@@ -29,7 +29,9 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 
 - No hay modelo GenAI real, proveedor, red, API web, Docker, cloud o base de
   datos.
-- No hay autenticación interna, service account, telemetría o remoto Git.
+- No hay autenticación interna, service account o telemetría. El remoto GitHub
+  público es una integración manual de desarrollo y distribución; no es
+  alcanzable desde el runtime.
 - El corpus adversario existe como fixtures y oráculos separados, pero el
   harness ejecutable todavía no existe.
 - El perfil vulnerable existe como API interna `C0`; no está conectado al

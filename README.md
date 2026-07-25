@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M03, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; el perfil vulnerable y el corpus adversario de 18 fixtures existen aislados y sin capacidad de ejecución. Todavía no existe un modelo GenAI real, harness de ataque, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M03, PGS-07-M08, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; el perfil vulnerable y el corpus adversario de 18 fixtures existen aislados y sin capacidad de ejecución. El código está publicado en un repositorio público, pero todavía no existe un modelo GenAI real, harness de ataque, proveedor o despliegue cloud.
 
 ## En una frase
 
@@ -15,7 +15,9 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 - **Ruta local canónica:** `/Users/adrianinfantes/Desktop/AIR/Carreer/AI-Security-Architec/Portfolio/GenAI-Seguro-Lab`.
 - **Tipo de ubicación:** carpeta física local; no es un enlace simbólico.
 - **Repositorio Git:** inicializado localmente sobre la rama `main`.
-- **Repositorio remoto y visibilidad:** no configurados; pendientes de una decisión posterior.
+- **Repositorio remoto:** [infantesromeroadrian/GenAI-Seguro-Lab](https://github.com/infantesromeroadrian/GenAI-Seguro-Lab).
+- **Visibilidad:** pública.
+- **Rama publicada:** `main`, con seguimiento de `origin/main`.
 
 La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar o mover esa carpeta superior.
 
@@ -247,15 +249,16 @@ y el cierre. Este registro no implementa controles ni acredita conformidad.
 `GSL-SYS-INV-001`, la fotografía verificable del checkout local antes de
 dibujar su arquitectura:
 
-- identifica tres actores, seis activos de datos, cinco componentes, un único
+- identifica tres actores, nueve activos de datos, seis componentes, un único
   modelo determinista y dos herramientas;
 - distingue lo expuesto por la CLI de lo implementado solo como API interna;
 - documenta que el proceso hereda la identidad de macOS y que no existen
   autenticación interna, credenciales de proveedor ni service accounts;
 - registra Python, `uv`, las dependencias directas y toda la resolución
   transitiva fijada;
-- confirma que no hay red, API, Docker, cloud, base de datos, vector store,
-  telemetría, modelo GenAI real, remoto Git ni publicación;
+- confirma que el runtime no tiene red, API, Docker, cloud, base de datos,
+  vector store, telemetría o modelo GenAI real, y separa de ese runtime el
+  repositorio GitHub público usado para desarrollo y distribución;
 - asigna IDs estables que PGS-02-M03 y PGS-02-M04 reutilizarán para los trust
   boundaries y la matriz de autoridad.
 
@@ -793,7 +796,9 @@ Toda acción no enumerada como permitida queda denegada por defecto.
 - No construirá interfaz gráfica, arquitectura multiagente, múltiples proveedores o toda la plataforma Docker AI sin una necesidad demostrada.
 - No ejecutará acciones autónomas fuera del sandbox ni pruebas contra terceros.
 - No obtendrá una certificación regulatoria ni afirmará cumplimiento legal integral.
-- No publicará GitHub, código, resultados o artefactos sin una decisión posterior independiente.
+- No publicará resultados de evaluación, releases u otros artefactos externos
+  sin una decisión posterior independiente; la publicación pública del código
+  fuente fue autorizada expresamente el 2026-07-25.
 
 ## Criterios de éxito aprobados
 
@@ -821,7 +826,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - Desde PGS-01, cada microtarea que produzca cambios cerrará con un commit funcional coherente. Código, pruebas y documentación inseparables permanecerán en el mismo commit.
 - Una microtarea sin cambios de repositorio no generará un commit vacío.
 - El estado del commit y cualquier publicación quedarán registrados en la evidencia de la microtarea.
-- No habrá `push`, remoto ni GitHub hasta una autorización posterior específica. Cuando exista, los pushes podrán seguir la misma granularidad de los commits verificados.
+- El remoto público y el primer `push` fueron autorizados expresamente el
+  2026-07-25. Los siguientes pushes conservarán la misma granularidad de los
+  commits verificados.
 
 ## Estado actual
 
@@ -851,8 +858,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Definir las Rules of Engagement del laboratorio propio.
 - [x] Crear el perfil vulnerable aislado y exclusivo para evaluación.
 - [x] Preparar el corpus adversario con entradas y resultados esperados.
+- [x] Crear el repositorio público y publicar `main` en GitHub.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M03, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **24 de 66 microtareas (36,4 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta completar las pruebas y P01-M08 hasta implementar y verificar PGS-04.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M03, PGS-07-M08, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **25 de 66 microtareas (37,9 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta completar las pruebas y P01-M08 hasta implementar y verificar PGS-04.
 
 ## Roadmap
 

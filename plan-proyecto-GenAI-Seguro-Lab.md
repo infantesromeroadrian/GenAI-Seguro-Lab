@@ -183,7 +183,9 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - El primer commit contiene PGS-00 completo porque Git no existía; no se ha fabricado historial.
 - Desde PGS-01, cada microtarea con cambios tendrá un commit funcional coherente con sus pruebas y documentación.
 - No se crearán commits vacíos.
-- No habrá `push` hasta crear un remoto y recibir autorización específica.
+- El remoto público y el primer `push` fueron autorizados expresamente el
+  2026-07-25; los pushes posteriores conservarán commits funcionales,
+  verificados y granulares.
 
 ## Criterios globales de éxito
 
@@ -315,11 +317,13 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [ ] **PGS-07-M05** Incorporar correcciones justificadas y registrar discrepancias.
 - [ ] **PGS-07-M06** Crear la matriz final requisito–evidencia–resultado–límite.
 - [ ] **PGS-07-M07** Preparar resumen técnico y resumen ejecutivo.
-- [ ] **PGS-07-M08** Decidir separadamente si se crea o publica el repositorio remoto.
+- [x] **PGS-07-M08** Crear el repositorio público y publicar `main` tras una autorización separada.
 - [ ] **PGS-07-M09** Revisar P01-M01 y P01-M04–P01-M11 contra sus criterios.
 - [ ] **PGS-07-M10** Registrar el estado de SEC-1 sin cerrarlo mientras BASE siga pendiente.
 
-**Salida:** proyecto reproducible, revisado y trazable; publicación externa solo si se autoriza.
+**Salida:** proyecto reproducible, revisado y trazable; el código fuente ya
+dispone de publicación pública autorizada, mientras que releases, resultados y
+otros artefactos externos siguen requiriendo una decisión separada.
 
 ## Trazabilidad con la fase 01
 
@@ -340,7 +344,9 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 ## Dependencias y decisiones abiertas
 
 - Elegir un proveedor real solo si aporta evidencia que el sustituto determinista no pueda producir; cualquier llamada y gasto exigirán autorización específica.
-- El repositorio local ya está inicializado sobre `main`; no existe ningún remoto configurado.
+- El repositorio local en `main` sigue
+  `origin/main` del remoto público
+  [infantesromeroadrian/GenAI-Seguro-Lab](https://github.com/infantesromeroadrian/GenAI-Seguro-Lab).
 - La estructura mínima ya separa código, tests, evaluaciones, datos, documentación y sandbox; Python 3.12, Pydantic 2, pytest 9 y sus dependencias están fijados mediante `pyproject.toml` y `uv.lock`.
 - El corpus benigno inicial contiene 12 incidentes y 8 documentos de conocimiento sintéticos; su esquema estricto, referencias, conteos y hashes están verificados automáticamente. `GSL-ADVERSARIAL-CORPUS-001` añade de forma separada 18 fixtures y 18 oráculos para los 17 abuse cases y seis familias, sin conectarlos a una ejecución.
 - El adaptador determinista ejecutado en proceso responde solo a peticiones completas previamente guionizadas, no usa red, registra coste cero y no autoriza ni ejecuta solicitudes de herramienta.
@@ -348,7 +354,12 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - El proyecto permanece deliberadamente sin empaquetar mediante `[tool.uv] package = false`. `main.py` ofrece el punto de entrada local estable desde el propio checkout, sin instalación editable ni `PYTHONPATH`.
 - La baseline `GSL-BASELINE-BENIGN-001` fija 12/12 ejecuciones funcionales, 24 invocaciones deterministas, 12 consultas autorizadas, 0 llamadas externas y 0 €. Sus campos declaran que no es una baseline de seguridad ni una evaluación de utilidad semántica.
 - `docs/framework-versions.md` fija OWASP LLM 2025, OWASP Agentic 2026, MITRE ATLAS release `v2026.06` con `ATLAS.yaml` 5.6.0, NIST AI RMF 1.0 y NIST SP 800-218A final; NIST AI 600-1 queda como perfil GenAI complementario. La revalidación para PGS-02-M07 conserva el snapshot ATLAS anterior y documenta la actualización de `AML.T0054`.
-- `docs/system-inventory.md` fija `GSL-SYS-INV-001` con actores, datos, componentes, modelo, herramientas, identidades, dependencias, infraestructura e integraciones verificadas. Distingue la CLI expuesta de `DraftWriterTool`, que solo está implementada como API interna, y confirma la ausencia actual de modelo GenAI real, red, autenticación, Docker, cloud, bases de datos, telemetría y remoto Git.
+- `docs/system-inventory.md` fija `GSL-SYS-INV-001` con actores, datos,
+  componentes, modelo, herramientas, identidades, dependencias,
+  infraestructura e integraciones verificadas. Distingue la CLI expuesta de
+  `DraftWriterTool`, que solo está implementada como API interna, y separa el
+  remoto público de desarrollo del runtime local, que continúa sin modelo
+  GenAI real, red, autenticación, Docker, cloud, bases de datos o telemetría.
 - `architecture/manifest.json` y sus diagramas Tecture fijan contexto, contenedores y componentes con seis trust boundaries. El mapa incorpora `CMP-06` como configuración interna de evaluación, sin arista hacia el modelo ni las herramientas; `DraftWriterTool` permanece desconectada y TB-02 a TB-04 siguen siendo límites lógicos dentro del mismo proceso. PGS-02-M03 cierra P01-M06.
 - `docs/authority-matrix.md` fija `GSL-AUTH-MATRIX-001` con once cadenas actuales y cuatro niveles de consecuencia. Separa la construcción `C0` de `CMP-06`, la carga inerte `C1` de `DAT-07` a `DAT-09`, la propuesta sin autoridad de `MOD-01`, la ejecución con `IDN-01`, el efecto interno create-only de `TOL-02` y la autoridad externa de mantenimiento de `ACT-02`. PGS-02-M04 completa el inventario de autoridad y cierra P01-M05.
 - `docs/abuse-cases.md` fija `GSL-ABUSE-CASES-001` con 17 escenarios: 3 de prompt injection, 2 de jailbreak, 3 de exfiltración, 5 de abuso de herramientas, 3 de denegación de servicio y 1 de supply chain. Los separa como `SIN-RUTA`, `INTERNO`, `MANTENIMIENTO` o `CLI` y conserva los gaps de evidencia.
@@ -361,11 +372,13 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
   oráculos separados, validan cobertura, procedencia, límites y hashes, y
   terminan en un bundle en memoria. `AC-DOS-03` permanece como descriptor no
   materializado que requiere ampliar las RoE.
-- Decidir GitHub, remoto, visibilidad y primer `push` únicamente en PGS-07-M08 o mediante una autorización específica posterior.
+- PGS-07-M08 quedó adelantada mediante autorización específica: remoto público
+  creado y `main` publicado el 2026-07-25. Esto no autoriza releases,
+  resultados de evaluación ni otros artefactos externos.
 - Completar P00-M08, P00-M09 y P00-M10 antes de declarar superado SEC-1.
 
 ## Próxima microtarea
 
 **PGS-03-M04 — implementar pruebas para prompt injection directa e indirecta.**
 
-**Progreso interno:** 24 de 66 microtareas completadas, 42 abiertas (**36,4 %**).
+**Progreso interno:** 25 de 66 microtareas completadas, 41 abiertas (**37,9 %**).

@@ -5,17 +5,18 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYS-INV-001` |
-| Versión | `1.2.0` |
+| Versión | `1.3.0` |
 | Fecha de corte | 2026-07-25 |
-| Baseline de código | commit `3c4657efbc7dc92b232b83f3185d27968c2ba78b` + candidato PGS-03-M03 |
+| Baseline de código | commit `e8cf86999c457c6b1b5bc9a687f48aaf7a677ef1` + candidato PGS-07-M08 |
 | Entorno | checkout local de desarrollo |
-| Alcance | estado implementado por PGS-03-M03 |
+| Alcance | estado implementado por PGS-03-M03 y publicación PGS-07-M08 |
 
 Este documento inventaría el sistema que existe en el repositorio, no la
 solución futura descrita en el roadmap. PGS-03-M03 añade un corpus adversario
 inerte con entradas y oráculos separados. Puede validarse mediante una API
 Python interna, pero no está conectado al perfil, al modelo, a las herramientas
-o a una ejecución.
+o a una ejecución. PGS-07-M08 añade un remoto público de desarrollo; ese remoto
+no forma parte del runtime ni introduce llamadas externas en la aplicación.
 
 ## Convenciones de estado
 
@@ -34,7 +35,7 @@ PGS-02-M04.
 | ID | Actor | Estado | Interacción y autoridad real |
 |---|---|---|---|
 | `ACT-01` | Operador local del laboratorio | Expuesto | Lanza `analyze` o `baseline`, elige un identificador de incidente y recibe JSON por `stdout`. No inicia sesión en la aplicación; el proceso hereda los permisos de su cuenta local. |
-| `ACT-02` | Mantenedor y ejecutor de pruebas | Soporte | Modifica código y corpus, sincroniza dependencias, ejecuta pytest, construye explícitamente el perfil de evaluación y conserva snapshots mediante Git local. Su autoridad procede del sistema operativo y del repositorio, no de un rol interno de la aplicación. |
+| `ACT-02` | Mantenedor y ejecutor de pruebas | Soporte | Modifica código y corpus, sincroniza dependencias, ejecuta pytest, construye explícitamente el perfil de evaluación y conserva snapshots mediante Git. Puede publicar commits revisados en `origin`; su autoridad procede del sistema operativo y de GitHub, no de un rol interno de la aplicación. |
 | `ACT-03` | Llamador que confirma un borrador | Interno | Puede aportar a `DraftWriterTool` una confirmación separada y ligada a la propuesta exacta. La implementación comprueba consentimiento declarado, pero no autentica quién confirma; la CLI actual no expone este flujo. |
 
 No existen usuarios remotos, cuentas de cliente, administradores de aplicación
@@ -117,12 +118,13 @@ versionada para la resolución exacta.
 | ID | Recurso | Estado y límite |
 |---|---|---|
 | `INF-01` | Mac local | Único host de ejecución observado; el proyecto es una carpeta física local |
-| `INF-02` | Checkout Git en `main` | Repositorio local sin remoto configurado y sin publicación |
+| `INF-02` | Checkout Git en `main` | Repositorio local que sigue `origin/main` del remoto público `infantesromeroadrian/GenAI-Seguro-Lab` |
 | `INF-03` | Entorno `.venv` | Runtime local ignorado por Git y reconstruible con `uv sync --frozen` |
 | `INF-04` | Filesystem del checkout | Conserva corpus, snapshot y sandbox; solo `TOL-02` implementa escritura de producto, confinada a borradores |
 | `INT-01` | Entrada de proceso | Argumentos de la CLI local; no existe endpoint HTTP, UI o cola |
 | `INT-02` | Salida de proceso | `stdout`/`stderr`; no existe exportación, callback, correo, webhook o telemetría |
-| `INT-03` | Integraciones externas | Ninguna activa; la baseline registra 0 llamadas externas |
+| `INT-03` | Integraciones externas de runtime | Ninguna activa; la baseline registra 0 llamadas externas |
+| `INT-04` | Repositorio GitHub público | Integración manual de desarrollo y distribución de código; no es alcanzable por `CMP-01` ni por el runtime |
 
 Obsidian registra la continuidad humana del proyecto, pero no se importa ni se
 consulta durante la ejecución y, por tanto, no es una dependencia del sistema.
@@ -165,7 +167,10 @@ hacia `CMP-06`, `MOD-01`, `TOL-01`, `TOL-02` o `CMP-01`.
 | `GAP-06` | Logging persistente, telemetría y monitorización | No implementados |
 | `GAP-07` | Harness adversario y dispatcher de casos | El corpus inerte ya existe; la conexión y las pruebas pertenecen a PGS-03-M04 a PGS-03-M06 |
 | `GAP-08` | Sistema multiagente, autonomía abierta y ejecución de shell | No forman parte del diseño aprobado |
-| `GAP-09` | Remoto Git y publicación en GitHub | Pendientes de una decisión separada |
+
+`GAP-09` queda retirado desde PGS-07-M08: el remoto Git y la publicación
+pública del código ya existen. La ausencia de CI/CD o GitHub Actions no se
+reclasifica aquí como un requisito pendiente.
 
 ## Límites relevantes para el threat model
 
