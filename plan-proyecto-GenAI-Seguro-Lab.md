@@ -6,8 +6,8 @@
 - **Nombre de carpeta confirmado:** `GenAI-Seguro-Lab`.
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
-- **Microtareas padre completadas:** P01-M01, P01-M04, P01-M05 y P01-M06.
-- **Estado actual:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08 y PGS-03-M01 a PGS-03-M07 completadas; la baseline canónica fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED` sobre 14 fixtures PI/JB/EX/TOL, mientras las otras cuatro permanecen inertes.
+- **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M07.
+- **Estado actual:** PGS-00-M01 a PGS-03-M08 completadas; la baseline canónica fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED` sobre 14 fixtures PI/JB/EX/TOL, mientras las otras cuatro permanecen inertes. Los hallazgos, el impacto, la reproducción y los límites están documentados en `GSL-FINDINGS-ADVERSARIAL-001`.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** repositorio público ya autorizado y evidencia
@@ -259,7 +259,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-03-M05** Implementar pruebas para jailbreak y revelación de información.
 - [x] **PGS-03-M06** Implementar pruebas para llamadas de herramienta no autorizadas y exceso de agencia.
 - [x] **PGS-03-M07** Ejecutar la baseline y conservar configuración, resultados y logs saneados.
-- [ ] **PGS-03-M08** Documentar hallazgos, impacto, reproducción y límites.
+- [x] **PGS-03-M08** Documentar hallazgos, impacto, reproducción y límites.
 
 **Salida:** al menos un fallo reproducible y medido contra una baseline fija.
 
@@ -369,8 +369,8 @@ requiriendo una decisión separada.
 - `architecture/manifest.json` y sus diagramas Tecture fijan contexto, contenedores y componentes con seis trust boundaries. El mapa incorpora `CMP-06` como perfil interno y `CMP-07` como harness adversario acotado para 14 fixtures PI/JB/EX/TOL; `DraftWriterTool` permanece desconectada de la CLI y del flujo benigno, aunque el harness la invoca de forma confinada para TOL. TB-02 a TB-04 siguen siendo límites lógicos dentro del mismo proceso. PGS-02-M03 cierra P01-M06.
 - `docs/authority-matrix.md` fija `GSL-AUTH-MATRIX-001` con trece cadenas actuales y cuatro niveles de consecuencia. Separa la construcción `C0` de `CMP-06`, la evaluación temporal `C1` de PI/JB/EX, la evaluación TOL con residual máximo `C2`, la propuesta sin autoridad de `MOD-01`, la ejecución con `IDN-01`, el efecto interno create-only de `TOL-02` y la autoridad externa de mantenimiento de `ACT-02`. PGS-02-M04 completa el inventario de autoridad y cierra P01-M05.
 - `docs/abuse-cases.md` fija `GSL-ABUSE-CASES-001` con 17 escenarios: 3 de prompt injection, 2 de jailbreak, 3 de exfiltración, 5 de abuso de herramientas, 3 de denegación de servicio y 1 de supply chain. Los separa como `SIN-RUTA`, `INTERNO`, `MANTENIMIENTO` o `CLI` y conserva los gaps de evidencia.
-- `docs/risk-prioritization.md` fija `GSL-RISK-PRIORITY-001` con impacto `I0`–`I3`, probabilidad condicionada `L1`–`L3`, capacidad real `K0`–`K3` y una puntuación reproducible para los 17 casos. Tras PGS-03-M06 sitúa 2 en `PR-1`, 1 en `PR-2`, 13 en `PR-3` y 1 en `PR-0`; P01-M07 permanece abierta.
-- `docs/threat-crosswalk.md` fija `GSL-THREAT-CROSSWALK-001` con una fila por abuse case y relaciones directas, parciales o ausentes frente a OWASP LLM 2025, OWASP Agentic 2026 y MITRE ATLAS `v2026.06`. Conserva los gaps de consentimiento, filesystem y escenarios no agentic sin cambiar la prioridad; PGS-02-M07 avanza P01-M07, que permanece abierta.
+- `docs/risk-prioritization.md` fija `GSL-RISK-PRIORITY-001` con impacto `I0`–`I3`, probabilidad condicionada `L1`–`L3`, capacidad real `K0`–`K3` y una puntuación reproducible para los 17 casos. Tras PGS-03-M07 sitúa 2 en `PR-1`, 1 en `PR-2`, 13 en `PR-3` y 1 en `PR-0`.
+- `docs/threat-crosswalk.md` fija `GSL-THREAT-CROSSWALK-001` con una fila por abuse case y relaciones directas, parciales o ausentes frente a OWASP LLM 2025, OWASP Agentic 2026 y MITRE ATLAS `v2026.06`. Conserva los gaps de consentimiento, filesystem y escenarios no agentic sin cambiar la prioridad.
 - `docs/control-responsibility-mapping.md` fija `GSL-NIST-CONTROLS-001` con cuatro roles, trece controles en estado presente, parcial o planificado, cobertura de los 17 abuse cases y correspondencias acotadas con NIST AI RMF 1.0 y NIST SP 800-218A. Declara la concentración de responsabilidad en `ACT-02`, la falta de autenticación de `ACT-03`, el futuro `REV-01` sin asignar y los límites de alcance del perfil; PGS-02-M08 avanza P01-M08, que permanece abierta hasta implementar PGS-04.
 - `docs/rules-of-engagement.md` fija `GSL-ROE-001` con autorización por ejecución, activos incluidos y excluidos, acciones permitidas y prohibidas, presupuestos cuantitativos, evidencia, parada y un vehículo acotado para cada uno de los 17 abuse cases. `AC-DOS-01` solo admite un piloto limitado y `AC-DOS-03` necesita una ampliación posterior; PGS-03-M04/M05/M06 aplican esos límites a 14 fixtures PI/JB/EX/TOL sin red, proveedor o evidencia canónica.
 - `src/genai_seguro_lab/evaluation_profile.py` implementa `GSL-PROFILE-VULNERABLE-001`: requiere autorización estricta de `GSL-ROE-001`, datos sintéticos y un sandbox temporal, construye peticiones débiles claramente marcadas y carece de llamadas al modelo, ejecución de herramientas, red, escritura o ruta CLI. Su aislamiento queda probado en `tests/test_evaluation_profile.py`.
@@ -390,6 +390,11 @@ requiriendo una decisión separada.
   `evaluations/adversarial-baseline-v1/` configuración, resultados, eventos y
   un manifiesto de integridad saneados: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL`, 0
   `STOPPED`, 0 llamadas externas y 0 €.
+- `docs/adversarial-baseline-findings.md` fija
+  `GSL-FINDINGS-ADVERSARIAL-001`: explica cómo usar hoy la CLI, consolida seis
+  hallazgos, acota el impacto del residual `ADV-TOL-005`, documenta la
+  reproducción histórica y declara la ausencia de frontal, modelo real y
+  cobertura DOS/SC. PGS-03-M08 y P01-M07 quedan cerradas.
 - PGS-07-M08 quedó adelantada mediante autorización específica: remoto público
   creado y `main` publicado el 2026-07-25. PGS-03-M07 autoriza además su
   evidencia saneada concreta; releases y otros artefactos externos siguen
@@ -398,6 +403,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-03-M08 — documentar hallazgos, impacto, reproducción y límites.**
+**PGS-04-M01 — separar instrucciones de sistema, contenido no confiable y datos de usuario.**
 
-**Progreso interno:** 29 de 66 microtareas completadas, 37 abiertas (**43,9 %**).
+**Progreso interno:** 30 de 66 microtareas completadas, 36 abiertas (**45,5 %**).

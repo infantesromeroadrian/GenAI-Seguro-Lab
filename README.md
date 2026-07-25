@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M07, PGS-07-M08, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. La baseline adversaria canónica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`. Cuatro fixtures permanecen inertes y `ADV-TOL-005` conserva como residual conocido una única escritura confinada a `$TMP`. El código y la evidencia saneada están publicados en el repositorio público, pero todavía no existe un modelo GenAI real, proveedor o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-03-M08, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria canónica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`. Cuatro fixtures permanecen inertes y `ADV-TOL-005` conserva como residual conocido una única escritura confinada a `$TMP`. El código, la evidencia saneada y sus hallazgos están publicados en el repositorio público, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
 
 ## En una frase
 
@@ -83,6 +83,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 ├── docs/
 │   ├── README.md
 │   ├── abuse-cases.md
+│   ├── adversarial-baseline-findings.md
 │   ├── authority-matrix.md
 │   ├── control-responsibility-mapping.md
 │   ├── framework-versions.md
@@ -236,6 +237,17 @@ Comprobación específica:
 ```bash
 uv run --frozen pytest tests/test_cli_smoke.py
 ```
+
+### Uso actual y frontal
+
+La interfaz actual es la propia CLI. No existe frontal web, aplicación de
+escritorio ni API pública. Esto es deliberado: el contrato excluye una
+interfaz gráfica hasta validar el núcleo, porque una nueva entrada cambiaría
+la superficie de ataque y la futura autenticación de la confirmación humana.
+
+Una guía ejecutable para analizar un incidente, repetir las baselines,
+inspeccionar la evidencia y entender sus límites está en
+[Hallazgos de la baseline adversaria v1](./docs/adversarial-baseline-findings.md).
 
 ## Baseline de marcos y fuentes
 
@@ -460,7 +472,9 @@ La evidencia revisada está en
 Los artefactos omiten payloads completos, salida bruta, traceback y rutas
 personales. Un `PASS` solo acredita coincidencia con el oráculo de esa
 variante y ese candidato; no demuestra seguridad general ni robustez de un
-modelo GenAI real.
+modelo GenAI real. El impacto, la reproducción y los límites consolidados se
+documentan en
+[GSL-FINDINGS-ADVERSARIAL-001](./docs/adversarial-baseline-findings.md).
 
 ## Crosswalk de amenazas
 
@@ -942,9 +956,10 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Implementar pruebas para jailbreak y revelación de información.
 - [x] Implementar pruebas para llamadas de herramienta no autorizadas y exceso de agencia.
 - [x] Ejecutar la baseline y conservar configuración, resultados y logs saneados.
+- [x] Documentar hallazgos, impacto, reproducción y límites.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M07, PGS-07-M08, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **29 de 66 microtareas (43,9 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta documentar los hallazgos en PGS-03-M08 y P01-M08 hasta implementar y verificar PGS-04.
+**PGS-00-M01 a PGS-03-M08, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **30 de 66 microtareas (45,5 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar PGS-04.
 
 ## Roadmap
 
@@ -954,7 +969,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-03-M08 — documentar hallazgos, impacto, reproducción y límites.**
+**PGS-04-M01 — separar instrucciones de sistema, contenido no confiable y datos de usuario.**
 
 ## Uso responsable
 

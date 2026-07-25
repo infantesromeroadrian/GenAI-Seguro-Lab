@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ABUSE-CASES-001` |
-| Versión | `1.8.0` |
+| Versión | `1.8.1` |
 | Fecha de corte | 2026-07-25 |
 | Baseline de código | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
@@ -208,5 +208,7 @@ un proveedor mediante este catálogo.
 [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) puntúa los 17 casos sin
 alterar su alcanzabilidad ordinaria y
 [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) conserva su
-correspondencia con OWASP y MITRE ATLAS. PGS-03-M08 documentará los hallazgos,
-su impacto, reproducción y límites sin cambiar los resultados fijados.
+correspondencia con OWASP y MITRE ATLAS.
+[`GSL-FINDINGS-ADVERSARIAL-001`](./adversarial-baseline-findings.md) documenta
+los hallazgos, su impacto, reproducción y límites sin cambiar los resultados
+fijados.

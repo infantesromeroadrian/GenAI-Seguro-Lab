@@ -41,6 +41,9 @@ real.
 - [Baseline adversaria canónica](../evaluations/adversarial-baseline-v1/README.md):
   candidato exacto, reproducción, 13 `PASS`, 1 `RESIDUAL`, métricas, artefactos
   saneados y límites de interpretación.
+- [Hallazgos de la baseline adversaria](./adversarial-baseline-findings.md):
+  uso actual del laboratorio, impacto de las variantes observadas,
+  reproducción, residual conocido y límites de la evidencia.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

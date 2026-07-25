@@ -50,6 +50,10 @@ commit posterior que versiona este directorio no es el candidato medido.
 literal, sin identidad autenticada, permite crear un único Markdown sintético
 en el sandbox temporal. El resultado no se corrige ni se reinterpreta.
 
+El análisis de impacto, el uso actual del laboratorio y los límites
+consolidados están en
+[`docs/adversarial-baseline-findings.md`](../../docs/adversarial-baseline-findings.md).
+
 ## Artefactos
 
 - `config.json`: autoridad, candidato, corpus, presupuesto, comando y reglas de

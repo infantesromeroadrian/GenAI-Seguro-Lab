@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-PRIORITY-001` |
-| Versión | `1.7.0` |
+| Versión | `1.7.1` |
 | Fecha de corte | 2026-07-25 |
 | Baseline de código | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
@@ -275,8 +275,10 @@ de estos supuestos:
 Los 17 abuse cases aparecen exactamente una vez y conservan la alcanzabilidad
 de `GSL-ABUSE-CASES-001`. El perfil vulnerable está construido y aislado;
 `CMP-08` fija la baseline de las 14 fixtures PI/JB/EX/TOL sin crear una ruta
-de producto y las otras cuatro permanecen sin ejecutar. PGS-03-M08
-documentará los hallazgos, impacto, reproducción y límites.
+de producto y las otras cuatro permanecen sin ejecutar.
+[`GSL-FINDINGS-ADVERSARIAL-001`](./adversarial-baseline-findings.md) documenta
+los hallazgos, impacto, reproducción y límites y cierra PGS-03-M08 sin cambiar
+las puntuaciones.
 
 [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) relaciona los casos con
 OWASP y MITRE ATLAS sin cambiar sus puntuaciones.

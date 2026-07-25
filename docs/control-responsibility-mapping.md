@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-NIST-CONTROLS-001` |
-| Versión | `1.0.7` |
+| Versión | `1.0.8` |
 | Fecha de corte | 2026-07-25 |
 | Baseline de código | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Threat model de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md), [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) y [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
@@ -96,7 +96,7 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 | `CTL-09` | Política de salida, redacción, errores saneados y detección de fugas | `PARCIAL` | `A/R ACT-02` | `AC-JB-01`, `AC-EX-03` | Salida tipada y errores genéricos limitan la exposición actual; `CMP-07` comprueba que los jailbreak de contenido no se reflejan y que un marcador señuelo no aparece en la respuesta de proceso. Faltan filtros, reglas de redacción y pruebas sobre un modelo real | PGS-04-M05 y PGS-05 |
 | `CTL-10` | Límites de tamaño, tiempo, iteraciones, concurrencia y consumo | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-TOL-02`, `AC-DOS-01`, `AC-DOS-03` | `GSL-ROE-001` fija topes operativos y `CMP-08` registra tiempo, procesos, turnos, solicitudes, bytes, archivos y RSS del run canónico. Todavía no hay rate limit del producto ni tope global preventivo para un corpus dimensionado | PGS-04-M06 y PGS-05-M04 |
 | `CTL-11` | Integridad de código, dependencias, cambios y releases | `PARCIAL` | `A/R ACT-02`; `C REV-01` planificado | `AC-DOS-02`, `AC-SC-01` | Git, remoto público, `uv.lock`, hashes del corpus y commits granulares permiten detectar diferencias; faltan firma, CI, SBOM, revisión independiente y política de release | PGS-06-M08 y PGS-07-M01/M03/M04 |
-| `CTL-12` | Harness adversario, métricas, regresión y revisión independiente | `PARCIAL` | `A/R ACT-02`; `R REV-01` solo para revisión independiente | Los 17 casos de `GSL-ABUSE-CASES-001` | `CMP-07` cubre 14 fixtures PI/JB/EX/TOL con oráculos separados y `CMP-08` fija una baseline reproducible con 13 `PASS`, 1 `RESIDUAL`, métricas y evidencia saneada. Faltan 4 casos, documentación de hallazgos, retest y revisor independiente | PGS-03-M08, PGS-05 y PGS-07-M01 a M06 |
+| `CTL-12` | Harness adversario, métricas, regresión y revisión independiente | `PARCIAL` | `A/R ACT-02`; `R REV-01` solo para revisión independiente | Los 17 casos de `GSL-ABUSE-CASES-001` | `CMP-07` cubre 14 fixtures PI/JB/EX/TOL con oráculos separados; `CMP-08` fija una baseline reproducible con 13 `PASS`, 1 `RESIDUAL`, métricas y evidencia saneada, y `GSL-FINDINGS-ADVERSARIAL-001` documenta impacto, reproducción y límites. Faltan 4 casos, retest y revisor independiente | PGS-05 y PGS-07-M01 a M06 |
 | `CTL-13` | Eventos, monitorización, respuesta, rollback, comunicación y retirada | `PLANIFICADO` | `A/R ACT-02`; `R ACT-01` para avisos y parada | `AC-EX-03`, `AC-DOS-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | No hay logging persistente, telemetría, correlación, runbook, rollback ni procedimiento de retirada | PGS-04-M07/M08, PGS-06-M05 a M07 y PGS-07 |
 
 ## Mapeo de controles a NIST
@@ -159,5 +159,7 @@ autorización por ejecución, los targets, los presupuestos y la parada.
 `GSL-PROFILE-VULNERABLE-001` ya está aislado y sin capacidad de ejecución.
 `GSL-ADVERSARIAL-CORPUS-001` ya fija entradas y oráculos sintéticos separados,
 y `CMP-08` fija la baseline canónica de 14 fixtures PI/JB/EX/TOL con
-configuración, resultados, eventos y manifiesto saneados. PGS-03-M08 debe
-documentar los hallazgos, impacto, reproducción y límites.
+configuración, resultados, eventos y manifiesto saneados.
+[`GSL-FINDINGS-ADVERSARIAL-001`](./adversarial-baseline-findings.md) documenta
+los hallazgos, impacto, reproducción y límites. El siguiente tratamiento
+técnico empieza en PGS-04.
