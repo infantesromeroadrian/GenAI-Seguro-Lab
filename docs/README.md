@@ -31,6 +31,9 @@ real.
   NIST](./control-responsibility-mapping.md): propietarios, estados, evidencia
   y correspondencias seleccionadas con NIST AI RMF 1.0 y NIST SP 800-218A,
   sin atribuir conformidad ni eficacia no demostrada.
+- [Rules of Engagement](./rules-of-engagement.md): autorización por ejecución,
+  targets, acciones, datos, presupuestos, evidencias y condiciones de parada
+  para los 17 abuse cases del laboratorio propio.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

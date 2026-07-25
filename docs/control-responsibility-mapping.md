@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-NIST-CONTROLS-001` |
-| Versión | `1.0.0` |
+| Versión | `1.0.1` |
 | Fecha de corte | 2026-07-25 |
 | Estado de código observado | commit `372d96effad6095fea991917db98554ec56bd37e` |
 | Threat model de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md), [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) y [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
@@ -94,7 +94,7 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 | `CTL-07` | Confirmación humana autenticada, ligada al contenido y no reutilizable | `PARCIAL` | `A ACT-02`; `R ACT-03` | `AC-TOL-03`, `AC-TOL-05` | Huella exacta, confirmación separada y consumo único están implementados; `IDN-03` no acredita quién confirmó | PGS-04-M04 y pruebas específicas en PGS-03-M06/PGS-05 |
 | `CTL-08` | Efectos de filesystem confinados, creación exclusiva, parada y recuperación segura | `PARCIAL` | `A/R ACT-02`; `R ACT-01` para parada | `AC-TOL-03`, `AC-TOL-04`, `AC-TOL-05` | `TOL-02` bloquea subrutas, symlinks y overwrite dentro del sandbox; no existe aún un flujo operativo de parada, rollback o recuperación | PGS-04-M08, PGS-06-M07 y PGS-05 |
 | `CTL-09` | Política de salida, redacción, errores saneados y detección de fugas | `PARCIAL` | `A/R ACT-02` | `AC-JB-01`, `AC-EX-03` | Salida tipada y errores genéricos limitan la exposición actual; faltan filtros, marcadores señuelo, reglas de redacción y pruebas de fuga de extremo a extremo | PGS-04-M05, PGS-03-M05 y PGS-05 |
-| `CTL-10` | Límites de tamaño, tiempo, iteraciones, concurrencia y consumo | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-TOL-02`, `AC-DOS-01`, `AC-DOS-03` | Una ejecución tiene dos invocaciones, una herramienta y corpus pequeño; no hay rate limit entre procesos, tope global de corpus ni métricas de recursos | PGS-03-M01, PGS-04-M06 y PGS-05-M04 |
+| `CTL-10` | Límites de tamaño, tiempo, iteraciones, concurrencia y consumo | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-TOL-02`, `AC-DOS-01`, `AC-DOS-03` | `GSL-ROE-001` fija topes operativos por defecto y un piloto acotado para `AC-DOS-01`; todavía no hay enforcement en el harness, rate limit del producto, tope global del corpus ni métricas ejecutadas | PGS-04-M06 y PGS-05-M04 |
 | `CTL-11` | Integridad de código, dependencias, cambios y releases | `PARCIAL` | `A/R ACT-02`; `C REV-01` planificado | `AC-DOS-02`, `AC-SC-01` | Git local, `uv.lock`, hashes del corpus y commits granulares permiten detectar diferencias; faltan remoto, firma, CI, SBOM, revisión independiente y política de release | PGS-06-M08, PGS-07-M01/M03/M04 y decisión separada PGS-07-M08 |
 | `CTL-12` | Harness adversario, métricas, regresión y revisión independiente | `PLANIFICADO` | `A/R ACT-02`; `R REV-01` solo para revisión independiente | Los 17 casos de `GSL-ABUSE-CASES-001` | Solo existen pruebas unitarias y baseline benigna; no hay corpus adversario, baseline de seguridad, retest ni revisor independiente | PGS-03, PGS-05 y PGS-07-M01 a M06 |
 | `CTL-13` | Eventos, monitorización, respuesta, rollback, comunicación y retirada | `PLANIFICADO` | `A/R ACT-02`; `R ACT-01` para avisos y parada | `AC-EX-03`, `AC-DOS-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | No hay logging persistente, telemetría, correlación, runbook, rollback ni procedimiento de retirada | PGS-04-M07/M08, PGS-06-M05 a M07 y PGS-07 |
@@ -154,6 +154,7 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 
 ## Próximo tratamiento
 
-PGS-03-M01 definirá las Rules of Engagement antes de ejecutar cualquier caso
-adversario. El estado de los controles solo cambiará cuando las fases PGS-03 a
-PGS-07 produzcan la implementación y evidencia correspondientes.
+[`GSL-ROE-001`](./rules-of-engagement.md) ya delimita los 17 casos, la
+autorización por ejecución, los targets, los presupuestos y la parada. PGS-03-M02
+debe crear ahora el perfil vulnerable aislado; ningún caso adversario se ha
+ejecutado todavía.

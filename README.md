@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; la arquitectura, el threat model, los responsables y el mapa de controles NIST ya están fijados. Todavía no existe un modelo GenAI real, perfil vulnerable, harness adversario, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; la arquitectura, el threat model, los responsables, el mapa de controles NIST y las Rules of Engagement ya están fijados. Todavía no existe un modelo GenAI real, perfil vulnerable, harness adversario, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -68,6 +68,7 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 │   ├── control-responsibility-mapping.md
 │   ├── framework-versions.md
 │   ├── risk-prioritization.md
+│   ├── rules-of-engagement.md
 │   ├── system-inventory.md
 │   └── threat-crosswalk.md
 └── sandbox/
@@ -346,6 +347,25 @@ El primer residual funcional es la confirmación interna no autenticada de
 de procesos por CLI. Los escenarios de prompt injection y jailbreak se
 recalcularán cuando exista un modelo real o el perfil vulnerable cambie su
 alcanzabilidad. No se ejecutó ningún ataque durante la priorización.
+
+## Rules of Engagement
+
+[docs/rules-of-engagement.md](./docs/rules-of-engagement.md) fija
+`GSL-ROE-001` para las futuras evaluaciones del laboratorio propio:
+
+- delimita activos incluidos y excluye terceros, red, proveedores, datos
+  reales y el host como objetivo;
+- separa la autorización del usuario, la ejecución de `ACT-01` y la autoridad
+  de riesgo de `ACT-02`;
+- asigna un vehículo y una restricción a cada uno de los 17 abuse cases;
+- establece topes de procesos, tiempo, turnos, tamaño, archivos y memoria;
+- exige sandbox y copias temporales para cualquier efecto o corrupción;
+- define evidencia saneada y condiciones de parada sin reintento automático.
+
+`AC-DOS-01` queda limitado a un piloto de dos procesos, 20 invocaciones y 60
+segundos. `AC-DOS-03` no está autorizado por las reglas base y necesitará una
+ampliación posterior. PGS-03-M01 solo define el marco: no ejecuta ataques ni
+habilita el perfil vulnerable.
 
 ## Crosswalk de amenazas
 
@@ -806,8 +826,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Priorizar los abuse cases por impacto, probabilidad condicionada y capacidad real.
 - [x] Mapear las amenazas a OWASP y MITRE ATLAS.
 - [x] Mapear responsables y controles previstos a NIST AI RMF y NIST SP 800-218A.
+- [x] Definir las Rules of Engagement del laboratorio propio.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **21 de 66 microtareas (31,8 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta completar las pruebas y P01-M08 hasta implementar y verificar PGS-04.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **22 de 66 microtareas (33,3 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta completar las pruebas y P01-M08 hasta implementar y verificar PGS-04.
 
 ## Roadmap
 
@@ -817,7 +838,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-03-M01 — definir las Rules of Engagement del laboratorio propio.**
+**PGS-03-M02 — crear un perfil vulnerable aislado y exclusivo para evaluación.**
 
 ## Uso responsable
 
