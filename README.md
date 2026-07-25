@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M04 y P01-M01 completadas. El contrato, el esqueleto, el entorno reproducible y el corpus benigno sintético están versionados en un repositorio Git local sobre `main`; todavía no existe flujo funcional, modelo, proveedor real, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M05 y P01-M01 completadas. El contrato, el esqueleto, el entorno reproducible, el corpus benigno y el adaptador determinista están versionados en un repositorio Git local sobre `main`; todavía no existe flujo funcional, modelo GenAI real, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -32,10 +32,12 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 ├── src/
 │   └── genai_seguro_lab/
 │       ├── __init__.py
-│       └── data_contract.py
+│       ├── data_contract.py
+│       └── model_adapter.py
 ├── tests/
 │   ├── README.md
-│   └── test_data_contract.py
+│   ├── test_data_contract.py
+│   └── test_model_adapter.py
 ├── evaluations/
 │   └── README.md
 ├── data/
@@ -51,7 +53,7 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
         └── README.md
 ```
 
-PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno y PGS-01-M04 incorpora el primer corpus verificable, pero todavía no existe un modelo ni un flujo de aplicación ejecutable.
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable y PGS-01-M05 añade la frontera determinista de modelo. Todavía no existe un modelo GenAI real ni un flujo de aplicación ejecutable.
 
 ## Entorno reproducible
 
@@ -85,6 +87,30 @@ Comprobación específica:
 
 ```bash
 uv run --frozen pytest tests/test_data_contract.py
+```
+
+## Adaptador determinista actual
+
+`src/genai_seguro_lab/model_adapter.py` define la frontera mínima común de
+modelo y un doble de pruebas ejecutado en proceso:
+
+- `ModelAdapter` establece el protocolo de cualquier adaptador futuro.
+- Peticiones, mensajes, respuestas y solicitudes de herramienta usan esquemas
+  estrictos, inmutables y sin campos adicionales.
+- `DeterministicModelAdapter` solo responde a intercambios configurados
+  expresamente y los indexa mediante la huella SHA-256 de la petición completa.
+- La misma petición produce un resultado serializado idéntico; una petición
+  distinta o desconocida falla cerrada sin repetir su contenido en el error.
+- El descriptor registra proveedor `deterministic`, modelo `scripted-v1`,
+  llamadas externas desactivadas y coste de 0 €.
+- Una solicitud de herramienta es solo salida del modelo. El adaptador no
+  contiene autorización ni ejecuta herramientas; esa política pertenece a
+  PGS-01-M06.
+
+Comprobación específica:
+
+```bash
+uv run --frozen pytest tests/test_model_adapter.py
 ```
 
 ## Por qué existe
@@ -514,9 +540,10 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Crear la estructura mínima de código, tests, evaluaciones, datos y documentación.
 - [x] Configurar dependencias reproducibles y exclusión de secretos.
 - [x] Crear el dataset sintético de incidentes y la base de conocimiento.
-- [ ] Implementar el adaptador determinista de modelo para tests.
+- [x] Implementar el adaptador determinista de modelo para tests.
+- [ ] Implementar el flujo benigno mínimo y las herramientas confinadas al sandbox.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M04 y P01-M01 están completadas.** El avance interno es **10 de 66 microtareas (15,2 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M05 y P01-M01 están completadas.** El avance interno es **11 de 66 microtareas (16,7 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -526,7 +553,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-01-M05 — implementar el adaptador determinista de modelo para tests.**
+**PGS-01-M06 — implementar el flujo benigno mínimo y las herramientas confinadas al sandbox.**
 
 ## Uso responsable
 

@@ -1,4 +1,5 @@
-"""Paquete principal de GenAI Seguro Lab.
+"""Núcleo de contratos de GenAI Seguro Lab.
 
-PGS-01-M02 solo reserva el namespace; no expone comportamiento funcional.
+Incluye el corpus verificable y el adaptador determinista de pruebas. Todavía
+no expone un flujo de aplicación ni integra un modelo GenAI real.
 """
