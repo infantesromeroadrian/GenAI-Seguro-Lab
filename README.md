@@ -12,8 +12,6 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 
 - **Nombre del proyecto:** GenAI Seguro Lab.
 - **Nombre de la carpeta:** `GenAI-Seguro-Lab`.
-- **Ruta local canónica:** `/Users/adrianinfantes/Desktop/AIR/Carreer/AI-Security-Architec/Portfolio/GenAI-Seguro-Lab`.
-- **Tipo de ubicación:** carpeta física local; no es un enlace simbólico.
 - **Repositorio Git:** inicializado localmente sobre la rama `main`.
 - **Repositorio remoto:** [infantesromeroadrian/GenAI-Seguro-Lab](https://github.com/infantesromeroadrian/GenAI-Seguro-Lab).
 - **Visibilidad:** pública.
