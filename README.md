@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M05 y P01-M01 completadas. El contrato, el esqueleto, el entorno reproducible, el corpus benigno y el adaptador determinista están versionados en un repositorio Git local sobre `main`; todavía no existe flujo funcional, modelo GenAI real, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M06 y P01-M01 completadas. El contrato, el esqueleto, el entorno reproducible, el corpus benigno, el adaptador determinista y el primer flujo benigno con herramientas locales están versionados en un repositorio Git local sobre `main`; todavía no existe CLI, smoke baseline, modelo GenAI real, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -32,11 +32,15 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 ├── src/
 │   └── genai_seguro_lab/
 │       ├── __init__.py
+│       ├── benign_flow.py
 │       ├── data_contract.py
+│       ├── local_tools.py
 │       └── model_adapter.py
 ├── tests/
 │   ├── README.md
+│   ├── test_benign_flow.py
 │   ├── test_data_contract.py
+│   ├── test_local_tools.py
 │   └── test_model_adapter.py
 ├── evaluations/
 │   └── README.md
@@ -53,7 +57,7 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
         └── README.md
 ```
 
-PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable y PGS-01-M05 añade la frontera determinista de modelo. Todavía no existe un modelo GenAI real ni un flujo de aplicación ejecutable.
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo y PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas. Todavía no existe una CLI ni un modelo GenAI real.
 
 ## Entorno reproducible
 
@@ -61,7 +65,10 @@ PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, dat
 - `uv.lock` fija la resolución completa. En la verificación actual utiliza Python 3.12.8, Pydantic 2.13.4 y pytest 9.1.1.
 - Pydantic 2 es una dependencia de ejecución y pytest 9 pertenece al grupo de desarrollo.
 - pytest usa configuración TOML nativa, modo estricto, `tests/` como raíz de descubrimiento y `src/` como ruta de importación.
-- `[tool.uv] package = false` evita empaquetar una aplicación que todavía no tiene comportamiento ni CLI. Esta decisión se revisará cuando exista un punto de entrada real.
+- `[tool.uv] package = false` evita una instalación editable mientras todavía
+  no existe un punto de entrada estable. pytest añade `src/` a su ruta de
+  importación; una ejecución manual provisional requiere `PYTHONPATH=src`.
+  Esta decisión se revisará en PGS-01-M07.
 
 Reconstrucción y comprobación:
 
@@ -104,13 +111,51 @@ modelo y un doble de pruebas ejecutado en proceso:
 - El descriptor registra proveedor `deterministic`, modelo `scripted-v1`,
   llamadas externas desactivadas y coste de 0 €.
 - Una solicitud de herramienta es solo salida del modelo. El adaptador no
-  contiene autorización ni ejecuta herramientas; esa política pertenece a
-  PGS-01-M06.
+  contiene autorización ni ejecuta herramientas; PGS-01-M06 aplica esa
+  autorización fuera del adaptador.
 
 Comprobación específica:
 
 ```bash
 uv run --frozen pytest tests/test_model_adapter.py
+```
+
+## Flujo benigno y herramientas locales
+
+`src/genai_seguro_lab/benign_flow.py` coordina un ciclo deliberadamente
+pequeño y reproducible:
+
+```text
+incidente sintético
+  → modelo determinista
+  → una búsqueda de conocimiento autorizada
+  → respuesta final del modelo
+```
+
+- El primer resultado debe solicitar exactamente una herramienta y el segundo
+  debe ser una respuesta final; no existen bucles abiertos ni reintentos.
+- `knowledge_search` solo consulta los documentos sintéticos ya cargados en
+  memoria y referenciados por el incidente. No accede al sistema de archivos ni
+  a la red y el flujo falla cerrado si no obtiene coincidencias autorizadas.
+- El incidente enviado al modelo excluye `expected_result` y la procedencia,
+  para no filtrar el oráculo de evaluación.
+- `draft_create` solo prepara una propuesta tipada. Escribir exige que el
+  llamador aporte por separado una confirmación marcada como humana y con la
+  huella SHA-256 exacta de esa propuesta; el modelo no puede incluir ni
+  fabricar esa confirmación en sus argumentos.
+- El nombre del borrador no admite rutas. La escritura queda limitada al
+  directorio físico `sandbox/drafts/`, rechaza enlaces simbólicos y utiliza
+  creación exclusiva: nunca modifica, sobrescribe o borra.
+- La confirmación se consume una sola vez durante el proceso. La política
+  `create-only` del destino mantiene el bloqueo de sobrescritura entre
+  ejecuciones.
+- Esta capa verifica contenido y consentimiento declarado, pero todavía no
+  autentica la identidad humana: esa frontera pertenecerá a la futura interfaz.
+
+Comprobación específica:
+
+```bash
+uv run --frozen pytest tests/test_benign_flow.py tests/test_local_tools.py
 ```
 
 ## Por qué existe
@@ -541,9 +586,10 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Configurar dependencias reproducibles y exclusión de secretos.
 - [x] Crear el dataset sintético de incidentes y la base de conocimiento.
 - [x] Implementar el adaptador determinista de modelo para tests.
-- [ ] Implementar el flujo benigno mínimo y las herramientas confinadas al sandbox.
+- [x] Implementar el flujo benigno mínimo y las herramientas confinadas al sandbox.
+- [ ] Añadir smoke tests y registrar la primera baseline funcional.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M05 y P01-M01 están completadas.** El avance interno es **11 de 66 microtareas (16,7 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M06 y P01-M01 están completadas.** El avance interno es **12 de 66 microtareas (18,2 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -553,7 +599,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-01-M06 — implementar el flujo benigno mínimo y las herramientas confinadas al sandbox.**
+**PGS-01-M07 — añadir smoke tests y registrar la primera baseline funcional.**
 
 ## Uso responsable
 

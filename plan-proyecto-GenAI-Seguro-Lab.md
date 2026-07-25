@@ -7,7 +7,7 @@
 - **Ruta local confirmada:** `/Users/adrianinfantes/Desktop/AIR/Carreer/AI-Security-Architec/GenAI-Seguro-Lab`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtarea padre completada:** P01-M01.
-- **Estado actual:** PGS-00-M01 a PGS-00-M06 y PGS-01-M01 a PGS-01-M05 completadas; estructura, dependencias, corpus benigno y adaptador determinista están bloqueados, PGS-01-M06 es la siguiente y todavía no hay flujo funcional.
+- **Estado actual:** PGS-00-M01 a PGS-00-M06 y PGS-01-M01 a PGS-01-M06 completadas; el primer flujo benigno y sus herramientas locales confinadas ya existen, y PGS-01-M07 es la siguiente.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** fuera de alcance hasta una autorización específica.
@@ -221,7 +221,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-01-M03** Configurar dependencias reproducibles y exclusión de secretos.
 - [x] **PGS-01-M04** Crear el dataset sintético de incidentes y la base de conocimiento.
 - [x] **PGS-01-M05** Implementar el adaptador determinista de modelo para tests.
-- [ ] **PGS-01-M06** Implementar el flujo benigno mínimo y las herramientas confinadas al sandbox.
+- [x] **PGS-01-M06** Implementar el flujo benigno mínimo y las herramientas confinadas al sandbox.
 - [ ] **PGS-01-M07** Añadir smoke tests y registrar la primera baseline funcional.
 
 **Salida:** flujo benigno reproducible sin dependencia obligatoria de un proveedor externo.
@@ -344,12 +344,13 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - La estructura mínima ya separa código, tests, evaluaciones, datos, documentación y sandbox; Python 3.12, Pydantic 2, pytest 9 y sus dependencias están fijados mediante `pyproject.toml` y `uv.lock`.
 - El corpus benigno inicial contiene 12 incidentes y 8 documentos de conocimiento sintéticos; su esquema estricto, referencias, conteos y hashes están verificados automáticamente. Los casos adversarios siguen fuera de alcance hasta PGS-03.
 - El adaptador determinista ejecutado en proceso responde solo a peticiones completas previamente guionizadas, no usa red, registra coste cero y no autoriza ni ejecuta solicitudes de herramienta.
-- El proyecto permanece sin empaquetar mediante `[tool.uv] package = false` hasta disponer de comportamiento y un punto de entrada real.
+- El flujo benigno exige una única búsqueda sobre las referencias del incidente y una respuesta final. La búsqueda solo usa conocimiento sintético cargado en memoria; la escritura de borradores queda separada del modelo, requiere una confirmación declarada por el llamador y ligada a la huella exacta de la propuesta, y aplica creación exclusiva dentro de `sandbox/drafts/`. Esta capa todavía no autentica la identidad humana.
+- El proyecto permanece sin empaquetar mediante `[tool.uv] package = false` hasta disponer de un punto de entrada real; el smoke manual provisional requiere `PYTHONPATH=src`.
 - Decidir GitHub, remoto, visibilidad y primer `push` únicamente en PGS-07-M08 o mediante una autorización específica posterior.
 - Completar P00-M08, P00-M09 y P00-M10 antes de declarar superado SEC-1.
 
 ## Próxima microtarea
 
-**PGS-01-M06 — implementar el flujo benigno mínimo y las herramientas confinadas al sandbox.**
+**PGS-01-M07 — añadir smoke tests y registrar la primera baseline funcional.**
 
-**Progreso interno:** 11 de 66 microtareas completadas, 55 abiertas (**16,7 %**).
+**Progreso interno:** 12 de 66 microtareas completadas, 54 abiertas (**18,2 %**).
