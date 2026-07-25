@@ -5,12 +5,13 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ABUSE-CASES-001` |
-| Versión | `1.0.0` |
+| Versión | `1.1.0` |
 | Fecha de corte | 2026-07-25 |
 | Estado de código observado | commit `ae7d876799659b4025f53b7bf3c1f5ab5c8cfa56` |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
 | Arquitectura de origen | [`architecture/manifest.json`](../architecture/manifest.json) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
+| Priorización actual | [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) |
 | Alcance | sistema local, determinista y exclusivamente sintético actual |
 
 Un abuse case describe un objetivo adversario y el camino que intentaría usar.
@@ -22,9 +23,9 @@ catálogo separa expresamente:
 - escenarios que requieren autoridad de filesystem o mantenimiento;
 - abuso de operaciones alcanzables desde la CLI.
 
-PGS-02-M06 priorizará estos casos por impacto, probabilidad y capacidad real.
-Este documento todavía no asigna severidad, riesgo, control definitivo ni
-correspondencia con OWASP o MITRE ATLAS.
+PGS-02-M06 los ha ordenado por impacto, probabilidad condicionada y capacidad
+real en `GSL-RISK-PRIORITY-001`. Este catálogo todavía no asigna un control
+definitivo ni correspondencia con OWASP o MITRE ATLAS.
 
 ## Estados de alcance
 
@@ -49,7 +50,7 @@ modelo; y uno `INTERNO` no demuestra acceso remoto.
 | Abuso de herramientas | 5 | `TOL-01`, ciclo de herramientas y `TOL-02` |
 | Denegación de servicio | 3 | repetición local e integridad/tamaño del corpus |
 | Supply chain y mantenimiento | 1 | autoridad `C3` sobre código y evidencia |
-| **Total** | **17** | sin priorización todavía |
+| **Total** | **17** | priorizados en `GSL-RISK-PRIORITY-001` |
 
 Distribución por alcanzabilidad: 1 `SIN-RUTA`, 9 `INTERNO`, 6
 `MANTENIMIENTO` y 1 `CLI`.
@@ -161,7 +162,8 @@ un proveedor mediante este catálogo.
 
 ## Siguiente tratamiento
 
-PGS-02-M06 debe puntuar los 17 casos sin alterar su alcanzabilidad actual.
-PGS-02-M07 los mapeará a OWASP y MITRE ATLAS. PGS-03 seleccionará los casos
-priorizados, creará datos exclusivamente sintéticos y construirá el harness
-antes de afirmar que un ataque fue reproducido.
+[`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) puntúa los 17 casos sin
+alterar su alcanzabilidad actual. PGS-02-M07 los mapeará a OWASP y MITRE ATLAS.
+PGS-03 seleccionará los casos priorizados, creará datos exclusivamente
+sintéticos y construirá el harness antes de afirmar que un ataque fue
+reproducido.

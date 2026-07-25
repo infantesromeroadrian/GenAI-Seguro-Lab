@@ -20,7 +20,10 @@ real.
   y efectos máximos actuales, incluidas las rutas que no existen.
 - [Catálogo de abuse cases](./abuse-cases.md): 17 escenarios de prompt
   injection, jailbreak, exfiltración, abuso de herramientas, disponibilidad y
-  supply chain, separados por alcanzabilidad actual y aún sin priorización.
+  supply chain, separados por alcanzabilidad actual.
+- [Priorización de abuse cases](./risk-prioritization.md): método reproducible
+  que combina impacto, probabilidad condicionada y capacidad real, con los 17
+  casos ordenados como backlog de pruebas.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

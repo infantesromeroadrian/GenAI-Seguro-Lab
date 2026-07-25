@@ -7,7 +7,7 @@
 - **Ruta local confirmada:** `/Users/adrianinfantes/Desktop/AIR/Carreer/AI-Security-Architec/GenAI-Seguro-Lab`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01, P01-M04, P01-M05 y P01-M06.
-- **Estado actual:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07 y PGS-02-M01 a PGS-02-M05 completadas; el esqueleto reproducible, las fuentes, el inventario, el mapa C4, la matriz de autoridad y el catálogo de abuse cases ya están fijados.
+- **Estado actual:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07 y PGS-02-M01 a PGS-02-M06 completadas; el esqueleto reproducible, las fuentes, el inventario, el mapa C4, la matriz de autoridad, el catálogo de abuse cases y su priorización ya están fijados.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** fuera de alcance hasta una autorización específica.
@@ -235,7 +235,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-02-M03** Dibujar componentes, flujo de datos y trust boundaries.
 - [x] **PGS-02-M04** Crear la matriz `modelo → identidad → datos → herramientas → acciones → consecuencias`.
 - [x] **PGS-02-M05** Enumerar abuse cases de prompt injection, jailbreak, exfiltración, abuso de herramientas y denegación de servicio.
-- [ ] **PGS-02-M06** Priorizar los abuse cases por impacto, probabilidad y capacidad real del sistema.
+- [x] **PGS-02-M06** Priorizar los abuse cases por impacto, probabilidad y capacidad real del sistema.
 - [ ] **PGS-02-M07** Mapear amenazas a OWASP y MITRE ATLAS.
 - [ ] **PGS-02-M08** Mapear responsabilidades y controles previstos a NIST AI RMF y NIST SP 800-218A.
 
@@ -351,12 +351,13 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - `docs/system-inventory.md` fija `GSL-SYS-INV-001` con actores, datos, componentes, modelo, herramientas, identidades, dependencias, infraestructura e integraciones verificadas. Distingue la CLI expuesta de `DraftWriterTool`, que solo está implementada como API interna, y confirma la ausencia actual de modelo GenAI real, red, autenticación, Docker, cloud, bases de datos, telemetría y remoto Git.
 - `architecture/manifest.json` y sus diagramas Tecture fijan contexto, contenedores y componentes con 20 nodos y seis trust boundaries. No inventan integraciones externas; `DraftWriterTool` permanece desconectada en L3 y TB-02 a TB-04 se declaran límites lógicos dentro del mismo proceso. PGS-02-M03 cierra P01-M06.
 - `docs/authority-matrix.md` fija `GSL-AUTH-MATRIX-001` con nueve cadenas actuales, cuatro niveles de consecuencia y siete rutas ausentes. Separa la propuesta sin autoridad de `MOD-01`, la ejecución con `IDN-01`, el efecto interno create-only de `TOL-02` y la autoridad externa de mantenimiento de `ACT-02`. PGS-02-M04 completa el inventario de autoridad y cierra P01-M05.
-- `docs/abuse-cases.md` fija `GSL-ABUSE-CASES-001` con 17 escenarios: 3 de prompt injection, 2 de jailbreak, 3 de exfiltración, 5 de abuso de herramientas, 3 de denegación de servicio y 1 de supply chain. Los separa como `SIN-RUTA`, `INTERNO`, `MANTENIMIENTO` o `CLI`, conserva los gaps de evidencia y no anticipa la priorización de PGS-02-M06. PGS-02-M05 avanza P01-M07, que permanece abierta.
+- `docs/abuse-cases.md` fija `GSL-ABUSE-CASES-001` con 17 escenarios: 3 de prompt injection, 2 de jailbreak, 3 de exfiltración, 5 de abuso de herramientas, 3 de denegación de servicio y 1 de supply chain. Los separa como `SIN-RUTA`, `INTERNO`, `MANTENIMIENTO` o `CLI` y conserva los gaps de evidencia.
+- `docs/risk-prioritization.md` fija `GSL-RISK-PRIORITY-001` con impacto `I0`–`I3`, probabilidad condicionada `L1`–`L3`, capacidad real `K0`–`K3` y una puntuación reproducible para los 17 casos. Sitúa 2 en `PR-1`, 3 en `PR-2`, 11 en `PR-3` y 1 en `PR-0`; PGS-02-M06 avanza P01-M07, que permanece abierta.
 - Decidir GitHub, remoto, visibilidad y primer `push` únicamente en PGS-07-M08 o mediante una autorización específica posterior.
 - Completar P00-M08, P00-M09 y P00-M10 antes de declarar superado SEC-1.
 
 ## Próxima microtarea
 
-**PGS-02-M06 — priorizar los abuse cases por impacto, probabilidad y capacidad real del sistema.**
+**PGS-02-M07 — mapear las amenazas a OWASP y MITRE ATLAS.**
 
-**Progreso interno:** 18 de 66 microtareas completadas, 48 abiertas (**27,3 %**).
+**Progreso interno:** 19 de 66 microtareas completadas, 47 abiertas (**28,8 %**).

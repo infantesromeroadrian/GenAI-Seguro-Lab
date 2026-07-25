@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M05, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las fuentes, el inventario, el mapa C4, la matriz de autoridad y el catálogo de abuse cases ya están fijados. Todavía no existe un threat model priorizado, modelo GenAI real, perfil vulnerable, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M06, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las fuentes, el inventario, el mapa C4, la matriz de autoridad, el catálogo de abuse cases y su priorización ya están fijados. Todavía no existe un modelo GenAI real, perfil vulnerable, harness adversario, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -297,7 +297,7 @@ hasta `C3` —mutación de mantenimiento— y registra las rutas que no existen:
 el modelo no ejecuta herramientas, la CLI no alcanza `DraftWriterTool`, la
 aplicación no escribe la baseline y no hay red, proveedor, shell o usuario
 remoto. Es una descripción del estado implementado, no una evaluación de
-riesgo; su priorización comienza en PGS-02-M06.
+riesgo; la priorización se mantiene en un registro separado.
 
 ## Catálogo de abuse cases
 
@@ -312,10 +312,10 @@ autoridad real:
 - 3 de denegación de servicio;
 - 1 de supply chain y mantenimiento.
 
-El catálogo no asigna riesgo todavía. Separa un caso `SIN-RUTA`, nueve
-`INTERNO`, seis `MANTENIMIENTO` y uno `CLI`. Esto evita presentar como
-exposición activa una entrada que no existe o atribuir al modelo una
-modificación que exige permisos de Git/filesystem.
+El catálogo separa un caso `SIN-RUTA`, nueve `INTERNO`, seis `MANTENIMIENTO` y
+uno `CLI`. Esto evita presentar como exposición activa una entrada que no
+existe o atribuir al modelo una modificación que exige permisos de
+Git/filesystem.
 
 Los hallazgos más relevantes son que la CLI no acepta prompts libres, que
 `TOL-01` permite construir pruebas internas de autorización, que
@@ -323,6 +323,26 @@ Los hallazgos más relevantes son que la CLI no acepta prompts libres, que
 sin autenticar a la persona, y que la repetición de procesos es el único caso
 de disponibilidad alcanzable por la interfaz ordinaria. No se ejecutó ningún
 ataque en esta microtarea.
+
+## Priorización del riesgo actual
+
+[docs/risk-prioritization.md](./docs/risk-prioritization.md) fija
+`GSL-RISK-PRIORITY-001`. La puntuación combina el impacto máximo implementado,
+la probabilidad condicionada de éxito y la capacidad real de alcanzar la ruta.
+No representa frecuencia de incidentes ni severidad universal.
+
+| Prioridad | Casos | Tratamiento |
+|---|---:|---|
+| `PR-1` | 2 | `AC-TOL-05` y `AC-DOS-01`, después de aprobar las Rules of Engagement |
+| `PR-2` | 3 | `AC-EX-03`, `AC-EX-02` y `AC-SC-01` |
+| `PR-3` | 11 | regresiones o casos que necesitan un perfil específico |
+| `PR-0` | 1 | `AC-PI-01`, en espera porque no existe prompt libre |
+
+El primer residual funcional es la confirmación interna no autenticada de
+`DraftWriterTool`. La única superficie adversaria ordinaria es la repetición
+de procesos por CLI. Los escenarios de prompt injection y jailbreak se
+recalcularán cuando exista un modelo real o el perfil vulnerable cambie su
+alcanzabilidad. No se ejecutó ningún ataque durante la priorización.
 
 ## Por qué existe
 
@@ -759,8 +779,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Dibujar componentes, flujo de datos y trust boundaries.
 - [x] Crear la matriz de autoridad y consecuencias.
 - [x] Enumerar los abuse cases del sistema actual.
+- [x] Priorizar los abuse cases por impacto, probabilidad condicionada y capacidad real.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M05, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **18 de 66 microtareas (27,3 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 avanza con el catálogo, pero sigue abierta hasta completar la priorización, los mapeos y las pruebas.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M06, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **19 de 66 microtareas (28,8 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 avanza con el backlog priorizado, pero sigue abierta hasta completar los mapeos y las pruebas.
 
 ## Roadmap
 
@@ -770,7 +791,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-02-M06 — priorizar los abuse cases por impacto, probabilidad y capacidad real del sistema.**
+**PGS-02-M07 — mapear las amenazas a OWASP y MITRE ATLAS.**
 
 ## Uso responsable
 
