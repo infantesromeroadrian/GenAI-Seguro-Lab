@@ -20,6 +20,13 @@ ToolRequestId = Annotated[
     Field(pattern=r"^CALL-[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"),
 ]
 Sha256 = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+InstructionBoundary = Literal["separated", "deliberately_merged"]
+MessageTrustClass = Literal[
+    "trusted_instruction",
+    "user_data",
+    "untrusted_content",
+    "model_output",
+]
 
 
 class AdapterSchema(BaseModel):
@@ -30,11 +37,28 @@ class AdapterSchema(BaseModel):
 
 class ModelMessage(AdapterSchema):
     role: Literal["system", "user", "assistant", "tool"]
+    trust_class: MessageTrustClass
     content: Text
+
+    @model_validator(mode="after")
+    def validate_role_trust_class(self) -> Self:
+        allowed_trust_classes: dict[str, set[str]] = {
+            "system": {"trusted_instruction"},
+            "user": {"user_data", "untrusted_content"},
+            "assistant": {"model_output"},
+            "tool": {"untrusted_content"},
+        }
+        if self.trust_class not in allowed_trust_classes[self.role]:
+            raise ValueError(
+                f"{self.role} messages cannot be classified as "
+                f"{self.trust_class}"
+            )
+        return self
 
 
 class ModelRequest(AdapterSchema):
     request_id: RequestId
+    instruction_boundary: InstructionBoundary
     messages: Annotated[tuple[ModelMessage, ...], Field(min_length=1)]
     available_tools: tuple[Text, ...] = ()
 
@@ -44,6 +68,30 @@ class ModelRequest(AdapterSchema):
         if len(value) != len(set(value)):
             raise ValueError("available tool names must be unique")
         return value
+
+    @model_validator(mode="after")
+    def require_explicit_trust_boundaries(self) -> Self:
+        system_messages = tuple(
+            message
+            for message in self.messages
+            if message.trust_class == "trusted_instruction"
+        )
+        if len(system_messages) != 1 or self.messages[0] != system_messages[0]:
+            raise ValueError(
+                "requests require exactly one leading trusted instruction"
+            )
+        if not any(
+            message.trust_class == "user_data" for message in self.messages
+        ):
+            raise ValueError("requests require explicitly classified user data")
+        if not any(
+            message.trust_class == "untrusted_content"
+            for message in self.messages
+        ):
+            raise ValueError(
+                "requests require explicitly classified untrusted content"
+            )
+        return self
 
 
 class ModelToolRequest(AdapterSchema):

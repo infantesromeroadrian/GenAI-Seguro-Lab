@@ -16,6 +16,12 @@ la reproducción exacta de la baseline versionada, el resultado byte a byte de
 un caso repetido, el error saneado ante un identificador desconocido y que la
 ejecución no cree borradores.
 
+`test_instruction_boundary.py` comprueba que el flujo ordinario separa
+instrucciones confiables, datos de usuario y contenido no confiable; que las
+salidas del modelo y de herramientas conservan su clasificación; y que los
+roles incompatibles, las instrucciones tardías o los dominios ausentes fallan
+cerrados.
+
 `test_evaluation_profile.py` comprueba que
 `GSL-PROFILE-VULNERABLE-001` exige las RoE y los límites exactos, usa solo un
 `$TMP/sandbox/drafts`, no crea archivos, identifica sus peticiones, no expone

@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M07.
-- **Estado actual:** PGS-00-M01 a PGS-03-M08 completadas; la baseline canónica fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED` sobre 14 fixtures PI/JB/EX/TOL, mientras las otras cuatro permanecen inertes. Los hallazgos, el impacto, la reproducción y los límites están documentados en `GSL-FINDINGS-ADVERSARIAL-001`.
+- **Estado actual:** PGS-00-M01 a PGS-04-M01 completadas; la baseline canónica fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED` sobre 14 fixtures PI/JB/EX/TOL, mientras las otras cuatro permanecen inertes. El flujo ordinario ya separa instrucciones confiables, datos de usuario y contenido no confiable; el control permanece parcial hasta el retest y la incorporación de un modelo GenAI real.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** repositorio público ya autorizado y evidencia
@@ -267,7 +267,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 
 **Objetivo:** aplicar controles trazables a amenazas concretas.
 
-- [ ] **PGS-04-M01** Separar instrucciones de sistema, contenido no confiable y datos de usuario.
+- [x] **PGS-04-M01** Separar instrucciones de sistema, contenido no confiable y datos de usuario.
 - [ ] **PGS-04-M02** Validar entradas, salidas y argumentos de herramientas mediante esquemas y allowlists.
 - [ ] **PGS-04-M03** Aplicar mínimo privilegio a identidades, datos y herramientas.
 - [ ] **PGS-04-M04** Exigir confirmación humana para acciones con efecto.
@@ -357,6 +357,12 @@ requiriendo una decisión separada.
 - El corpus benigno inicial contiene 12 incidentes y 8 documentos de conocimiento sintéticos; su esquema estricto, referencias, conteos y hashes están verificados automáticamente. `GSL-ADVERSARIAL-CORPUS-001` añade de forma separada 18 fixtures y 18 oráculos para los 17 abuse cases y seis familias; 14 PI/JB/EX/TOL están conectadas a tests y evaluadas canónicamente, mientras cuatro permanecen inertes.
 - El adaptador determinista ejecutado en proceso responde solo a peticiones completas previamente guionizadas, no usa red, registra coste cero y no autoriza ni ejecuta solicitudes de herramienta.
 - El flujo benigno exige una única búsqueda sobre las referencias del incidente y una respuesta final. La búsqueda solo usa conocimiento sintético cargado en memoria; la escritura de borradores queda separada del modelo, requiere una confirmación declarada por el llamador y ligada a la huella exacta de la propuesta, y aplica creación exclusiva dentro de `sandbox/drafts/`. Esta capa todavía no autentica la identidad humana.
+- PGS-04-M01 incorpora `instruction_boundary` y una clase de confianza por
+  mensaje. El flujo ordinario exige una instrucción confiable inicial, datos de
+  usuario y contenido no confiable separados; marca los resultados de
+  herramienta como no confiables y conserva el perfil de evaluación como
+  `deliberately_merged`. Esta evidencia no sustituye el retest sobre un modelo
+  GenAI real.
 - El proyecto permanece deliberadamente sin empaquetar mediante `[tool.uv] package = false`. `main.py` ofrece el punto de entrada local estable desde el propio checkout, sin instalación editable ni `PYTHONPATH`.
 - La baseline `GSL-BASELINE-BENIGN-001` fija 12/12 ejecuciones funcionales, 24 invocaciones deterministas, 12 consultas autorizadas, 0 llamadas externas y 0 €. Sus campos declaran que no es una baseline de seguridad ni una evaluación de utilidad semántica.
 - `docs/framework-versions.md` fija OWASP LLM 2025, OWASP Agentic 2026, MITRE ATLAS release `v2026.06` con `ATLAS.yaml` 5.6.0, NIST AI RMF 1.0 y NIST SP 800-218A final; NIST AI 600-1 queda como perfil GenAI complementario. La revalidación para PGS-02-M07 conserva el snapshot ATLAS anterior y documenta la actualización de `AML.T0054`.
@@ -403,6 +409,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-04-M01 — separar instrucciones de sistema, contenido no confiable y datos de usuario.**
+**PGS-04-M02 — validar entradas, salidas y argumentos de herramientas mediante esquemas y allowlists.**
 
-**Progreso interno:** 30 de 66 microtareas completadas, 36 abiertas (**45,5 %**).
+**Progreso interno:** 31 de 66 microtareas completadas, 35 abiertas (**47,0 %**).

@@ -152,23 +152,41 @@ class VulnerableEvaluationProfile:
             "harness aislado; no autoriza ni ejecuta herramientas."
         )
         payload = {
+            "id": incident.id,
+            "title": incident.title,
+            "scenario": incident.scenario,
+            "indicators": incident.indicators,
+            "knowledge_refs": incident.knowledge_refs,
+        }
+        user_data = {
+            "incident_id": incident.id,
+            "operation": "evaluate_synthetic_incident",
             "profile_id": self.descriptor.profile_id,
             "profile_version": self.descriptor.version,
             "synthetic": True,
-            "incident": {
-                "id": incident.id,
-                "title": incident.title,
-                "scenario": incident.scenario,
-                "indicators": incident.indicators,
-                "knowledge_refs": incident.knowledge_refs,
-            },
         }
         return ModelRequest(
             request_id=f"REQ-EVAL-{incident.id}",
+            instruction_boundary=self.descriptor.instruction_boundary,
             messages=(
-                ModelMessage(role="system", content=system_message),
+                ModelMessage(
+                    role="system",
+                    trust_class="trusted_instruction",
+                    content=system_message,
+                ),
                 ModelMessage(
                     role="user",
+                    trust_class="user_data",
+                    content=json.dumps(
+                        user_data,
+                        ensure_ascii=False,
+                        separators=(",", ":"),
+                        sort_keys=True,
+                    ),
+                ),
+                ModelMessage(
+                    role="user",
+                    trust_class="untrusted_content",
                     content=json.dumps(
                         payload,
                         ensure_ascii=False,

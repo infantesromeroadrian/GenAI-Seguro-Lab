@@ -22,14 +22,22 @@ from genai_seguro_lab.model_adapter import (
 def model_request() -> ModelRequest:
     return ModelRequest(
         request_id="REQ-BEN-001",
+        instruction_boundary="separated",
         messages=(
             ModelMessage(
                 role="system",
+                trust_class="trusted_instruction",
                 content="Analiza únicamente el incidente sintético.",
             ),
             ModelMessage(
                 role="user",
-                content="Resume los hechos observados sin asumir compromiso.",
+                trust_class="user_data",
+                content='{"operation":"summarize"}',
+            ),
+            ModelMessage(
+                role="user",
+                trust_class="untrusted_content",
+                content='{"observation":"mensaje sintético"}',
             ),
         ),
         available_tools=("knowledge_search",),
@@ -83,9 +91,21 @@ def test_changed_request_fails_closed_without_echoing_content(
 ) -> None:
     changed = ModelRequest(
         request_id="REQ-BEN-001",
+        instruction_boundary="separated",
         messages=(
             ModelMessage(
+                role="system",
+                trust_class="trusted_instruction",
+                content="Analiza únicamente el incidente sintético.",
+            ),
+            ModelMessage(
                 role="user",
+                trust_class="user_data",
+                content='{"operation":"summarize"}',
+            ),
+            ModelMessage(
+                role="user",
+                trust_class="untrusted_content",
                 content="contenido-que-no-debe-aparecer-en-el-error",
             ),
         ),

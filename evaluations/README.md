@@ -23,6 +23,11 @@ Resultado fijado:
 El snapshot es evidencia de reproducibilidad y funcionamiento del flujo, no
 una medición de resistencia a ataques ni de utilidad semántica.
 
+PGS-04-M01 renovó únicamente sus 24 huellas de petición para incorporar las
+clases de confianza y la frontera de instrucciones al contrato serializado. Los
+12 resultados funcionales y el resumen permanecieron sin cambios; el historial
+Git conserva la instantánea anterior.
+
 ## Baseline adversaria canónica v1
 
 `adversarial-baseline-v1/` conserva la proyección saneada y revisada de

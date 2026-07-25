@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-03-M08, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria canónica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`. Cuatro fixtures permanecen inertes y `ADV-TOL-005` conserva como residual conocido una única escritura confinada a `$TMP`. El código, la evidencia saneada y sus hallazgos están publicados en el repositorio público, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-04-M01, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria canónica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`. Cuatro fixtures permanecen inertes y `ADV-TOL-005` conserva como residual conocido una única escritura confinada a `$TMP`. El código, la evidencia saneada y sus hallazgos están publicados en el repositorio público, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
 
 ## En una frase
 
@@ -183,6 +183,13 @@ incidente sintético
 
 - El primer resultado debe solicitar exactamente una herramienta y el segundo
   debe ser una respuesta final; no existen bucles abiertos ni reintentos.
+- Cada petición declara `instruction_boundary`. En el flujo ordinario vale
+  `separated` y cada mensaje lleva una clase de confianza explícita:
+  `trusted_instruction`, `user_data`, `untrusted_content` o `model_output`.
+- El contrato falla cerrado si no existe exactamente una instrucción confiable
+  inicial o si faltan los dominios de datos de usuario y contenido no
+  confiable. La respuesta de una herramienta siempre vuelve al modelo como
+  `untrusted_content`.
 - `knowledge_search` solo consulta los documentos sintéticos ya cargados en
   memoria y referenciados por el incidente. No accede al sistema de archivos ni
   a la red y el flujo falla cerrado si no obtiene coincidencias autorizadas.
@@ -201,10 +208,11 @@ incidente sintético
 - Esta capa verifica contenido y consentimiento declarado, pero todavía no
   autentica la identidad humana: esa frontera pertenecerá a la futura interfaz.
 
-Comprobación específica:
+Este control estructura la frontera del doble determinista actual; todavía no
+demuestra resistencia de un modelo GenAI real. Comprobación específica:
 
 ```bash
-uv run --frozen pytest tests/test_benign_flow.py tests/test_local_tools.py
+uv run --frozen pytest tests/test_instruction_boundary.py tests/test_benign_flow.py tests/test_local_tools.py
 ```
 
 ## Interfaz local y baseline funcional
@@ -711,8 +719,9 @@ exclusiva de evaluación:
 - solo acepta el `DatasetBundle` sintético validado y un
   `$TMP/sandbox/drafts` ya existente;
 - rechaza el sandbox del checkout canónico;
-- construye una `ModelRequest` marcada que mezcla deliberadamente contenido no
-  confiable con instrucciones y anuncia `knowledge_search` y `draft_create`;
+- construye una `ModelRequest` que etiqueta por separado los dominios, pero
+  declara `instruction_boundary: deliberately_merged` y ordena
+  deliberadamente tratar el contenido no confiable como instrucción;
 - no llama al adaptador, no ejecuta herramientas, no escribe archivos, no usa
   red y no está importado ni expuesto por la CLI;
 - omite el oráculo `expected_result` de la petición preparada.
@@ -959,7 +968,7 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Documentar hallazgos, impacto, reproducción y límites.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
 
-**PGS-00-M01 a PGS-03-M08, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **30 de 66 microtareas (45,5 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar PGS-04.
+**PGS-00-M01 a PGS-04-M01, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **31 de 66 microtareas (47,0 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
 
 ## Roadmap
 
@@ -969,7 +978,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-04-M01 — separar instrucciones de sistema, contenido no confiable y datos de usuario.**
+**PGS-04-M02 — validar entradas, salidas y argumentos de herramientas mediante esquemas y allowlists.**
 
 ## Uso responsable
 

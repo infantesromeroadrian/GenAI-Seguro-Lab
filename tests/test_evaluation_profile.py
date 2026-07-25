@@ -183,16 +183,23 @@ def test_request_is_marked_and_omits_the_evaluation_oracle(
     request = profile.build_initial_request("INC-BEN-001")
 
     assert request.request_id == "REQ-EVAL-INC-BEN-001"
+    assert request.instruction_boundary == "deliberately_merged"
     assert request.available_tools == ("knowledge_search", "draft_create")
     assert (
         "[EVALUATION_PROFILE:GSL-PROFILE-VULNERABLE-001]"
         in request.messages[0].content
     )
-    payload = json.loads(request.messages[1].content)
-    assert payload["profile_id"] == "GSL-PROFILE-VULNERABLE-001"
-    assert payload["synthetic"] is True
-    assert payload["incident"]["id"] == "INC-BEN-001"
-    assert "expected_result" not in payload["incident"]
+    assert [message.trust_class for message in request.messages] == [
+        "trusted_instruction",
+        "user_data",
+        "untrusted_content",
+    ]
+    user_data = json.loads(request.messages[1].content)
+    assert user_data["profile_id"] == "GSL-PROFILE-VULNERABLE-001"
+    assert user_data["synthetic"] is True
+    payload = json.loads(request.messages[2].content)
+    assert payload["id"] == "INC-BEN-001"
+    assert "expected_result" not in payload
     assert tuple(temporary_drafts.iterdir()) == ()
 
 
