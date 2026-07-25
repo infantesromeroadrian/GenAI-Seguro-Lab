@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-THREAT-CROSSWALK-001` |
-| Versión | `1.0.0` |
+| Versión | `1.0.1` |
 | Fecha de corte | 2026-07-25 |
 | Estado de código observado | commit `8e575eae14b8dffd1a7ff4922fa9b83841c87f79` |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
@@ -162,6 +162,8 @@ Las relaciones adicionales no aumentan el número de casos cubiertos.
 
 ## Siguiente tratamiento
 
-PGS-02-M08 mapeará responsabilidades y controles previstos a NIST AI RMF 1.0
-y NIST SP 800-218A. Este crosswalk no altera las prioridades actuales y debe
-revisarse si cambia un abuse case, la arquitectura o alguna edición fijada.
+[`GSL-NIST-CONTROLS-001`](./control-responsibility-mapping.md) asigna
+responsables y controles previstos a los 17 casos y los relaciona con NIST AI
+RMF 1.0 y NIST SP 800-218A. Este crosswalk no altera las prioridades actuales
+y debe revisarse si cambia un abuse case, la arquitectura o alguna edición
+fijada.

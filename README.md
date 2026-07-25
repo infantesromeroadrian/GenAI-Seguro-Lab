@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M07, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las fuentes, el inventario, el mapa C4, la matriz de autoridad, el catálogo, la priorización y el crosswalk de amenazas ya están fijados. Todavía no existe un modelo GenAI real, perfil vulnerable, harness adversario, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; la arquitectura, el threat model, los responsables y el mapa de controles NIST ya están fijados. Todavía no existe un modelo GenAI real, perfil vulnerable, harness adversario, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -65,8 +65,11 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 │   ├── README.md
 │   ├── abuse-cases.md
 │   ├── authority-matrix.md
+│   ├── control-responsibility-mapping.md
 │   ├── framework-versions.md
-│   └── system-inventory.md
+│   ├── risk-prioritization.md
+│   ├── system-inventory.md
+│   └── threat-crosswalk.md
 └── sandbox/
     ├── README.md
     └── drafts/
@@ -802,8 +805,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Enumerar los abuse cases del sistema actual.
 - [x] Priorizar los abuse cases por impacto, probabilidad condicionada y capacidad real.
 - [x] Mapear las amenazas a OWASP y MITRE ATLAS.
+- [x] Mapear responsables y controles previstos a NIST AI RMF y NIST SP 800-218A.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M07, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **20 de 66 microtareas (30,3 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 avanza con el backlog y el crosswalk, pero sigue abierta hasta completar las pruebas.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **21 de 66 microtareas (31,8 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta completar las pruebas y P01-M08 hasta implementar y verificar PGS-04.
 
 ## Roadmap
 
@@ -813,7 +817,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-02-M08 — mapear responsabilidades y controles previstos a NIST AI RMF y NIST SP 800-218A.**
+**PGS-03-M01 — definir las Rules of Engagement del laboratorio propio.**
 
 ## Uso responsable
 

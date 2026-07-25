@@ -27,6 +27,10 @@ real.
 - [Crosswalk de amenazas](./threat-crosswalk.md): correspondencias directas,
   parciales y gaps explícitos entre los 17 casos, OWASP LLM 2025, OWASP
   Agentic 2026 y MITRE ATLAS `v2026.06`.
+- [Mapa de responsabilidades y controles
+  NIST](./control-responsibility-mapping.md): propietarios, estados, evidencia
+  y correspondencias seleccionadas con NIST AI RMF 1.0 y NIST SP 800-218A,
+  sin atribuir conformidad ni eficacia no demostrada.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

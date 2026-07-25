@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-PRIORITY-001` |
-| Versión | `1.1.0` |
+| Versión | `1.1.1` |
 | Fecha de corte | 2026-07-25 |
 | Estado de código observado | commit `9393e893b80276c78d4398626eb2d75cac16f363` |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
@@ -165,6 +165,8 @@ de `GSL-ABUSE-CASES-001`. No se ha ejecutado ningún ataque, creado un corpus
 adversario ni habilitado un perfil vulnerable.
 
 [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) relaciona los casos con
-OWASP y MITRE ATLAS sin cambiar sus puntuaciones. PGS-02-M08 continuará con
-NIST AI RMF y NIST SP 800-218A. Cualquier corrección de alcance deberá quedar
-justificada en una nueva versión de este registro.
+OWASP y MITRE ATLAS sin cambiar sus puntuaciones.
+[`GSL-NIST-CONTROLS-001`](./control-responsibility-mapping.md) asigna
+responsables y controles previstos sin modificar el orden. Cualquier
+corrección de alcance deberá quedar justificada en una nueva versión de este
+registro.

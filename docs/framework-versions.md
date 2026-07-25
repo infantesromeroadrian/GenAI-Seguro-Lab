@@ -8,7 +8,8 @@ el **25 de julio de 2026** exclusivamente en fuentes oficiales.
 
 Fijar una versión no convierte la guía en requisito legal, certificación o
 control implementado. El crosswalk de amenazas pertenece a PGS-02-M07 y el
-mapeo de responsabilidades y controles a PGS-02-M08.
+[mapeo de responsabilidades y controles](./control-responsibility-mapping.md)
+a PGS-02-M08.
 
 ## Versiones seleccionadas
 
@@ -79,6 +80,35 @@ ediciones publicadas usadas por el proyecto.
 
 NIST indica que SP 800-218A se utiliza junto con **SP 800-218, SSDF
 Version 1.1**.
+
+## Revalidación para PGS-02-M08
+
+La consulta oficial se repitió el 25 de julio de 2026 antes de construir
+`GSL-NIST-CONTROLS-001`:
+
+- NIST mantiene **AI RMF 1.0, NIST AI 100-1**, como versión publicada mientras
+  prepara su revisión.
+- El Playbook oficial, actualizado el 10 de junio de 2026, continúa organizado
+  sobre las subcategorías de AI RMF 1.0. NIST lo presenta como recurso
+  voluntario y no como checklist ni secuencia completa obligatoria.
+- **NIST SP 800-218A** continúa en estado Final, con fecha de julio de 2024, y
+  debe utilizarse junto con SP 800-218.
+- El alcance de SP 800-218A es el desarrollo de modelos y su integración en
+  software. El despliegue y la operación quedan fuera, igual que la mayor parte
+  del ciclo general de gobierno de datos.
+
+La decisión es conservar AI RMF 1.0 y SP 800-218A como baseline, mapear
+identificadores concretos y marcar como parciales las correspondencias que
+dependen del futuro modelo real o exceden el alcance de desarrollo del perfil.
+Para fijar exactamente los artefactos consultados, sus SHA-256 fueron:
+
+- `NIST.AI.100-1.pdf`:
+  `7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1`;
+- `NIST.SP.800-218A.pdf`:
+  `e088c8bc75716824dae7c36a987f408364638561d381ed001b5c12254a7b10d8`.
+
+Los PDF no se incorporan al repositorio; las huellas permiten identificar la
+consulta sin duplicar documentos oficiales.
 
 ## Regla de cambio
 
