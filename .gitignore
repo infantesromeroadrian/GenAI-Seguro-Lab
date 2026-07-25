@@ -1,0 +1,32 @@
+# Entorno local, cachés y artefactos de Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Sistema operativo y editores
+.DS_Store
+.idea/
+.vscode/
+
+# Secretos y credenciales locales
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.secret
+credentials*.json
+secrets*.json
+
+# Salidas generadas por el laboratorio
+sandbox/drafts/*
+!sandbox/drafts/README.md

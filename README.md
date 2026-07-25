@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01, PGS-01-M02 y P01-M01 completadas. El contrato y el esqueleto del proyecto están versionados en un repositorio Git local sobre `main`; todavía no existe implementación funcional, proveedor real, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M03 y P01-M01 completadas. El contrato, el esqueleto y el entorno reproducible están versionados en un repositorio Git local sobre `main`; todavía no existe implementación funcional, proveedor real, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -23,8 +23,12 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 
 ```text
 .
+├── .gitignore
+├── .python-version
 ├── README.md
 ├── plan-proyecto-GenAI-Seguro-Lab.md
+├── pyproject.toml
+├── uv.lock
 ├── src/
 │   └── genai_seguro_lab/
 │       └── __init__.py
@@ -43,6 +47,25 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 ```
 
 PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. No añade todavía dependencias, configuración de pytest, datasets, modelos ni comportamiento ejecutable.
+
+## Entorno reproducible
+
+- Python queda restringido a `>=3.12,<3.13`; `.python-version` selecciona la serie 3.12.
+- `uv.lock` fija la resolución completa. En la verificación actual utiliza Python 3.12.8, Pydantic 2.13.4 y pytest 9.1.1.
+- Pydantic 2 es una dependencia de ejecución y pytest 9 pertenece al grupo de desarrollo.
+- pytest usa configuración TOML nativa, modo estricto, `tests/` como raíz de descubrimiento y `src/` como ruta de importación.
+- `[tool.uv] package = false` evita empaquetar una aplicación que todavía no tiene comportamiento ni CLI. Esta decisión se revisará cuando exista un punto de entrada real.
+
+Reconstrucción y comprobación:
+
+```bash
+uv sync --frozen
+uv lock --check
+uv sync --frozen --check
+uv run --frozen pytest --version
+```
+
+`.gitignore` excluye entornos, cachés, artefactos de build, credenciales locales comunes y borradores generados, pero no sustituye un escaneo de secretos antes de cada commit. `.env.example` y `sandbox/drafts/README.md` permanecen expresamente versionables.
 
 ## Por qué existe
 
@@ -469,9 +492,10 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Aprobar criterios de éxito, entregables y no-objetivos.
 - [x] Inicializar el repositorio Git local y crear el commit inicial del contrato.
 - [x] Crear la estructura mínima de código, tests, evaluaciones, datos y documentación.
-- [ ] Configurar dependencias reproducibles y exclusión de secretos.
+- [x] Configurar dependencias reproducibles y exclusión de secretos.
+- [ ] Crear el dataset sintético de incidentes y la base de conocimiento.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01, PGS-01-M02 y P01-M01 están completadas.** El avance interno es **8 de 66 microtareas (12,1 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M03 y P01-M01 están completadas.** El avance interno es **9 de 66 microtareas (13,6 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -481,7 +505,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-01-M03 — configurar dependencias reproducibles y exclusión de secretos.**
+**PGS-01-M04 — crear el dataset sintético de incidentes y la base de conocimiento.**
 
 ## Uso responsable
 
