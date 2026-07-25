@@ -11,14 +11,16 @@ local.
 - Exponer internamente la herramienta de borradores sin conectarla a la CLI.
 - Construir, solo por factory interna, una petición vulnerable de evaluación
   ligada a datos sintéticos y un sandbox temporal.
-- Ejecutar por API interna los dos casos PI indirectos sobre copias temporales,
-  con dos turnos deterministas, una búsqueda autorizada y cero borradores.
+- Ejecutar por API interna nueve fixtures PI/JB/EX mediante copias temporales,
+  dobles deterministas, guardas del flujo, rechazos de búsqueda y un
+  subproceso CLI saneado, siempre sin red ni borradores.
 
 ## Trust boundary
 
 - ID: `TB-02`.
 - Aislamiento real: memoria del proceso.
-- Límite: no existe aislamiento interno por subprocess, contenedor o identidad.
+- Límite: salvo el subproceso acotado de `ADV-EX-003`, no existe aislamiento
+  interno por proceso, contenedor o identidad.
 
 ## Tecnología
 

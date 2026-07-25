@@ -175,6 +175,19 @@ EXPECTED_ADVERSARIAL_PREFIX_BY_FAMILY = {
     "denial_of_service": "DOS",
     "supply_chain": "SC",
 }
+EXPECTED_TEST_WIRED_ADVERSARIAL_CASES = frozenset(
+    {
+        "ADV-PI-001",
+        "ADV-PI-002",
+        "ADV-PI-003",
+        "ADV-JB-001",
+        "ADV-JB-002",
+        "ADV-JB-003",
+        "ADV-EX-001",
+        "ADV-EX-002",
+        "ADV-EX-003",
+    }
+)
 
 
 class StrictModel(BaseModel):
@@ -360,14 +373,14 @@ class AdversarialManifestExpectedResult(StrictModel):
     oracle_records: Literal[18]
     unique_abuse_cases: Literal[17]
     threat_families: Literal[6]
-    test_wired_records: Literal[3]
-    inert_records: Literal[15]
+    test_wired_records: Literal[9]
+    inert_records: Literal[9]
     canonical_evaluation_records: Literal[0]
 
 
 class AdversarialCorpusManifest(StrictModel):
     id: AdversarialCorpusId
-    version: Literal["1.1.0"]
+    version: Literal["1.2.0"]
     type: Literal["adversarial_corpus_manifest"]
     rules_of_engagement: Literal["GSL-ROE-001"]
     target_profile: Literal["GSL-PROFILE-VULNERABLE-001"]
@@ -562,7 +575,7 @@ def load_adversarial_corpus(data_dir: Path) -> AdversarialCorpusBundle:
             )
         expected_fixture_state = (
             "test_wired"
-            if record.id in {"ADV-PI-001", "ADV-PI-002", "ADV-PI-003"}
+            if record.id in EXPECTED_TEST_WIRED_ADVERSARIAL_CASES
             else "inert_not_wired"
         )
         if record.fixture_state != expected_fixture_state:

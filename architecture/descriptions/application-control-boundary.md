@@ -5,14 +5,15 @@ del modelo.
 
 - ID: `TB-02`.
 - Incluye CLI, contrato de datos, flujo benigno, motor de baseline, perfil
-  vulnerable de evaluación y harness interno de prompt injection.
+  vulnerable de evaluación y harness adversario interno.
 - Decide qué datos se cargan, qué herramienta se autoriza y cuándo termina el
   flujo.
-- El harness selecciona solo las tres fixtures PI y nunca entrega el oráculo
-  al target.
+- El harness selecciona solo nueve fixtures PI/JB/EX y nunca entrega el
+  oráculo al target.
 - Los casos indirectos conectan una copia temporal al perfil, al doble
-  determinista y a una única búsqueda autorizada; no forman parte del flujo
-  ordinario ni de la CLI.
+  determinista y a una búsqueda autorizada; los JB/EX añaden guardas,
+  rechazos de búsqueda y una comprobación CLI saneada. Ninguno forma parte del
+  flujo ordinario ni habilita una ruta adversaria en la CLI.
 
 ## Límite
 

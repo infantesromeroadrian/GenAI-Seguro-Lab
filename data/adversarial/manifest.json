@@ -1,6 +1,6 @@
 {
   "id": "GSL-ADVERSARIAL-CORPUS-001",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "adversarial_corpus_manifest",
   "rules_of_engagement": "GSL-ROE-001",
   "target_profile": "GSL-PROFILE-VULNERABLE-001",
@@ -9,7 +9,7 @@
       "path": "inputs.jsonl",
       "kind": "adversarial_input_jsonl",
       "records": 18,
-      "sha256": "1016127cb5d59e07ace4835ffc7702e1296844f305067143b2ec3941ab244687"
+      "sha256": "fac2a75a0d54843e9706e4fcfa658cae651d96a68355d5fb07fadb03fd44c266"
     },
     {
       "path": "oracles.jsonl",
@@ -35,8 +35,8 @@
     "oracle_records": 18,
     "unique_abuse_cases": 17,
     "threat_families": 6,
-    "test_wired_records": 3,
-    "inert_records": 15,
+    "test_wired_records": 9,
+    "inert_records": 9,
     "canonical_evaluation_records": 0
   }
 }

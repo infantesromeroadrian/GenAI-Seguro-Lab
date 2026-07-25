@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-AUTH-MATRIX-001` |
-| Versión | `1.3.0` |
+| Versión | `1.4.0` |
 | Fecha de corte | 2026-07-25 |
-| Baseline de código | commit `6184031b` + candidato PGS-03-M04 |
+| Baseline de código | commit `239575aa` + candidato PGS-03-M05 |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
 | Arquitectura de origen | [`architecture/manifest.json`](../architecture/manifest.json) |
 | Alcance | autoridad implementada en el checkout local actual |
@@ -62,7 +62,7 @@ residual.
 | `AUTH-09` | `ACT-02` mantiene el checkout local; operación de desarrollo y soporte | Ninguno limita esta autoridad | Cuenta macOS y autoridad Git de `ACT-02`, fuera de la aplicación | Puede modificar código, `DAT-01` a `DAT-04`, `DAT-06` a `DAT-09`, configuración y resolución de dependencias | Editor, Git, `uv` y herramientas de desarrollo | Cambiar y versionar el laboratorio de forma deliberada | Ningún control de runtime restringe esta cuenta; su uso queda sujeto al sistema operativo, revisión y disciplina de repositorio | `C3`: mayor autoridad actual; puede alterar controles, comportamiento, datos y evidencia |
 | `AUTH-10` | `ACT-02` llama a la factory de `CMP-06`; API Python interna, no CLI | Ninguno se ejecuta; solo se construye una `ModelRequest` deliberadamente débil | `IDN-01`; declaración exacta de `GSL-ROE-001`, sin identidad de servicio | Lee en memoria un incidente de `DAT-01` y metadatos de `DAT-03`; omite el oráculo y liga un `$TMP/sandbox/drafts` | `CMP-06`; valida autorización, datos sintéticos y aislamiento temporal | Preparar una petición marcada que anuncia `TOL-01` y `TOL-02` para un futuro harness | Usar el sandbox canónico, elegir el perfil desde CLI, llamar a `MOD-01`, ejecutar herramientas, crear archivos, usar red o iniciar un ataque | `C0`: petición tipada en memoria, sin efecto o ejecución |
 | `AUTH-11` | `ACT-02` o pytest llama a `load_adversarial_corpus()`; API Python interna, no CLI | Ninguno participa | `IDN-01`; no existe una identidad de evaluación separada | Lee `DAT-07`, `DAT-08` y `DAT-09` y devuelve fixtures y oráculos tipados en memoria | `CMP-02`; valida esquema, cobertura, estados de conexión, límites, relación uno a uno, conteos y SHA-256 | Cargar el corpus y comprobar su contrato sin interpretar los payloads | Ejecutar por sí mismo un caso, invocar herramientas, escribir, usar red o tratar el oráculo como autorización | `C1`: lectura de datos sintéticos versionados |
-| `AUTH-12` | `ACT-02` ejecuta mediante pytest los tres casos PI aprobados; API interna de test | `MOD-01` recibe dos peticiones exactas por caso indirecto; no hay proveedor real | `IDN-01`; autorización tipada de `GSL-ROE-001`, sin identidad de servicio | Lee `DAT-07/08/09`; crea copias temporales de `DAT-01/02/03`; consulta el subconjunto autorizado de `DAT-02` | `CMP-07`, `CMP-06`, `CMP-01` para el caso negativo y `TOL-01` para los indirectos | Rechazar `--prompt`; probar `ADV-PI-002/003` en `$TMP`; máximo 2 turnos, 1 consulta, 15 s y 0 archivos de producto; comparar el oráculo después | Entregar `DAT-08` al target, ejecutar `TOL-02`, mutar el checkout, abrir red, usar datos reales, crear baseline canónica o extenderse a otra fixture | `C1`: proceso/error saneado y lectura sintética temporal; sin persistencia de producto |
+| `AUTH-12` | `ACT-02` ejecuta mediante pytest las nueve fixtures PI/JB/EX aprobadas; API interna de test | `MOD-01` recibe peticiones exactas en PI y JB de contenido; `ADV-JB-003` usa respuestas manipuladas del doble; EX no llama al modelo | `IDN-01`; autorización tipada de `GSL-ROE-001`, sin identidad de servicio | Lee `DAT-07/08/09`; crea copias temporales de `DAT-01/02/03`; consulta o intenta consultar subconjuntos de `DAT-02`; observa `DAT-05` saneado | `CMP-07`, `CMP-06`, `CMP-01`, `CMP-03` y `TOL-01`; nunca `TOL-02` | Ejecutar los tres PI, dos jailbreak de contenido, dos guardas independientes del ciclo, dos rechazos de conocimiento y un error CLI con marcador; máximo 15 s, 4 turnos, 2 solicitudes, 1 subproceso y 0 archivos por ejecución M05; comparar el oráculo después | Entregar `DAT-08` al target, ejecutar `TOL-02`, mutar el checkout, abrir red, usar datos reales, crear baseline canónica o extenderse a las otras nueve fixtures | `C1`: proceso/error saneado y lectura sintética temporal; sin persistencia de producto |
 
 ## Cadenas de autoridad resumidas
 
@@ -111,8 +111,10 @@ ACT-02 (pytest y API interna)
   → autorización exacta de GSL-ROE-001
   → ADV-PI-001: CMP-01 rechaza --prompt
   → ADV-PI-002/003: CMP-07 crea $TMP y construye CMP-06
-  → MOD-01 propone knowledge_search
-  → CMP-07 autoriza TOL-01 una vez
+  → ADV-JB-001/002: contenido temporal, MOD-01 y TOL-01 una vez
+  → ADV-JB-003: CMP-03 rechaza cardinalidad o segundo turno no final
+  → ADV-EX-001/002: TOL-01 rechaza alcance o ID desconocido
+  → ADV-EX-003: CMP-01 emite error genérico sin marcador
   → observación tipada; DAT-08 se compara fuera del target
 ```
 
@@ -120,9 +122,9 @@ La primera cadena es la única alcanzable mediante `main.py`. La segunda existe
 como capacidad interna probada, pero no está conectada a la CLI ni al flujo
 benigno. La tercera es una autoridad de mantenimiento externa a los controles
 de la aplicación. La cuarta prepara una entrada de evaluación `C0`. La quinta
-valida el corpus y conserva la separación del oráculo. La sexta cubre
-únicamente los tres casos PI dentro de `$TMP`; no es una ruta de producto ni
-una baseline adversaria canónica.
+valida el corpus y conserva la separación del oráculo. La sexta cubre nueve
+fixtures PI/JB/EX con datos sintéticos y límites por ejecución; no es una ruta
+de producto ni una baseline adversaria canónica.
 
 ## Rutas de autoridad que no existen
 
@@ -132,7 +134,7 @@ una baseline adversaria canónica.
 | `MOD-01` | Preparar o crear mediante `TOL-02` | Sin ruta: no hay arista de ejecución desde el modelo o el flujo benigno |
 | `CMP-06` | Invocar por sí mismo `MOD-01`, `TOL-01` o `TOL-02` | Sin ruta: el perfil solo construye una `ModelRequest`; `CMP-07` es quien conduce el doble y autoriza una búsqueda |
 | `DAT-08` | Entrar en `CMP-06`, `MOD-01` o una herramienta | Sin ruta: `CMP-07` recibe solo `DAT-07`; pytest compara el oráculo después de observar el target |
-| Las otras 15 entradas de `DAT-07` | Entrar en `CMP-06`, `MOD-01` o una herramienta | Sin ruta en PGS-03-M04: `CMP-07` rechaza cualquier ID fuera de `ADV-PI-001/002/003` |
+| Las otras 9 entradas de `DAT-07` | Entrar en `CMP-06`, `MOD-01` o una herramienta | Sin ruta en PGS-03-M05: `CMP-07` rechaza cualquier ID fuera de las nueve fixtures PI/JB/EX |
 | `CMP-01` | Invocar `TOL-02` | Sin ruta: la CLI solo expone `analyze` y `baseline` |
 | Runtime de aplicación | Escribir `DAT-04` | Sin ruta directa: la baseline solo se emite por `stdout` y el mantenedor la versiona |
 | Runtime de aplicación | Shell, red, proveedor, cloud, base de datos o secretos | Sin capacidad implementada ni credenciales |

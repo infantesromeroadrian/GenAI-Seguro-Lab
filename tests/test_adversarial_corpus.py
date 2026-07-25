@@ -16,6 +16,7 @@ from genai_seguro_lab.data_contract import (
     EXPECTED_ADVERSARIAL_ABUSE_CASES,
     EXPECTED_ADVERSARIAL_FAMILY_BY_ABUSE_CASE,
     EXPECTED_ADVERSARIAL_FAMILIES,
+    EXPECTED_TEST_WIRED_ADVERSARIAL_CASES,
     AdversarialCorpusBundle,
     AdversarialCorpusManifest,
     AdversarialInputRecord,
@@ -45,7 +46,7 @@ def test_manifest_fixes_scope_counts_and_partial_test_wiring(
     expected = adversarial_bundle.manifest.expected_result
 
     assert adversarial_bundle.manifest.id == "GSL-ADVERSARIAL-CORPUS-001"
-    assert adversarial_bundle.manifest.version == "1.1.0"
+    assert adversarial_bundle.manifest.version == "1.2.0"
     assert adversarial_bundle.manifest.rules_of_engagement == "GSL-ROE-001"
     assert (
         adversarial_bundle.manifest.target_profile
@@ -55,8 +56,8 @@ def test_manifest_fixes_scope_counts_and_partial_test_wiring(
     assert expected.oracle_records == len(adversarial_bundle.oracles) == 18
     assert expected.unique_abuse_cases == 17
     assert expected.threat_families == 6
-    assert expected.test_wired_records == 3
-    assert expected.inert_records == 15
+    assert expected.test_wired_records == 9
+    assert expected.inert_records == 9
     assert expected.canonical_evaluation_records == 0
     assert (
         adversarial_bundle.manifest.fixture_state
@@ -122,7 +123,7 @@ def test_all_records_are_synthetic_local_and_explicitly_wired_or_inert(
         for record in adversarial_bundle.inputs
         if record.fixture_state == "test_wired"
     }
-    assert test_wired == {"ADV-PI-001", "ADV-PI-002", "ADV-PI-003"}
+    assert test_wired == EXPECTED_TEST_WIRED_ADVERSARIAL_CASES
     assert all(
         record.fixture_state == "inert_not_wired"
         for record in adversarial_bundle.inputs
@@ -207,10 +208,10 @@ def test_manifest_cannot_claim_more_wired_or_canonical_records() -> None:
     )
     payload["expected_result"]["test_wired_records"] = 18
 
-    with pytest.raises(ValidationError, match="Input should be 3"):
+    with pytest.raises(ValidationError, match="Input should be 9"):
         AdversarialCorpusManifest.model_validate_json(json.dumps(payload))
 
-    payload["expected_result"]["test_wired_records"] = 3
+    payload["expected_result"]["test_wired_records"] = 9
     payload["expected_result"]["canonical_evaluation_records"] = 1
     with pytest.raises(ValidationError, match="Input should be 0"):
         AdversarialCorpusManifest.model_validate_json(json.dumps(payload))

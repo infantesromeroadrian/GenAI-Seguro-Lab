@@ -69,8 +69,8 @@
           "DAT-09"
         ],
         "adversarialState": "partially-wired-for-tests",
-        "testWiredRecords": 3,
-        "inertRecords": 15,
+        "testWiredRecords": 9,
+        "inertRecords": 9,
         "adversarialCliReachable": false,
         "canonicalEvaluationRecorded": false
       }
@@ -132,7 +132,7 @@
       "id": "containers-process-reads-versioned-data",
       "source": "python-application-process",
       "target": "versioned-data-store",
-      "label": "CLI: benigno; test interno: 3 PI; otros 15 inertes",
+      "label": "CLI: benigno; test interno: 9 PI/JB/EX; otras 9 inertes",
       "meta": {
         "type": "reads",
         "crossesBoundary": "TB-06",

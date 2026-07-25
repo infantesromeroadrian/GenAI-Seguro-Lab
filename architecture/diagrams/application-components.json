@@ -116,8 +116,8 @@
       }
     },
     {
-      "id": "prompt-injection-evaluation-harness",
-      "label": "CMP-07 · Harness PI acotado",
+      "id": "adversarial-evaluation-harness",
+      "label": "CMP-07 · Harness adversario acotado",
       "parentId": "application-control-boundary",
       "path": "src/genai_seguro_lab/evaluation_harness.py",
       "meta": {
@@ -130,7 +130,23 @@
         "caseIds": [
           "AC-PI-01",
           "AC-PI-02",
-          "AC-PI-03"
+          "AC-PI-03",
+          "AC-JB-01",
+          "AC-JB-02",
+          "AC-EX-01",
+          "AC-EX-02",
+          "AC-EX-03"
+        ],
+        "fixtureIds": [
+          "ADV-PI-001",
+          "ADV-PI-002",
+          "ADV-PI-003",
+          "ADV-JB-001",
+          "ADV-JB-002",
+          "ADV-JB-003",
+          "ADV-EX-001",
+          "ADV-EX-002",
+          "ADV-EX-003"
         ],
         "cliReachable": false,
         "externalCalls": false,
@@ -309,9 +325,9 @@
     },
     {
       "id": "components-harness-loads-cases",
-      "source": "prompt-injection-evaluation-harness",
+      "source": "adversarial-evaluation-harness",
       "target": "dataset-loader",
-      "label": "selecciona 3 PI; carga copias temporales coherentes",
+      "label": "selecciona 9 PI/JB/EX; copia a $TMP cuando procede",
       "meta": {
         "type": "calls",
         "oraclesDeliveredToTarget": false
@@ -319,33 +335,55 @@
     },
     {
       "id": "components-harness-builds-vulnerable-request",
-      "source": "prompt-injection-evaluation-harness",
+      "source": "adversarial-evaluation-harness",
       "target": "vulnerable-evaluation-profile",
-      "label": "build_initial_request(): incidente temporal",
+      "label": "build_initial_request(): PI/JB de contenido",
       "meta": {
         "type": "calls"
       }
     },
     {
       "id": "components-harness-drives-model-double",
-      "source": "prompt-injection-evaluation-harness",
+      "source": "adversarial-evaluation-harness",
       "target": "deterministic-model",
-      "label": "2 generate() exactos; sin proveedor",
+      "label": "generate() acotado; hasta 4 turnos; sin proveedor",
       "meta": {
         "type": "calls",
         "crossesBoundary": "TB-03",
-        "maxModelTurns": 2
+        "maxModelTurns": 4
       }
     },
     {
       "id": "components-harness-authorizes-search",
-      "source": "prompt-injection-evaluation-harness",
+      "source": "adversarial-evaluation-harness",
       "target": "knowledge-search",
-      "label": "1 search(): IDs permitidos del incidente",
+      "label": "search(): permitido o rechazo genérico; máximo 2",
       "meta": {
         "type": "calls",
         "crossesBoundary": "TB-04",
-        "maxToolRequests": 1
+        "maxToolRequests": 2
+      }
+    },
+    {
+      "id": "components-harness-checks-flow-guards",
+      "source": "adversarial-evaluation-harness",
+      "target": "benign-flow",
+      "label": "JB-003: cardinalidad inicial y recursión en runs separados",
+      "meta": {
+        "type": "calls",
+        "maxModelTurns": 4,
+        "maxToolRequests": 2
+      }
+    },
+    {
+      "id": "components-harness-checks-cli-errors",
+      "source": "adversarial-evaluation-harness",
+      "target": "cli-dispatcher",
+      "label": "PI directa y EX-003: rechazo saneado; máximo 1 subproceso",
+      "meta": {
+        "type": "calls",
+        "maxSubprocesses": 1,
+        "canonicalEvidence": false
       }
     }
   ]
