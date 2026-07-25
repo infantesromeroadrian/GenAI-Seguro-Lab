@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M07.
-- **Estado actual:** PGS-00-M01 a PGS-04-M01 completadas; la baseline canónica fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED` sobre 14 fixtures PI/JB/EX/TOL, mientras las otras cuatro permanecen inertes. El flujo ordinario ya separa instrucciones confiables, datos de usuario y contenido no confiable; el control permanece parcial hasta el retest y la incorporación de un modelo GenAI real.
+- **Estado actual:** PGS-00-M01 a PGS-04-M02 completadas; la baseline canónica fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED` sobre 14 fixtures PI/JB/EX/TOL, mientras las otras cuatro permanecen inertes. El flujo ordinario separa dominios de confianza y valida entradas, salida final y argumentos de herramientas mediante esquemas estrictos y allowlists. El control permanece parcial hasta el filtrado, el retest y la incorporación de un modelo GenAI real.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** repositorio público ya autorizado y evidencia
@@ -268,7 +268,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 **Objetivo:** aplicar controles trazables a amenazas concretas.
 
 - [x] **PGS-04-M01** Separar instrucciones de sistema, contenido no confiable y datos de usuario.
-- [ ] **PGS-04-M02** Validar entradas, salidas y argumentos de herramientas mediante esquemas y allowlists.
+- [x] **PGS-04-M02** Validar entradas, salidas y argumentos de herramientas mediante esquemas y allowlists.
 - [ ] **PGS-04-M03** Aplicar mínimo privilegio a identidades, datos y herramientas.
 - [ ] **PGS-04-M04** Exigir confirmación humana para acciones con efecto.
 - [ ] **PGS-04-M05** Incorporar filtros, redacción de datos y política de salida.
@@ -363,6 +363,13 @@ requiriendo una decisión separada.
   herramienta como no confiables y conserva el perfil de evaluación como
   `deliberately_merged`. Esta evidencia no sustituye el retest sobre un modelo
   GenAI real.
+- PGS-04-M02 incorpora `BenignTaskInput`, `BenignIncidentInput` y
+  `BenignFinalOutput`; la aplicación exige `ToolExecutionPolicy` antes de
+  preparar o ejecutar las herramientas locales y comprueba nombres, IDs y
+  referencias contra allowlists cerradas. La salida final debe pertenecer al
+  incidente y citar exactamente el conocimiento devuelto. La política y sus
+  límites están en `docs/validation-policy.md`; el filtrado semántico, el
+  mínimo privilegio, la identidad humana y el retest continúan pendientes.
 - El proyecto permanece deliberadamente sin empaquetar mediante `[tool.uv] package = false`. `main.py` ofrece el punto de entrada local estable desde el propio checkout, sin instalación editable ni `PYTHONPATH`.
 - La baseline `GSL-BASELINE-BENIGN-001` fija 12/12 ejecuciones funcionales, 24 invocaciones deterministas, 12 consultas autorizadas, 0 llamadas externas y 0 €. Sus campos declaran que no es una baseline de seguridad ni una evaluación de utilidad semántica.
 - `docs/framework-versions.md` fija OWASP LLM 2025, OWASP Agentic 2026, MITRE ATLAS release `v2026.06` con `ATLAS.yaml` 5.6.0, NIST AI RMF 1.0 y NIST SP 800-218A final; NIST AI 600-1 queda como perfil GenAI complementario. La revalidación para PGS-02-M07 conserva el snapshot ATLAS anterior y documenta la actualización de `AML.T0054`.
@@ -409,6 +416,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-04-M02 — validar entradas, salidas y argumentos de herramientas mediante esquemas y allowlists.**
+**PGS-04-M03 — aplicar mínimo privilegio a identidades, datos y herramientas.**
 
-**Progreso interno:** 31 de 66 microtareas completadas, 35 abiertas (**47,0 %**).
+**Progreso interno:** 32 de 66 microtareas completadas, 34 abiertas (**48,5 %**).

@@ -5,8 +5,9 @@ cargados en memoria.
 
 - Aceptar solo `knowledge_search`.
 - Validar consulta, IDs y límite mediante Pydantic.
-- Exigir que los IDs solicitados estén en la allowlist del incidente y en el
-  índice conocido.
+- Exigir una `ToolExecutionPolicy` aportada por la aplicación.
+- Comprobar que la herramienta está permitida, que la allowlist solo contiene
+  IDs conocidos y que los IDs solicitados son un subconjunto autorizado.
 - Ordenar coincidencias de forma determinista.
 
 ## Restricciones
@@ -14,6 +15,7 @@ cargados en memoria.
 - Sin filesystem.
 - Sin red.
 - Sin escritura.
+- Sin política explícita no existe invocación válida.
 
 ## Evidencia
 

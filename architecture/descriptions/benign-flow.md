@@ -4,9 +4,12 @@ Orquesta un ciclo fijo de modelo, búsqueda autorizada y respuesta final.
 
 - Construir una petición inicial que trata el incidente como dato no confiable.
 - Exigir exactamente una solicitud `knowledge_search`.
-- Autorizar la consulta mediante las referencias del incidente.
+- Construir una `ToolExecutionPolicy` con la herramienta y las referencias
+  autorizadas por el incidente.
 - Incorporar el resultado tipado y exigir una respuesta final en la segunda
   invocación.
+- Validar que la salida final pertenece al incidente y solo cita los
+  documentos realmente devueltos por la búsqueda.
 
 ## Restricciones
 
@@ -14,6 +17,8 @@ Orquesta un ciclo fijo de modelo, búsqueda autorizada y respuesta final.
 - Una única herramienta por incidente.
 - Sin bucles abiertos o reintentos.
 - Sin ruta hacia `DraftWriterTool`.
+- Cualquier salida libre, campo adicional, afirmación de efecto o referencia
+  fuera de alcance falla cerrada.
 
 ## Inventario
 

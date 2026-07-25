@@ -7,9 +7,18 @@ from pathlib import Path
 
 import pytest
 
-from genai_seguro_lab.benign_flow import BenignAnalysisFlow, BenignFlowError
+from genai_seguro_lab.benign_flow import (
+    BenignAnalysisFlow,
+    BenignFinalOutput,
+    BenignFlowError,
+    canonical_flow_json,
+)
 from genai_seguro_lab.data_contract import IncidentRecord, load_dataset
-from genai_seguro_lab.local_tools import KnowledgeSearchTool, ToolDeniedError
+from genai_seguro_lab.local_tools import (
+    KnowledgeSearchTool,
+    ToolDeniedError,
+    ToolExecutionPolicy,
+)
 from genai_seguro_lab.model_adapter import (
     DeterministicModelAdapter,
     ModelResponse,
@@ -59,7 +68,10 @@ def _configured_flow(
     )
     knowledge = knowledge_tool.search(
         tool_request,
-        allowed_ids=incident.knowledge_refs,
+        policy=ToolExecutionPolicy(
+            allowed_tools=initial.available_tools,
+            allowed_knowledge_ids=incident.knowledge_refs,
+        ),
     )
     followup = BenignAnalysisFlow.build_followup_request(
         initial,
@@ -68,9 +80,17 @@ def _configured_flow(
     )
     final_response = ModelResponse(
         finish_reason="stop",
-        output_text=(
-            "El mensaje contiene indicadores sintéticos de phishing; "
-            "no consta compromiso."
+        output_text=canonical_flow_json(
+            BenignFinalOutput(
+                incident_id=incident.id,
+                summary=(
+                    "El mensaje contiene indicadores sintéticos de phishing; "
+                    "no consta compromiso."
+                ),
+                knowledge_ids=tuple(hit.id for hit in knowledge.hits),
+                actions_executed=False,
+                compromise_confirmed=False,
+            )
         ),
     )
     adapter = DeterministicModelAdapter(

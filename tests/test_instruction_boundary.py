@@ -10,7 +10,10 @@ from pydantic import ValidationError
 
 from genai_seguro_lab.benign_flow import BenignAnalysisFlow
 from genai_seguro_lab.data_contract import IncidentRecord, load_dataset
-from genai_seguro_lab.local_tools import KnowledgeSearchTool
+from genai_seguro_lab.local_tools import (
+    KnowledgeSearchTool,
+    ToolExecutionPolicy,
+)
 from genai_seguro_lab.model_adapter import (
     ModelMessage,
     ModelRequest,
@@ -70,7 +73,10 @@ def test_followup_preserves_boundary_and_marks_model_and_tool_data(
         load_dataset(DATA_DIR).knowledge
     ).search(
         tool_request,
-        allowed_ids=incident.knowledge_refs,
+        policy=ToolExecutionPolicy(
+            allowed_tools=initial.available_tools,
+            allowed_knowledge_ids=incident.knowledge_refs,
+        ),
     )
 
     followup = BenignAnalysisFlow.build_followup_request(

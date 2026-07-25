@@ -21,6 +21,7 @@ ToolRequestId = Annotated[
 ]
 Sha256 = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
 InstructionBoundary = Literal["separated", "deliberately_merged"]
+KnownToolName = Literal["knowledge_search", "draft_create"]
 MessageTrustClass = Literal[
     "trusted_instruction",
     "user_data",
@@ -60,7 +61,10 @@ class ModelRequest(AdapterSchema):
     request_id: RequestId
     instruction_boundary: InstructionBoundary
     messages: Annotated[tuple[ModelMessage, ...], Field(min_length=1)]
-    available_tools: tuple[Text, ...] = ()
+    available_tools: Annotated[
+        tuple[KnownToolName, ...],
+        Field(max_length=2),
+    ] = ()
 
     @field_validator("available_tools")
     @classmethod

@@ -205,3 +205,15 @@ def test_tool_request_is_transported_but_not_authorized(
 
     assert result.response.tool_requests[0].name == "unapproved_tool"
     assert "authorized" not in result.response.model_dump()
+
+
+def test_request_rejects_unknown_advertised_tools(
+    model_request: ModelRequest,
+) -> None:
+    with pytest.raises(ValidationError, match="literal_error"):
+        ModelRequest(
+            request_id=model_request.request_id,
+            instruction_boundary=model_request.instruction_boundary,
+            messages=model_request.messages,
+            available_tools=("unapproved_tool",),
+        )

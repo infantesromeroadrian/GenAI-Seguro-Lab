@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-04-M01, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria canónica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`. Cuatro fixtures permanecen inertes y `ADV-TOL-005` conserva como residual conocido una única escritura confinada a `$TMP`. El código, la evidencia saneada y sus hallazgos están publicados en el repositorio público, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-04-M02, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria canónica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`. Cuatro fixtures permanecen inertes y `ADV-TOL-005` conserva como residual conocido una única escritura confinada a `$TMP`. El flujo ordinario ya valida entradas, salidas y herramientas con esquemas y allowlists. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
 
 ## En una frase
 
@@ -57,6 +57,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── test_adversarial_baseline.py
 │   ├── test_local_tools.py
 │   ├── test_model_adapter.py
+│   ├── test_validation_policy.py
 │   ├── test_jailbreak_disclosure_evaluation.py
 │   ├── test_prompt_injection_evaluation.py
 │   └── test_tool_abuse_evaluation.py
@@ -90,14 +91,15 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── risk-prioritization.md
 │   ├── rules-of-engagement.md
 │   ├── system-inventory.md
-│   └── threat-crosswalk.md
+│   ├── threat-crosswalk.md
+│   └── validation-policy.md
 └── sandbox/
     ├── README.md
     └── drafts/
         └── README.md
 ```
 
-PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado, PGS-03-M03 prepara el corpus adversario, PGS-03-M04/M05/M06 conectan 14 fixtures PI/JB/EX/TOL a pruebas internas y PGS-03-M07 fija su primera ejecución canónica. Todavía no existe un modelo GenAI real.
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado, PGS-03-M03 prepara el corpus adversario, PGS-03-M04/M05/M06 conectan 14 fixtures PI/JB/EX/TOL a pruebas internas, PGS-03-M07 fija su primera ejecución canónica y PGS-04-M01/M02 separan dominios de confianza y aplican validación estructural con allowlists. Todavía no existe un modelo GenAI real.
 
 ## Entorno reproducible
 
@@ -183,6 +185,9 @@ incidente sintético
 
 - El primer resultado debe solicitar exactamente una herramienta y el segundo
   debe ser una respuesta final; no existen bucles abiertos ni reintentos.
+- La tarea y el incidente se serializan mediante sobres Pydantic cerrados. El
+  incidente enviado al modelo excluye el resultado esperado y la procedencia,
+  para no filtrar el oráculo de evaluación.
 - Cada petición declara `instruction_boundary`. En el flujo ordinario vale
   `separated` y cada mensaje lleva una clase de confianza explícita:
   `trusted_instruction`, `user_data`, `untrusted_content` o `model_output`.
@@ -191,11 +196,16 @@ incidente sintético
   confiable. La respuesta de una herramienta siempre vuelve al modelo como
   `untrusted_content`.
 - `knowledge_search` solo consulta los documentos sintéticos ya cargados en
-  memoria y referenciados por el incidente. No accede al sistema de archivos ni
-  a la red y el flujo falla cerrado si no obtiene coincidencias autorizadas.
-- El incidente enviado al modelo excluye `expected_result` y la procedencia,
-  para no filtrar el oráculo de evaluación.
-- `draft_create` solo prepara una propuesta tipada. Escribir exige que el
+  memoria y referenciados por el incidente. Cada llamada exige una
+  `ToolExecutionPolicy` aportada por la aplicación, que autoriza el nombre de
+  herramienta y los IDs exactos. No accede al sistema de archivos ni a la red
+  y el flujo falla cerrado si no obtiene coincidencias autorizadas.
+- El adaptador transporta la salida final como texto no confiable. El flujo la
+  acepta únicamente si cumple `BenignFinalOutput`, pertenece al incidente,
+  cita exactamente el conocimiento devuelto y declara que no ejecutó acciones
+  ni confirmó un compromiso.
+- `draft_create` solo prepara una propuesta tipada cuando su herramienta y
+  referencias están en la política explícita. Escribir exige que el
   llamador aporte por separado una confirmación marcada como humana y con la
   huella SHA-256 exacta de esa propuesta; el modelo no puede incluir ni
   fabricar esa confirmación en sus argumentos.
@@ -209,10 +219,13 @@ incidente sintético
   autentica la identidad humana: esa frontera pertenecerá a la futura interfaz.
 
 Este control estructura la frontera del doble determinista actual; todavía no
-demuestra resistencia de un modelo GenAI real. Comprobación específica:
+demuestra resistencia de un modelo GenAI real ni sustituye los filtros de
+contenido de PGS-04-M05. La política completa está en
+[Política de validación y allowlists](./docs/validation-policy.md).
+Comprobación específica:
 
 ```bash
-uv run --frozen pytest tests/test_instruction_boundary.py tests/test_benign_flow.py tests/test_local_tools.py
+uv run --frozen pytest tests/test_instruction_boundary.py tests/test_benign_flow.py tests/test_local_tools.py tests/test_validation_policy.py
 ```
 
 ## Interfaz local y baseline funcional
@@ -966,9 +979,11 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Implementar pruebas para llamadas de herramienta no autorizadas y exceso de agencia.
 - [x] Ejecutar la baseline y conservar configuración, resultados y logs saneados.
 - [x] Documentar hallazgos, impacto, reproducción y límites.
+- [x] Separar instrucciones de sistema, contenido no confiable y datos de usuario.
+- [x] Validar entradas, salidas y argumentos de herramientas mediante esquemas y allowlists.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
 
-**PGS-00-M01 a PGS-04-M01, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **31 de 66 microtareas (47,0 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
+**PGS-00-M01 a PGS-04-M02, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **32 de 66 microtareas (48,5 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
 
 ## Roadmap
 
@@ -978,7 +993,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-04-M02 — validar entradas, salidas y argumentos de herramientas mediante esquemas y allowlists.**
+**PGS-04-M03 — aplicar mínimo privilegio a identidades, datos y herramientas.**
 
 ## Uso responsable
 

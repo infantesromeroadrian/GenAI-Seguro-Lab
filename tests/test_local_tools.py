@@ -17,6 +17,8 @@ from genai_seguro_lab.local_tools import (
     SandboxViolationError,
     ToolArgumentsError,
     ToolDeniedError,
+    ToolExecutionPolicy,
+    ToolPolicyError,
 )
 from genai_seguro_lab.model_adapter import ModelToolRequest
 
@@ -70,6 +72,20 @@ def _draft_request(
     return _tool_request(name="draft_create", arguments=arguments)
 
 
+def _knowledge_policy(*knowledge_ids: str) -> ToolExecutionPolicy:
+    return ToolExecutionPolicy(
+        allowed_tools=("knowledge_search",),
+        allowed_knowledge_ids=knowledge_ids,
+    )
+
+
+def _draft_policy(*knowledge_ids: str) -> ToolExecutionPolicy:
+    return ToolExecutionPolicy(
+        allowed_tools=("draft_create",),
+        allowed_knowledge_ids=knowledge_ids,
+    )
+
+
 def test_knowledge_search_only_returns_allowed_documents(
     knowledge_tool: KnowledgeSearchTool,
 ) -> None:
@@ -82,7 +98,10 @@ def test_knowledge_search_only_returns_allowed_documents(
         },
     )
 
-    result = knowledge_tool.search(request, allowed_ids=("KB-001",))
+    result = knowledge_tool.search(
+        request,
+        policy=_knowledge_policy("KB-001"),
+    )
 
     assert [hit.id for hit in result.hits] == ["KB-001"]
     assert all(hit.topic == "phishing" for hit in result.hits)
@@ -93,7 +112,10 @@ def test_knowledge_search_denies_other_tools_and_out_of_scope_ids(
 ) -> None:
     other_tool = _tool_request(name="shell", arguments={"command": "whoami"})
     with pytest.raises(ToolDeniedError, match="not allowed"):
-        knowledge_tool.search(other_tool, allowed_ids=("KB-001",))
+        knowledge_tool.search(
+            other_tool,
+            policy=_knowledge_policy("KB-001"),
+        )
 
     out_of_scope = _tool_request(
         name="knowledge_search",
@@ -103,7 +125,28 @@ def test_knowledge_search_denies_other_tools_and_out_of_scope_ids(
         },
     )
     with pytest.raises(ToolDeniedError, match="exceeds the incident scope"):
-        knowledge_tool.search(out_of_scope, allowed_ids=("KB-001",))
+        knowledge_tool.search(
+            out_of_scope,
+            policy=_knowledge_policy("KB-001"),
+        )
+
+
+def test_knowledge_search_rejects_unknown_policy_data(
+    knowledge_tool: KnowledgeSearchTool,
+) -> None:
+    request = _tool_request(
+        name="knowledge_search",
+        arguments={
+            "query": "phishing",
+            "knowledge_ids": ["KB-999"],
+        },
+    )
+
+    with pytest.raises(ToolPolicyError, match="unknown data"):
+        knowledge_tool.search(
+            request,
+            policy=_knowledge_policy("KB-999"),
+        )
 
 
 def test_knowledge_search_rejects_invalid_arguments(
@@ -119,29 +162,46 @@ def test_knowledge_search_rejects_invalid_arguments(
     )
 
     with pytest.raises(ToolArgumentsError, match="were rejected"):
-        knowledge_tool.search(request, allowed_ids=("KB-001",))
+        knowledge_tool.search(
+            request,
+            policy=_knowledge_policy("KB-001"),
+        )
 
 
 def test_model_can_only_prepare_a_draft(
     drafts_dir: Path,
 ) -> None:
     writer = DraftWriterTool(drafts_dir)
-    proposal = writer.prepare(_draft_request())
+    policy = _draft_policy("KB-001")
+    proposal = writer.prepare(_draft_request(), policy=policy)
 
     assert proposal.filename == "resumen-incidente.md"
     assert list(drafts_dir.iterdir()) == []
 
     self_confirmed = _draft_request(extra={"confirmed_by_user": True})
     with pytest.raises(ToolArgumentsError, match="were rejected"):
-        writer.prepare(self_confirmed)
+        writer.prepare(self_confirmed, policy=policy)
     assert list(drafts_dir.iterdir()) == []
+
+
+def test_draft_writer_rejects_references_outside_policy(
+    drafts_dir: Path,
+) -> None:
+    writer = DraftWriterTool(drafts_dir)
+
+    with pytest.raises(ToolDeniedError, match="authorized scope"):
+        writer.prepare(
+            _draft_request(),
+            policy=_draft_policy("KB-002"),
+        )
 
 
 def test_exact_confirmation_creates_once_without_overwrite(
     drafts_dir: Path,
 ) -> None:
     writer = DraftWriterTool(drafts_dir)
-    proposal = writer.prepare(_draft_request())
+    policy = _draft_policy("KB-001")
+    proposal = writer.prepare(_draft_request(), policy=policy)
 
     wrong = DraftConfirmation(
         proposal_fingerprint="0" * 64,
@@ -168,7 +228,8 @@ def test_exact_confirmation_creates_once_without_overwrite(
         writer.create(proposal, confirmation)
 
     changed = writer.prepare(
-        _draft_request(body="Contenido distinto para el mismo destino.")
+        _draft_request(body="Contenido distinto para el mismo destino."),
+        policy=policy,
     )
     changed_confirmation = DraftConfirmation(
         proposal_fingerprint=changed.proposal_fingerprint,
@@ -186,7 +247,7 @@ def test_draft_writer_rejects_traversal_and_symlink_root(
     traversal = _draft_request(filename="../escape.md")
 
     with pytest.raises(ToolArgumentsError, match="were rejected"):
-        writer.prepare(traversal)
+        writer.prepare(traversal, policy=_draft_policy("KB-001"))
     assert not (drafts_dir.parent.parent / "escape.md").exists()
 
     linked_parent = tmp_path / "linked" / "sandbox"
@@ -206,7 +267,10 @@ def test_draft_writer_does_not_follow_destination_symlink(
     target = drafts_dir / "resumen-incidente.md"
     target.symlink_to(outside)
     writer = DraftWriterTool(drafts_dir)
-    proposal = writer.prepare(_draft_request())
+    proposal = writer.prepare(
+        _draft_request(),
+        policy=_draft_policy("KB-001"),
+    )
     confirmation = DraftConfirmation(
         proposal_fingerprint=proposal.proposal_fingerprint,
         confirmed_by_user=True,

@@ -22,6 +22,11 @@ salidas del modelo y de herramientas conservan su clasificación; y que los
 roles incompatibles, las instrucciones tardías o los dominios ausentes fallan
 cerrados.
 
+`test_validation_policy.py` comprueba que los sobres de tarea, incidente y
+salida final son estrictos; que las allowlists solo admiten herramientas
+conocidas y valores únicos; y que el flujo rechaza texto libre, efectos
+atribuidos, otro incidente o conocimiento no autorizado.
+
 `test_evaluation_profile.py` comprueba que
 `GSL-PROFILE-VULNERABLE-001` exige las RoE y los límites exactos, usa solo un
 `$TMP/sandbox/drafts`, no crea archivos, identifica sus peticiones, no expone

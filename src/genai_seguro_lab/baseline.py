@@ -9,7 +9,12 @@ from typing import Annotated, Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from .benign_flow import BenignAnalysisFlow, BenignAnalysisResult
+from .benign_flow import (
+    BenignAnalysisFlow,
+    BenignAnalysisResult,
+    BenignFinalOutput,
+    canonical_flow_json,
+)
 from .data_contract import (
     DatasetBundle,
     DatasetId,
@@ -19,7 +24,7 @@ from .data_contract import (
     KnowledgeId,
     load_dataset,
 )
-from .local_tools import KnowledgeSearchTool
+from .local_tools import KnowledgeSearchTool, ToolExecutionPolicy
 from .model_adapter import (
     DeterministicModelAdapter,
     ModelResponse,
@@ -174,7 +179,10 @@ def _build_flow(
         )
         knowledge = knowledge_tool.search(
             tool_request,
-            allowed_ids=incident.knowledge_refs,
+            policy=ToolExecutionPolicy(
+                allowed_tools=initial.available_tools,
+                allowed_knowledge_ids=incident.knowledge_refs,
+            ),
         )
         if not knowledge.hits:
             raise ValueError("baseline configuration produced no knowledge hits")
@@ -185,9 +193,17 @@ def _build_flow(
         )
         final_response = ModelResponse(
             finish_reason="stop",
-            output_text=_output_text(
-                incident,
-                tuple(hit.id for hit in knowledge.hits),
+            output_text=canonical_flow_json(
+                BenignFinalOutput(
+                    incident_id=incident.id,
+                    summary=_output_text(
+                        incident,
+                        tuple(hit.id for hit in knowledge.hits),
+                    ),
+                    knowledge_ids=tuple(hit.id for hit in knowledge.hits),
+                    actions_executed=False,
+                    compromise_confirmed=False,
+                )
             ),
         )
         scripts.extend(

@@ -23,7 +23,7 @@ from .data_contract import (
     KnowledgeId,
     KnowledgeRecord,
 )
-from .model_adapter import ModelToolRequest
+from .model_adapter import KnownToolName, ModelToolRequest
 
 Text = Annotated[str, Field(min_length=1)]
 Query = Annotated[
@@ -63,6 +63,10 @@ class ToolArgumentsError(ValueError):
     """Los argumentos no cumplen el esquema de la herramienta."""
 
 
+class ToolPolicyError(ValueError):
+    """La política de ejecución no es válida para una herramienta."""
+
+
 class DraftConfirmationError(PermissionError):
     """La confirmación no autoriza esta propuesta exacta."""
 
@@ -88,6 +92,29 @@ class KnowledgeSearchArguments(ToolSchema):
     def reject_duplicate_ids(cls, value: tuple[str, ...]) -> tuple[str, ...]:
         if len(value) != len(set(value)):
             raise ValueError("knowledge identifiers must be unique")
+        return value
+
+
+class ToolExecutionPolicy(ToolSchema):
+    """Allowlist inmutable aportada por la aplicación, no por el modelo."""
+
+    allowed_tools: Annotated[
+        tuple[KnownToolName, ...],
+        Field(min_length=1, max_length=2),
+    ]
+    allowed_knowledge_ids: Annotated[
+        tuple[KnowledgeId, ...],
+        Field(max_length=8),
+    ] = ()
+
+    @field_validator("allowed_tools", "allowed_knowledge_ids")
+    @classmethod
+    def reject_duplicate_policy_values(
+        cls,
+        value: tuple[str, ...],
+    ) -> tuple[str, ...]:
+        if len(value) != len(set(value)):
+            raise ValueError("execution policy values must be unique")
         return value
 
 
@@ -124,11 +151,16 @@ class KnowledgeSearchTool:
         self,
         request: ModelToolRequest,
         *,
-        allowed_ids: Iterable[str],
+        policy: ToolExecutionPolicy,
     ) -> KnowledgeSearchResult:
         if not isinstance(request, ModelToolRequest):
             raise TypeError("request must be a ModelToolRequest")
-        if request.name != "knowledge_search":
+        if not isinstance(policy, ToolExecutionPolicy):
+            raise TypeError("policy must be a ToolExecutionPolicy")
+        if (
+            request.name != "knowledge_search"
+            or request.name not in policy.allowed_tools
+        ):
             raise ToolDeniedError("requested tool is not allowed in this flow")
 
         try:
@@ -140,7 +172,11 @@ class KnowledgeSearchTool:
                 "knowledge_search arguments were rejected"
             ) from exc
 
-        allowed = set(allowed_ids)
+        allowed = set(policy.allowed_knowledge_ids)
+        if not allowed.issubset(self._documents):
+            raise ToolPolicyError(
+                "knowledge_search policy references unknown data"
+            )
         requested = set(arguments.knowledge_ids)
         if not requested.issubset(allowed):
             raise ToolDeniedError(
@@ -276,11 +312,21 @@ class DraftWriterTool:
         self._root = root
         self._consumed_confirmations: set[str] = set()
 
-    def prepare(self, request: ModelToolRequest) -> DraftProposal:
+    def prepare(
+        self,
+        request: ModelToolRequest,
+        *,
+        policy: ToolExecutionPolicy,
+    ) -> DraftProposal:
         if not isinstance(request, ModelToolRequest):
             raise TypeError("request must be a ModelToolRequest")
-        if request.name != "draft_create":
-            raise ToolDeniedError("requested tool is not draft_create")
+        if not isinstance(policy, ToolExecutionPolicy):
+            raise TypeError("policy must be a ToolExecutionPolicy")
+        if (
+            request.name != "draft_create"
+            or request.name not in policy.allowed_tools
+        ):
+            raise ToolDeniedError("requested tool is not allowed in this flow")
 
         try:
             arguments = DraftCreateArguments.model_validate_json(
@@ -288,6 +334,12 @@ class DraftWriterTool:
             )
         except ValidationError as exc:
             raise ToolArgumentsError("draft_create arguments were rejected") from exc
+        if not set(arguments.references).issubset(
+            policy.allowed_knowledge_ids
+        ):
+            raise ToolDeniedError(
+                "draft references exceed the authorized scope"
+            )
         return DraftProposal.from_arguments(arguments)
 
     def create(

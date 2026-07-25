@@ -3,7 +3,9 @@ muy restringida.
 
 ## Responsabilidades
 
-- Validar `draft_create`.
+- Validar `draft_create` mediante un esquema cerrado.
+- Exigir una `ToolExecutionPolicy` que permita la herramienta y todas las
+  referencias incluidas en la propuesta.
 - Calcular una huella SHA-256 de la propuesta exacta.
 - Exigir una confirmación separada y consumirla una sola vez en proceso.
 - Crear un único Markdown nuevo dentro de `sandbox/drafts/`.
@@ -12,6 +14,7 @@ muy restringida.
 
 - No admite rutas, symlinks de directorio, sobrescritura o borrado.
 - No accede a red, shell o filesystem general.
+- Sin política explícita no prepara una propuesta.
 - No está conectado a la CLI ni al flujo benigno.
 - No autentica la identidad humana que el llamador declara.
 - `CMP-07` lo invoca solo desde pytest, bajo `$TMP`, para las fixtures
