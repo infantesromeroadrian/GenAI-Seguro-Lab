@@ -137,5 +137,6 @@ incorporar cualquiera de estos cambios:
 - escritura sobre datos o evidencia versionada;
 - Docker, cloud, almacenamiento externo, telemetría o sistema multiagente.
 
-PGS-02-M05 utilizará estas cadenas y rutas ausentes para enumerar abuse cases
-sin atribuir al modelo capacidades que hoy no posee.
+PGS-02-M05 materializa estas cadenas y rutas ausentes en el
+[catálogo `GSL-ABUSE-CASES-001`](./abuse-cases.md), sin atribuir al modelo
+capacidades que hoy no posee.

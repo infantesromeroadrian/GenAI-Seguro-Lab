@@ -18,6 +18,9 @@ real.
 - [Matriz de autoridad y consecuencias](./authority-matrix.md): cadenas
   verificadas entre actores, modelo, identidades, datos, herramientas, acciones
   y efectos máximos actuales, incluidas las rutas que no existen.
+- [Catálogo de abuse cases](./abuse-cases.md): 17 escenarios de prompt
+  injection, jailbreak, exfiltración, abuso de herramientas, disponibilidad y
+  supply chain, separados por alcanzabilidad actual y aún sin priorización.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

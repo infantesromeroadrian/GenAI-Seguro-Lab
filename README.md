@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M04, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las fuentes, el inventario, el mapa C4 y la matriz de autoridad ya están fijados. Todavía no existe un threat model completo, modelo GenAI real, perfil vulnerable, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M05, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las fuentes, el inventario, el mapa C4, la matriz de autoridad y el catálogo de abuse cases ya están fijados. Todavía no existe un threat model priorizado, modelo GenAI real, perfil vulnerable, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -63,6 +63,7 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 │   └── manifest.json
 ├── docs/
 │   ├── README.md
+│   ├── abuse-cases.md
 │   ├── authority-matrix.md
 │   ├── framework-versions.md
 │   └── system-inventory.md
@@ -296,7 +297,32 @@ hasta `C3` —mutación de mantenimiento— y registra las rutas que no existen:
 el modelo no ejecuta herramientas, la CLI no alcanza `DraftWriterTool`, la
 aplicación no escribe la baseline y no hay red, proveedor, shell o usuario
 remoto. Es una descripción del estado implementado, no una evaluación de
-riesgo; los abuse cases comienzan en PGS-02-M05.
+riesgo; su priorización comienza en PGS-02-M06.
+
+## Catálogo de abuse cases
+
+[docs/abuse-cases.md](./docs/abuse-cases.md) fija
+`GSL-ABUSE-CASES-001` con 17 escenarios derivados de la arquitectura y de la
+autoridad real:
+
+- 3 de prompt injection;
+- 2 de jailbreak;
+- 3 de exfiltración;
+- 5 de abuso de herramientas;
+- 3 de denegación de servicio;
+- 1 de supply chain y mantenimiento.
+
+El catálogo no asigna riesgo todavía. Separa un caso `SIN-RUTA`, nueve
+`INTERNO`, seis `MANTENIMIENTO` y uno `CLI`. Esto evita presentar como
+exposición activa una entrada que no existe o atribuir al modelo una
+modificación que exige permisos de Git/filesystem.
+
+Los hallazgos más relevantes son que la CLI no acepta prompts libres, que
+`TOL-01` permite construir pruebas internas de autorización, que
+`DraftWriterTool` sigue sin estar conectada pero acepta una confirmación exacta
+sin autenticar a la persona, y que la repetición de procesos es el único caso
+de disponibilidad alcanzable por la interfaz ordinaria. No se ejecutó ningún
+ataque en esta microtarea.
 
 ## Por qué existe
 
@@ -732,8 +758,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Inventariar usuarios, datos, modelo, herramientas, identidades, dependencias e infraestructura.
 - [x] Dibujar componentes, flujo de datos y trust boundaries.
 - [x] Crear la matriz de autoridad y consecuencias.
+- [x] Enumerar los abuse cases del sistema actual.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M04, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **17 de 66 microtareas (25,8 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M05 queda cerrada con el inventario y la matriz de autoridad.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M05, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **18 de 66 microtareas (27,3 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 avanza con el catálogo, pero sigue abierta hasta completar la priorización, los mapeos y las pruebas.
 
 ## Roadmap
 
@@ -743,7 +770,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-02-M05 — enumerar abuse cases de prompt injection, jailbreak, exfiltración, abuso de herramientas y denegación de servicio.**
+**PGS-02-M06 — priorizar los abuse cases por impacto, probabilidad y capacidad real del sistema.**
 
 ## Uso responsable
 
