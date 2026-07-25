@@ -48,6 +48,7 @@
       "meta": {
         "type": "system",
         "deployment": "local-only",
+        "mandatoryOutputPolicy": true,
         "runtimeExternalIntegrations": 0,
         "developmentIntegrations": 1
       }

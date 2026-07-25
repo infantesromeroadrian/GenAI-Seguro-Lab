@@ -5,12 +5,12 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYS-INV-001` |
-| Versión | `1.9.0` |
+| Versión | `2.0.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-04-M04 en esta revisión; el commit exacto se obtiene del historial Git |
+| Control vigente | PGS-04-M05 en esta revisión; el commit exacto se obtiene del historial Git |
 | Entorno | checkout local de desarrollo |
-| Alcance | estado implementado hasta PGS-04-M04, con baseline histórica PGS-03-M07 y publicación PGS-07-M08 |
+| Alcance | estado implementado hasta PGS-04-M05, con baseline histórica PGS-03-M07 y publicación PGS-07-M08 |
 
 Este documento inventaría el sistema que existe en el repositorio, no la
 solución futura descrita en el roadmap. PGS-03-M04/M05/M06 conectan 14 fixtures
@@ -22,6 +22,9 @@ del runtime ni introduce llamadas externas en la aplicación.
 PGS-04-M04 sustituye la confirmación literal por una autoridad local efímera
 que autentica un principal sintético y emite aprobaciones opacas. No añade una
 interfaz ni demuestra presencia o identidad de una persona real.
+PGS-04-M05 añade una política de salida propiedad de la aplicación: el resumen
+final y los borradores deben pasarla antes de entrega, huella o aprobación.
+Sus reglas son léxicas y acotadas y no acreditan detección universal.
 
 ## Convenciones de estado
 
@@ -54,7 +57,7 @@ ni procesos desatendidos.
 | `DAT-02` | 8 documentos de conocimiento | `synthetic_internal`; JSONL versionado | Lectura y validación completa por `CMP-02`; cada instancia de `TOL-01` retiene solo las referencias exactas del incidente | `data/knowledge.jsonl` |
 | `DAT-03` | Manifiesto del dataset | Sintético; JSON versionado con conteos, procedencia y SHA-256 | Lectura y validación por `CMP-02` | `data/manifest.json` |
 | `DAT-04` | Baseline funcional benigna | Evidencia JSON versionada; no es baseline de seguridad ni evaluación semántica | Se regenera por `CMP-05` y se compara de forma reproducible | `evaluations/benign-baseline-v1.json` |
-| `DAT-05` | Resultado de proceso | JSON efímero por `stdout` y error saneado por `stderr` | Emisión por `CMP-01`; no hay almacenamiento o logging persistente automático | `src/genai_seguro_lab/cli.py` |
+| `DAT-05` | Resultado de proceso | JSON efímero por `stdout` y error saneado por `stderr` | `CMP-09` permite o redacta el resumen antes de la emisión por `CMP-01`; no hay almacenamiento o logging persistente automático | `src/genai_seguro_lab/cli.py`, `src/genai_seguro_lab/output_policy.py` |
 | `DAT-06` | Borradores ficticios | Markdown sintético local; ignorado por Git | Creación exclusiva y no-follow por `TOL-02`, anclada al descriptor de `sandbox/drafts/` y con modo `0600`; actualmente no hay borradores generados en el checkout | `sandbox/drafts/` |
 | `DAT-07` | 18 entradas adversarias | `synthetic_internal`; JSONL versionado | `CMP-07` selecciona las 14 PI/JB/EX/TOL; las otras 4 permanecen `inert_not_wired`; la CLI ordinaria no expone el corpus | `data/adversarial/inputs.jsonl` |
 | `DAT-08` | 18 oráculos adversarios | `synthetic_internal`; JSONL versionado y fijado antes de ejecutar | Pytest los compara después de observar el target; nunca entran en la petición, el modelo o la herramienta | `data/adversarial/oracles.jsonl` |
@@ -82,15 +85,16 @@ descriptor no materializado que conserva
 |---|---|---|---|---|
 | `CMP-01` | Punto de entrada y CLI local | Expuesto | `main.py` ofrece únicamente `analyze` y `baseline`; ambas operaciones son de solo lectura y sin red | `main.py`, `src/genai_seguro_lab/cli.py` |
 | `CMP-02` | Contrato y cargador de datos | Expuesto para benigno; interno para adversario | `load_dataset()` entrega el corpus benigno a la CLI; `load_adversarial_corpus()` valida entradas y oráculos separados, cobertura, límites RoE, conteos y hashes, pero no interpreta ni ejecuta las fixtures | `src/genai_seguro_lab/data_contract.py`, `tests/test_adversarial_corpus.py` |
-| `CMP-03` | Flujo benigno | Expuesto | Coordina exactamente dos invocaciones de modelo, una petición de herramienta y una respuesta final; no hay bucle abierto ni reintento | `src/genai_seguro_lab/benign_flow.py` |
+| `CMP-03` | Flujo benigno | Expuesto | Coordina exactamente dos invocaciones de modelo, una petición de herramienta y una respuesta final; aplica `CMP-09` y sustituye las invocaciones brutas por una proyección segura antes de devolver el resultado | `src/genai_seguro_lab/benign_flow.py` |
 | `MOD-01` | `DeterministicModelAdapter` | Expuesto | Doble `deterministic/scripted-v1` en el mismo proceso; responde solo a peticiones guionizadas, falla cerrado, hace 0 llamadas externas y registra 0 € | `src/genai_seguro_lab/model_adapter.py` |
 | `TOL-01` | `KnowledgeSearchTool` | Expuesto | Se crea desde `KnowledgeCatalog` con la vista física exacta del incidente y un grant opaco de una sola herramienta ligado a principal, scope e instancia; no usa red ni filesystem | `src/genai_seguro_lab/local_tools.py` |
-| `TOL-02` | `DraftWriterTool` y `DraftApprovalAuthority` | Interno | Separa preparación, challenge, autenticación sintética, aprobación y grant de efecto. Challenge, aprobación y grant son efímeros, de un solo uso y quedan ligados a identidad configurada, propuesta, principal, scope, herramienta, efecto, writer, sesión y raíz. La creación usa descriptor, `O_EXCL`, `O_NOFOLLOW` y modo `0600` | `src/genai_seguro_lab/local_tools.py`, `tests/test_local_tools.py` |
+| `TOL-02` | `DraftWriterTool` y `DraftApprovalAuthority` | Interno | Aplica `CMP-09` antes de propuesta y huella y después separa preparación, challenge, autenticación sintética, aprobación y grant de efecto. Challenge, aprobación y grant son efímeros, de un solo uso y quedan ligados al contexto exacto. La creación usa descriptor, `O_EXCL`, `O_NOFOLLOW` y modo `0600` | `src/genai_seguro_lab/local_tools.py`, `tests/test_local_tools.py` |
 | `CMP-04` | Constructor de escenarios deterministas | Expuesto | Construye los intercambios guionizados para los incidentes benignos; no es un proveedor GenAI | `src/genai_seguro_lab/baseline.py` |
 | `CMP-05` | Ejecutor de baseline funcional | Expuesto | Ejecuta los 12 incidentes y serializa evidencia canónica por `stdout`; no escribe el snapshot por sí mismo | `src/genai_seguro_lab/baseline.py` |
 | `CMP-06` | Perfil vulnerable de evaluación | Interno | Requiere una declaración exacta de `GSL-ROE-001`, el bundle sintético y un `$TMP/sandbox/drafts`; construye una `ModelRequest` débil marcada, pero no llama al modelo, ejecuta herramientas ni escribe | `src/genai_seguro_lab/evaluation_profile.py`, `tests/test_evaluation_profile.py` |
 | `CMP-07` | Harness adversario acotado | Interno de test | Selecciona exactamente 14 fixtures PI/JB/EX/TOL; combina copias y sandboxes `$TMP`, grants lógicos, dobles deterministas, guardas de `CMP-03`, rechazos de `TOL-01`, pruebas confinadas de `TOL-02` y un subproceso con tres variables ambientales permitidas. En el checkout actual `AC-TOL-05` rechaza la confirmación literal y crea cero archivos | `src/genai_seguro_lab/evaluation_harness.py`, `tests/test_prompt_injection_evaluation.py`, `tests/test_jailbreak_disclosure_evaluation.py`, `tests/test_tool_abuse_evaluation.py` |
 | `CMP-08` | Runner de baseline adversaria histórica | Soporte interno | Reproduce exclusivamente el candidato histórico `93aefa45eac687d219bfed32f03be4e60e4a13ed`; verifica commit, rama y limpieza, impone la autorización y presupuestos y escribe evidencia bruta solo bajo `$TMP`. Rechaza otro candidato para no atribuir el oráculo histórico al código endurecido | `src/genai_seguro_lab/adversarial_baseline.py`, `evaluations/run_adversarial_baseline.py`, `tests/test_adversarial_baseline.py` |
+| `CMP-09` | `OutputPolicy` | Control de aplicación | Dependencia obligatoria y sin autoridad de modelo, red o filesystem. Rechaza categorías explícitas, redacta correo y rutas locales, emite sellos ligados a instancia/canal y no conserva valores en su evidencia | `src/genai_seguro_lab/output_policy.py`, `tests/test_output_policy.py` |
 
 `MOD-01` es el único modelo activo, pero no es un modelo GenAI real. Tampoco
 hay un agente autónomo: `CMP-03` es un flujo acotado y determinista con una sola
@@ -161,11 +165,14 @@ consulta durante la ejecución y, por tanto, no es una dependencia del sistema.
    incidente y emite un grant `IDN-05` independiente del catálogo anunciado.
 6. `TOL-01` acepta una única consulta con ese principal, scope e instancia.
 7. `CMP-03` devuelve ese resultado a `MOD-01` y exige una respuesta final.
-8. `CMP-01` emite `DAT-05`. En modo `baseline`, el ciclo se repite para los 12
+8. `CMP-03` valida consistencia, aplica `CMP-09` al resumen y conserva solo una
+   proyección segura de las invocaciones.
+9. `CMP-01` emite `DAT-05`. En modo `baseline`, el ciclo se repite para los 12
    casos; la CLI no escribe automáticamente `DAT-04`.
 
-El flujo interno de borradores es independiente: `TOL-02` prepara una
-propuesta sin efecto, emite un challenge opaco y exige que
+El flujo interno de borradores es independiente: `TOL-02` valida referencias,
+aplica `CMP-09` a título y cuerpo y prepara con ese contenido una propuesta sin
+efecto. Después emite un challenge opaco y exige que
 `DraftApprovalAuthority` autentique el principal sintético configurado. La
 aprobación y el grant quedan ligados a contenido, principal, scope,
 herramienta, efecto, writer, sesión y raíz, caducan y se consumen una sola vez
@@ -226,6 +233,8 @@ reclasifica aquí como un requisito pendiente.
   GenAI real.
 - `DAT-05` no deja un audit trail persistente; `DAT-04` es una instantánea
   funcional y `DAT-10` a `DAT-13` evidencia adversaria versionada manualmente.
+- `CMP-09` solo cubre reglas explícitas. No sustituye detección contextual,
+  moderación completa, retest adversario ni evaluación con un modelo real.
 - La ausencia de red y proveedor elimina esas superficies del sistema actual,
   pero deberán inventariarse de nuevo si se incorporan.
 - La baseline adversaria solo acredita las observaciones de las 14 variantes

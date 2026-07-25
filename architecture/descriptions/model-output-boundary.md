@@ -15,10 +15,12 @@ de la aplicación.
   una petición desconocida.
 - Una solicitud de herramienta conserva su nombre como dato bruto para poder
   observar y rechazar nombres desconocidos; no concede autoridad de ejecución.
+- La respuesta final continúa siendo transporte bruto hasta que `CMP-03`
+  valida su consistencia y `CMP-09` permite o redacta el resumen.
 
 ## Límite
 
 El adaptador actual es determinista y está en el mismo proceso. La frontera es
 lógica y deberá revisarse y probarse de nuevo si se incorpora un proveedor
-real. La validación estructural no sustituye el filtrado de contenido de
-PGS-04-M05.
+real. `CMP-09` añade reglas léxicas explícitas, pero no sustituye moderación
+contextual, retest ni evaluación con un modelo real.

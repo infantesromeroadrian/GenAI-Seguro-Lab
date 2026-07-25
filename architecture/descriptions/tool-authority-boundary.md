@@ -11,6 +11,8 @@ local.
   o un ID no retenido falla cerrado.
 - `TOL-02` registra la propuesta en su instancia y exige otro grant de efecto,
   ligado a propuesta y raíz, antes de crear.
+- Antes del registro y la huella, `TOL-02` exige que `CMP-09` controle título y
+  cuerpo; la aprobación liga únicamente ese contenido saneado.
 - `DraftApprovalAuthority` autentica una identidad sintética, emite tokens
   opacos con TTL y liga identidad, propuesta, principal, scope, herramienta,
   efecto, writer, sesión y raíz.

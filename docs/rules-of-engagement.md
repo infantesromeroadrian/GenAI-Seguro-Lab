@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `1.7.0` |
+| Versión | `1.8.0` |
 | Fecha de entrada en vigor | 2026-07-26 |
 | Baseline técnica de origen | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
@@ -290,6 +290,7 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-15` | PGS-03-M06 debe quedar limitada a los cinco casos TOL | La autorización exige cinco IDs, datos sintéticos, 15 s, hasta 3 escenarios, 2 turnos y 2 solicitudes por escenario, 0 subprocesos y como máximo 1 archivo temporal; el único efecto permitido es el residual `ADV-TOL-005` |
 | `ROE-16` | PGS-03-M07 debe ejecutar un candidato limpio y conservar solo evidencia saneada | `CMP-08` exige commit y rama exactos, 14 IDs, 600 s totales, 15 s por caso, 1 proceso objetivo, 512 MiB RSS, 25 MiB temporales, 1 archivo de efecto, 0 red y 0 mutación canónica; los artefactos revisados excluyen payloads, salida bruta, traceback y rutas personales |
 | `ROE-17` | PGS-04-M04 no debe reinterpretar la baseline histórica | El runner acepta solo el commit `93aefa45`; el checkout actual conserva corpus y evidencia byte a byte y prueba por separado que `ADV-TOL-005` rechaza el literal con cero archivos |
+| `ROE-18` | PGS-04-M05 no debe presentarse como retest adversario | `CMP-09` se verifica con fixtures unitarias e integración local; corpus, oráculos y evidencia histórica permanecen inmutables y la eficacia comparativa se reserva a PGS-05 |
 
 ## Disparadores de revisión
 

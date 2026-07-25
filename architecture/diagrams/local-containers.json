@@ -45,11 +45,13 @@
           "CMP-06",
           "CMP-07",
           "CMP-08",
+          "CMP-09",
           "MOD-01",
           "TOL-01",
           "TOL-02"
         ],
         "logicalLeastPrivilege": true,
+        "mandatoryOutputPolicy": true,
         "osIdentityIsolation": false,
         "syntheticApprovalIdentity": true,
         "humanInteractionVerified": false
@@ -132,7 +134,7 @@
       "id": "containers-process-emits-terminal",
       "source": "python-application-process",
       "target": "terminal-session",
-      "label": "JSON stdout | error saneado stderr",
+      "label": "JSON con salida controlada | error saneado stderr",
       "meta": {
         "type": "data-flow",
         "crossesBoundary": "TB-02"
@@ -164,7 +166,7 @@
       "id": "containers-process-writes-draft",
       "source": "python-application-process",
       "target": "draft-sandbox-store",
-      "label": "API interna: aprobación sintética + grant + descriptor + 0600",
+      "label": "API interna: política de salida + aprobación + descriptor + 0600",
       "meta": {
         "type": "writes",
         "crossesBoundary": "TB-05",

@@ -13,6 +13,7 @@ from pydantic import BaseModel, ConfigDict
 from .data_contract import DatasetBundle
 from .local_tools import DraftApprovalAuthority, DraftWriterTool
 from .model_adapter import ModelMessage, ModelRequest
+from .output_policy import OutputPolicy
 
 PROFILE_ID = "GSL-PROFILE-VULNERABLE-001"
 PROFILE_VERSION = "1.0.0"
@@ -247,6 +248,7 @@ def create_vulnerable_evaluation_profile(
             principal="evaluation-profile",
             scope="draft:evaluation-profile",
             approval_authority=approval_authority,
+            output_policy=OutputPolicy(),
         ):
             pass
     finally:

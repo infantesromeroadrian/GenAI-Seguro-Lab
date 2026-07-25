@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-04-M04, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria histórica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`; su evidencia permanece inmutable. El checkout actual rechaza el literal de `ADV-TOL-005` antes de I/O mediante una aprobación sintética autenticada, ligada y de un solo uso. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-04-M05, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria histórica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`; su evidencia permanece inmutable. El checkout actual exige aprobación sintética para efectos y aplica una política de salida obligatoria antes de devolver un resumen o aprobar un borrador. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
 
 ## En una frase
 
@@ -46,7 +46,8 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │       ├── evaluation_harness.py
 │       ├── evaluation_profile.py
 │       ├── local_tools.py
-│       └── model_adapter.py
+│       ├── model_adapter.py
+│       └── output_policy.py
 ├── tests/
 │   ├── README.md
 │   ├── test_benign_flow.py
@@ -57,6 +58,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── test_adversarial_baseline.py
 │   ├── test_local_tools.py
 │   ├── test_model_adapter.py
+│   ├── test_output_policy.py
 │   ├── test_validation_policy.py
 │   ├── test_jailbreak_disclosure_evaluation.py
 │   ├── test_prompt_injection_evaluation.py
@@ -89,6 +91,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── control-responsibility-mapping.md
 │   ├── framework-versions.md
 │   ├── least-privilege-policy.md
+│   ├── output-safety-policy.md
 │   ├── risk-prioritization.md
 │   ├── rules-of-engagement.md
 │   ├── system-inventory.md
@@ -100,7 +103,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
         └── README.md
 ```
 
-PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado, PGS-03-M03 prepara el corpus adversario, PGS-03-M04/M05/M06 conectan 14 fixtures PI/JB/EX/TOL a pruebas internas, PGS-03-M07 fija su primera ejecución canónica y PGS-04-M01/M02/M03 separan dominios de confianza, validan esquemas y aplican mínimo privilegio lógico. Todavía no existe un modelo GenAI real.
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado, PGS-03-M03 prepara el corpus adversario, PGS-03-M04/M05/M06 conectan 14 fixtures PI/JB/EX/TOL a pruebas internas, PGS-03-M07 fija su primera ejecución canónica y PGS-04-M01 a M05 separan dominios de confianza, validan esquemas, aplican mínimo privilegio, exigen aprobación de efectos y controlan la salida. Todavía no existe un modelo GenAI real.
 
 ## Entorno reproducible
 
@@ -221,16 +224,19 @@ incidente sintético
   verificada fuera del modelo. No demuestra presencia o identidad de una
   persona real: esa frontera pertenecerá a una futura interfaz/autenticador.
 
-Este control estructura la frontera del doble determinista actual; todavía no
-demuestra resistencia de un modelo GenAI real ni sustituye los filtros de
-contenido de PGS-04-M05. La política completa está en
+Estos controles estructuran la frontera del doble determinista actual. La
+salida final y los borradores atraviesan además una política de aplicación con
+precedencia `reject > redact > allow`; los borradores se sanean antes de su
+huella y aprobación. Esto no demuestra resistencia de un modelo GenAI real ni
+detección universal de contenido sensible. Los contratos completos están en
 [Política de validación y allowlists](./docs/validation-policy.md).
-El contrato de autoridad y sus límites están en
+[Política de seguridad de salida](./docs/output-safety-policy.md) define las
+reglas, canales y límites. El contrato de autoridad está en
 [Política de mínimo privilegio](./docs/least-privilege-policy.md).
 Comprobación específica:
 
 ```bash
-uv run --frozen pytest tests/test_instruction_boundary.py tests/test_benign_flow.py tests/test_local_tools.py tests/test_validation_policy.py
+uv run --frozen pytest tests/test_instruction_boundary.py tests/test_benign_flow.py tests/test_local_tools.py tests/test_output_policy.py tests/test_validation_policy.py
 ```
 
 ## Interfaz local y baseline funcional
@@ -725,7 +731,8 @@ Si la arquitectura cambia, el threat model deberá revisarse antes de ampliar la
   **implementado en PGS-04-M03**; el aislamiento de SO sigue abierto.
 - Aprobación sintética autenticada, ligada, efímera y de un solo uso
   **implementada en PGS-04-M04**; la presencia humana real sigue abierta.
-- Filtrado y redacción de información sensible.
+- Política de salida, filtros y redacción acotada
+  **implementados en PGS-04-M05**; no constituyen detección universal.
 - Límites de tamaño, tiempo, iteraciones y consumo.
 - Registro de decisiones y eventos de seguridad.
 - Parada segura y recuperación del sandbox.
@@ -993,9 +1000,10 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Validar entradas, salidas y argumentos de herramientas mediante esquemas y allowlists.
 - [x] Aplicar mínimo privilegio a identidades, datos y herramientas.
 - [x] Exigir una aprobación sintética autenticada, ligada y de un solo uso para efectos.
+- [x] Incorporar filtros, redacción de datos y una política de salida obligatoria.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
 
-**PGS-00-M01 a PGS-04-M04, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **34 de 66 microtareas (51,5 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
+**PGS-00-M01 a PGS-04-M05, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **35 de 66 microtareas (53,0 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
 
 ## Roadmap
 
@@ -1005,7 +1013,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-04-M05 — incorporar filtros, redacción de datos y política de salida.**
+**PGS-04-M06 — añadir límites de tamaño, tiempo, iteraciones y consumo.**
 
 ## Uso responsable
 

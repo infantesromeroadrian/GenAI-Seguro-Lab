@@ -19,11 +19,13 @@ from .local_tools import (
 )
 from .model_adapter import (
     ModelAdapter,
+    ModelDescriptor,
     ModelMessage,
     ModelRequest,
     ModelResult,
     ModelToolRequest,
 )
+from .output_policy import OutputPolicy, PolicyDecisionMetadata
 
 Text = Annotated[str, Field(min_length=1)]
 
@@ -86,6 +88,64 @@ class BenignFinalOutput(FlowSchema):
         return value
 
 
+class SafeModelInvocation(FlowSchema):
+    """Proyección sin la petición ni la respuesta bruta del modelo."""
+
+    descriptor: ModelDescriptor
+    request_id: Text
+    request_fingerprint: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+    finish_reason: Literal["stop", "tool_request"]
+    tool_request_count: Annotated[int, Field(ge=0, le=2)]
+
+    @classmethod
+    def from_result(cls, result: ModelResult) -> SafeModelInvocation:
+        if not isinstance(result, ModelResult):
+            raise TypeError("result must be a ModelResult")
+        return cls(
+            descriptor=result.descriptor,
+            request_id=result.request_id,
+            request_fingerprint=result.request_fingerprint,
+            finish_reason=result.response.finish_reason,
+            tool_request_count=len(result.response.tool_requests),
+        )
+
+
+class PolicyRedactionEvidence(FlowSchema):
+    category: Literal["email", "local_path"]
+    count: Annotated[int, Field(ge=1)]
+
+
+class OutputPolicyEvidence(FlowSchema):
+    """Evidencia sin valores sobre la política aplicada al resumen."""
+
+    policy_id: Literal["GSL-OUTPUT-POLICY-001"]
+    policy_version: Literal["1.0.0"]
+    channel: Literal["final_summary"]
+    decision: Literal["allow", "redact"]
+    redaction_categories: tuple[Literal["email", "local_path"], ...]
+    redaction_counts: tuple[PolicyRedactionEvidence, ...]
+
+    @classmethod
+    def from_metadata(
+        cls,
+        metadata: PolicyDecisionMetadata,
+    ) -> OutputPolicyEvidence:
+        return cls(
+            policy_id=metadata.policy_id,
+            policy_version=metadata.policy_version,
+            channel="final_summary",
+            decision=metadata.decision,
+            redaction_categories=metadata.redaction_categories,
+            redaction_counts=tuple(
+                PolicyRedactionEvidence(
+                    category=item.category,
+                    count=item.count,
+                )
+                for item in metadata.redaction_counts
+            ),
+        )
+
+
 def canonical_flow_json(document: FlowSchema) -> str:
     """Serializa un sobre validado con representación estable."""
 
@@ -104,9 +164,10 @@ class BenignAnalysisResult(FlowSchema):
     output: BenignFinalOutput
     knowledge: KnowledgeSearchResult
     invocations: Annotated[
-        tuple[ModelResult, ...],
+        tuple[SafeModelInvocation, ...],
         Field(min_length=2, max_length=2),
     ]
+    output_policy: OutputPolicyEvidence
 
     @property
     def output_text(self) -> str:
@@ -120,13 +181,18 @@ class BenignAnalysisFlow:
         self,
         adapter: ModelAdapter,
         knowledge_catalog: KnowledgeCatalog,
+        *,
+        output_policy: OutputPolicy,
     ) -> None:
         if not isinstance(adapter, ModelAdapter):
             raise TypeError("adapter must implement ModelAdapter")
         if not isinstance(knowledge_catalog, KnowledgeCatalog):
             raise TypeError("knowledge_catalog must be a KnowledgeCatalog")
+        if not isinstance(output_policy, OutputPolicy):
+            raise TypeError("output_policy must be an OutputPolicy")
         self._adapter = adapter
         self._knowledge_catalog = knowledge_catalog
+        self._output_policy = output_policy
 
     @staticmethod
     def build_initial_request(incident: IncidentRecord) -> ModelRequest:
@@ -269,10 +335,30 @@ class BenignAnalysisFlow:
             raise BenignFlowError(
                 "the final model output exceeds authorized knowledge"
             )
+        checked_summary = self._output_policy.check(
+            output.summary,
+            channel="final_summary",
+        )
+        safe_output = BenignFinalOutput(
+            incident_id=output.incident_id,
+            summary=self._output_policy.unwrap(
+                checked_summary,
+                channel="final_summary",
+            ),
+            knowledge_ids=output.knowledge_ids,
+            actions_executed=output.actions_executed,
+            compromise_confirmed=output.compromise_confirmed,
+        )
 
         return BenignAnalysisResult(
             incident_id=incident.id,
-            output=output,
+            output=safe_output,
             knowledge=knowledge,
-            invocations=(first, second),
+            invocations=(
+                SafeModelInvocation.from_result(first),
+                SafeModelInvocation.from_result(second),
+            ),
+            output_policy=OutputPolicyEvidence.from_metadata(
+                checked_summary.metadata
+            ),
         )

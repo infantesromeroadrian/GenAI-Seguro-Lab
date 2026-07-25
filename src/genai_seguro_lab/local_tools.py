@@ -34,6 +34,7 @@ from .data_contract import (
     KnowledgeRecord,
 )
 from .model_adapter import KnownToolName, ModelToolRequest
+from .output_policy import OutputPolicy
 
 Text = Annotated[str, Field(min_length=1)]
 Query = Annotated[
@@ -1168,6 +1169,7 @@ class DraftWriterTool:
         principal: str,
         scope: str,
         approval_authority: DraftApprovalAuthority,
+        output_policy: OutputPolicy,
         allowed_knowledge_ids: tuple[str, ...] = (),
     ) -> None:
         if not isinstance(drafts_dir, Path):
@@ -1176,6 +1178,8 @@ class DraftWriterTool:
             raise TypeError(
                 "approval_authority must be a DraftApprovalAuthority"
             )
+        if not isinstance(output_policy, OutputPolicy):
+            raise TypeError("output_policy must be an OutputPolicy")
         if not drafts_dir.is_absolute():
             raise ValueError("drafts_dir must be absolute")
         if drafts_dir.name != "drafts" or drafts_dir.parent.name != "sandbox":
@@ -1219,6 +1223,7 @@ class DraftWriterTool:
         self._scope = scope
         self._binding = object()
         self._approval_authority = approval_authority
+        self._output_policy = output_policy
         try:
             self._prepare_grant = _issue_tool_grant(
                 principal=principal,
@@ -1299,7 +1304,32 @@ class DraftWriterTool:
                 raise ToolDeniedError(
                     "draft references exceed the authorized scope"
                 )
-            proposal = DraftProposal.from_arguments(arguments)
+            checked_title = self._output_policy.check(
+                arguments.title,
+                channel="draft_title",
+            )
+            checked_body = self._output_policy.check(
+                arguments.body,
+                channel="draft_body",
+            )
+            try:
+                safe_arguments = DraftCreateArguments(
+                    filename=arguments.filename,
+                    title=self._output_policy.unwrap(
+                        checked_title,
+                        channel="draft_title",
+                    ),
+                    body=self._output_policy.unwrap(
+                        checked_body,
+                        channel="draft_body",
+                    ),
+                    references=arguments.references,
+                )
+            except ValidationError:
+                raise ToolArgumentsError(
+                    "draft_create arguments were rejected"
+                ) from None
+            proposal = DraftProposal.from_arguments(safe_arguments)
             self._prepared[id(proposal)] = proposal
             return proposal
 

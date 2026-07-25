@@ -1,9 +1,9 @@
 # Política de validación y allowlists
 
 - **ID:** `GSL-VALIDATION-POLICY-001`
-- **Versión:** 1.2
+- **Versión:** 1.3
 - **Fecha:** 2026-07-26
-- **Microtareas:** PGS-04-M02 a PGS-04-M04
+- **Microtareas:** PGS-04-M02 a PGS-04-M05
 - **Ámbito:** flujo benigno determinista y herramientas locales
 
 ## Objetivo
@@ -53,10 +53,12 @@ JSON válido conforme a `BenignFinalOutput`:
 | `actions_executed` | Solo admite `false` |
 | `compromise_confirmed` | Solo admite `false` |
 
-Los campos adicionales y el texto libre fallan cerrados. Esta validación
-impide atribuir efectos o conocimiento no autorizados, pero no determina si el
-resumen es veraz, seguro o está correctamente redactado; esa política de
-contenido pertenece a PGS-04-M05.
+Los campos adicionales y el texto libre fallan cerrados. Tras estas
+comprobaciones, `CMP-09` aplica `GSL-OUTPUT-POLICY-001` al resumen: rechaza
+categorías explícitas de alta señal, redacta correo y rutas locales y emite
+evidencia sin valores. `BenignAnalysisResult.invocations` conserva solo una
+proyección de métricas y no la petición o respuesta brutas. Esta política es
+léxica y acotada; no demuestra veracidad ni detección universal.
 
 ## Validación y autoridad de herramientas
 
@@ -99,7 +101,9 @@ La preparación de un borrador solo se acepta cuando:
 1. el grant de preparación pertenece a la instancia y permite únicamente
    `draft_create`;
 2. los argumentos cumplen `DraftCreateArguments`;
-3. todas las referencias de la propuesta están en el scope autorizado.
+3. todas las referencias de la propuesta están en el scope autorizado;
+4. `CMP-09` permite o redacta título y cuerpo antes de crear la propuesta y
+   calcular su huella.
 
 El grant de preparación no concede permiso para escribir. La creación exige
 un challenge opaco, autenticación de la identidad sintética configurada y una
@@ -117,6 +121,8 @@ sola vez antes de I/O. Este mecanismo no verifica presencia humana real.
 | Grant fabricado o scope que no pertenece a la instancia | `ToolPolicyError` o `ToolDeniedError` |
 | Credencial, challenge, aprobación o grant de efecto inválidos | `DraftApprovalError` |
 | Salida final sin esquema o inconsistente con la ejecución | `BenignFlowError` |
+| Contenido rechazado por la política de salida | `OutputPolicyRejectedError` genérico, sin reflejar el valor |
+| Sello de política fabricado, cruzado o de otro canal | `PolicyCheckedTextError` |
 
 Los errores no incluyen el contenido adversario ni habilitan una segunda
 herramienta, un reintento o una ruta alternativa.
@@ -130,6 +136,8 @@ herramienta, un reintento o una ruta alternativa.
 - `tests/test_local_tools.py`: esquemas, política obligatoria, alcance de datos
   y referencias de borrador, además de los grants ligados por M03.
 - `tests/test_benign_flow.py`: integración del ciclo completo.
+- `tests/test_output_policy.py`: precedencia, reglas, redacción, opacidad y
+  binding del sello de salida.
 - `tests/test_instruction_boundary.py`: conservación de las clases de
   confianza.
 
@@ -146,6 +154,8 @@ esta microtarea.
   `IDN-01` conserva los permisos de la cuenta macOS.
 - PGS-04-M04 autentica un principal sintético local; una futura interfaz debe
   añadir presencia e identidad humanas reales.
-- PGS-04-M05 debe filtrar y redactar contenido.
+- PGS-04-M05 filtra y redacta categorías explícitas, pero no detecta de forma
+  universal secretos codificados, PII, homoglifos, paráfrasis o contenido
+  activo.
 - PGS-04-M06 debe imponer límites preventivos de recursos.
 - PGS-05 debe repetir el mismo corpus y medir el control frente a la baseline.

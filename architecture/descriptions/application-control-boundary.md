@@ -4,13 +4,15 @@ del modelo.
 ## Trust boundary
 
 - ID: `TB-02`.
-- Incluye CLI, contrato de datos, flujo benigno, motor de baseline, perfil
-  vulnerable de evaluación, harness adversario interno y runner canónico.
+- Incluye CLI, contrato de datos, flujo benigno, motor de baseline, política
+  de salida, perfil vulnerable, harness adversario y runner canónico.
 - Decide qué datos se cargan, qué herramienta se autoriza y cuándo termina el
   flujo.
 - Emite un principal y scope lógicos por operación y no deriva la autoridad
   ejecutable del catálogo anunciado al modelo.
 - Proyecta para `TOL-01` únicamente las referencias del incidente validado.
+- Exige `CMP-09` antes de devolver un resumen o ligar un borrador a una
+  aprobación.
 - El harness selecciona solo 14 fixtures PI/JB/EX/TOL y nunca entrega el
   oráculo al target.
 - `CMP-08` exige exclusivamente el commit histórico limpio, aplica los

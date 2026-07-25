@@ -191,6 +191,31 @@
       }
     },
     {
+      "id": "output-safety-policy",
+      "label": "CMP-09 · Política de salida",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/output_policy.py",
+      "meta": {
+        "type": "service",
+        "technology": "python-stdlib",
+        "inventoryIds": [
+          "CMP-09"
+        ],
+        "state": "application-control",
+        "policyId": "GSL-OUTPUT-POLICY-001",
+        "policyVersion": "1.0.0",
+        "channels": [
+          "final_summary",
+          "draft_title",
+          "draft_body"
+        ],
+        "precedence": "reject-redact-allow",
+        "externalCalls": false,
+        "modelConfigurable": false,
+        "universalDetection": false
+      }
+    },
+    {
       "id": "deterministic-model",
       "label": "MOD-01 · Modelo determinista",
       "parentId": "model-output-boundary",
@@ -356,17 +381,28 @@
       "id": "components-model-returns-final",
       "source": "deterministic-model",
       "target": "benign-flow",
-      "label": "ModelResponse final tipada",
+      "label": "ModelResponse final tipada, bruta y no confiable",
       "meta": {
         "type": "data-flow",
         "crossesBoundary": "TB-03"
       }
     },
     {
+      "id": "components-flow-checks-output-policy",
+      "source": "benign-flow",
+      "target": "output-safety-policy",
+      "label": "check(final_summary) antes de devolver",
+      "meta": {
+        "type": "calls",
+        "policyRequired": true,
+        "rawTextPersisted": false
+      }
+    },
+    {
       "id": "components-flow-returns-analysis",
       "source": "benign-flow",
       "target": "baseline-engine",
-      "label": "BenignAnalysisResult",
+      "label": "BenignAnalysisResult: resumen controlado + métricas seguras",
       "meta": {
         "type": "data-flow"
       }
@@ -477,6 +513,18 @@
         "maxEffectFiles": 1,
         "cliReachable": false,
         "canonicalEvidence": false
+      }
+    },
+    {
+      "id": "components-writer-checks-output-policy",
+      "source": "draft-writer",
+      "target": "output-safety-policy",
+      "label": "check(title/body) antes de propuesta, huella y aprobación",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-04",
+        "policyRequired": true,
+        "sanitizeBeforeFingerprint": true
       }
     },
     {

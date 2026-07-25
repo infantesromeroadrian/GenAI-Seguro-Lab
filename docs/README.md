@@ -51,6 +51,9 @@ real.
   scopes lógicos, proyección de conocimiento, grants de herramienta y efecto,
   aprobación sintética autenticada, entorno mínimo de subproceso y límites de
   PGS-04-M03/M04.
+- [Política de seguridad de salida](./output-safety-policy.md): canales
+  cerrados, precedencia de rechazo, redacción determinista, binding opaco,
+  inserción antes de entrega o aprobación y límites de PGS-04-M05.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

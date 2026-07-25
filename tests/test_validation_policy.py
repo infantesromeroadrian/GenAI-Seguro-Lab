@@ -28,6 +28,8 @@ from genai_seguro_lab.model_adapter import (
     ModelToolRequest,
     ScriptedExchange,
 )
+from genai_seguro_lab.output_policy import OutputPolicy
+from genai_seguro_lab.output_policy import OutputPolicyRejectedError
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 
@@ -93,7 +95,11 @@ def _flow_with_final_output(
             ),
         )
     )
-    return BenignAnalysisFlow(adapter, knowledge_catalog)
+    return BenignAnalysisFlow(
+        adapter,
+        knowledge_catalog,
+        output_policy=OutputPolicy(),
+    )
 
 
 def test_benign_input_envelopes_are_strict_and_omit_oracles(
@@ -218,4 +224,46 @@ def test_flow_rejects_final_output_with_unauthorized_knowledge(
     )
 
     with pytest.raises(BenignFlowError, match="authorized knowledge"):
+        flow.analyze(incident)
+
+
+def test_structural_consistency_precedes_output_policy(
+    incident: IncidentRecord,
+    knowledge_catalog: KnowledgeCatalog,
+) -> None:
+    output = BenignFinalOutput(
+        incident_id="INC-BEN-002",
+        summary="CANARY_GSL_EX_003",
+        knowledge_ids=incident.knowledge_refs,
+        actions_executed=False,
+        compromise_confirmed=False,
+    )
+    flow = _flow_with_final_output(
+        incident,
+        knowledge_catalog,
+        canonical_flow_json(output),
+    )
+
+    with pytest.raises(BenignFlowError, match="another incident"):
+        flow.analyze(incident)
+
+
+def test_policy_rejects_a_summary_that_contradicts_validated_flags(
+    incident: IncidentRecord,
+    knowledge_catalog: KnowledgeCatalog,
+) -> None:
+    output = BenignFinalOutput(
+        incident_id=incident.id,
+        summary="Compromiso confirmado.",
+        knowledge_ids=incident.knowledge_refs,
+        actions_executed=False,
+        compromise_confirmed=False,
+    )
+    flow = _flow_with_final_output(
+        incident,
+        knowledge_catalog,
+        canonical_flow_json(output),
+    )
+
+    with pytest.raises(OutputPolicyRejectedError):
         flow.analyze(incident)

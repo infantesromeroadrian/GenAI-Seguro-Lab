@@ -10,6 +10,8 @@ Orquesta un ciclo fijo de modelo, búsqueda autorizada y respuesta final.
   invocación.
 - Validar que la salida final pertenece al incidente y solo cita los
   documentos realmente devueltos por la búsqueda.
+- Aplicar `CMP-09` al resumen y sustituir las invocaciones brutas por una
+  proyección de métricas antes de devolver el resultado.
 
 ## Restricciones
 
@@ -18,6 +20,7 @@ Orquesta un ciclo fijo de modelo, búsqueda autorizada y respuesta final.
 - El catálogo anunciado al modelo no concede ni amplía el grant.
 - Sin bucles abiertos o reintentos.
 - Sin ruta hacia `DraftWriterTool`.
+- La política de salida es obligatoria y no puede configurarla el modelo.
 - Cualquier salida libre, campo adicional, afirmación de efecto o referencia
   fuera de alcance falla cerrada.
 

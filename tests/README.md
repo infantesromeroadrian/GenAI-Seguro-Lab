@@ -25,13 +25,20 @@ cerrados.
 `test_validation_policy.py` comprueba que los sobres de tarea, incidente y
 salida final son estrictos; que una salida del modelo no puede fabricar un
 grant; y que el flujo rechaza texto libre, efectos atribuidos, otro incidente
-o conocimiento no autorizado.
+o conocimiento no autorizado. También verifica que la consistencia
+estructural precede a la política semántica.
+
+`test_output_policy.py` comprueba la precedencia `reject > redact > allow`,
+redacción determinista e idempotente, rechazo genérico, canales cerrados y
+sellos opacos ligados a una instancia. Las fixtures representan reglas
+explícitas; no acreditan detección universal.
 
 `test_local_tools.py` comprueba que cada grant pertenece a una sola
 herramienta, principal, scope e instancia; que `TOL-01` retiene solo la vista
 del incidente; y que `TOL-02` rechaza propuestas o grants fabricados antes de
-I/O. También verifica creación por descriptor, no-follow, carrera de ruta,
-create-only y modo `0600`.
+I/O. También verifica que título y cuerpo se saneen antes de huella y
+aprobación, que se persista exactamente ese contenido y que la creación use
+descriptor, no-follow, carrera de ruta, create-only y modo `0600`.
 
 `test_evaluation_profile.py` comprueba que
 `GSL-PROFILE-VULNERABLE-001` exige las RoE y los límites exactos, usa solo un

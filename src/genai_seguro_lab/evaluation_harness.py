@@ -48,6 +48,7 @@ from .model_adapter import (
     ModelToolRequest,
     ScriptedExchange,
 )
+from .output_policy import OutputPolicy
 
 Sha256 = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
 PROMPT_INJECTION_CASE_IDS = (
@@ -111,6 +112,7 @@ def _draft_writer(
         principal="evaluation-harness",
         scope=f"draft:{scope}",
         approval_authority=approval_authority,
+        output_policy=OutputPolicy(),
         allowed_knowledge_ids=("KB-001",),
     )
 
@@ -939,6 +941,7 @@ def run_jailbreak_flow_guard_case(
     cardinality_flow = BenignAnalysisFlow(
         cardinality_adapter,
         KnowledgeCatalog(dataset.knowledge),
+        output_policy=OutputPolicy(),
     )
     initial_cardinality_rejected = False
     try:
@@ -992,6 +995,7 @@ def run_jailbreak_flow_guard_case(
     recursive_flow = BenignAnalysisFlow(
         recursive_adapter,
         KnowledgeCatalog(dataset.knowledge),
+        output_policy=OutputPolicy(),
     )
     recursive_second_turn_rejected = False
     try:
@@ -1386,6 +1390,7 @@ def run_excess_agency_case(
         BenignAnalysisFlow(
             cardinality_adapter,
             KnowledgeCatalog(dataset.knowledge),
+            output_policy=OutputPolicy(),
         ).analyze(incident)
     except BenignFlowError as exc:
         cardinality_rejected = (
@@ -1468,6 +1473,7 @@ def run_excess_agency_case(
         BenignAnalysisFlow(
             recursive_adapter,
             KnowledgeCatalog(dataset.knowledge),
+            output_policy=OutputPolicy(),
         ).analyze(incident)
     except BenignFlowError as exc:
         recursive_rejected = (

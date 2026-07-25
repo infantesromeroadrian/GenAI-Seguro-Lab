@@ -25,6 +25,8 @@ from genai_seguro_lab.model_adapter import (
     ScriptedExchange,
     UnknownModelRequestError,
 )
+from genai_seguro_lab.output_policy import OutputPolicy
+from genai_seguro_lab.output_policy import OutputPolicyRejectedError
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 
@@ -58,6 +60,8 @@ def _search_request(incident: IncidentRecord) -> ModelToolRequest:
 def _configured_flow(
     incident: IncidentRecord,
     knowledge_catalog: KnowledgeCatalog,
+    *,
+    summary: str | None = None,
 ) -> BenignAnalysisFlow:
     initial = BenignAnalysisFlow.build_initial_request(incident)
     tool_request = _search_request(incident)
@@ -84,7 +88,7 @@ def _configured_flow(
         output_text=canonical_flow_json(
             BenignFinalOutput(
                 incident_id=incident.id,
-                summary=(
+                summary=summary or (
                     "El mensaje contiene indicadores sintéticos de phishing; "
                     "no consta compromiso."
                 ),
@@ -100,7 +104,11 @@ def _configured_flow(
             ScriptedExchange(request=followup, response=final_response),
         )
     )
-    return BenignAnalysisFlow(adapter, knowledge_catalog)
+    return BenignAnalysisFlow(
+        adapter,
+        knowledge_catalog,
+        output_policy=OutputPolicy(),
+    )
 
 
 def test_benign_flow_searches_once_and_returns_final_text(
@@ -121,6 +129,56 @@ def test_benign_flow_searches_once_and_returns_final_text(
         for invocation in first.invocations
     )
     assert "no consta compromiso" in first.output_text
+    serialized_invocations = tuple(
+        invocation.model_dump(mode="json")
+        for invocation in first.invocations
+    )
+    assert all("response" not in item for item in serialized_invocations)
+    assert all("output_text" not in item for item in serialized_invocations)
+    assert first.invocations[0].tool_request_count == 1
+    assert first.invocations[1].tool_request_count == 0
+    assert first.output_policy.decision == "allow"
+
+
+def test_benign_flow_redacts_before_returning_safe_result(
+    incident: IncidentRecord,
+    knowledge_catalog: KnowledgeCatalog,
+) -> None:
+    raw = "Contacta con analyst@example.test en /Users/operator/report.txt."
+    result = _configured_flow(
+        incident,
+        knowledge_catalog,
+        summary=raw,
+    ).analyze(incident)
+
+    assert result.output_text == (
+        "Contacta con [REDACTED_EMAIL] en [REDACTED_LOCAL_PATH]"
+    )
+    assert result.output_policy.decision == "redact"
+    assert result.output_policy.redaction_categories == (
+        "email",
+        "local_path",
+    )
+    assert raw not in repr(result)
+    assert raw not in str(result.model_dump(mode="json"))
+
+
+def test_benign_flow_rejects_without_retaining_raw_output(
+    incident: IncidentRecord,
+    knowledge_catalog: KnowledgeCatalog,
+) -> None:
+    raw = "CANARY_GSL_EX_003"
+    flow = _configured_flow(
+        incident,
+        knowledge_catalog,
+        summary=raw,
+    )
+
+    with pytest.raises(OutputPolicyRejectedError) as captured:
+        flow.analyze(incident)
+
+    assert raw not in str(captured.value)
+    assert raw not in repr(captured.value)
 
 
 def test_flow_fails_if_model_skips_required_search(
@@ -139,7 +197,11 @@ def test_flow_fails_if_model_skips_required_search(
             ),
         )
     )
-    flow = BenignAnalysisFlow(adapter, knowledge_catalog)
+    flow = BenignAnalysisFlow(
+        adapter,
+        knowledge_catalog,
+        output_policy=OutputPolicy(),
+    )
 
     with pytest.raises(BenignFlowError, match="exactly one tool"):
         flow.analyze(incident)
@@ -167,7 +229,11 @@ def test_flow_denies_a_non_knowledge_tool(
             ),
         )
     )
-    flow = BenignAnalysisFlow(adapter, knowledge_catalog)
+    flow = BenignAnalysisFlow(
+        adapter,
+        knowledge_catalog,
+        output_policy=OutputPolicy(),
+    )
 
     with pytest.raises(ToolDeniedError, match="not allowed"):
         flow.analyze(incident)
@@ -202,7 +268,11 @@ def test_flow_fails_closed_when_search_has_no_hits(
             ),
         )
     )
-    flow = BenignAnalysisFlow(adapter, knowledge_catalog)
+    flow = BenignAnalysisFlow(
+        adapter,
+        knowledge_catalog,
+        output_policy=OutputPolicy(),
+    )
 
     with pytest.raises(BenignFlowError, match="no authorized hits"):
         flow.analyze(incident)

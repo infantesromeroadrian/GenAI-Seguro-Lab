@@ -31,6 +31,7 @@ from .model_adapter import (
     ModelToolRequest,
     ScriptedExchange,
 )
+from .output_policy import OutputPolicy
 
 Text = Annotated[str, Field(min_length=1)]
 Sha256 = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
@@ -224,6 +225,7 @@ def _build_flow(
     return BenignAnalysisFlow(
         DeterministicModelAdapter(scripts),
         knowledge_catalog,
+        output_policy=OutputPolicy(),
     )
 
 
@@ -241,7 +243,7 @@ def _case_result(
         ),
         model_invocations=len(result.invocations),
         tool_requests=sum(
-            len(invocation.response.tool_requests)
+            invocation.tool_request_count
             for invocation in result.invocations
         ),
         external_calls=any(

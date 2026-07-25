@@ -36,6 +36,8 @@ from genai_seguro_lab.local_tools import (
     ToolPolicyError,
 )
 from genai_seguro_lab.model_adapter import ModelToolRequest
+from genai_seguro_lab.output_policy import OutputPolicy
+from genai_seguro_lab.output_policy import OutputPolicyRejectedError
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 SYNTHETIC_IDENTITY = "synthetic-operator"
@@ -133,6 +135,7 @@ def _writer(
         principal=principal,
         scope=scope,
         approval_authority=authority or _authority(),
+        output_policy=OutputPolicy(),
         allowed_knowledge_ids=("KB-001",),
     )
 
@@ -302,6 +305,74 @@ def test_model_can_only_prepare_a_draft_without_effect(
     assert writer.prepare_grant.tool == "draft_create"
     assert list(drafts_dir.iterdir()) == []
 
+
+def test_draft_is_redacted_before_fingerprint_approval_and_exact_write(
+    drafts_dir: Path,
+) -> None:
+    writer = _writer(drafts_dir)
+    request = _tool_request(
+        name="draft_create",
+        arguments={
+            "filename": "redacted.md",
+            "title": "Informe de analyst@example.test",
+            "body": (
+                "Fuente /Users/operator/private/report.txt y "
+                r"C:\Users\operator\private\report.txt"
+            ),
+            "references": ["KB-001"],
+        },
+    )
+
+    proposal = _prepare(writer, request)
+
+    assert proposal.title == "Informe de [REDACTED_EMAIL]"
+    assert proposal.body == (
+        "Fuente [REDACTED_LOCAL_PATH] y [REDACTED_LOCAL_PATH]"
+    )
+    safe_content = local_tools.DraftContent(
+        filename=proposal.filename,
+        title=proposal.title,
+        body=proposal.body,
+        references=proposal.references,
+    )
+    assert proposal.proposal_fingerprint == local_tools._draft_fingerprint(
+        safe_content
+    )
+    assert "operator" not in repr(proposal)
+    assert list(drafts_dir.iterdir()) == []
+
+    writer.create(proposal, _effect_grant(writer, proposal))
+
+    assert (drafts_dir / "redacted.md").read_text(encoding="utf-8") == (
+        "# Informe de [REDACTED_EMAIL]\n\n"
+        "Fuente [REDACTED_LOCAL_PATH] y [REDACTED_LOCAL_PATH]\n\n"
+        "## Referencias\n\n"
+        "- KB-001\n"
+    )
+
+
+def test_draft_policy_rejects_before_proposal_challenge_and_io(
+    drafts_dir: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    writer = _writer(drafts_dir)
+
+    def unexpected_challenge(*_: object, **__: object) -> None:
+        raise AssertionError("policy rejection must precede a challenge")
+
+    monkeypatch.setattr(
+        DraftApprovalAuthority,
+        "_issue_challenge",
+        unexpected_challenge,
+    )
+    unsafe = _draft_request(body="Consulta https://outside.example/secret")
+    with pytest.raises(OutputPolicyRejectedError) as captured:
+        _prepare(writer, unsafe)
+
+    assert "outside.example" not in str(captured.value)
+    assert writer._prepared == {}
+    assert list(drafts_dir.iterdir()) == []
+
     self_confirmed = _draft_request(extra={"confirmed_by_user": True})
     with pytest.raises(ToolArgumentsError, match="were rejected"):
         _prepare(writer, self_confirmed)
@@ -316,6 +387,7 @@ def test_draft_writer_rejects_references_outside_grant(
         principal="draft-caller",
         scope="draft:test",
         approval_authority=_authority(),
+        output_policy=OutputPolicy(),
         allowed_knowledge_ids=("KB-002",),
     )
 

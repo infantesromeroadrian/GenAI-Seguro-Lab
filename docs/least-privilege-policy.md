@@ -136,7 +136,7 @@ la aplicación, pero no:
 - autentica a una persona real o verifica su presencia; PGS-04-M04 solo
   acredita un principal sintético local;
 - protege frente a ejecución arbitraria de Python bajo la cuenta local;
-- incorpora filtros M05, cuotas M06 o recuperación M08;
+- sustituye la política de salida M05, añade cuotas M06 o recuperación M08;
 - demuestra robustez frente a un modelo GenAI real.
 
 `CTL-07` permanece `PARCIAL`: el contrato ya autentica y vincula un principal

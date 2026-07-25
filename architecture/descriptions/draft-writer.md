@@ -5,7 +5,8 @@ muy restringida.
 
 - Validar `draft_create` mediante un esquema cerrado.
 - Exigir un grant de preparación ligado a principal, scope e instancia.
-- Calcular una huella SHA-256 de la propuesta exacta.
+- Aplicar `CMP-09` a título y cuerpo antes de construir la propuesta.
+- Calcular una huella SHA-256 del contenido ya permitido o redactado.
 - Registrar la identidad de la propuesta en la instancia.
 - Solicitar a `DraftApprovalAuthority` challenge, aprobación y grant de efecto
   ligados al contexto exacto.
@@ -22,6 +23,7 @@ muy restringida.
 - No está conectado a la CLI ni al flujo benigno.
 - Solo acepta aprobaciones opacas de la autoridad configurada; no admite una
   confirmación literal o serializable.
+- La escritura no transforma el contenido después de su huella y aprobación.
 - Acredita un principal sintético, no presencia o identidad humana real.
 - `CMP-07` lo invoca solo desde pytest, bajo `$TMP`, para las fixtures
   `ADV-TOL-003/004/005`; no crea una ruta de producto.
