@@ -15,6 +15,9 @@ real.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.
+- [Matriz de autoridad y consecuencias](./authority-matrix.md): cadenas
+  verificadas entre actores, modelo, identidades, datos, herramientas, acciones
+  y efectos máximos actuales, incluidas las rutas que no existen.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

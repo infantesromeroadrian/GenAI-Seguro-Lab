@@ -161,4 +161,8 @@ pero no existe una ruta desde `CMP-01` hasta esa herramienta.
 
 PGS-02-M03 materializa estos IDs en el
 [mapa C4 versionado](../architecture/manifest.json), con componentes, flujos y
-límites de confianza sin añadir infraestructura hipotética.
+límites de confianza sin añadir infraestructura hipotética. PGS-02-M04
+relaciona los mismos IDs en la
+[matriz de autoridad y consecuencias](./authority-matrix.md), distinguiendo
+propuestas del modelo, ejecución por el proceso, efectos internos y autoridad
+externa de mantenimiento.

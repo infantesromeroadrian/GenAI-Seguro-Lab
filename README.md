@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M03, P01-M01, P01-M04 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las fuentes, el inventario y el mapa C4 con trust boundaries ya están fijados. Todavía no existe un threat model completo, modelo GenAI real, perfil vulnerable, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M04, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las fuentes, el inventario, el mapa C4 y la matriz de autoridad ya están fijados. Todavía no existe un threat model completo, modelo GenAI real, perfil vulnerable, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -63,6 +63,7 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 │   └── manifest.json
 ├── docs/
 │   ├── README.md
+│   ├── authority-matrix.md
 │   ├── framework-versions.md
 │   └── system-inventory.md
 └── sandbox/
@@ -273,6 +274,29 @@ El mapa hace visibles seis límites:
 aislamiento por contenedor o identidad. En el diagrama L3,
 `DraftWriterTool` permanece sin arista de ejecución: está implementada, pero
 no conectada a la CLI ni al flujo benigno.
+
+## Matriz de autoridad y consecuencias
+
+[docs/authority-matrix.md](./docs/authority-matrix.md) fija
+`GSL-AUTH-MATRIX-001` y convierte el inventario y los trust boundaries en
+cadenas de autoridad observables:
+
+- `MOD-01` carece de identidad de ejecución y solo devuelve datos tipados;
+- `CMP-03` decide si una propuesta pertenece al único flujo permitido;
+- `IDN-01`, la cuenta macOS del proceso, aporta la autoridad efectiva;
+- `TOL-01` limita la lectura al subconjunto autorizado del corpus sintético;
+- `TOL-02` solo puede crear un borrador confinado mediante su API interna y
+  una confirmación exacta que todavía no autentica a la persona;
+- `ACT-02`, mediante su cuenta macOS y Git fuera del runtime, posee la mayor
+  autoridad actual porque puede modificar código, datos, dependencias y
+  evidencia.
+
+La matriz clasifica las consecuencias actuales desde `C0` —datos en memoria—
+hasta `C3` —mutación de mantenimiento— y registra las rutas que no existen:
+el modelo no ejecuta herramientas, la CLI no alcanza `DraftWriterTool`, la
+aplicación no escribe la baseline y no hay red, proveedor, shell o usuario
+remoto. Es una descripción del estado implementado, no una evaluación de
+riesgo; los abuse cases comienzan en PGS-02-M05.
 
 ## Por qué existe
 
@@ -707,8 +731,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Registrar las versiones consultadas de OWASP, MITRE ATLAS y NIST.
 - [x] Inventariar usuarios, datos, modelo, herramientas, identidades, dependencias e infraestructura.
 - [x] Dibujar componentes, flujo de datos y trust boundaries.
+- [x] Crear la matriz de autoridad y consecuencias.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M03, P01-M01, P01-M04 y P01-M06 están completadas.** El avance interno es **16 de 66 microtareas (24,2 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M05 sigue abierta porque también requiere la matriz de autoridad de PGS-02-M04.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M04, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **17 de 66 microtareas (25,8 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M05 queda cerrada con el inventario y la matriz de autoridad.
 
 ## Roadmap
 
@@ -718,7 +743,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-02-M04 — crear la matriz `modelo → identidad → datos → herramientas → acciones → consecuencias`.**
+**PGS-02-M05 — enumerar abuse cases de prompt injection, jailbreak, exfiltración, abuso de herramientas y denegación de servicio.**
 
 ## Uso responsable
 
