@@ -1,4 +1,4 @@
-"""Pruebas del corpus adversario inerte, sin ejecutar sus entradas."""
+"""Pruebas del contrato y del estado de conexión del corpus adversario."""
 
 from __future__ import annotations
 
@@ -39,12 +39,13 @@ def _file_hashes(directory: Path) -> dict[str, str]:
     }
 
 
-def test_manifest_fixes_scope_counts_and_zero_executions(
+def test_manifest_fixes_scope_counts_and_partial_test_wiring(
     adversarial_bundle: AdversarialCorpusBundle,
 ) -> None:
     expected = adversarial_bundle.manifest.expected_result
 
     assert adversarial_bundle.manifest.id == "GSL-ADVERSARIAL-CORPUS-001"
+    assert adversarial_bundle.manifest.version == "1.1.0"
     assert adversarial_bundle.manifest.rules_of_engagement == "GSL-ROE-001"
     assert (
         adversarial_bundle.manifest.target_profile
@@ -54,8 +55,13 @@ def test_manifest_fixes_scope_counts_and_zero_executions(
     assert expected.oracle_records == len(adversarial_bundle.oracles) == 18
     assert expected.unique_abuse_cases == 17
     assert expected.threat_families == 6
-    assert expected.runtime_connections == 0
-    assert expected.attack_executions == 0
+    assert expected.test_wired_records == 3
+    assert expected.inert_records == 15
+    assert expected.canonical_evaluation_records == 0
+    assert (
+        adversarial_bundle.manifest.fixture_state
+        == "partially_wired_for_tests"
+    )
 
 
 def test_corpus_covers_all_abuse_cases_and_six_families(
@@ -98,7 +104,7 @@ def test_inputs_and_oracles_are_strictly_separated_and_joined(
     assert "required_observations" not in raw_inputs
 
 
-def test_all_records_are_inert_synthetic_and_local(
+def test_all_records_are_synthetic_local_and_explicitly_wired_or_inert(
     adversarial_bundle: AdversarialCorpusBundle,
 ) -> None:
     records = (*adversarial_bundle.inputs, *adversarial_bundle.oracles)
@@ -107,10 +113,20 @@ def test_all_records_are_inert_synthetic_and_local(
     assert all(record.sensitivity == "synthetic_internal" for record in records)
     assert all(record.provenance.origin == "authored_for_lab" for record in records)
     assert all(
-        record.fixture_state == "inert_not_wired"
-        and record.scope == "local_lab_only"
+        record.scope == "local_lab_only"
         and record.external_target is False
         for record in adversarial_bundle.inputs
+    )
+    test_wired = {
+        record.id
+        for record in adversarial_bundle.inputs
+        if record.fixture_state == "test_wired"
+    }
+    assert test_wired == {"ADV-PI-001", "ADV-PI-002", "ADV-PI-003"}
+    assert all(
+        record.fixture_state == "inert_not_wired"
+        for record in adversarial_bundle.inputs
+        if record.id not in test_wired
     )
     input_bytes = (ADVERSARIAL_DIR / "inputs.jsonl").read_bytes()
     assert len(input_bytes) <= 10_485_760
@@ -185,14 +201,19 @@ def test_input_contract_rejects_extra_and_non_synthetic_fields() -> None:
         )
 
 
-def test_manifest_cannot_claim_a_runtime_connection() -> None:
+def test_manifest_cannot_claim_more_wired_or_canonical_records() -> None:
     payload = json.loads(
         (ADVERSARIAL_DIR / "manifest.json").read_text(encoding="utf-8")
     )
-    payload["expected_result"]["runtime_connections"] = 1
+    payload["expected_result"]["test_wired_records"] = 18
 
+    with pytest.raises(ValidationError, match="Input should be 3"):
+        AdversarialCorpusManifest.model_validate_json(json.dumps(payload))
+
+    payload["expected_result"]["test_wired_records"] = 3
+    payload["expected_result"]["canonical_evaluation_records"] = 1
     with pytest.raises(ValidationError, match="Input should be 0"):
-        AdversarialCorpusManifest.model_validate(payload)
+        AdversarialCorpusManifest.model_validate_json(json.dumps(payload))
 
 
 def test_default_cli_exposes_no_adversarial_command(capsys) -> None:

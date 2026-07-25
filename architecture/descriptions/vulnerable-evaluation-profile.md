@@ -16,12 +16,13 @@ el futuro harness adversario.
 - Rechaza el sandbox del checkout canónico.
 - No llama a `MOD-01`.
 - No prepara ni ejecuta `TOL-01` o `TOL-02`.
-- No consume `DAT-07` ni `DAT-08`; todavía no existe dispatcher entre el
-  corpus adversario y el perfil.
+- `CMP-07` puede construirlo con copias temporales derivadas de
+  `ADV-PI-002/003`; el perfil no lee `DAT-07` ni recibe `DAT-08`.
 - No escribe archivos, abre red, inicia procesos o crea evidencia.
 - Omite el oráculo `expected_result` de la petición.
 
 ## Consecuencia
 
-Su techo actual es `C0`. El perfil materializa una configuración vulnerable,
-pero no constituye todavía un harness ni demuestra un ataque.
+Su techo propio continúa en `C0`. `CMP-07` usa la petición como entrada de una
+prueba local acotada, pero el perfil por sí mismo no ejecuta el modelo ni una
+herramienta.

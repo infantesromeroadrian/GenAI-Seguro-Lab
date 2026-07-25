@@ -1,5 +1,5 @@
-Convierte los ficheros benignos en el bundle usado por la aplicación y permite
-validar por separado el corpus adversario inerte mediante una API interna.
+Convierte los ficheros benignos en el bundle usado por la aplicación y valida
+por separado el corpus adversario mediante una API interna.
 
 ## Responsabilidades
 
@@ -11,8 +11,10 @@ validar por separado el corpus adversario inerte mediante una API interna.
 - Unir cada entrada adversaria con un único oráculo sin mezclar ambos archivos.
 - Exigir 18 fixtures, los 17 abuse cases, seis familias y los límites de las
   RoE.
-- Devolver el bundle adversario en memoria sin interpretarlo, conectarlo o
-  ejecutarlo.
+- Verificar que tres fixtures PI están conectadas al harness de test y que las
+  otras quince permanecen inertes.
+- Devolver el bundle en memoria sin interpretar payloads ni entregar oráculos
+  al target.
 
 ## Tecnología
 

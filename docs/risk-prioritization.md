@@ -5,13 +5,13 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-PRIORITY-001` |
-| Versión | `1.3.0` |
+| Versión | `1.4.0` |
 | Fecha de corte | 2026-07-25 |
-| Baseline de código | commit `3c4657efbc7dc92b232b83f3185d27968c2ba78b` + candidato PGS-03-M03 |
+| Baseline de código | commit `6184031b` + candidato PGS-03-M04 |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Crosswalk actual | [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
-| Alcance | sistema local sintético, incluida la configuración aislada `CMP-06` |
+| Alcance | sistema local sintético, incluidos `CMP-06` y el harness PI `CMP-07` |
 
 Esta priorización ordena el backlog de pruebas del laboratorio. No es una
 clasificación CVSS, no estima la frecuencia de incidentes reales y no afirma
@@ -148,6 +148,25 @@ Preparar la entrada y el resultado esperado no cambia `I`, `L` o `K`. El
 recalculo siguiente se producirá cuando una microtarea posterior incorpore un
 harness o dispatcher capaz de entregar una fixture a un target.
 
+## Recálculo de PGS-03-M04
+
+`CMP-07` conecta las tres fixtures PI a pruebas internas, pero no cambia la
+alcanzabilidad ordinaria ni las puntuaciones:
+
+- `AC-PI-01` confirma que la CLI sigue sin ruta de prompt libre;
+- `AC-PI-02/03` exigen autoridad de mantenimiento y solo mutan copias bajo
+  `$TMP`;
+- el único modelo sigue siendo el doble exacto `MOD-01`, que no interpreta
+  texto libre ni representa un proveedor GenAI;
+- cada caso indirecto termina con dos turnos, una búsqueda autorizada, cero
+  borradores y una salida igual al control;
+- no existe una baseline adversaria canónica y las otras 15 fixtures siguen
+  inertes.
+
+La evidencia no contradice las probabilidades condicionadas actuales. Se
+recalcularán si PGS-03-M05/M06 descubre un resultado distinto, si un control
+cambia la ruta o si se incorpora un modelo real.
+
 ## Backlog inicial de pruebas
 
 Los cinco primeros casos forman el backlog prioritario actual:
@@ -191,7 +210,7 @@ de estos supuestos:
 - incorporación de un modelo o proveedor real;
 - entrada libre, API, UI, red o usuario remoto;
 - conexión de `TOL-02` al flujo o a la CLI;
-- conexión de `CMP-06` a un adaptador, dispatcher o harness ejecutable;
+- ampliación de `CMP-07` a nuevos casos o cambio de su target;
 - incorporación de nuevas herramientas, shell, secretos o datos sensibles;
 - ejecución desatendida, contenedores, cloud o identidad de servicio;
 - controles que cambien la probabilidad condicionada;
@@ -200,9 +219,9 @@ de estos supuestos:
 ## Cobertura y siguiente tratamiento
 
 Los 17 abuse cases aparecen exactamente una vez y conservan la alcanzabilidad
-de `GSL-ABUSE-CASES-001`. El perfil vulnerable está construido y aislado, pero
-ninguna de las 18 fixtures se ha ejecutado ni se ha habilitado una ruta de
-ejecución.
+de `GSL-ABUSE-CASES-001`. El perfil vulnerable está construido y aislado;
+`CMP-07` cubre las tres fixtures PI sin crear una ruta de producto y las otras
+15 permanecen sin ejecutar.
 
 [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) relaciona los casos con
 OWASP y MITRE ATLAS sin cambiar sus puntuaciones.

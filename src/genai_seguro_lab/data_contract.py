@@ -299,7 +299,7 @@ class AdversarialInputRecord(StrictModel):
     synthetic: Literal[True]
     sensitivity: Sensitivity
     scope: Literal["local_lab_only"]
-    fixture_state: Literal["inert_not_wired"]
+    fixture_state: Literal["inert_not_wired", "test_wired"]
     roe_status: RoeStatus
     external_target: Literal[False]
 
@@ -360,13 +360,14 @@ class AdversarialManifestExpectedResult(StrictModel):
     oracle_records: Literal[18]
     unique_abuse_cases: Literal[17]
     threat_families: Literal[6]
-    runtime_connections: Literal[0]
-    attack_executions: Literal[0]
+    test_wired_records: Literal[3]
+    inert_records: Literal[15]
+    canonical_evaluation_records: Literal[0]
 
 
 class AdversarialCorpusManifest(StrictModel):
     id: AdversarialCorpusId
-    version: Literal["1.0.0"]
+    version: Literal["1.1.0"]
     type: Literal["adversarial_corpus_manifest"]
     rules_of_engagement: Literal["GSL-ROE-001"]
     target_profile: Literal["GSL-PROFILE-VULNERABLE-001"]
@@ -377,7 +378,7 @@ class AdversarialCorpusManifest(StrictModel):
     provenance: Provenance
     synthetic: Literal[True]
     sensitivity: Sensitivity
-    fixture_state: Literal["prepared_not_wired"]
+    fixture_state: Literal["partially_wired_for_tests"]
     expected_result: AdversarialManifestExpectedResult
 
 
@@ -484,7 +485,7 @@ def load_dataset(data_dir: Path) -> DatasetBundle:
 
 
 def load_adversarial_corpus(data_dir: Path) -> AdversarialCorpusBundle:
-    """Carga fixtures y oráculos inertes sin conectarlos a ninguna ejecución."""
+    """Carga fixtures y oráculos sin entregar los oráculos al target."""
 
     input_path = data_dir / "inputs.jsonl"
     input_bytes = input_path.read_bytes()
@@ -559,6 +560,15 @@ def load_adversarial_corpus(data_dir: Path) -> AdversarialCorpusBundle:
             raise ValueError(
                 f"unexpected RoE status for {record.abuse_case_id}"
             )
+        expected_fixture_state = (
+            "test_wired"
+            if record.id in {"ADV-PI-001", "ADV-PI-002", "ADV-PI-003"}
+            else "inert_not_wired"
+        )
+        if record.fixture_state != expected_fixture_state:
+            raise ValueError(
+                f"unexpected fixture state for {record.id}"
+            )
 
     entries = {entry.path: entry for entry in manifest.files}
     expected_paths = {"inputs.jsonl", "oracles.jsonl"}
@@ -593,6 +603,16 @@ def load_adversarial_corpus(data_dir: Path) -> AdversarialCorpusBundle:
         raise ValueError("manifest abuse-case coverage does not match")
     if expected.threat_families != len(families):
         raise ValueError("manifest threat-family coverage does not match")
+    test_wired_records = sum(
+        record.fixture_state == "test_wired" for record in inputs
+    )
+    inert_records = sum(
+        record.fixture_state == "inert_not_wired" for record in inputs
+    )
+    if expected.test_wired_records != test_wired_records:
+        raise ValueError("manifest wired-record total does not match")
+    if expected.inert_records != inert_records:
+        raise ValueError("manifest inert-record total does not match")
 
     return AdversarialCorpusBundle(
         manifest=manifest,

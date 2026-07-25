@@ -5,11 +5,14 @@ mediante un flujo determinista y herramientas con autoridad acotada.
 
 - Cargar y validar el corpus sintético versionado.
 - Ejecutar `analyze` o `baseline` sin llamadas externas.
-- Validar un corpus adversario inerte sin conectarlo al runtime benigno.
+- Validar el corpus adversario y conectar solo sus tres casos PI al harness
+  interno de test.
 - Separar la salida del modelo de la autorización de herramientas.
 - Emitir resultados JSON reproducibles y mantener los efectos locales fuera de
   la ruta ordinaria de la CLI.
 - Preparar una petición vulnerable marcada para evaluación sin ejecutarla.
+- Evaluar en `$TMP` dos inyecciones indirectas con un doble determinista y una
+  búsqueda autorizada.
 
 ## Límites de confianza
 
@@ -32,10 +35,11 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 - No hay autenticación interna, service account o telemetría. El remoto GitHub
   público es una integración manual de desarrollo y distribución; no es
   alcanzable desde el runtime.
-- El corpus adversario existe como fixtures y oráculos separados, pero el
-  harness ejecutable todavía no existe.
-- El perfil vulnerable existe como API interna `C0`; no está conectado al
-  modelo, las herramientas o la CLI.
+- El corpus adversario conserva fixtures y oráculos separados; `CMP-07` cubre
+  solo tres PI y las otras 15 entradas siguen inertes.
+- El perfil vulnerable existe como API interna `C0`; solo `CMP-07` conduce sus
+  peticiones hacia el doble determinista y `TOL-01`, nunca hacia la CLI
+  ordinaria o `TOL-02`.
 
 ## Evidencia
 

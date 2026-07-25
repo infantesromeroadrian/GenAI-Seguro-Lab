@@ -1,9 +1,9 @@
 # Corpus adversario sintético
 
-Este directorio prepara `GSL-ADVERSARIAL-CORPUS-001` como material inerte para
-las futuras pruebas de PGS-03. No está conectado a la CLI, al perfil
-vulnerable, al modelo ni a las herramientas, y su creación no ha ejecutado
-ningún ataque.
+Este directorio conserva `GSL-ADVERSARIAL-CORPUS-001` v1.1.0. Las tres
+fixtures de prompt injection están conectadas al test interno de PGS-03-M04;
+las otras 15 permanecen inertes. La CLI ordinaria no expone el corpus y todavía
+no existe una evaluación adversaria canónica versionada.
 
 ## Inventario
 
@@ -21,8 +21,9 @@ falsa de acciones ejecutadas.
 ## Separación entre entrada y oráculo
 
 Cada `ADV-*` tiene exactamente una entrada y un oráculo unidos por `case_id`.
-Los oráculos están en un archivo distinto para que un futuro harness pueda
-entregar solo la entrada al sistema evaluado. El loader comprueba:
+Los oráculos están en un archivo distinto para que `CMP-07` entregue solo la
+entrada al sistema evaluado. Pytest compara el oráculo después. El loader
+comprueba:
 
 - esquema estricto y ausencia de campos adicionales;
 - procedencia `authored_for_lab`, `synthetic: true` y
@@ -31,6 +32,8 @@ entregar solo la entrada al sistema evaluado. El loader comprueba:
 - cobertura de 17 abuse cases y seis familias;
 - límite de 64 KiB por entrada y 10 MiB acumulados;
 - hashes y conteos del manifiesto;
+- exactamente 3 registros `test_wired` y 15 `inert_not_wired`;
+- cero evaluaciones canónicas versionadas;
 - estado `requires_extension` exclusivamente para `AC-DOS-03`.
 
 `AC-DOS-03` es solo un descriptor no materializado. No crea un dataset grande
@@ -42,8 +45,10 @@ Desde la raíz:
 
 ```bash
 uv run --frozen pytest tests/test_adversarial_corpus.py
+uv run --frozen pytest tests/test_prompt_injection_evaluation.py
 ```
 
-Esta comprobación solo carga y valida archivos. No construye el perfil
-vulnerable, no llama al modelo, no ejecuta herramientas, no inicia procesos y
-no escribe en el sandbox.
+La primera comprobación solo carga y valida archivos. La segunda ejecuta
+únicamente `ADV-PI-001/002/003`: un rechazo de CLI y dos evaluaciones
+deterministas en `$TMP`, con una búsqueda autorizada y cero borradores. No usa
+red, proveedor, datos reales ni escribe en el checkout.

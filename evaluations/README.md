@@ -31,7 +31,8 @@ marcadas, pero no llama al modelo, no ejecuta herramientas y no genera aquí
 ningún resultado.
 
 El corpus adversario ya está fijado fuera de este directorio, con entradas y
-oráculos separados, pero el harness, los runs y la baseline de seguridad siguen
-pendientes de PGS-03-M04 a PGS-03-M07. Este directorio no debe recibir una
-evidencia de ataque antes de implementar el harness y fijar el candidato exacto
-de cada ejecución.
+oráculos separados. `CMP-07` implementa los tres casos PI como pruebas de
+desarrollo, pero no escribe resultados aquí. Las pruebas restantes pertenecen
+a PGS-03-M05/M06 y la baseline adversaria canónica a PGS-03-M07. Este
+directorio no debe recibirla hasta fijar un commit limpio, configuración,
+límites, resultados y logs saneados.

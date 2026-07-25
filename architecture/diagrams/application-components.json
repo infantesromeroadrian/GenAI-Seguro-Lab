@@ -116,6 +116,28 @@
       }
     },
     {
+      "id": "prompt-injection-evaluation-harness",
+      "label": "CMP-07 · Harness PI acotado",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/evaluation_harness.py",
+      "meta": {
+        "type": "service",
+        "technology": "pydantic",
+        "inventoryIds": [
+          "CMP-07"
+        ],
+        "state": "internal-test-only",
+        "caseIds": [
+          "AC-PI-01",
+          "AC-PI-02",
+          "AC-PI-03"
+        ],
+        "cliReachable": false,
+        "externalCalls": false,
+        "canonicalEvidence": false
+      }
+    },
+    {
       "id": "deterministic-model",
       "label": "MOD-01 · Modelo determinista",
       "parentId": "model-output-boundary",
@@ -283,6 +305,47 @@
         "type": "calls",
         "crossesBoundary": "TB-04",
         "executionEnabled": false
+      }
+    },
+    {
+      "id": "components-harness-loads-cases",
+      "source": "prompt-injection-evaluation-harness",
+      "target": "dataset-loader",
+      "label": "selecciona 3 PI; carga copias temporales coherentes",
+      "meta": {
+        "type": "calls",
+        "oraclesDeliveredToTarget": false
+      }
+    },
+    {
+      "id": "components-harness-builds-vulnerable-request",
+      "source": "prompt-injection-evaluation-harness",
+      "target": "vulnerable-evaluation-profile",
+      "label": "build_initial_request(): incidente temporal",
+      "meta": {
+        "type": "calls"
+      }
+    },
+    {
+      "id": "components-harness-drives-model-double",
+      "source": "prompt-injection-evaluation-harness",
+      "target": "deterministic-model",
+      "label": "2 generate() exactos; sin proveedor",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-03",
+        "maxModelTurns": 2
+      }
+    },
+    {
+      "id": "components-harness-authorizes-search",
+      "source": "prompt-injection-evaluation-harness",
+      "target": "knowledge-search",
+      "label": "1 search(): IDs permitidos del incidente",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-04",
+        "maxToolRequests": 1
       }
     }
   ]

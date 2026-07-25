@@ -4,14 +4,15 @@ del modelo.
 ## Trust boundary
 
 - ID: `TB-02`.
-- Incluye CLI, contrato de datos, flujo benigno, motor de baseline y perfil
-  vulnerable de evaluación.
+- Incluye CLI, contrato de datos, flujo benigno, motor de baseline, perfil
+  vulnerable de evaluación y harness interno de prompt injection.
 - Decide qué datos se cargan, qué herramienta se autoriza y cuándo termina el
   flujo.
-- El contrato puede validar el corpus adversario, pero no lo entrega al perfil,
-  al modelo o a las herramientas.
-- El perfil de evaluación solo construye una petición y no participa en el
-  flujo ordinario.
+- El harness selecciona solo las tres fixtures PI y nunca entrega el oráculo
+  al target.
+- Los casos indirectos conectan una copia temporal al perfil, al doble
+  determinista y a una única búsqueda autorizada; no forman parte del flujo
+  ordinario ni de la CLI.
 
 ## Límite
 

@@ -43,6 +43,7 @@
           "CMP-04",
           "CMP-05",
           "CMP-06",
+          "CMP-07",
           "MOD-01",
           "TOL-01",
           "TOL-02"
@@ -67,9 +68,11 @@
           "DAT-08",
           "DAT-09"
         ],
-        "adversarialState": "prepared-not-wired",
+        "adversarialState": "partially-wired-for-tests",
+        "testWiredRecords": 3,
+        "inertRecords": 15,
         "adversarialCliReachable": false,
-        "adversarialExecutionEnabled": false
+        "canonicalEvaluationRecorded": false
       }
     },
     {
@@ -129,12 +132,12 @@
       "id": "containers-process-reads-versioned-data",
       "source": "python-application-process",
       "target": "versioned-data-store",
-      "label": "CLI: bundle benigno; API interna: corpus adversario inerte",
+      "label": "CLI: benigno; test interno: 3 PI; otros 15 inertes",
       "meta": {
         "type": "reads",
         "crossesBoundary": "TB-06",
         "adversarialCliReachable": false,
-        "adversarialExecutionEnabled": false
+        "oraclesDeliveredToTarget": false
       }
     },
     {

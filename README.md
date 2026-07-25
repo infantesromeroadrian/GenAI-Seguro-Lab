@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M03, PGS-07-M08, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; el perfil vulnerable y el corpus adversario de 18 fixtures existen aislados y sin capacidad de ejecución. El código está publicado en un repositorio público, pero todavía no existe un modelo GenAI real, harness de ataque, proveedor o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M04, PGS-07-M08, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local y baseline funcional; el harness interno ya cubre los tres casos de prompt injection con datos temporales y sin efectos, mientras las otras 15 fixtures permanecen inertes. El código está publicado en un repositorio público, pero todavía no existe un modelo GenAI real, baseline adversaria canónica, proveedor o despliegue cloud.
 
 ## En una frase
 
@@ -42,6 +42,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │       ├── benign_flow.py
 │       ├── cli.py
 │       ├── data_contract.py
+│       ├── evaluation_harness.py
 │       ├── evaluation_profile.py
 │       ├── local_tools.py
 │       └── model_adapter.py
@@ -53,7 +54,8 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── test_evaluation_profile.py
 │   ├── test_adversarial_corpus.py
 │   ├── test_local_tools.py
-│   └── test_model_adapter.py
+│   ├── test_model_adapter.py
+│   └── test_prompt_injection_evaluation.py
 ├── evaluations/
 │   ├── README.md
 │   └── benign-baseline-v1.json
@@ -83,7 +85,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
         └── README.md
 ```
 
-PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado y PGS-03-M03 prepara el corpus adversario inerte. Todavía no existe un modelo GenAI real.
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado, PGS-03-M03 prepara el corpus adversario y PGS-03-M04 conecta únicamente sus tres casos de prompt injection a pruebas internas. Todavía no existe un modelo GenAI real.
 
 ## Entorno reproducible
 
@@ -116,8 +118,8 @@ uv run --frozen pytest --version
 - `src/genai_seguro_lab/data_contract.py` valida el esquema en modo estricto, rechaza campos adicionales y comprueba identificadores, referencias, conteos y hashes.
 - El corpus declara `synthetic: true`, sensibilidad `synthetic_internal` y procedencia `authored_for_lab`.
 - `data/adversarial/` contiene 18 entradas y 18 oráculos separados para los 17
-  abuse cases y seis familias; su manifiesto declara cero conexiones y cero
-  ejecuciones.
+  abuse cases y seis familias; su manifiesto declara 3 fixtures conectadas a
+  test, 15 inertes y 0 evaluaciones canónicas versionadas.
 - El dataset benigno conserva cero registros adversarios y sigue siendo el
   único que consume la CLI.
 
@@ -126,6 +128,7 @@ Comprobación específica:
 ```bash
 uv run --frozen pytest tests/test_data_contract.py
 uv run --frozen pytest tests/test_adversarial_corpus.py
+uv run --frozen pytest tests/test_prompt_injection_evaluation.py
 ```
 
 ## Adaptador determinista actual
@@ -376,8 +379,10 @@ alcanzabilidad. No se ejecutó ningún ataque durante la priorización.
 
 `AC-DOS-01` queda limitado a un piloto de dos procesos, 20 invocaciones y 60
 segundos. `AC-DOS-03` no está autorizado por las reglas base y necesitará una
-ampliación posterior. PGS-03-M03 prepara las fixtures y los oráculos, pero no
-ejecuta ataques ni habilita una ruta desde la CLI.
+ampliación posterior. PGS-03-M04 comprueba el rechazo de `--prompt` y ejecuta
+los dos casos indirectos en `$TMP`, con dos turnos deterministas, una consulta
+autorizada, cero borradores, cero red y sin habilitar una ruta adversaria en la
+CLI ordinaria.
 
 ## Crosswalk de amenazas
 
@@ -854,9 +859,10 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Definir las Rules of Engagement del laboratorio propio.
 - [x] Crear el perfil vulnerable aislado y exclusivo para evaluación.
 - [x] Preparar el corpus adversario con entradas y resultados esperados.
+- [x] Implementar pruebas para prompt injection directa e indirecta.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M03, PGS-07-M08, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **25 de 66 microtareas (37,9 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta completar las pruebas y P01-M08 hasta implementar y verificar PGS-04.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M04, PGS-07-M08, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **26 de 66 microtareas (39,4 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta completar las pruebas y P01-M08 hasta implementar y verificar PGS-04.
 
 ## Roadmap
 
@@ -866,7 +872,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-03-M04 — implementar pruebas para prompt injection directa e indirecta.**
+**PGS-03-M05 — implementar pruebas para jailbreak y revelación de información.**
 
 ## Uso responsable
 

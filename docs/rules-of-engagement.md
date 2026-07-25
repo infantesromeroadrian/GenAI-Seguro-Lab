@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `1.2.0` |
+| Versión | `1.3.0` |
 | Fecha de entrada en vigor | 2026-07-25 |
-| Baseline técnica de origen | commit `3c4657efbc7dc92b232b83f3185d27968c2ba78b` + candidato PGS-03-M03 |
+| Baseline técnica de origen | commit `6184031b` + candidato PGS-03-M04 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
 | Operador | `ACT-01` — operador local |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
@@ -19,10 +19,11 @@ las evaluaciones adversarias de GenAI Seguro Lab. No son una autorización
 permanente para atacar: cada ejecución debe estar cubierta por una petición
 vigente que identifique los casos, el perfil, el candidato y los límites.
 
-PGS-03-M03 prepara `GSL-ADVERSARIAL-CORPUS-001` con entradas y oráculos
-separados. El manifiesto declara cero conexiones y cero ejecuciones: no entrega
-una fixture al perfil, no llama a un modelo, no ejecuta herramientas y no
-ejecuta ningún caso de ataque.
+PGS-03-M03 preparó `GSL-ADVERSARIAL-CORPUS-001` con entradas y oráculos
+separados. PGS-03-M04 conecta exclusivamente `ADV-PI-001/002/003` al test
+interno: el caso directo observa el rechazo de la CLI y los dos indirectos
+operan sobre copias temporales. Las otras 15 fixtures permanecen inertes y no
+existe todavía una evaluación adversaria canónica versionada.
 
 ## Objetivo y resultado permitido
 
@@ -146,10 +147,10 @@ para depurar, pero debe fijar el diff observado y no cuenta como baseline
 canónica. La baseline de PGS-03-M07 y los retests sí deben utilizar un commit
 exacto con el checkout limpio.
 
-PGS-03-M02 y PGS-03-M03 ya están satisfechas. El harness aplicable y una
-petición vigente siguen siendo precondiciones para ejecutar el corpus
-adversario. Hasta entonces, las 18 fixtures de los 17 casos permanecen
-preparadas pero no ejecutables como campaña.
+PGS-03-M02 a PGS-03-M04 ya están satisfechas. `CMP-07` solo cubre los tres
+casos PI y exige una autorización tipada con estos límites. Para cualquier
+otra fixture siguen faltando el harness aplicable y una petición vigente; no
+existe una campaña general ni una continuación automática.
 
 ## Presupuesto operativo de seguridad
 
@@ -235,14 +236,15 @@ revisados y libres de secretos.
 ## Tratamiento de los 17 abuse cases
 
 `CATALOGADO` significa que el caso tiene vehículo y límites definidos, no que
-su ejecución esté autorizada. PGS-03-M03 ya aporta una o dos fixtures por caso
-en `DAT-07` y su oráculo correspondiente en `DAT-08`.
+su ejecución esté autorizada. PGS-03-M03 aporta una o dos fixtures por caso en
+`DAT-07` y su oráculo correspondiente en `DAT-08`; PGS-03-M04 conecta solo las
+tres PI.
 
-| Caso | Vehículo autorizado futuro | Restricción específica | Estado RoE tras PGS-03-M03 |
+| Caso | Vehículo autorizado | Restricción específica | Estado RoE tras PGS-03-M04 |
 |---|---|---|---|
-| `AC-PI-01` | Proceso CLI con argumento no reconocido | Prueba negativa; no añadir un prompt libre para simular la ruta | `CATALOGADO` |
-| `AC-PI-02` | Copia temporal de incidentes y manifiesto | Material sintético; nunca alterar el corpus canónico durante el run | `CATALOGADO` |
-| `AC-PI-03` | Copia temporal de conocimiento y manifiesto | Registrar los IDs recuperados y no ejecutar el texto del documento | `CATALOGADO` |
+| `AC-PI-01` | Proceso CLI con argumento no reconocido | Prueba negativa; no añadir un prompt libre para simular la ruta | `IMPLEMENTADO EN TEST` |
+| `AC-PI-02` | Copia temporal de incidentes y manifiesto | Material sintético; nunca alterar el corpus canónico durante el run | `IMPLEMENTADO EN TEST` |
+| `AC-PI-03` | Copia temporal de conocimiento y manifiesto | Registrar los IDs recuperados y no ejecutar el texto del documento | `IMPLEMENTADO EN TEST` |
 | `AC-JB-01` | Corpus temporal y doble determinista | Oráculos textuales fijados antes del resultado | `CATALOGADO` |
 | `AC-JB-02` | Doble interno de modelo | Máximo 4 turnos y 2 solicitudes; el harness impone la terminación | `CATALOGADO` |
 | `AC-EX-01` | Llamada interna a `knowledge_search` | Verificar cero resultados fuera de la allowlist | `CATALOGADO` |
@@ -273,7 +275,8 @@ en `DAT-07` y su oráculo correspondiente en `DAT-08`.
 | `ROE-09` | Cambios de superficie deben invalidar la versión vigente | Se revisan las RoE antes de usar red, proveedor, Docker, cloud o datos reales |
 | `ROE-10` | PGS-03-M01 no debe ejecutar ataques | El commit solo contiene documentación y verificaciones ordinarias |
 | `ROE-11` | PGS-03-M02 no debe crear una ruta de ejecución | El perfil exige autorización exacta y `$TMP`, no está en la CLI y termina al devolver una `ModelRequest` |
-| `ROE-12` | PGS-03-M03 no debe ejecutar ni conectar las fixtures | `DAT-09` declara 0 conexiones y 0 ejecuciones; el loader solo devuelve un bundle tipado y mantiene `DAT-08` separado |
+| `ROE-12` | PGS-03-M03 no debe ejecutar ni conectar las fixtures durante su creación | La versión 1.0.0 del corpus en el commit `e8cf8699` declaró 0 conexiones y 0 ejecuciones |
+| `ROE-13` | PGS-03-M04 debe quedar limitada a los tres casos PI | `CMP-07` exige sus tres IDs, `$TMP`, 15 s, 2 turnos, 1 consulta, 0 archivos, sin red ni evidencia canónica; `DAT-08` queda fuera del target |
 
 ## Disparadores de revisión
 
@@ -292,11 +295,11 @@ Estas reglas deben revisarse y versionarse antes de:
 Una revisión no autoriza por sí misma la ejecución. Debe conservar versión,
 motivo, cambios y nueva petición aplicable.
 
-## Estado de cierre de PGS-03-M03
+## Estado de cierre de PGS-03-M04
 
 Las RoE siguen delimitando los 17 casos, responsables, targets, acciones,
-datos, presupuesto, evidencia y parada. El perfil aislado y el corpus
-adversario ya existen, pero permanecen desconectados. El corpus contiene 18
-fixtures sintéticas, 18 oráculos previos y un descriptor no materializado para
-`AC-DOS-03`; el harness y su enforcement pertenecen a las microtareas
-posteriores.
+datos, presupuesto, evidencia y parada. `CMP-07` aplica el contrato de los tres
+casos PI: una prueba negativa de proceso y dos copias temporales con dos turnos
+deterministas, una búsqueda autorizada y cero borradores. Los oráculos no se
+entregan al target, las otras 15 fixtures permanecen inertes y PGS-03-M07
+continúa siendo responsable de fijar la baseline canónica.
