@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M03 y P01-M01 completadas. El contrato, el esqueleto y el entorno reproducible están versionados en un repositorio Git local sobre `main`; todavía no existe implementación funcional, proveedor real, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M04 y P01-M01 completadas. El contrato, el esqueleto, el entorno reproducible y el corpus benigno sintético están versionados en un repositorio Git local sobre `main`; todavía no existe flujo funcional, modelo, proveedor real, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -31,13 +31,18 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 ├── uv.lock
 ├── src/
 │   └── genai_seguro_lab/
-│       └── __init__.py
+│       ├── __init__.py
+│       └── data_contract.py
 ├── tests/
-│   └── README.md
+│   ├── README.md
+│   └── test_data_contract.py
 ├── evaluations/
 │   └── README.md
 ├── data/
-│   └── README.md
+│   ├── README.md
+│   ├── incidents.jsonl
+│   ├── knowledge.jsonl
+│   └── manifest.json
 ├── docs/
 │   └── README.md
 └── sandbox/
@@ -46,7 +51,7 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
         └── README.md
 ```
 
-PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. No añade todavía dependencias, configuración de pytest, datasets, modelos ni comportamiento ejecutable.
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno y PGS-01-M04 incorpora el primer corpus verificable, pero todavía no existe un modelo ni un flujo de aplicación ejecutable.
 
 ## Entorno reproducible
 
@@ -66,6 +71,21 @@ uv run --frozen pytest --version
 ```
 
 `.gitignore` excluye entornos, cachés, artefactos de build, credenciales locales comunes y borradores generados, pero no sustituye un escaneo de secretos antes de cada commit. `.env.example` y `sandbox/drafts/README.md` permanecen expresamente versionables.
+
+## Corpus sintético actual
+
+- `data/incidents.jsonl` contiene 12 incidentes benignos ficticios.
+- `data/knowledge.jsonl` contiene 8 documentos sintéticos, uno por categoría cubierta.
+- `data/manifest.json` fija la versión, los conteos, la procedencia y los hashes SHA-256.
+- `src/genai_seguro_lab/data_contract.py` valida el esquema en modo estricto, rechaza campos adicionales y comprueba identificadores, referencias, conteos y hashes.
+- El corpus declara `synthetic: true`, sensibilidad `synthetic_internal` y procedencia `authored_for_lab`.
+- Esta versión contiene cero casos adversarios; se crearán en PGS-03, no en el flujo benigno inicial.
+
+Comprobación específica:
+
+```bash
+uv run --frozen pytest tests/test_data_contract.py
+```
 
 ## Por qué existe
 
@@ -493,9 +513,10 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Inicializar el repositorio Git local y crear el commit inicial del contrato.
 - [x] Crear la estructura mínima de código, tests, evaluaciones, datos y documentación.
 - [x] Configurar dependencias reproducibles y exclusión de secretos.
-- [ ] Crear el dataset sintético de incidentes y la base de conocimiento.
+- [x] Crear el dataset sintético de incidentes y la base de conocimiento.
+- [ ] Implementar el adaptador determinista de modelo para tests.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M03 y P01-M01 están completadas.** El avance interno es **9 de 66 microtareas (13,6 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M04 y P01-M01 están completadas.** El avance interno es **10 de 66 microtareas (15,2 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -505,7 +526,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-01-M04 — crear el dataset sintético de incidentes y la base de conocimiento.**
+**PGS-01-M05 — implementar el adaptador determinista de modelo para tests.**
 
 ## Uso responsable
 

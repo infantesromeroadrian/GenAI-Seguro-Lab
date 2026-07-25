@@ -7,7 +7,7 @@
 - **Ruta local confirmada:** `/Users/adrianinfantes/Desktop/AIR/Carreer/AI-Security-Architec/GenAI-Seguro-Lab`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtarea padre completada:** P01-M01.
-- **Estado actual:** PGS-00-M01 a PGS-00-M06 y PGS-01-M01 a PGS-01-M03 completadas; estructura y dependencias están bloqueadas, PGS-01-M04 es la siguiente y todavía no hay comportamiento funcional.
+- **Estado actual:** PGS-00-M01 a PGS-00-M06 y PGS-01-M01 a PGS-01-M04 completadas; estructura, dependencias y corpus benigno están bloqueados, PGS-01-M05 es la siguiente y todavía no hay flujo funcional.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** fuera de alcance hasta una autorización específica.
@@ -219,7 +219,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-01-M01** Inicializar el repositorio Git local y crear el commit inicial del contrato después de cerrar PGS-00.
 - [x] **PGS-01-M02** Crear la estructura mínima de código, tests, evaluaciones, datos y documentación.
 - [x] **PGS-01-M03** Configurar dependencias reproducibles y exclusión de secretos.
-- [ ] **PGS-01-M04** Crear el dataset sintético de incidentes y la base de conocimiento.
+- [x] **PGS-01-M04** Crear el dataset sintético de incidentes y la base de conocimiento.
 - [ ] **PGS-01-M05** Implementar el adaptador determinista de modelo para tests.
 - [ ] **PGS-01-M06** Implementar el flujo benigno mínimo y las herramientas confinadas al sandbox.
 - [ ] **PGS-01-M07** Añadir smoke tests y registrar la primera baseline funcional.
@@ -342,12 +342,13 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - Elegir un proveedor real solo si aporta evidencia que el sustituto determinista no pueda producir; cualquier llamada y gasto exigirán autorización específica.
 - El repositorio local ya está inicializado sobre `main`; no existe ningún remoto configurado.
 - La estructura mínima ya separa código, tests, evaluaciones, datos, documentación y sandbox; Python 3.12, Pydantic 2, pytest 9 y sus dependencias están fijados mediante `pyproject.toml` y `uv.lock`.
+- El corpus benigno inicial contiene 12 incidentes y 8 documentos de conocimiento sintéticos; su esquema estricto, referencias, conteos y hashes están verificados automáticamente. Los casos adversarios siguen fuera de alcance hasta PGS-03.
 - El proyecto permanece sin empaquetar mediante `[tool.uv] package = false` hasta disponer de comportamiento y un punto de entrada real.
 - Decidir GitHub, remoto, visibilidad y primer `push` únicamente en PGS-07-M08 o mediante una autorización específica posterior.
 - Completar P00-M08, P00-M09 y P00-M10 antes de declarar superado SEC-1.
 
 ## Próxima microtarea
 
-**PGS-01-M04 — crear el dataset sintético de incidentes y la base de conocimiento.**
+**PGS-01-M05 — implementar el adaptador determinista de modelo para tests.**
 
-**Progreso interno:** 9 de 66 microtareas completadas, 57 abiertas (**13,6 %**).
+**Progreso interno:** 10 de 66 microtareas completadas, 56 abiertas (**15,2 %**).

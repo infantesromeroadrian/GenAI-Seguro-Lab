@@ -1,0 +1,33 @@
+{
+  "id": "GSL-DATASET-001",
+  "version": "1.0.0",
+  "type": "dataset_manifest",
+  "files": [
+    {
+      "path": "incidents.jsonl",
+      "kind": "incident_jsonl",
+      "records": 12,
+      "sha256": "928af933a23ffe2851f5bf5206fa691e18dd7e3a6a6d621d3ad8af06d4c4870a"
+    },
+    {
+      "path": "knowledge.jsonl",
+      "kind": "knowledge_jsonl",
+      "records": 8,
+      "sha256": "f62fd7bb0051c5b97f5f5ce40941e77c1c8019d2b0ac6ceb3d2fa099d8ab92da"
+    }
+  ],
+  "provenance": {
+    "origin": "authored_for_lab",
+    "author": "GenAI Seguro Lab",
+    "created_on": "2026-07-25",
+    "references": []
+  },
+  "synthetic": true,
+  "sensitivity": "synthetic_internal",
+  "expected_result": {
+    "incident_records": 12,
+    "knowledge_records": 8,
+    "benign_incident_records": 12,
+    "adversarial_records": 0
+  }
+}
