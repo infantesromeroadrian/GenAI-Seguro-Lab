@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01, P01-M01 y P01-M04 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las versiones de OWASP, MITRE ATLAS y NIST ya están fijadas. Todavía no existe un threat model, modelo GenAI real, perfil vulnerable, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 y PGS-02-M02, P01-M01 y P01-M04 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las versiones de OWASP, MITRE ATLAS y NIST y el inventario del sistema real ya están fijados. Todavía no existe un threat model, modelo GenAI real, perfil vulnerable, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -56,7 +56,8 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 │   └── manifest.json
 ├── docs/
 │   ├── README.md
-│   └── framework-versions.md
+│   ├── framework-versions.md
+│   └── system-inventory.md
 └── sandbox/
     ├── README.md
     └── drafts/
@@ -213,6 +214,29 @@ NIST AI 600-1 queda registrado como perfil GenAI complementario. NIST informa
 de que AI RMF 1.0 está siendo revisado; por ello el proyecto conserva 1.0 como
 baseline y comprobará de nuevo el estado oficial antes de realizar los mapeos
 y el cierre. Este registro no implementa controles ni acredita conformidad.
+
+## Inventario del sistema actual
+
+[docs/system-inventory.md](./docs/system-inventory.md) fija
+`GSL-SYS-INV-001`, la fotografía verificable del checkout local antes de
+dibujar su arquitectura:
+
+- identifica tres actores, seis activos de datos, cinco componentes, un único
+  modelo determinista y dos herramientas;
+- distingue lo expuesto por la CLI de lo implementado solo como API interna;
+- documenta que el proceso hereda la identidad de macOS y que no existen
+  autenticación interna, credenciales de proveedor ni service accounts;
+- registra Python, `uv`, las dependencias directas y toda la resolución
+  transitiva fijada;
+- confirma que no hay red, API, Docker, cloud, base de datos, vector store,
+  telemetría, modelo GenAI real, remoto Git ni publicación;
+- asigna IDs estables que PGS-02-M03 y PGS-02-M04 reutilizarán para los trust
+  boundaries y la matriz de autoridad.
+
+`DraftWriterTool` existe y está probado, pero no está conectado a `main.py`.
+Su confirmación demuestra coincidencia con la propuesta, no autentica la
+identidad humana. El inventario describe estas limitaciones sin convertir
+componentes planificados en infraestructura desplegada.
 
 ## Por qué existe
 
@@ -645,8 +669,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Implementar el flujo benigno mínimo y las herramientas confinadas al sandbox.
 - [x] Añadir smoke tests y registrar la primera baseline funcional.
 - [x] Registrar las versiones consultadas de OWASP, MITRE ATLAS y NIST.
+- [x] Inventariar usuarios, datos, modelo, herramientas, identidades, dependencias e infraestructura.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01, P01-M01 y P01-M04 están completadas.** El avance interno es **14 de 66 microtareas (21,2 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 y PGS-02-M02, P01-M01 y P01-M04 están completadas.** El avance interno es **15 de 66 microtareas (22,7 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M05 sigue abierta porque también requiere la matriz de autoridad de PGS-02-M04.
 
 ## Roadmap
 
@@ -656,7 +681,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-02-M02 — inventariar usuarios, datos, modelo, herramientas, identidades, dependencias e infraestructura.**
+**PGS-02-M03 — dibujar componentes, flujo de datos y trust boundaries.**
 
 ## Uso responsable
 

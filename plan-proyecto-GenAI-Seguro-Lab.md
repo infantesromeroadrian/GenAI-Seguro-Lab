@@ -7,7 +7,7 @@
 - **Ruta local confirmada:** `/Users/adrianinfantes/Desktop/AIR/Carreer/AI-Security-Architec/GenAI-Seguro-Lab`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04.
-- **Estado actual:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07 y PGS-02-M01 completadas; el esqueleto reproducible y la baseline fechada de marcos oficiales ya están fijados.
+- **Estado actual:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 y PGS-02-M02 completadas; el esqueleto reproducible, la baseline fechada de marcos oficiales y el inventario del sistema real ya están fijados.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** fuera de alcance hasta una autorización específica.
@@ -231,7 +231,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 **Objetivo:** describir exactamente qué se protege antes de probar ataques.
 
 - [x] **PGS-02-M01** Registrar las versiones consultadas de OWASP, MITRE ATLAS y NIST.
-- [ ] **PGS-02-M02** Inventariar usuarios, datos, modelo, herramientas, identidades, dependencias e infraestructura.
+- [x] **PGS-02-M02** Inventariar usuarios, datos, modelo, herramientas, identidades, dependencias e infraestructura.
 - [ ] **PGS-02-M03** Dibujar componentes, flujo de datos y trust boundaries.
 - [ ] **PGS-02-M04** Crear la matriz `modelo → identidad → datos → herramientas → acciones → consecuencias`.
 - [ ] **PGS-02-M05** Enumerar abuse cases de prompt injection, jailbreak, exfiltración, abuso de herramientas y denegación de servicio.
@@ -348,11 +348,12 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - El proyecto permanece deliberadamente sin empaquetar mediante `[tool.uv] package = false`. `main.py` ofrece el punto de entrada local estable desde el propio checkout, sin instalación editable ni `PYTHONPATH`.
 - La baseline `GSL-BASELINE-BENIGN-001` fija 12/12 ejecuciones funcionales, 24 invocaciones deterministas, 12 consultas autorizadas, 0 llamadas externas y 0 €. Sus campos declaran que no es una baseline de seguridad ni una evaluación de utilidad semántica.
 - `docs/framework-versions.md` fija OWASP LLM 2025, OWASP Agentic 2026, MITRE ATLAS v5.6.0, NIST AI RMF 1.0 y NIST SP 800-218A final; NIST AI 600-1 queda como perfil GenAI complementario. AI RMF 1.0 está en revisión y se volverá a comprobar antes de los mapeos y del cierre.
+- `docs/system-inventory.md` fija `GSL-SYS-INV-001` con actores, datos, componentes, modelo, herramientas, identidades, dependencias, infraestructura e integraciones verificadas. Distingue la CLI expuesta de `DraftWriterTool`, que solo está implementada como API interna, y confirma la ausencia actual de modelo GenAI real, red, autenticación, Docker, cloud, bases de datos, telemetría y remoto Git. Esta evidencia avanza P01-M05, que permanecerá abierta hasta completar también PGS-02-M04.
 - Decidir GitHub, remoto, visibilidad y primer `push` únicamente en PGS-07-M08 o mediante una autorización específica posterior.
 - Completar P00-M08, P00-M09 y P00-M10 antes de declarar superado SEC-1.
 
 ## Próxima microtarea
 
-**PGS-02-M02 — inventariar usuarios, datos, modelo, herramientas, identidades, dependencias e infraestructura.**
+**PGS-02-M03 — dibujar componentes, flujo de datos y trust boundaries.**
 
-**Progreso interno:** 14 de 66 microtareas completadas, 52 abiertas (**21,2 %**).
+**Progreso interno:** 15 de 66 microtareas completadas, 51 abiertas (**22,7 %**).
