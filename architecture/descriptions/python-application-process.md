@@ -4,7 +4,9 @@ local.
 ## Responsabilidades
 
 - Resolver la CLI desde el checkout.
-- Validar el dataset antes de utilizarlo.
+- Validar el dataset benigno antes de utilizarlo.
+- Validar por API interna las entradas y oráculos adversarios sin conectarlos
+  al flujo.
 - Ejecutar el flujo benigno acotado y el adaptador determinista.
 - Autorizar la búsqueda de conocimiento fuera del modelo.
 - Exponer internamente la herramienta de borradores sin conectarla a la CLI.

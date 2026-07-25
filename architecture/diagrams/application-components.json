@@ -63,7 +63,10 @@
         "inventoryIds": [
           "CMP-02"
         ],
-        "state": "exposed"
+        "state": "exposed-benign-internal-adversarial",
+        "adversarialCliReachable": false,
+        "adversarialExecutionEnabled": false,
+        "oracleSeparated": true
       }
     },
     {

@@ -11,6 +11,7 @@ y no describen personas, organizaciones, credenciales o incidentes reales.
 | `incidents.jsonl` | Incidentes benignos sintéticos | 12 |
 | `knowledge.jsonl` | Procedimientos de conocimiento sintético | 8 |
 | `manifest.json` | Versión, conteos, procedencia y hashes SHA-256 | 1 |
+| `adversarial/` | Entradas y oráculos adversarios inertes | 18 + 18 |
 
 Los ocho temas cubiertos son `phishing`, `identity`, `endpoint`,
 `data_protection`, `availability`, `cloud_configuration`, `supply_chain` y
@@ -31,8 +32,10 @@ estricto, rechaza campos adicionales y exige:
 - referencias a documentos de conocimiento existentes;
 - identificadores únicos, conteos y hashes coincidentes con el manifiesto.
 
-El manifiesto declara cero registros adversarios. Las fixtures adversarias
-controladas pertenecen a PGS-03 y no forman parte de este corpus.
+El manifiesto benigno continúa declarando cero registros adversarios. Las
+fixtures controladas de PGS-03 viven separadas en
+[`adversarial/`](./adversarial/README.md), tienen su propio manifiesto y no
+forman parte del bundle que consume la CLI.
 
 ## Verificación
 

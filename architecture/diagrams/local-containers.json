@@ -62,8 +62,14 @@
         "inventoryIds": [
           "DAT-01",
           "DAT-02",
-          "DAT-03"
-        ]
+          "DAT-03",
+          "DAT-07",
+          "DAT-08",
+          "DAT-09"
+        ],
+        "adversarialState": "prepared-not-wired",
+        "adversarialCliReachable": false,
+        "adversarialExecutionEnabled": false
       }
     },
     {
@@ -123,10 +129,12 @@
       "id": "containers-process-reads-versioned-data",
       "source": "python-application-process",
       "target": "versioned-data-store",
-      "label": "lee JSON/JSONL; valida esquema y SHA-256",
+      "label": "CLI: bundle benigno; API interna: corpus adversario inerte",
       "meta": {
         "type": "reads",
-        "crossesBoundary": "TB-06"
+        "crossesBoundary": "TB-06",
+        "adversarialCliReachable": false,
+        "adversarialExecutionEnabled": false
       }
     },
     {

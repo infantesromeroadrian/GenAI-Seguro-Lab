@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-PRIORITY-001` |
-| Versión | `1.2.0` |
+| Versión | `1.3.0` |
 | Fecha de corte | 2026-07-25 |
-| Baseline de código | commit `5b76303c56eda7544165fc8c08738c9eb0f8edd2` + candidato PGS-03-M02 |
+| Baseline de código | commit `3c4657efbc7dc92b232b83f3185d27968c2ba78b` + candidato PGS-03-M03 |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Crosswalk actual | [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
@@ -119,15 +119,34 @@ puntuaciones no cambian todavía:
 
 - `CMP-06` construye una petición débil marcada, pero no llama a `MOD-01`;
 - anunciar `knowledge_search` y `draft_create` no crea una ruta de ejecución;
-- no existe corpus adversario, dispatcher, run manifest o evidencia de ataque;
+- en el corte PGS-03-M02 no existían corpus adversario, dispatcher, run
+  manifest o evidencia de ataque;
 - la CLI sigue aceptando únicamente `analyze` y `baseline`;
 - el efecto máximo nuevo es `C0`, por lo que no cambia `I`, `L` o `K` de
   ninguno de los 17 casos.
 
 El cambio es arquitectónico y observable, pero no se presenta como una
-vulnerabilidad explotada. La siguiente revisión deberá producirse cuando
-PGS-03-M03 y el harness conecten una entrada adversaria a un adaptador y un
-oráculo.
+vulnerabilidad explotada. PGS-03-M03 produce el recálculo siguiente; otra
+revisión será necesaria cuando el harness conecte una entrada adversaria a un
+target y compare su resultado con el oráculo.
+
+## Recálculo de PGS-03-M03
+
+La incorporación de `GSL-ADVERSARIAL-CORPUS-001` vuelve a activar la revisión,
+pero tampoco modifica las puntuaciones:
+
+- `DAT-07` y `DAT-08` son fixtures y oráculos sintéticos inertes;
+- `DAT-09` fija 18 entradas, 17 abuse cases, seis familias, cero conexiones y
+  cero ejecuciones;
+- `AUTH-11` termina al devolver un bundle tipado en memoria;
+- no existe arista desde ese bundle hacia `CMP-06`, `MOD-01`, `TOL-01`,
+  `TOL-02` o la CLI;
+- `AC-DOS-03` continúa `NO AUTORIZADO` y solo se representa mediante un
+  descriptor no materializado.
+
+Preparar la entrada y el resultado esperado no cambia `I`, `L` o `K`. El
+recalculo siguiente se producirá cuando una microtarea posterior incorpore un
+harness o dispatcher capaz de entregar una fixture a un target.
 
 ## Backlog inicial de pruebas
 
@@ -144,9 +163,10 @@ Los cinco primeros casos forman el backlog prioritario actual:
 5. dividir `AC-SC-01` en cambios controlados de código, lock y evidencia sobre
    copias temporales, sin alterar la baseline autoritativa.
 
-La prioridad no autoriza su ejecución. `GSL-ROE-001` ya fija el marco, pero el
-corpus adversario y el harness siguen siendo precondiciones. En particular,
-`AC-DOS-01` se ejecutará solo con sus topes conservadores y una parada segura.
+La prioridad no autoriza su ejecución. `GSL-ROE-001` ya fija el marco y el
+corpus adversario está preparado, pero el harness y una petición vigente siguen
+siendo precondiciones. En particular, `AC-DOS-01` se ejecutará solo con sus
+topes conservadores y una parada segura.
 
 ## Decisiones derivadas
 
@@ -181,8 +201,8 @@ de estos supuestos:
 
 Los 17 abuse cases aparecen exactamente una vez y conservan la alcanzabilidad
 de `GSL-ABUSE-CASES-001`. El perfil vulnerable está construido y aislado, pero
-no se ha ejecutado ningún ataque, creado un corpus adversario ni habilitado una
-ruta de ejecución.
+ninguna de las 18 fixtures se ha ejecutado ni se ha habilitado una ruta de
+ejecución.
 
 [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) relaciona los casos con
 OWASP y MITRE ATLAS sin cambiar sus puntuaciones.

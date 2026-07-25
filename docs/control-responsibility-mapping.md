@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-NIST-CONTROLS-001` |
-| Versión | `1.0.2` |
+| Versión | `1.0.3` |
 | Fecha de corte | 2026-07-25 |
-| Baseline de código | commit `5b76303c56eda7544165fc8c08738c9eb0f8edd2` + candidato PGS-03-M02 |
+| Baseline de código | commit `3c4657efbc7dc92b232b83f3185d27968c2ba78b` + candidato PGS-03-M03 |
 | Threat model de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md), [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) y [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Baseline normativa | [NIST AI RMF 1.0 y NIST SP 800-218A](./framework-versions.md) |
@@ -87,7 +87,7 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 |---|---|---|---|---|---|---|
 | `CTL-01` | Requisitos de seguridad, tolerancia y tratamiento de riesgo | `PARCIAL` | `A/R ACT-02` | Los 17 casos de `GSL-ABUSE-CASES-001` | README, criterios de éxito, catálogo y priorización fijan límites; falta un registro formal de riesgos, aceptación residual y revisión periódica | PGS-06-M02 a M04 y PGS-05-M08 |
 | `CTL-02` | Inventario, límites, autoridad, threat model y disparadores de cambio | `PRESENTE` | `A/R ACT-02`; `C REV-01` planificado | Los 17 casos de `GSL-ABUSE-CASES-001` | Inventario, C4, autoridad, catálogo y priorización ya incorporan `CMP-06`; deberán revisarse si el futuro harness crea una ruta de ejecución | Revisión en cada disparador y matriz final PGS-07-M06 |
-| `CTL-03` | Procedencia, esquema e integridad del corpus y artefactos | `PRESENTE` para el corpus sintético actual | `A/R ACT-02` | `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | Esquemas estrictos, referencias, conteos, clasificación sintética y SHA-256 fallan cerrado; no hay firma, control de acceso propio ni límite global de tamaño | Corpus adversario PGS-03-M03, límites PGS-04-M06 y supply chain PGS-06-M08 |
+| `CTL-03` | Procedencia, esquema e integridad del corpus y artefactos | `PRESENTE` para los corpus sintéticos actuales | `A/R ACT-02` | `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | Los corpus benigno y adversario aplican esquemas estrictos, procedencia, conteos y SHA-256; entradas y oráculos adversarios están separados. No hay firma, control de acceso propio ni límite global para un futuro dataset dimensionado | Límites PGS-04-M06 y supply chain PGS-06-M08 |
 | `CTL-04` | Separación de instrucciones y contenido no confiable, resistencia a inyección y jailbreak | `PLANIFICADO` | `A/R ACT-02` | `AC-PI-01`, `AC-PI-02`, `AC-PI-03`, `AC-JB-01` | El adaptador actual no interpreta texto libre; eso elimina rutas, pero no demuestra resistencia de un modelo GenAI | PGS-04-M01 y retest PGS-05-M01 a M03 |
 | `CTL-05` | Validación de entradas, salidas y argumentos; allowlist de herramientas | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-EX-01`, `AC-EX-02`, `AC-TOL-01`, `AC-TOL-02` | Pydantic, nombre exacto, subconjunto por incidente, cardinalidad y terminación acotada protegen el flujo actual; faltan política de salida y validación del futuro modelo real | PGS-04-M02, PGS-04-M05 y PGS-05 |
 | `CTL-06` | Mínimo privilegio y separación modelo–identidad–datos–herramientas | `PARCIAL` | `A/R ACT-02` | `AC-TOL-01`, `AC-TOL-02`, `AC-TOL-05`, `AC-SC-01` | El modelo solo propone datos y la aplicación autoriza `TOL-01`; todo el proceso conserva, sin embargo, los permisos amplios de `IDN-01` y no hay identidad de servicio | PGS-04-M03 y revisión de la matriz de autoridad |
@@ -96,7 +96,7 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 | `CTL-09` | Política de salida, redacción, errores saneados y detección de fugas | `PARCIAL` | `A/R ACT-02` | `AC-JB-01`, `AC-EX-03` | Salida tipada y errores genéricos limitan la exposición actual; faltan filtros, marcadores señuelo, reglas de redacción y pruebas de fuga de extremo a extremo | PGS-04-M05, PGS-03-M05 y PGS-05 |
 | `CTL-10` | Límites de tamaño, tiempo, iteraciones, concurrencia y consumo | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-TOL-02`, `AC-DOS-01`, `AC-DOS-03` | `GSL-ROE-001` fija topes operativos por defecto y un piloto acotado para `AC-DOS-01`; todavía no hay enforcement en el harness, rate limit del producto, tope global del corpus ni métricas ejecutadas | PGS-04-M06 y PGS-05-M04 |
 | `CTL-11` | Integridad de código, dependencias, cambios y releases | `PARCIAL` | `A/R ACT-02`; `C REV-01` planificado | `AC-DOS-02`, `AC-SC-01` | Git local, `uv.lock`, hashes del corpus y commits granulares permiten detectar diferencias; faltan remoto, firma, CI, SBOM, revisión independiente y política de release | PGS-06-M08, PGS-07-M01/M03/M04 y decisión separada PGS-07-M08 |
-| `CTL-12` | Harness adversario, métricas, regresión y revisión independiente | `PLANIFICADO` | `A/R ACT-02`; `R REV-01` solo para revisión independiente | Los 17 casos de `GSL-ABUSE-CASES-001` | El perfil vulnerable aislado ya existe, pero solo construye peticiones; no hay corpus adversario, harness ejecutable, baseline de seguridad, retest ni revisor independiente | PGS-03-M03 a M08, PGS-05 y PGS-07-M01 a M06 |
+| `CTL-12` | Harness adversario, métricas, regresión y revisión independiente | `PLANIFICADO` | `A/R ACT-02`; `R REV-01` solo para revisión independiente | Los 17 casos de `GSL-ABUSE-CASES-001` | El perfil vulnerable y las 18 fixtures con oráculos ya existen, pero permanecen desconectados; no hay harness ejecutable, baseline de seguridad, retest ni revisor independiente | PGS-03-M04 a M08, PGS-05 y PGS-07-M01 a M06 |
 | `CTL-13` | Eventos, monitorización, respuesta, rollback, comunicación y retirada | `PLANIFICADO` | `A/R ACT-02`; `R ACT-01` para avisos y parada | `AC-EX-03`, `AC-DOS-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | No hay logging persistente, telemetría, correlación, runbook, rollback ni procedimiento de retirada | PGS-04-M07/M08, PGS-06-M05 a M07 y PGS-07 |
 
 ## Mapeo de controles a NIST
@@ -157,4 +157,6 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 [`GSL-ROE-001`](./rules-of-engagement.md) ya delimita los 17 casos, la
 autorización por ejecución, los targets, los presupuestos y la parada.
 `GSL-PROFILE-VULNERABLE-001` ya está aislado y sin capacidad de ejecución.
-PGS-03-M03 debe crear ahora el corpus adversario; ningún caso se ha ejecutado.
+`GSL-ADVERSARIAL-CORPUS-001` ya fija entradas y oráculos sintéticos separados.
+PGS-03-M04 debe implementar las pruebas de prompt injection; ningún caso se ha
+ejecutado.

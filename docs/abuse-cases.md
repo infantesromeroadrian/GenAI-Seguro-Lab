@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ABUSE-CASES-001` |
-| Versión | `1.3.0` |
+| Versión | `1.4.0` |
 | Fecha de corte | 2026-07-25 |
-| Baseline de código | commit `5b76303c56eda7544165fc8c08738c9eb0f8edd2` + candidato PGS-03-M02 |
+| Baseline de código | commit `3c4657efbc7dc92b232b83f3185d27968c2ba78b` + candidato PGS-03-M03 |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
 | Arquitectura de origen | [`architecture/manifest.json`](../architecture/manifest.json) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
@@ -56,6 +56,39 @@ modelo; y uno `INTERNO` no demuestra acceso remoto.
 
 Distribución por alcanzabilidad: 1 `SIN-RUTA`, 9 `INTERNO`, 6
 `MANTENIMIENTO` y 1 `CLI`.
+
+## Corpus adversario preparado
+
+`GSL-ADVERSARIAL-CORPUS-001` materializa 18 fixtures inertes para los 17
+casos. Las entradas `DAT-07` y los oráculos previos `DAT-08` permanecen en
+archivos separados y se unen uno a uno por ID. `AC-JB-01` tiene dos variantes
+porque distingue una afirmación falsa de compromiso de una afirmación falsa de
+acciones ejecutadas.
+
+| Fixture | Abuse case | Familia | Estado |
+|---|---|---|---|
+| `ADV-PI-001` | `AC-PI-01` | Prompt injection | Preparada, no conectada |
+| `ADV-PI-002` | `AC-PI-02` | Prompt injection | Preparada, no conectada |
+| `ADV-PI-003` | `AC-PI-03` | Prompt injection | Preparada, no conectada |
+| `ADV-JB-001` | `AC-JB-01` | Jailbreak | Preparada, no conectada |
+| `ADV-JB-002` | `AC-JB-01` | Jailbreak | Preparada, no conectada |
+| `ADV-JB-003` | `AC-JB-02` | Jailbreak | Preparada, no conectada |
+| `ADV-EX-001` | `AC-EX-01` | Exfiltración | Preparada, no conectada |
+| `ADV-EX-002` | `AC-EX-02` | Exfiltración | Preparada, no conectada |
+| `ADV-EX-003` | `AC-EX-03` | Exfiltración | Preparada, no conectada |
+| `ADV-TOL-001` | `AC-TOL-01` | Abuso de herramientas | Preparada, no conectada |
+| `ADV-TOL-002` | `AC-TOL-02` | Abuso de herramientas | Preparada, no conectada |
+| `ADV-TOL-003` | `AC-TOL-03` | Abuso de herramientas | Preparada, no conectada |
+| `ADV-TOL-004` | `AC-TOL-04` | Abuso de herramientas | Preparada, no conectada |
+| `ADV-TOL-005` | `AC-TOL-05` | Abuso de herramientas | Preparada, no conectada |
+| `ADV-DOS-001` | `AC-DOS-01` | Denegación de servicio | Preparada, no conectada |
+| `ADV-DOS-002` | `AC-DOS-02` | Denegación de servicio | Preparada, no conectada |
+| `ADV-DOS-003` | `AC-DOS-03` | Denegación de servicio | Descriptor; requiere ampliar RoE |
+| `ADV-SC-001` | `AC-SC-01` | Supply chain | Preparada, no conectada |
+
+El manifiesto `DAT-09` declara cero conexiones y cero ejecuciones. La
+existencia de una fixture no cambia `SIN-RUTA`, `INTERNO`, `MANTENIMIENTO` o
+`CLI`, ni demuestra el resultado fijado en su oráculo.
 
 ## Prompt injection
 
@@ -162,14 +195,15 @@ un proveedor mediante este catálogo.
 - `CMP-06` construye una petición deliberadamente vulnerable como API interna,
   pero no llama al modelo ni ejecuta herramientas; por eso no cambia todavía
   el estado de alcance de ningún `AC-*`.
-- No existe todavía corpus adversario, harness de ataque, modelo real,
-  proveedor, red, autenticación, telemetría o despliegue.
+- El corpus adversario ya existe como 18 fixtures inertes, pero no existe
+  todavía harness de ataque, modelo real, proveedor, red, autenticación,
+  telemetría o despliegue.
 
 ## Siguiente tratamiento
 
 [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) puntúa los 17 casos sin
 alterar su alcanzabilidad actual y
 [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) conserva su
-correspondencia con OWASP y MITRE ATLAS. PGS-03-M03 creará datos
-exclusivamente sintéticos y las siguientes microtareas construirán el harness
-antes de afirmar que un ataque fue reproducido.
+correspondencia con OWASP y MITRE ATLAS. PGS-03-M04 implementará las pruebas
+de prompt injection directa e indirecta sin reinterpretar la preparación del
+corpus como un ataque ya reproducido.

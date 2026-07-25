@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 y PGS-03-M02, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; el perfil vulnerable de evaluación ya existe aislado y sin capacidad de ejecución. Todavía no existe un modelo GenAI real, corpus adversario, harness de ataque, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M03, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; el perfil vulnerable y el corpus adversario de 18 fixtures existen aislados y sin capacidad de ejecución. Todavía no existe un modelo GenAI real, harness de ataque, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -53,6 +53,7 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 │   ├── test_cli_smoke.py
 │   ├── test_data_contract.py
 │   ├── test_evaluation_profile.py
+│   ├── test_adversarial_corpus.py
 │   ├── test_local_tools.py
 │   └── test_model_adapter.py
 ├── evaluations/
@@ -62,6 +63,11 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 │   ├── README.md
 │   ├── incidents.jsonl
 │   ├── knowledge.jsonl
+│   ├── adversarial/
+│   │   ├── README.md
+│   │   ├── inputs.jsonl
+│   │   ├── oracles.jsonl
+│   │   └── manifest.json
 │   └── manifest.json
 ├── docs/
 │   ├── README.md
@@ -79,7 +85,7 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
         └── README.md
 ```
 
-PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional y PGS-03-M02 añade el perfil vulnerable aislado. Todavía no existe un modelo GenAI real.
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado y PGS-03-M03 prepara el corpus adversario inerte. Todavía no existe un modelo GenAI real.
 
 ## Entorno reproducible
 
@@ -111,12 +117,17 @@ uv run --frozen pytest --version
 - `data/manifest.json` fija la versión, los conteos, la procedencia y los hashes SHA-256.
 - `src/genai_seguro_lab/data_contract.py` valida el esquema en modo estricto, rechaza campos adicionales y comprueba identificadores, referencias, conteos y hashes.
 - El corpus declara `synthetic: true`, sensibilidad `synthetic_internal` y procedencia `authored_for_lab`.
-- Esta versión contiene cero casos adversarios; se crearán en PGS-03-M03, no en el flujo benigno inicial.
+- `data/adversarial/` contiene 18 entradas y 18 oráculos separados para los 17
+  abuse cases y seis familias; su manifiesto declara cero conexiones y cero
+  ejecuciones.
+- El dataset benigno conserva cero registros adversarios y sigue siendo el
+  único que consume la CLI.
 
 Comprobación específica:
 
 ```bash
 uv run --frozen pytest tests/test_data_contract.py
+uv run --frozen pytest tests/test_adversarial_corpus.py
 ```
 
 ## Adaptador determinista actual
@@ -366,8 +377,8 @@ alcanzabilidad. No se ejecutó ningún ataque durante la priorización.
 
 `AC-DOS-01` queda limitado a un piloto de dos procesos, 20 invocaciones y 60
 segundos. `AC-DOS-03` no está autorizado por las reglas base y necesitará una
-ampliación posterior. PGS-03-M02 crea el perfil, pero no ejecuta ataques ni
-habilita una ruta desde la CLI.
+ampliación posterior. PGS-03-M03 prepara las fixtures y los oráculos, pero no
+ejecuta ataques ni habilita una ruta desde la CLI.
 
 ## Crosswalk de amenazas
 
@@ -612,8 +623,8 @@ exclusiva de evaluación:
 
 El descriptor inmutable declara `default_profile: false`,
 `cli_reachable: false`, `external_calls: false` y
-`execution_enabled: false`. PGS-03-M03 añadirá el corpus adversario y las
-microtareas posteriores construirán el harness y su autorización por run.
+`execution_enabled: false`. El corpus adversario ya está preparado y separado;
+las microtareas posteriores construirán el harness y su autorización por run.
 
 ## Contrato de evidencia
 
@@ -839,8 +850,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Mapear responsables y controles previstos a NIST AI RMF y NIST SP 800-218A.
 - [x] Definir las Rules of Engagement del laboratorio propio.
 - [x] Crear el perfil vulnerable aislado y exclusivo para evaluación.
+- [x] Preparar el corpus adversario con entradas y resultados esperados.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 y PGS-03-M02, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **23 de 66 microtareas (34,8 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta completar las pruebas y P01-M08 hasta implementar y verificar PGS-04.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M03, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **24 de 66 microtareas (36,4 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta completar las pruebas y P01-M08 hasta implementar y verificar PGS-04.
 
 ## Roadmap
 
@@ -850,7 +862,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-03-M03 — preparar el corpus adversario con entradas y resultados esperados.**
+**PGS-03-M04 — implementar pruebas para prompt injection directa e indirecta.**
 
 ## Uso responsable
 

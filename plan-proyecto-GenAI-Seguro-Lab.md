@@ -7,7 +7,7 @@
 - **Ruta local confirmada:** `/Users/adrianinfantes/Desktop/AIR/Carreer/AI-Security-Architec/Portfolio/GenAI-Seguro-Lab`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01, P01-M04, P01-M05 y P01-M06.
-- **Estado actual:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08 y PGS-03-M01 a PGS-03-M02 completadas; el perfil vulnerable de evaluación ya está fijado, aislado de la CLI y sin ejecución de ataques.
+- **Estado actual:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08 y PGS-03-M01 a PGS-03-M03 completadas; el perfil vulnerable y el corpus adversario están fijados, separados de la CLI y sin ejecución de ataques.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** fuera de alcance hasta una autorización específica.
@@ -247,7 +247,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 
 - [x] **PGS-03-M01** Definir las Rules of Engagement del laboratorio propio.
 - [x] **PGS-03-M02** Crear un perfil vulnerable aislado y exclusivo para evaluación.
-- [ ] **PGS-03-M03** Preparar el corpus adversario con entradas y resultados esperados.
+- [x] **PGS-03-M03** Preparar el corpus adversario con entradas y resultados esperados.
 - [ ] **PGS-03-M04** Implementar pruebas para prompt injection directa e indirecta.
 - [ ] **PGS-03-M05** Implementar pruebas para jailbreak y revelación de información.
 - [ ] **PGS-03-M06** Implementar pruebas para llamadas de herramienta no autorizadas y exceso de agencia.
@@ -342,7 +342,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - Elegir un proveedor real solo si aporta evidencia que el sustituto determinista no pueda producir; cualquier llamada y gasto exigirán autorización específica.
 - El repositorio local ya está inicializado sobre `main`; no existe ningún remoto configurado.
 - La estructura mínima ya separa código, tests, evaluaciones, datos, documentación y sandbox; Python 3.12, Pydantic 2, pytest 9 y sus dependencias están fijados mediante `pyproject.toml` y `uv.lock`.
-- El corpus benigno inicial contiene 12 incidentes y 8 documentos de conocimiento sintéticos; su esquema estricto, referencias, conteos y hashes están verificados automáticamente. Los casos adversarios se crearán de forma separada en PGS-03-M03.
+- El corpus benigno inicial contiene 12 incidentes y 8 documentos de conocimiento sintéticos; su esquema estricto, referencias, conteos y hashes están verificados automáticamente. `GSL-ADVERSARIAL-CORPUS-001` añade de forma separada 18 fixtures y 18 oráculos para los 17 abuse cases y seis familias, sin conectarlos a una ejecución.
 - El adaptador determinista ejecutado en proceso responde solo a peticiones completas previamente guionizadas, no usa red, registra coste cero y no autoriza ni ejecuta solicitudes de herramienta.
 - El flujo benigno exige una única búsqueda sobre las referencias del incidente y una respuesta final. La búsqueda solo usa conocimiento sintético cargado en memoria; la escritura de borradores queda separada del modelo, requiere una confirmación declarada por el llamador y ligada a la huella exacta de la propuesta, y aplica creación exclusiva dentro de `sandbox/drafts/`. Esta capa todavía no autentica la identidad humana.
 - El proyecto permanece deliberadamente sin empaquetar mediante `[tool.uv] package = false`. `main.py` ofrece el punto de entrada local estable desde el propio checkout, sin instalación editable ni `PYTHONPATH`.
@@ -350,18 +350,22 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - `docs/framework-versions.md` fija OWASP LLM 2025, OWASP Agentic 2026, MITRE ATLAS release `v2026.06` con `ATLAS.yaml` 5.6.0, NIST AI RMF 1.0 y NIST SP 800-218A final; NIST AI 600-1 queda como perfil GenAI complementario. La revalidación para PGS-02-M07 conserva el snapshot ATLAS anterior y documenta la actualización de `AML.T0054`.
 - `docs/system-inventory.md` fija `GSL-SYS-INV-001` con actores, datos, componentes, modelo, herramientas, identidades, dependencias, infraestructura e integraciones verificadas. Distingue la CLI expuesta de `DraftWriterTool`, que solo está implementada como API interna, y confirma la ausencia actual de modelo GenAI real, red, autenticación, Docker, cloud, bases de datos, telemetría y remoto Git.
 - `architecture/manifest.json` y sus diagramas Tecture fijan contexto, contenedores y componentes con seis trust boundaries. El mapa incorpora `CMP-06` como configuración interna de evaluación, sin arista hacia el modelo ni las herramientas; `DraftWriterTool` permanece desconectada y TB-02 a TB-04 siguen siendo límites lógicos dentro del mismo proceso. PGS-02-M03 cierra P01-M06.
-- `docs/authority-matrix.md` fija `GSL-AUTH-MATRIX-001` con diez cadenas actuales y cuatro niveles de consecuencia. Separa la construcción `C0` de `CMP-06`, la propuesta sin autoridad de `MOD-01`, la ejecución con `IDN-01`, el efecto interno create-only de `TOL-02` y la autoridad externa de mantenimiento de `ACT-02`. PGS-02-M04 completa el inventario de autoridad y cierra P01-M05.
+- `docs/authority-matrix.md` fija `GSL-AUTH-MATRIX-001` con once cadenas actuales y cuatro niveles de consecuencia. Separa la construcción `C0` de `CMP-06`, la carga inerte `C1` de `DAT-07` a `DAT-09`, la propuesta sin autoridad de `MOD-01`, la ejecución con `IDN-01`, el efecto interno create-only de `TOL-02` y la autoridad externa de mantenimiento de `ACT-02`. PGS-02-M04 completa el inventario de autoridad y cierra P01-M05.
 - `docs/abuse-cases.md` fija `GSL-ABUSE-CASES-001` con 17 escenarios: 3 de prompt injection, 2 de jailbreak, 3 de exfiltración, 5 de abuso de herramientas, 3 de denegación de servicio y 1 de supply chain. Los separa como `SIN-RUTA`, `INTERNO`, `MANTENIMIENTO` o `CLI` y conserva los gaps de evidencia.
 - `docs/risk-prioritization.md` fija `GSL-RISK-PRIORITY-001` con impacto `I0`–`I3`, probabilidad condicionada `L1`–`L3`, capacidad real `K0`–`K3` y una puntuación reproducible para los 17 casos. Sitúa 2 en `PR-1`, 3 en `PR-2`, 11 en `PR-3` y 1 en `PR-0`; PGS-02-M06 avanza P01-M07, que permanece abierta.
 - `docs/threat-crosswalk.md` fija `GSL-THREAT-CROSSWALK-001` con una fila por abuse case y relaciones directas, parciales o ausentes frente a OWASP LLM 2025, OWASP Agentic 2026 y MITRE ATLAS `v2026.06`. Conserva los gaps de consentimiento, filesystem y escenarios no agentic sin cambiar la prioridad; PGS-02-M07 avanza P01-M07, que permanece abierta.
 - `docs/control-responsibility-mapping.md` fija `GSL-NIST-CONTROLS-001` con cuatro roles, trece controles en estado presente, parcial o planificado, cobertura de los 17 abuse cases y correspondencias acotadas con NIST AI RMF 1.0 y NIST SP 800-218A. Declara la concentración de responsabilidad en `ACT-02`, la falta de autenticación de `ACT-03`, el futuro `REV-01` sin asignar y los límites de alcance del perfil; PGS-02-M08 avanza P01-M08, que permanece abierta hasta implementar PGS-04.
-- `docs/rules-of-engagement.md` fija `GSL-ROE-001` con autorización por ejecución, activos incluidos y excluidos, acciones permitidas y prohibidas, presupuestos cuantitativos, evidencia, parada y un vehículo acotado para cada uno de los 17 abuse cases. `AC-DOS-01` solo admite un piloto limitado y `AC-DOS-03` necesita una ampliación posterior; PGS-03-M02 creó `GSL-PROFILE-VULNERABLE-001` sin ejecutar ataques.
+- `docs/rules-of-engagement.md` fija `GSL-ROE-001` con autorización por ejecución, activos incluidos y excluidos, acciones permitidas y prohibidas, presupuestos cuantitativos, evidencia, parada y un vehículo acotado para cada uno de los 17 abuse cases. `AC-DOS-01` solo admite un piloto limitado y `AC-DOS-03` necesita una ampliación posterior; PGS-03-M03 mantiene el perfil y las fixtures sin ejecución.
 - `src/genai_seguro_lab/evaluation_profile.py` implementa `GSL-PROFILE-VULNERABLE-001`: requiere autorización estricta de `GSL-ROE-001`, datos sintéticos y un sandbox temporal, construye peticiones débiles claramente marcadas y carece de llamadas al modelo, ejecución de herramientas, red, escritura o ruta CLI. Su aislamiento queda probado en `tests/test_evaluation_profile.py`.
+- `data/adversarial/` y `load_adversarial_corpus()` fijan las entradas y los
+  oráculos separados, validan cobertura, procedencia, límites y hashes, y
+  terminan en un bundle en memoria. `AC-DOS-03` permanece como descriptor no
+  materializado que requiere ampliar las RoE.
 - Decidir GitHub, remoto, visibilidad y primer `push` únicamente en PGS-07-M08 o mediante una autorización específica posterior.
 - Completar P00-M08, P00-M09 y P00-M10 antes de declarar superado SEC-1.
 
 ## Próxima microtarea
 
-**PGS-03-M03 — preparar el corpus adversario con entradas y resultados esperados.**
+**PGS-03-M04 — implementar pruebas para prompt injection directa e indirecta.**
 
-**Progreso interno:** 23 de 66 microtareas completadas, 43 abiertas (**34,8 %**).
+**Progreso interno:** 24 de 66 microtareas completadas, 42 abiertas (**36,4 %**).

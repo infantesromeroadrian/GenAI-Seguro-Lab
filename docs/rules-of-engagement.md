@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `1.1.0` |
+| Versión | `1.2.0` |
 | Fecha de entrada en vigor | 2026-07-25 |
-| Baseline técnica de origen | commit `5b76303c56eda7544165fc8c08738c9eb0f8edd2` + candidato PGS-03-M02 |
+| Baseline técnica de origen | commit `3c4657efbc7dc92b232b83f3185d27968c2ba78b` + candidato PGS-03-M03 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
 | Operador | `ACT-01` — operador local |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
@@ -19,10 +19,10 @@ las evaluaciones adversarias de GenAI Seguro Lab. No son una autorización
 permanente para atacar: cada ejecución debe estar cubierta por una petición
 vigente que identifique los casos, el perfil, el candidato y los límites.
 
-PGS-03-M02 implementa únicamente la configuración aislada
-`GSL-PROFILE-VULNERABLE-001` y sus comprobaciones ordinarias. No añade corpus
-adversario, no llama a un modelo, no ejecuta herramientas y no ejecuta ningún
-caso de ataque.
+PGS-03-M03 prepara `GSL-ADVERSARIAL-CORPUS-001` con entradas y oráculos
+separados. El manifiesto declara cero conexiones y cero ejecuciones: no entrega
+una fixture al perfil, no llama a un modelo, no ejecuta herramientas y no
+ejecuta ningún caso de ataque.
 
 ## Objetivo y resultado permitido
 
@@ -68,7 +68,7 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
   para lectura, build, tests y cambios deliberados de desarrollo.
 - El código, la CLI, el adaptador determinista, las herramientas internas y
   `GSL-PROFILE-VULNERABLE-001`, creado expresamente en PGS-03-M02.
-- El corpus benigno actual y el futuro corpus adversario 100 % sintético de
+- El corpus benigno actual y el corpus adversario 100 % sintético de
   PGS-03-M03.
 - Directorios temporales específicos de la ejecución, creados por pytest o por
   el sistema operativo, para corpus alterados, sandboxes y copias desechables.
@@ -147,9 +147,10 @@ para depurar, pero debe fijar el diff observado y no cuenta como baseline
 canónica. La baseline de PGS-03-M07 y los retests sí deben utilizar un commit
 exacto con el checkout limpio.
 
-PGS-03-M02 ya está satisfecha. PGS-03-M03, el harness aplicable y una petición
-vigente siguen siendo precondiciones para ejecutar el corpus adversario. Hasta
-entonces, los 17 casos permanecen catalogados y no ejecutables como campaña.
+PGS-03-M02 y PGS-03-M03 ya están satisfechas. El harness aplicable y una
+petición vigente siguen siendo precondiciones para ejecutar el corpus
+adversario. Hasta entonces, las 18 fixtures de los 17 casos permanecen
+preparadas pero no ejecutables como campaña.
 
 ## Presupuesto operativo de seguridad
 
@@ -235,9 +236,10 @@ revisados y libres de secretos.
 ## Tratamiento de los 17 abuse cases
 
 `CATALOGADO` significa que el caso tiene vehículo y límites definidos, no que
-su ejecución esté autorizada ni que exista su fixture.
+su ejecución esté autorizada. PGS-03-M03 ya aporta una o dos fixtures por caso
+en `DAT-07` y su oráculo correspondiente en `DAT-08`.
 
-| Caso | Vehículo autorizado futuro | Restricción específica | Estado tras PGS-03-M02 |
+| Caso | Vehículo autorizado futuro | Restricción específica | Estado RoE tras PGS-03-M03 |
 |---|---|---|---|
 | `AC-PI-01` | Proceso CLI con argumento no reconocido | Prueba negativa; no añadir un prompt libre para simular la ruta | `CATALOGADO` |
 | `AC-PI-02` | Copia temporal de incidentes y manifiesto | Material sintético; nunca alterar el corpus canónico durante el run | `CATALOGADO` |
@@ -272,6 +274,7 @@ su ejecución esté autorizada ni que exista su fixture.
 | `ROE-09` | Cambios de superficie deben invalidar la versión vigente | Se revisan las RoE antes de usar red, proveedor, Docker, cloud o datos reales |
 | `ROE-10` | PGS-03-M01 no debe ejecutar ataques | El commit solo contiene documentación y verificaciones ordinarias |
 | `ROE-11` | PGS-03-M02 no debe crear una ruta de ejecución | El perfil exige autorización exacta y `$TMP`, no está en la CLI y termina al devolver una `ModelRequest` |
+| `ROE-12` | PGS-03-M03 no debe ejecutar ni conectar las fixtures | `DAT-09` declara 0 conexiones y 0 ejecuciones; el loader solo devuelve un bundle tipado y mantiene `DAT-08` separado |
 
 ## Disparadores de revisión
 
@@ -290,10 +293,11 @@ Estas reglas deben revisarse y versionarse antes de:
 Una revisión no autoriza por sí misma la ejecución. Debe conservar versión,
 motivo, cambios y nueva petición aplicable.
 
-## Estado de cierre de PGS-03-M02
+## Estado de cierre de PGS-03-M03
 
 Las RoE siguen delimitando los 17 casos, responsables, targets, acciones,
-datos, presupuesto, evidencia y parada. El perfil aislado ya existe, exige una
-declaración exacta de estas reglas y un sandbox temporal, y no contiene
-enforcement de ejecución: el corpus adversario se creará en PGS-03-M03 y el
-harness en las microtareas posteriores.
+datos, presupuesto, evidencia y parada. El perfil aislado y el corpus
+adversario ya existen, pero permanecen desconectados. El corpus contiene 18
+fixtures sintéticas, 18 oráculos previos y un descriptor no materializado para
+`AC-DOS-03`; el harness y su enforcement pertenecen a las microtareas
+posteriores.

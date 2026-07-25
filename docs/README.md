@@ -34,6 +34,9 @@ real.
 - [Rules of Engagement](./rules-of-engagement.md): autorización por ejecución,
   targets, acciones, datos, presupuestos, evidencias y condiciones de parada
   para los 17 abuse cases del laboratorio propio.
+- [Corpus adversario sintético](../data/adversarial/README.md): 18 entradas y
+  18 oráculos separados para los 17 casos y seis familias, todavía sin harness
+  ni ejecución.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

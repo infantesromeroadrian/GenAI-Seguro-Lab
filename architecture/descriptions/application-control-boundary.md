@@ -8,6 +8,8 @@ del modelo.
   vulnerable de evaluación.
 - Decide qué datos se cargan, qué herramienta se autoriza y cuándo termina el
   flujo.
+- El contrato puede validar el corpus adversario, pero no lo entrega al perfil,
+  al modelo o a las herramientas.
 - El perfil de evaluación solo construye una petición y no participa en el
   flujo ordinario.
 

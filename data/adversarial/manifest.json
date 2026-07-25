@@ -1,0 +1,41 @@
+{
+  "id": "GSL-ADVERSARIAL-CORPUS-001",
+  "version": "1.0.0",
+  "type": "adversarial_corpus_manifest",
+  "rules_of_engagement": "GSL-ROE-001",
+  "target_profile": "GSL-PROFILE-VULNERABLE-001",
+  "files": [
+    {
+      "path": "inputs.jsonl",
+      "kind": "adversarial_input_jsonl",
+      "records": 18,
+      "sha256": "759b7ec5d185100dbd3573e7f0c1e96d78404b10630dbca60a4ac56bace59c47"
+    },
+    {
+      "path": "oracles.jsonl",
+      "kind": "adversarial_oracle_jsonl",
+      "records": 18,
+      "sha256": "ab0f70a8d225101168aa1be0e720b86320d9d910d1ef8358b3688ff7a5c6a9f0"
+    }
+  ],
+  "provenance": {
+    "origin": "authored_for_lab",
+    "author": "GenAI Seguro Lab",
+    "created_on": "2026-07-25",
+    "references": [
+      "docs/abuse-cases.md",
+      "docs/rules-of-engagement.md"
+    ]
+  },
+  "synthetic": true,
+  "sensitivity": "synthetic_internal",
+  "fixture_state": "prepared_not_wired",
+  "expected_result": {
+    "input_records": 18,
+    "oracle_records": 18,
+    "unique_abuse_cases": 17,
+    "threat_families": 6,
+    "runtime_connections": 0,
+    "attack_executions": 0
+  }
+}

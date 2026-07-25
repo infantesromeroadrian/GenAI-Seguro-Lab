@@ -20,3 +20,9 @@ ejecución no cree borradores.
 `$TMP/sandbox/drafts`, no crea archivos, identifica sus peticiones, no expone
 el oráculo y no puede seleccionarse desde la CLI. Estas pruebas no ejecutan
 ataques ni herramientas.
+
+`test_adversarial_corpus.py` carga las 18 fixtures y sus 18 oráculos separados,
+verifica la cobertura de los 17 abuse cases y seis familias, la procedencia,
+los límites RoE, la relación uno a uno y los hashes. También demuestra que el
+manifiesto fija cero conexiones y cero ejecuciones; no interpreta ni envía las
+entradas a ningún componente.

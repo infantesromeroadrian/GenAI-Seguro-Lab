@@ -30,7 +30,8 @@ predeterminada y sin capacidad de ejecución. Construye peticiones claramente
 marcadas, pero no llama al modelo, no ejecuta herramientas y no genera aquí
 ningún resultado.
 
-El corpus adversario, el harness, los runs y la baseline de seguridad siguen
-pendientes de PGS-03-M03 a PGS-03-M07. Este directorio no debe recibir una
-evidencia de ataque antes de fijar el corpus, los oráculos y el candidato
-exacto.
+El corpus adversario ya está fijado fuera de este directorio, con entradas y
+oráculos separados, pero el harness, los runs y la baseline de seguridad siguen
+pendientes de PGS-03-M04 a PGS-03-M07. Este directorio no debe recibir una
+evidencia de ataque antes de implementar el harness y fijar el candidato exacto
+de cada ejecución.

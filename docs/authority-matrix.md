@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-AUTH-MATRIX-001` |
-| Versión | `1.1.0` |
+| Versión | `1.2.0` |
 | Fecha de corte | 2026-07-25 |
-| Baseline de código | commit `5b76303c56eda7544165fc8c08738c9eb0f8edd2` + candidato PGS-03-M02 |
+| Baseline de código | commit `3c4657efbc7dc92b232b83f3185d27968c2ba78b` + candidato PGS-03-M03 |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
 | Arquitectura de origen | [`architecture/manifest.json`](../architecture/manifest.json) |
 | Alcance | autoridad implementada en el checkout local actual |
@@ -59,8 +59,9 @@ residual.
 | `AUTH-06` | `ACT-03` o cualquier llamador Python local invoca `TOL-02.prepare`; API interna, no CLI | Ninguno conectado; acepta estructuralmente un `ModelToolRequest`, pero `MOD-01` no tiene ruta hasta aquí | `IDN-01`; no se autentica al llamador | Recibe contenido de propuesta y devuelve una huella SHA-256 en memoria | `TOL-02.prepare` | Aceptar solo `draft_create`, validar nombre, título, cuerpo y referencias, y preparar la propuesta exacta | Crear el archivo, interpretar la propuesta como confirmación o alcanzar una ruta fuera del sandbox | `C0`: propuesta verificable en memoria |
 | `AUTH-07` | `ACT-03` aporta por API interna una propuesta y una confirmación separadas | Ninguno participa en la autorización | `IDN-01` ejecuta; `IDN-03` declara consentimiento pero no acredita identidad humana | Crea `DAT-06` con nombre de hasta 64 caracteres, título de 120 y cuerpo de 10 000 | `TOL-02.create` | Comprobar la huella exacta, consumirla una sola vez por instancia, revalidar el directorio y crear con modo exclusivo | Sobrescribir, borrar, usar subrutas, seguir symlinks de directorio, escribir fuera de `sandbox/drafts/`, usar shell o red | `C2`: un Markdown sintético nuevo y confinado; la CLI actual no puede provocarlo |
 | `AUTH-08` | `ACT-02` regenera y versiona manualmente la baseline; operación de soporte | `MOD-01` genera material de origen, pero no autoriza la versión | Cuenta macOS y autoridad Git de `ACT-02`, fuera de la aplicación | Transforma `DAT-05` en `DAT-04` | CLI, redirección/editor y Git; no son herramientas del producto | Revisar, guardar y versionar la evidencia funcional | Atribuir a la aplicación una escritura automática o considerar el snapshot una evaluación de seguridad | `C3`: modificar la evidencia versionada y su interpretación |
-| `AUTH-09` | `ACT-02` mantiene el checkout local; operación de desarrollo y soporte | Ninguno limita esta autoridad | Cuenta macOS y autoridad Git de `ACT-02`, fuera de la aplicación | Puede modificar código, `DAT-01` a `DAT-04`, `DAT-06`, configuración y resolución de dependencias | Editor, Git, `uv` y herramientas de desarrollo | Cambiar y versionar el laboratorio de forma deliberada | Ningún control de runtime restringe esta cuenta; su uso queda sujeto al sistema operativo, revisión y disciplina de repositorio | `C3`: mayor autoridad actual; puede alterar controles, comportamiento, datos y evidencia |
+| `AUTH-09` | `ACT-02` mantiene el checkout local; operación de desarrollo y soporte | Ninguno limita esta autoridad | Cuenta macOS y autoridad Git de `ACT-02`, fuera de la aplicación | Puede modificar código, `DAT-01` a `DAT-04`, `DAT-06` a `DAT-09`, configuración y resolución de dependencias | Editor, Git, `uv` y herramientas de desarrollo | Cambiar y versionar el laboratorio de forma deliberada | Ningún control de runtime restringe esta cuenta; su uso queda sujeto al sistema operativo, revisión y disciplina de repositorio | `C3`: mayor autoridad actual; puede alterar controles, comportamiento, datos y evidencia |
 | `AUTH-10` | `ACT-02` llama a la factory de `CMP-06`; API Python interna, no CLI | Ninguno se ejecuta; solo se construye una `ModelRequest` deliberadamente débil | `IDN-01`; declaración exacta de `GSL-ROE-001`, sin identidad de servicio | Lee en memoria un incidente de `DAT-01` y metadatos de `DAT-03`; omite el oráculo y liga un `$TMP/sandbox/drafts` | `CMP-06`; valida autorización, datos sintéticos y aislamiento temporal | Preparar una petición marcada que anuncia `TOL-01` y `TOL-02` para un futuro harness | Usar el sandbox canónico, elegir el perfil desde CLI, llamar a `MOD-01`, ejecutar herramientas, crear archivos, usar red o iniciar un ataque | `C0`: petición tipada en memoria, sin efecto o ejecución |
+| `AUTH-11` | `ACT-02` o pytest llama a `load_adversarial_corpus()`; API Python interna, no CLI | Ninguno participa | `IDN-01`; no existe una identidad de evaluación separada | Lee `DAT-07`, `DAT-08` y `DAT-09` y devuelve fixtures y oráculos tipados en memoria | `CMP-02`; valida esquema, cobertura, límites, relación uno a uno, conteos y SHA-256 | Cargar el corpus inerte y comprobar su contrato sin interpretarlo | Entregar una entrada a `CMP-06` o `MOD-01`, ejecutar un caso, iniciar procesos, invocar herramientas, escribir, usar red o tratar el oráculo como autorización | `C1`: lectura de datos sintéticos versionados; cero conexiones y cero ejecuciones |
 
 ## Cadenas de autoridad resumidas
 
@@ -98,11 +99,19 @@ ACT-02 (API Python interna)
   → fin sin llamar modelo o herramientas
 ```
 
+```text
+ACT-02 o pytest (API Python interna)
+  → CMP-02 valida DAT-07/DAT-08/DAT-09
+  → AdversarialCorpusBundle en memoria
+  → fin sin entregar entradas al perfil, modelo o herramientas
+```
+
 La primera cadena es la única alcanzable mediante `main.py`. La segunda existe
 como capacidad interna probada, pero no está conectada a la CLI ni al flujo
 benigno. La tercera es una autoridad de mantenimiento externa a los controles
 de la aplicación. La cuarta prepara una entrada de evaluación `C0`; todavía no
-es un harness ni una ejecución adversaria.
+es un harness ni una ejecución adversaria. La quinta solo valida el corpus
+inerte y termina antes de cualquier target.
 
 ## Rutas de autoridad que no existen
 
@@ -111,6 +120,7 @@ es un harness ni una ejecución adversaria.
 | `MOD-01` | Ejecutar directamente `TOL-01` | Sin ruta: el modelo solo devuelve una solicitud tipada a `CMP-03` |
 | `MOD-01` | Preparar o crear mediante `TOL-02` | Sin ruta: no hay arista de ejecución desde el modelo o el flujo benigno |
 | `CMP-06` | Invocar `MOD-01`, `TOL-01` o `TOL-02` | Sin ruta: el perfil solo construye una `ModelRequest`; no contiene adaptador ni dispatcher |
+| `DAT-07`/`DAT-08` | Entrar en `CMP-06`, `MOD-01` o una herramienta | Sin ruta: `load_adversarial_corpus()` devuelve un bundle a su llamador y no existe harness o dispatcher |
 | `CMP-01` | Invocar `TOL-02` | Sin ruta: la CLI solo expone `analyze` y `baseline` |
 | Runtime de aplicación | Escribir `DAT-04` | Sin ruta directa: la baseline solo se emite por `stdout` y el mantenedor la versiona |
 | Runtime de aplicación | Shell, red, proveedor, cloud, base de datos o secretos | Sin capacidad implementada ni credenciales |
@@ -128,6 +138,8 @@ supply chain.
 - El modelo propone; la aplicación autoriza; la identidad del proceso ejecuta.
 - Una solicitud de herramienta no equivale a consentimiento ni a ejecución.
 - La allowlist pertenece al incidente validado, no a los argumentos del modelo.
+- Los oráculos `DAT-08` permanecen separados de las entradas `DAT-07` y nunca
+  se convierten en instrucciones o autoridad para el sistema evaluado.
 - La confirmación de un borrador queda ligada al contenido exacto, pero sigue
   necesitando una identidad humana real si la capacidad se expone.
 - Los efectos persistentes de producto no pueden superar `C2` sin revisar esta

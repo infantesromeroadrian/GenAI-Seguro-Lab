@@ -5,6 +5,7 @@ mediante un flujo determinista y herramientas con autoridad acotada.
 
 - Cargar y validar el corpus sintético versionado.
 - Ejecutar `analyze` o `baseline` sin llamadas externas.
+- Validar un corpus adversario inerte sin conectarlo al runtime benigno.
 - Separar la salida del modelo de la autorización de herramientas.
 - Emitir resultados JSON reproducibles y mantener los efectos locales fuera de
   la ruta ordinaria de la CLI.
@@ -29,7 +30,8 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 - No hay modelo GenAI real, proveedor, red, API web, Docker, cloud o base de
   datos.
 - No hay autenticación interna, service account, telemetría o remoto Git.
-- El corpus adversario y el harness ejecutable todavía no existen.
+- El corpus adversario existe como fixtures y oráculos separados, pero el
+  harness ejecutable todavía no existe.
 - El perfil vulnerable existe como API interna `C0`; no está conectado al
   modelo, las herramientas o la CLI.
 
@@ -39,4 +41,5 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 - `main.py`
 - `src/genai_seguro_lab/`
 - `data/manifest.json`
+- `data/adversarial/manifest.json`
 - `evaluations/benign-baseline-v1.json`
