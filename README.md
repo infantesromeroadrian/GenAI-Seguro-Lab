@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07 y P01-M01 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional reproducible sobre el corpus sintético. Todavía no existe un modelo GenAI real, perfil vulnerable, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01, P01-M01 y P01-M04 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las versiones de OWASP, MITRE ATLAS y NIST ya están fijadas. Todavía no existe un threat model, modelo GenAI real, perfil vulnerable, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -55,7 +55,8 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 │   ├── knowledge.jsonl
 │   └── manifest.json
 ├── docs/
-│   └── README.md
+│   ├── README.md
+│   └── framework-versions.md
 └── sandbox/
     ├── README.md
     └── drafts/
@@ -194,6 +195,24 @@ Comprobación específica:
 ```bash
 uv run --frozen pytest tests/test_cli_smoke.py
 ```
+
+## Baseline de marcos y fuentes
+
+[docs/framework-versions.md](./docs/framework-versions.md) fija la fotografía
+consultada el 25 de julio de 2026:
+
+| Fuente | Versión seleccionada |
+|---|---|
+| OWASP Top 10 for LLM Applications | Version 2025, documento v2.0 |
+| OWASP Top 10 for Agentic Applications | Version 2026 |
+| MITRE ATLAS data | v5.6.0, commit `c1050fc` |
+| NIST AI Risk Management Framework | AI RMF 1.0, NIST AI 100-1 |
+| NIST SP 800-218A | Final, julio de 2024 |
+
+NIST AI 600-1 queda registrado como perfil GenAI complementario. NIST informa
+de que AI RMF 1.0 está siendo revisado; por ello el proyecto conserva 1.0 como
+baseline y comprobará de nuevo el estado oficial antes de realizar los mapeos
+y el cierre. Este registro no implementa controles ni acredita conformidad.
 
 ## Por qué existe
 
@@ -625,8 +644,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Implementar el adaptador determinista de modelo para tests.
 - [x] Implementar el flujo benigno mínimo y las herramientas confinadas al sandbox.
 - [x] Añadir smoke tests y registrar la primera baseline funcional.
+- [x] Registrar las versiones consultadas de OWASP, MITRE ATLAS y NIST.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07 y P01-M01 están completadas.** El avance interno es **13 de 66 microtareas (19,7 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01, P01-M01 y P01-M04 están completadas.** El avance interno es **14 de 66 microtareas (21,2 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -636,7 +656,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-02-M01 — registrar las versiones consultadas de OWASP, MITRE ATLAS y NIST.**
+**PGS-02-M02 — inventariar usuarios, datos, modelo, herramientas, identidades, dependencias e infraestructura.**
 
 ## Uso responsable
 

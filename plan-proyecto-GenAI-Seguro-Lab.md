@@ -6,8 +6,8 @@
 - **Nombre de carpeta confirmado:** `GenAI-Seguro-Lab`.
 - **Ruta local confirmada:** `/Users/adrianinfantes/Desktop/AIR/Carreer/AI-Security-Architec/GenAI-Seguro-Lab`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
-- **Microtarea padre completada:** P01-M01.
-- **Estado actual:** PGS-00-M01 a PGS-00-M06 y PGS-01-M01 a PGS-01-M07 completadas; el esqueleto reproducible queda cerrado con interfaz local, pruebas smoke y baseline funcional benigna.
+- **Microtareas padre completadas:** P01-M01 y P01-M04.
+- **Estado actual:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07 y PGS-02-M01 completadas; el esqueleto reproducible y la baseline fechada de marcos oficiales ya están fijados.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** fuera de alcance hasta una autorización específica.
@@ -230,7 +230,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 
 **Objetivo:** describir exactamente qué se protege antes de probar ataques.
 
-- [ ] **PGS-02-M01** Registrar las versiones consultadas de OWASP, MITRE ATLAS y NIST.
+- [x] **PGS-02-M01** Registrar las versiones consultadas de OWASP, MITRE ATLAS y NIST.
 - [ ] **PGS-02-M02** Inventariar usuarios, datos, modelo, herramientas, identidades, dependencias e infraestructura.
 - [ ] **PGS-02-M03** Dibujar componentes, flujo de datos y trust boundaries.
 - [ ] **PGS-02-M04** Crear la matriz `modelo → identidad → datos → herramientas → acciones → consecuencias`.
@@ -347,11 +347,12 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - El flujo benigno exige una única búsqueda sobre las referencias del incidente y una respuesta final. La búsqueda solo usa conocimiento sintético cargado en memoria; la escritura de borradores queda separada del modelo, requiere una confirmación declarada por el llamador y ligada a la huella exacta de la propuesta, y aplica creación exclusiva dentro de `sandbox/drafts/`. Esta capa todavía no autentica la identidad humana.
 - El proyecto permanece deliberadamente sin empaquetar mediante `[tool.uv] package = false`. `main.py` ofrece el punto de entrada local estable desde el propio checkout, sin instalación editable ni `PYTHONPATH`.
 - La baseline `GSL-BASELINE-BENIGN-001` fija 12/12 ejecuciones funcionales, 24 invocaciones deterministas, 12 consultas autorizadas, 0 llamadas externas y 0 €. Sus campos declaran que no es una baseline de seguridad ni una evaluación de utilidad semántica.
+- `docs/framework-versions.md` fija OWASP LLM 2025, OWASP Agentic 2026, MITRE ATLAS v5.6.0, NIST AI RMF 1.0 y NIST SP 800-218A final; NIST AI 600-1 queda como perfil GenAI complementario. AI RMF 1.0 está en revisión y se volverá a comprobar antes de los mapeos y del cierre.
 - Decidir GitHub, remoto, visibilidad y primer `push` únicamente en PGS-07-M08 o mediante una autorización específica posterior.
 - Completar P00-M08, P00-M09 y P00-M10 antes de declarar superado SEC-1.
 
 ## Próxima microtarea
 
-**PGS-02-M01 — registrar las versiones consultadas de OWASP, MITRE ATLAS y NIST.**
+**PGS-02-M02 — inventariar usuarios, datos, modelo, herramientas, identidades, dependencias e infraestructura.**
 
-**Progreso interno:** 13 de 66 microtareas completadas, 53 abiertas (**19,7 %**).
+**Progreso interno:** 14 de 66 microtareas completadas, 52 abiertas (**21,2 %**).

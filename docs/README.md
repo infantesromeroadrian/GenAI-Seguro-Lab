@@ -1,5 +1,14 @@
 # Documentación
 
-Este directorio contendrá arquitectura, threat model, decisiones, riesgos, fichas y runbooks que describan el sistema real.
+Este directorio contiene la documentación estable que describe las fuentes,
+arquitectura, threat model, decisiones, riesgos, fichas y runbooks del sistema
+real.
 
-La documentación estable se añadirá junto al hito técnico correspondiente; este archivo solo establece su ubicación.
+## Inventario actual
+
+- [Baseline de marcos y fuentes](./framework-versions.md): versiones oficiales
+  fijadas para OWASP, MITRE ATLAS y NIST, con fecha de consulta y regla de
+  actualización.
+
+La documentación se añade junto al hito técnico correspondiente y debe
+distinguir el estado implementado de las decisiones o trabajos futuros.
