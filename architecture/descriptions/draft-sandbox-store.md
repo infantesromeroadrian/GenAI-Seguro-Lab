@@ -12,7 +12,9 @@ ficticio.
 ## Acceso
 
 `TOL-02` exige propuesta y confirmación exacta separadas. Esta ruta existe como
-API Python interna, pero no está conectada a `main.py`.
+API Python interna, pero no está conectada a `main.py`. `CMP-07` usa una
+instancia efímera bajo `$TMP` para las pruebas TOL; el sandbox canónico no se
+modifica.
 
 ## Persistencia
 

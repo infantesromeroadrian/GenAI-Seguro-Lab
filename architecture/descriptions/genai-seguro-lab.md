@@ -5,7 +5,7 @@ mediante un flujo determinista y herramientas con autoridad acotada.
 
 - Cargar y validar el corpus sintético versionado.
 - Ejecutar `analyze` o `baseline` sin llamadas externas.
-- Validar el corpus adversario y conectar nueve fixtures PI/JB/EX al harness
+- Validar el corpus adversario y conectar 14 fixtures PI/JB/EX/TOL al harness
   interno de test.
 - Separar la salida del modelo de la autorización de herramientas.
 - Emitir resultados JSON reproducibles y mantener los efectos locales fuera de
@@ -15,6 +15,8 @@ mediante un flujo determinista y herramientas con autoridad acotada.
   búsqueda autorizada.
 - Evaluar jailbreak de contenido y de flujo, rechazos de conocimiento y un
   marcador señuelo de CLI sin persistencia ni red.
+- Evaluar abuso de herramientas, confirmaciones y filesystem dentro de `$TMP`,
+  conservando explícitamente un único residual de confirmación sin identidad.
 
 ## Límites de confianza
 
@@ -38,10 +40,10 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
   público es una integración manual de desarrollo y distribución; no es
   alcanzable desde el runtime.
 - El corpus adversario conserva fixtures y oráculos separados; `CMP-07` cubre
-  nueve PI/JB/EX y las otras nueve entradas siguen inertes.
+  14 PI/JB/EX/TOL y las otras cuatro entradas siguen inertes.
 - El perfil vulnerable existe como API interna `C0`; solo `CMP-07` conduce sus
-  peticiones hacia el doble determinista y `TOL-01`, nunca hacia la CLI
-  ordinaria o `TOL-02`.
+  peticiones hacia el doble determinista y `TOL-01`; M06 invoca `TOL-02`
+  únicamente desde pytest y bajo `$TMP`, nunca desde la CLI o el flujo benigno.
 
 ## Evidencia
 

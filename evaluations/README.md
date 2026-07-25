@@ -32,8 +32,7 @@ ningún resultado.
 
 El corpus adversario ya está fijado fuera de este directorio, con entradas y
 oráculos separados. `CMP-07` implementa como pruebas de desarrollo los tres
-casos PI y los seis casos de jailbreak y revelación, pero no escribe resultados
-aquí. Las pruebas de abuso de herramientas pertenecen a PGS-03-M06 y la
-baseline adversaria canónica a PGS-03-M07. Este directorio no debe recibirla
-hasta fijar un commit limpio, configuración, límites, resultados y logs
-saneados.
+casos PI, los seis casos de jailbreak y revelación y los cinco casos de abuso de
+herramientas, pero no escribe resultados aquí. La baseline adversaria canónica
+pertenece a PGS-03-M07. Este directorio no debe recibirla hasta fijar un commit
+limpio, configuración, límites, resultados y logs saneados.

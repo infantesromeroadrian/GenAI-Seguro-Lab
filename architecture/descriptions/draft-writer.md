@@ -14,9 +14,12 @@ muy restringida.
 - No accede a red, shell o filesystem general.
 - No está conectado a la CLI ni al flujo benigno.
 - No autentica la identidad humana que el llamador declara.
+- `CMP-07` lo invoca solo desde pytest, bajo `$TMP`, para las fixtures
+  `ADV-TOL-003/004/005`; no crea una ruta de producto.
 
 ## Evidencia
 
 - `src/genai_seguro_lab/local_tools.py`
 - `tests/test_local_tools.py`
+- `tests/test_tool_abuse_evaluation.py`
 - Inventario `TOL-02`

@@ -5,16 +5,17 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYS-INV-001` |
-| Versión | `1.5.0` |
+| Versión | `1.6.0` |
 | Fecha de corte | 2026-07-25 |
-| Baseline de código | commit `239575aa` + candidato PGS-03-M05 |
+| Baseline de código | commit `b1850e93` + candidato PGS-03-M06 |
 | Entorno | checkout local de desarrollo |
-| Alcance | estado implementado por PGS-03-M05 y publicación PGS-07-M08 |
+| Alcance | estado implementado por PGS-03-M06 y publicación PGS-07-M08 |
 
 Este documento inventaría el sistema que existe en el repositorio, no la
-solución futura descrita en el roadmap. PGS-03-M04/M05 conectan nueve fixtures
-a pruebas internas: tres de prompt injection, tres de jailbreak y tres de
-revelación. Los oráculos permanecen separados del target y las otras nueve
+solución futura descrita en el roadmap. PGS-03-M04/M05/M06 conectan 14 fixtures
+a pruebas internas: tres de prompt injection, tres de jailbreak, tres de
+revelación y cinco de abuso de herramientas. Los oráculos permanecen separados
+del target y las otras cuatro
 fixtures siguen inertes. PGS-07-M08 añade un remoto público de desarrollo; ese
 remoto no forma parte del runtime ni introduce llamadas externas en la
 aplicación.
@@ -52,9 +53,9 @@ ni procesos desatendidos.
 | `DAT-04` | Baseline funcional benigna | Evidencia JSON versionada; no es baseline de seguridad ni evaluación semántica | Se regenera por `CMP-05` y se compara de forma reproducible | `evaluations/benign-baseline-v1.json` |
 | `DAT-05` | Resultado de proceso | JSON efímero por `stdout` y error saneado por `stderr` | Emisión por `CMP-01`; no hay almacenamiento o logging persistente automático | `src/genai_seguro_lab/cli.py` |
 | `DAT-06` | Borradores ficticios | Markdown sintético local; ignorado por Git | Creación exclusiva por `TOL-02`; actualmente no hay borradores generados en el checkout | `sandbox/drafts/` |
-| `DAT-07` | 18 entradas adversarias | `synthetic_internal`; JSONL versionado | `CMP-07` selecciona las nueve PI/JB/EX; las otras 9 permanecen `inert_not_wired`; la CLI ordinaria no expone el corpus | `data/adversarial/inputs.jsonl` |
+| `DAT-07` | 18 entradas adversarias | `synthetic_internal`; JSONL versionado | `CMP-07` selecciona las 14 PI/JB/EX/TOL; las otras 4 permanecen `inert_not_wired`; la CLI ordinaria no expone el corpus | `data/adversarial/inputs.jsonl` |
 | `DAT-08` | 18 oráculos adversarios | `synthetic_internal`; JSONL versionado y fijado antes de ejecutar | Pytest los compara después de observar el target; nunca entran en la petición, el modelo o la herramienta | `data/adversarial/oracles.jsonl` |
-| `DAT-09` | Manifiesto adversario | Sintético; JSON versionado con RoE, perfil objetivo, conteos y SHA-256 | Lectura y validación interna por `CMP-02`; declara 9 fixtures conectadas a test, 9 inertes y 0 evaluaciones canónicas | `data/adversarial/manifest.json` |
+| `DAT-09` | Manifiesto adversario | Sintético; JSON versionado con RoE, perfil objetivo, conteos y SHA-256 | Lectura y validación interna por `CMP-02`; declara 14 fixtures conectadas a test, 4 inertes y 0 evaluaciones canónicas | `data/adversarial/manifest.json` |
 
 El dataset `GSL-DATASET-001` declara 12 registros benignos, 8 documentos de
 conocimiento y 0 registros adversarios. No contiene datos personales,
@@ -62,8 +63,9 @@ corporativos, credenciales, secretos ni incidentes reales.
 
 `GSL-ADVERSARIAL-CORPUS-001` permanece separado del dataset benigno. Sus 18
 fixtures cubren los 17 abuse cases y seis familias; `AC-JB-01` tiene dos
-variantes. `ADV-PI-001/002/003`, `ADV-JB-001/002/003` y
-`ADV-EX-001/002/003` están conectadas al harness de test. `AC-DOS-03` es un
+variantes. `ADV-PI-001/002/003`, `ADV-JB-001/002/003`,
+`ADV-EX-001/002/003` y `ADV-TOL-001/002/003/004/005` están conectadas al
+harness de test. `AC-DOS-03` es un
 descriptor no materializado que conserva
 `requires_extension`.
 
@@ -80,7 +82,7 @@ descriptor no materializado que conserva
 | `CMP-04` | Constructor de escenarios deterministas | Expuesto | Construye los intercambios guionizados para los incidentes benignos; no es un proveedor GenAI | `src/genai_seguro_lab/baseline.py` |
 | `CMP-05` | Ejecutor de baseline funcional | Expuesto | Ejecuta los 12 incidentes y serializa evidencia canónica por `stdout`; no escribe el snapshot por sí mismo | `src/genai_seguro_lab/baseline.py` |
 | `CMP-06` | Perfil vulnerable de evaluación | Interno | Requiere una declaración exacta de `GSL-ROE-001`, el bundle sintético y un `$TMP/sandbox/drafts`; construye una `ModelRequest` débil marcada, pero no llama al modelo, ejecuta herramientas ni escribe | `src/genai_seguro_lab/evaluation_profile.py`, `tests/test_evaluation_profile.py` |
-| `CMP-07` | Harness adversario acotado | Interno de test | Selecciona exactamente nueve fixtures PI/JB/EX; combina copias `$TMP`, dobles deterministas, guardas de `CMP-03`, rechazos de `TOL-01` y errores saneados de `CMP-01`; no crea borradores, abre red o guarda una baseline | `src/genai_seguro_lab/evaluation_harness.py`, `tests/test_prompt_injection_evaluation.py`, `tests/test_jailbreak_disclosure_evaluation.py` |
+| `CMP-07` | Harness adversario acotado | Interno de test | Selecciona exactamente 14 fixtures PI/JB/EX/TOL; combina copias y sandboxes `$TMP`, dobles deterministas, guardas de `CMP-03`, rechazos de `TOL-01`, pruebas confinadas de `TOL-02` y errores saneados de `CMP-01`; `AC-TOL-05` crea un único Markdown temporal y no guarda una baseline | `src/genai_seguro_lab/evaluation_harness.py`, `tests/test_prompt_injection_evaluation.py`, `tests/test_jailbreak_disclosure_evaluation.py`, `tests/test_tool_abuse_evaluation.py` |
 
 `MOD-01` es el único modelo activo, pero no es un modelo GenAI real. Tampoco
 hay un agente autónomo: `CMP-03` es un flujo acotado y determinista con una sola
@@ -88,7 +90,9 @@ herramienta disponible por incidente. `CMP-06` anuncia dos herramientas en el
 objeto de petición, pero no contiene un adaptador ni un dispatcher.
 `CMP-07` conduce únicamente dobles deterministas, autoriza como máximo una
 `knowledge_search` en los flujos que la necesitan y observa rechazos
-adicionales; `draft_create` nunca se ejecuta.
+adicionales. Solo `ADV-TOL-005` ejecuta `draft_create`, con una confirmación
+literal no autenticada y un único efecto sintético bajo `$TMP`; no conecta
+`TOL-02` a la CLI ni al flujo benigno.
 
 ## Identidades, credenciales y autoridad
 
@@ -157,13 +161,13 @@ explícitos. `CMP-06` solo devuelve una `ModelRequest` marcada como vulnerable;
 no existe una arista desde el perfil hacia `MOD-01`, `TOL-01` o `TOL-02`.
 
 La evaluación adversaria es un flujo interno de test: pytest usa `CMP-02` para
-leer `DAT-07`, `DAT-08` y `DAT-09`, selecciona únicamente nueve fixtures
-PI/JB/EX y mantiene `DAT-08` fuera del target. Los casos PI conservan el flujo
-de M04. M05 añade dos payloads de jailbreak sobre copias desechables, dos
-ejecuciones independientes contra las guardas de `CMP-03`, dos búsquedas
-rechazadas por `TOL-01` y un proceso `CMP-01` cuyo error no refleja el marcador
-sintético. Todos terminan sin borradores, red o evidencia canónica. No hay una
-ruta adversaria equivalente desde la CLI ordinaria.
+leer `DAT-07`, `DAT-08` y `DAT-09`, selecciona únicamente 14 fixtures
+PI/JB/EX/TOL y mantiene `DAT-08` fuera del target. Los casos PI conservan el
+flujo de M04. M05 añade jailbreak, guardas de `CMP-03`, rechazos de `TOL-01` y
+un error saneado de `CMP-01`. M06 añade allowlist, exceso de agencia,
+confirmación y filesystem; solo `ADV-TOL-005` crea un Markdown sintético bajo
+`$TMP` para registrar el residual conocido. No hay una ruta adversaria
+equivalente desde la CLI ordinaria ni evidencia canónica todavía.
 
 ## Elementos confirmados como ausentes
 
@@ -175,7 +179,7 @@ ruta adversaria equivalente desde la CLI ordinaria.
 | `GAP-04` | Cloud, base de datos, vector store, cola o almacenamiento remoto | Fuera de alcance |
 | `GAP-05` | Autenticación, autorización por roles y service accounts | No implementadas |
 | `GAP-06` | Logging persistente, telemetría y monitorización | No implementados |
-| `GAP-07` | Cobertura adversaria restante | `CMP-07` cubre prompt injection, jailbreak y revelación; abuso de herramientas pertenece a PGS-03-M06 y la baseline canónica a PGS-03-M07 |
+| `GAP-07` | Cobertura adversaria restante | `CMP-07` cubre PI/JB/EX/TOL; disponibilidad y supply chain permanecen inertes y la baseline canónica pertenece a PGS-03-M07 |
 | `GAP-08` | Sistema multiagente, autonomía abierta y ejecución de shell | No forman parte del diseño aprobado |
 
 `GAP-09` queda retirado desde PGS-07-M08: el remoto Git y la publicación
@@ -192,7 +196,7 @@ reclasifica aquí como un requisito pendiente.
 - `CMP-06` es alcanzable únicamente por factory Python, queda ligado a un
   sandbox temporal y termina en `C0`: preparar una petición no equivale a
   ejecutarla.
-- `DAT-07`, `DAT-08` y `DAT-09` pueden validarse internamente. Nueve fixtures
+- `DAT-07`, `DAT-08` y `DAT-09` pueden validarse internamente. Catorce fixtures
   están conectadas a `CMP-07`; el resto continúa sin dispatcher.
   Una prueba passing del doble determinista no demuestra robustez de un modelo
   GenAI real.
@@ -205,7 +209,7 @@ reclasifica aquí como un requisito pendiente.
 
 El [mapa C4 versionado](../architecture/manifest.json) materializa estos IDs
 con componentes, flujos y límites de confianza sin añadir infraestructura
-hipotética; PGS-03-M05 amplía `CMP-07` a JB/EX sin cambiar su límite. La
+hipotética; PGS-03-M06 amplía `CMP-07` a TOL sin crear una ruta de producto. La
 [matriz de autoridad y consecuencias](./authority-matrix.md) distingue
 propuestas del modelo, construcción del perfil, ejecución por el proceso,
 efectos internos y autoridad externa de mantenimiento.

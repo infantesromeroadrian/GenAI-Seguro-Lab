@@ -11,9 +11,10 @@ local.
 - Exponer internamente la herramienta de borradores sin conectarla a la CLI.
 - Construir, solo por factory interna, una petición vulnerable de evaluación
   ligada a datos sintéticos y un sandbox temporal.
-- Ejecutar por API interna nueve fixtures PI/JB/EX mediante copias temporales,
-  dobles deterministas, guardas del flujo, rechazos de búsqueda y un
-  subproceso CLI saneado, siempre sin red ni borradores.
+- Ejecutar por API interna 14 fixtures PI/JB/EX/TOL mediante copias y sandboxes
+  temporales, dobles deterministas, guardas del flujo, rechazos de búsqueda y
+  herramienta, controles de borrador y un subproceso CLI saneado, siempre sin
+  red y con un único efecto temporal conocido.
 
 ## Trust boundary
 

@@ -35,8 +35,8 @@ real.
   targets, acciones, datos, presupuestos, evidencias y condiciones de parada
   para los 17 abuse cases del laboratorio propio.
 - [Corpus adversario sintético](../data/adversarial/README.md): 18 entradas y
-  18 oráculos separados para los 17 casos y seis familias; 9 fixtures están
-  conectadas al harness interno y 9 permanecen inertes.
+  18 oráculos separados para los 17 casos y seis familias; 14 fixtures están
+  conectadas al harness interno y 4 permanecen inertes.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

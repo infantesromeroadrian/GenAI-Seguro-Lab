@@ -6,7 +6,7 @@ incidente.
 - `DAT-01`: 12 incidentes benignos.
 - `DAT-02`: 8 documentos de conocimiento.
 - `DAT-03`: manifiesto con procedencia, conteos y SHA-256.
-- `DAT-07`: 18 entradas adversarias sintéticas; 9 conectadas a test y 9
+- `DAT-07`: 18 entradas adversarias sintéticas; 14 conectadas a test y 4
   inertes.
 - `DAT-08`: 18 oráculos fijados antes de cualquier ejecución.
 - `DAT-09`: manifiesto adversario con RoE, perfil objetivo, conteos y SHA-256.
@@ -21,8 +21,8 @@ incidente.
 - Las entradas adversarias y sus oráculos viven en archivos distintos y se
   relacionan uno a uno por `ADV-*`.
 - La CLI ordinaria no expone el corpus. `CMP-07` selecciona únicamente las
-  nueve fixtures PI/JB/EX; las copias de datos necesarias se materializan en
-  `$TMP`.
+  14 fixtures PI/JB/EX/TOL; las copias de datos y sandboxes necesarios se
+  materializan en `$TMP`.
 - `DAT-08` se usa después de observar el target y nunca se incorpora a su
   petición.
 
@@ -30,5 +30,5 @@ incidente.
 
 - JSON y JSONL versionados bajo `data/`.
 - `data/manifest.json` sigue describiendo solo el corpus benigno.
-- `data/adversarial/manifest.json` declara 9 fixtures conectadas a test, 9
+- `data/adversarial/manifest.json` declara 14 fixtures conectadas a test, 4
   inertes y 0 evaluaciones canónicas versionadas.

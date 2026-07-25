@@ -14,4 +14,6 @@ local.
 
 La búsqueda está conectada al flujo benigno. El borrador permanece como API
 interna desconectada de la CLI y su confirmación no autentica al humano. La
-validación del sandbox del perfil no concede autoridad para usar la herramienta.
+validación del sandbox del perfil no concede autoridad para usar la
+herramienta. `CMP-07` la invoca únicamente con autorización TOL exacta y un
+sandbox efímero bajo `$TMP`.

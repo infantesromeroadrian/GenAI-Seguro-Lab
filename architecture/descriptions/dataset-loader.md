@@ -11,8 +11,8 @@ por separado el corpus adversario mediante una API interna.
 - Unir cada entrada adversaria con un único oráculo sin mezclar ambos archivos.
 - Exigir 18 fixtures, los 17 abuse cases, seis familias y los límites de las
   RoE.
-- Verificar que nueve fixtures PI/JB/EX están conectadas al harness de test y
-  que las otras nueve permanecen inertes.
+- Verificar que 14 fixtures PI/JB/EX/TOL están conectadas al harness de test y
+  que las otras cuatro permanecen inertes.
 - Devolver el bundle en memoria sin interpretar payloads ni entregar oráculos
   al target.
 

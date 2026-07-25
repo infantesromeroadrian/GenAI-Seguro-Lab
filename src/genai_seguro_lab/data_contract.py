@@ -186,6 +186,11 @@ EXPECTED_TEST_WIRED_ADVERSARIAL_CASES = frozenset(
         "ADV-EX-001",
         "ADV-EX-002",
         "ADV-EX-003",
+        "ADV-TOL-001",
+        "ADV-TOL-002",
+        "ADV-TOL-003",
+        "ADV-TOL-004",
+        "ADV-TOL-005",
     }
 )
 
@@ -373,14 +378,14 @@ class AdversarialManifestExpectedResult(StrictModel):
     oracle_records: Literal[18]
     unique_abuse_cases: Literal[17]
     threat_families: Literal[6]
-    test_wired_records: Literal[9]
-    inert_records: Literal[9]
+    test_wired_records: Literal[14]
+    inert_records: Literal[4]
     canonical_evaluation_records: Literal[0]
 
 
 class AdversarialCorpusManifest(StrictModel):
     id: AdversarialCorpusId
-    version: Literal["1.2.0"]
+    version: Literal["1.3.0"]
     type: Literal["adversarial_corpus_manifest"]
     rules_of_engagement: Literal["GSL-ROE-001"]
     target_profile: Literal["GSL-PROFILE-VULNERABLE-001"]

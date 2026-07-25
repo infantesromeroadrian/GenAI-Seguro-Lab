@@ -25,7 +25,7 @@ ataques ni herramientas.
 `test_adversarial_corpus.py` carga las 18 fixtures y sus 18 oráculos separados,
 verifica la cobertura de los 17 abuse cases y seis familias, la procedencia,
 los límites RoE, la relación uno a uno y los hashes. También demuestra que el
-manifiesto fija 9 fixtures conectadas a test, 9 inertes y 0 evaluaciones
+manifiesto fija 14 fixtures conectadas a test, 4 inertes y 0 evaluaciones
 canónicas.
 
 `test_prompt_injection_evaluation.py` cubre los tres casos PI. Comprueba en un
@@ -39,3 +39,9 @@ los tres de revelación. Comprueba afirmaciones prohibidas en copias temporales,
 cardinalidad y terminación del ciclo, rechazo de IDs fuera de alcance o
 desconocidos y un error de CLI con marcador señuelo. Cada ejecución conserva
 datos sintéticos, salida saneada, cero llamadas externas y cero archivos.
+
+`test_tool_abuse_evaluation.py` cubre los cinco casos TOL. Comprueba una
+allowlist de herramienta cerrada, cardinalidad, IDs duplicados, recursión,
+integridad y consumo único de confirmaciones, traversal, symlink y overwrite.
+También registra `AC-TOL-05` como residual conocido: una confirmación literal
+sin identidad crea exactamente un Markdown sintético bajo `$TMP`.

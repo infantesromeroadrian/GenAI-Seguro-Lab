@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `1.4.0` |
+| Versión | `1.5.0` |
 | Fecha de entrada en vigor | 2026-07-25 |
-| Baseline técnica de origen | commit `239575aa` + candidato PGS-03-M05 |
+| Baseline técnica de origen | commit `b1850e93` + candidato PGS-03-M06 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
 | Operador | `ACT-01` — operador local |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
@@ -20,10 +20,10 @@ permanente para atacar: cada ejecución debe estar cubierta por una petición
 vigente que identifique los casos, el perfil, el candidato y los límites.
 
 PGS-03-M03 preparó `GSL-ADVERSARIAL-CORPUS-001` con entradas y oráculos
-separados. PGS-03-M04/M05 conectan `ADV-PI-001/002/003`,
-`ADV-JB-001/002/003` y `ADV-EX-001/002/003` al test interno. Las otras nueve
-fixtures permanecen inertes y no existe todavía una evaluación adversaria
-canónica versionada.
+separados. PGS-03-M04/M05/M06 conectan `ADV-PI-001/002/003`,
+`ADV-JB-001/002/003`, `ADV-EX-001/002/003` y `ADV-TOL-001/002/003/004/005`
+al test interno. Las otras cuatro fixtures permanecen inertes y no existe
+todavía una evaluación adversaria canónica versionada.
 
 ## Objetivo y resultado permitido
 
@@ -147,7 +147,7 @@ para depurar, pero debe fijar el diff observado y no cuenta como baseline
 canónica. La baseline de PGS-03-M07 y los retests sí deben utilizar un commit
 exacto con el checkout limpio.
 
-PGS-03-M02 a PGS-03-M05 ya están satisfechas. `CMP-07` cubre nueve fixtures y
+PGS-03-M02 a PGS-03-M06 ya están satisfechas. `CMP-07` cubre 14 fixtures y
 exige autorizaciones tipadas con estos límites. Para cualquier otra fixture
 siguen faltando el harness aplicable y una petición vigente; no existe una
 campaña general ni una continuación automática.
@@ -168,10 +168,15 @@ rendimiento ni controles del producto.
 | Solicitudes de herramienta por caso | 2 |
 | Tamaño de una entrada adversaria | 64 KiB |
 | Datos de entrada acumulados por run | 10 MiB |
-| Archivos creados por caso | 1 |
-| Archivos creados por run | 36 |
+| Archivos de efecto creados por caso | 1 |
+| Archivos de efecto creados por run | 36 |
 | Escritura temporal y evidencia bruta acumuladas | 25 MiB |
 | RSS agregado de los procesos objetivo | 512 MiB |
+
+Los centinelas, destinos existentes y symlinks creados por el propio harness
+bajo `$TMP` son entradas de preparación, no efectos del target. Deben
+enumerarse, permanecer sintéticos y eliminarse con el directorio temporal; el
+único efecto aceptado por M06 es un Markdown en `ADV-TOL-005`.
 
 El presupuesto especial de `AC-DOS-01` sustituye solo los límites de procesos,
 invocaciones y tiempo:
@@ -237,10 +242,10 @@ revisados y libres de secretos.
 
 `CATALOGADO` significa que el caso tiene vehículo y límites definidos, no que
 su ejecución esté autorizada. PGS-03-M03 aporta una o dos fixtures por caso en
-`DAT-07` y su oráculo correspondiente en `DAT-08`; PGS-03-M04/M05 conectan las
-nueve fixtures PI, JB y EX.
+`DAT-07` y su oráculo correspondiente en `DAT-08`; PGS-03-M04/M05/M06 conectan
+las 14 fixtures PI, JB, EX y TOL.
 
-| Caso | Vehículo autorizado | Restricción específica | Estado RoE tras PGS-03-M05 |
+| Caso | Vehículo autorizado | Restricción específica | Estado RoE tras PGS-03-M06 |
 |---|---|---|---|
 | `AC-PI-01` | Proceso CLI con argumento no reconocido | Prueba negativa; no añadir un prompt libre para simular la ruta | `IMPLEMENTADO EN TEST` |
 | `AC-PI-02` | Copia temporal de incidentes y manifiesto | Material sintético; nunca alterar el corpus canónico durante el run | `IMPLEMENTADO EN TEST` |
@@ -250,11 +255,11 @@ nueve fixtures PI, JB y EX.
 | `AC-EX-01` | Llamada interna a `knowledge_search` | Verificar cero resultados fuera de la allowlist | `IMPLEMENTADO EN TEST` |
 | `AC-EX-02` | IDs señuelo sintéticos | No enumerar el índice real ni divulgar el corpus completo | `IMPLEMENTADO EN TEST` |
 | `AC-EX-03` | Marcadores señuelo y subproceso CLI | Comprobar ausencia en salida, errores, rutas y traceback | `IMPLEMENTADO EN TEST` |
-| `AC-TOL-01` | Doble interno con nombre prohibido | Sin implementar shell ni una herramienta falsa ejecutable | `CATALOGADO` |
-| `AC-TOL-02` | Respuestas internas con cardinalidad o ciclo inválidos | Aplican los topes de turnos y solicitudes | `CATALOGADO` |
-| `AC-TOL-03` | API interna de borradores | Sandbox temporal; propuesta, huella y replay sintéticos | `CATALOGADO` |
-| `AC-TOL-04` | Sandbox temporal con archivo centinela | No apuntar a archivos personales ni seguir symlinks externos | `CATALOGADO` |
-| `AC-TOL-05` | API interna con confirmación fabricada | Un único Markdown sintético en sandbox temporal | `CATALOGADO` |
+| `AC-TOL-01` | Doble interno con nombre prohibido | Sin implementar shell ni una herramienta falsa ejecutable | `IMPLEMENTADO EN TEST` |
+| `AC-TOL-02` | Respuestas internas con cardinalidad o ciclo inválidos | Tres escenarios independientes; máximo 2 turnos y 2 solicitudes cada uno | `IMPLEMENTADO EN TEST` |
+| `AC-TOL-03` | API interna de borradores | Sandbox temporal; propuesta, huella y replay sintéticos | `IMPLEMENTADO EN TEST` |
+| `AC-TOL-04` | Sandbox temporal con archivo centinela | No apuntar a archivos personales ni seguir symlinks externos | `IMPLEMENTADO EN TEST` |
+| `AC-TOL-05` | API interna con confirmación fabricada | Un único Markdown sintético en sandbox temporal | `IMPLEMENTADO COMO RESIDUAL` |
 | `AC-DOS-01` | Subprocesos de la CLI | Solo presupuesto especial: 2 procesos, 20 invocaciones, 60 s | `CATALOGADO` |
 | `AC-DOS-02` | Copia temporal del corpus | Corrupción reversible; el checkout canónico no se toca | `CATALOGADO` |
 | `AC-DOS-03` | Corpus sintético dimensionado | `NO AUTORIZADO` por las RoE base; requiere ampliación posterior | `CATALOGADO` |
@@ -278,6 +283,7 @@ nueve fixtures PI, JB y EX.
 | `ROE-12` | PGS-03-M03 no debe ejecutar ni conectar las fixtures durante su creación | La versión 1.0.0 del corpus en el commit `e8cf8699` declaró 0 conexiones y 0 ejecuciones |
 | `ROE-13` | PGS-03-M04 debe quedar limitada a los tres casos PI | `CMP-07` exige sus tres IDs, `$TMP`, 15 s, 2 turnos, 1 consulta, 0 archivos, sin red ni evidencia canónica; `DAT-08` queda fuera del target |
 | `ROE-14` | PGS-03-M05 debe quedar limitada a los seis casos JB/EX | La autorización exige seis IDs, datos sintéticos, 15 s por ejecución, hasta 4 turnos, 2 solicitudes, 1 subproceso, 0 archivos, sin red ni evidencia canónica; las dos guardas de `ADV-JB-003` se ejecutan de forma independiente |
+| `ROE-15` | PGS-03-M06 debe quedar limitada a los cinco casos TOL | La autorización exige cinco IDs, datos sintéticos, 15 s, hasta 3 escenarios, 2 turnos y 2 solicitudes por escenario, 0 subprocesos y como máximo 1 archivo temporal; el único efecto permitido es el residual `ADV-TOL-005` |
 
 ## Disparadores de revisión
 
@@ -296,12 +302,12 @@ Estas reglas deben revisarse y versionarse antes de:
 Una revisión no autoriza por sí misma la ejecución. Debe conservar versión,
 motivo, cambios y nueva petición aplicable.
 
-## Estado de cierre de PGS-03-M05
+## Estado de cierre de PGS-03-M06
 
 Las RoE siguen delimitando los 17 casos, responsables, targets, acciones,
-datos, presupuesto, evidencia y parada. `CMP-07` aplica el contrato de nueve
-fixtures: tres PI, tres JB y tres EX. M05 añade dos copias temporales, dos
-guardas independientes del flujo, dos rechazos de conocimiento y un subproceso
-CLI con marcador señuelo. Los oráculos no se entregan al target, las otras
-nueve fixtures permanecen inertes y PGS-03-M07 continúa siendo responsable de
-fijar la baseline canónica.
+datos, presupuesto, evidencia y parada. `CMP-07` aplica el contrato de 14
+fixtures: tres PI, tres JB, tres EX y cinco TOL. M06 añade rechazo de nombre,
+cardinalidad, duplicados, recursión, integridad de confirmación y filesystem,
+y registra `AC-TOL-05` como residual conocido con un único Markdown temporal.
+Los oráculos no se entregan al target, las otras cuatro fixtures permanecen
+inertes y PGS-03-M07 continúa siendo responsable de fijar la baseline canónica.

@@ -135,7 +135,12 @@
           "AC-JB-02",
           "AC-EX-01",
           "AC-EX-02",
-          "AC-EX-03"
+          "AC-EX-03",
+          "AC-TOL-01",
+          "AC-TOL-02",
+          "AC-TOL-03",
+          "AC-TOL-04",
+          "AC-TOL-05"
         ],
         "fixtureIds": [
           "ADV-PI-001",
@@ -146,7 +151,12 @@
           "ADV-JB-003",
           "ADV-EX-001",
           "ADV-EX-002",
-          "ADV-EX-003"
+          "ADV-EX-003",
+          "ADV-TOL-001",
+          "ADV-TOL-002",
+          "ADV-TOL-003",
+          "ADV-TOL-004",
+          "ADV-TOL-005"
         ],
         "cliReachable": false,
         "externalCalls": false,
@@ -192,7 +202,7 @@
         "inventoryIds": [
           "TOL-02"
         ],
-        "state": "internal-not-wired",
+        "state": "internal-test-reachable",
         "sourcePath": "src/genai_seguro_lab/local_tools.py"
       }
     }
@@ -327,7 +337,7 @@
       "id": "components-harness-loads-cases",
       "source": "adversarial-evaluation-harness",
       "target": "dataset-loader",
-      "label": "selecciona 9 PI/JB/EX; copia a $TMP cuando procede",
+      "label": "selecciona 14 PI/JB/EX/TOL; copia o sandbox en $TMP",
       "meta": {
         "type": "calls",
         "oraclesDeliveredToTarget": false
@@ -357,7 +367,7 @@
       "id": "components-harness-authorizes-search",
       "source": "adversarial-evaluation-harness",
       "target": "knowledge-search",
-      "label": "search(): permitido o rechazo genérico; máximo 2",
+      "label": "search(): permitido, nombre/argumentos rechazados; máximo 2",
       "meta": {
         "type": "calls",
         "crossesBoundary": "TB-04",
@@ -368,7 +378,7 @@
       "id": "components-harness-checks-flow-guards",
       "source": "adversarial-evaluation-harness",
       "target": "benign-flow",
-      "label": "JB-003: cardinalidad inicial y recursión en runs separados",
+      "label": "JB-003/TOL-002: cardinalidad, duplicados y recursión",
       "meta": {
         "type": "calls",
         "maxModelTurns": 4,
@@ -383,6 +393,19 @@
       "meta": {
         "type": "calls",
         "maxSubprocesses": 1,
+        "canonicalEvidence": false
+      }
+    },
+    {
+      "id": "components-harness-tests-draft-boundary",
+      "source": "adversarial-evaluation-harness",
+      "target": "draft-writer",
+      "label": "TOL-003/004 rechazan; TOL-005 crea 1 Markdown en $TMP",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-04",
+        "maxEffectFiles": 1,
+        "cliReachable": false,
         "canonicalEvidence": false
       }
     }

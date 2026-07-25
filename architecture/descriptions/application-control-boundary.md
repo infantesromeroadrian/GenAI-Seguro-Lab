@@ -8,12 +8,14 @@ del modelo.
   vulnerable de evaluación y harness adversario interno.
 - Decide qué datos se cargan, qué herramienta se autoriza y cuándo termina el
   flujo.
-- El harness selecciona solo nueve fixtures PI/JB/EX y nunca entrega el
+- El harness selecciona solo 14 fixtures PI/JB/EX/TOL y nunca entrega el
   oráculo al target.
 - Los casos indirectos conectan una copia temporal al perfil, al doble
   determinista y a una búsqueda autorizada; los JB/EX añaden guardas,
-  rechazos de búsqueda y una comprobación CLI saneada. Ninguno forma parte del
-  flujo ordinario ni habilita una ruta adversaria en la CLI.
+  rechazos de búsqueda y una comprobación CLI saneada. TOL añade llamadas
+  internas confinadas a las fronteras existentes y un único efecto temporal
+  conocido. Ninguno forma parte del flujo ordinario ni habilita una ruta
+  adversaria en la CLI.
 
 ## Límite
 
