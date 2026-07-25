@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M06, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las fuentes, el inventario, el mapa C4, la matriz de autoridad, el catálogo de abuse cases y su priorización ya están fijados. Todavía no existe un modelo GenAI real, perfil vulnerable, harness adversario, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M07, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las fuentes, el inventario, el mapa C4, la matriz de autoridad, el catálogo, la priorización y el crosswalk de amenazas ya están fijados. Todavía no existe un modelo GenAI real, perfil vulnerable, harness adversario, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -215,7 +215,7 @@ consultada el 25 de julio de 2026:
 |---|---|
 | OWASP Top 10 for LLM Applications | Version 2025, documento v2.0 |
 | OWASP Top 10 for Agentic Applications | Version 2026 |
-| MITRE ATLAS data | v5.6.0, commit `c1050fc` |
+| MITRE ATLAS data | release `v2026.06`, `ATLAS.yaml` 5.6.0, commit `651dad9` |
 | NIST AI Risk Management Framework | AI RMF 1.0, NIST AI 100-1 |
 | NIST SP 800-218A | Final, julio de 2024 |
 
@@ -343,6 +343,27 @@ El primer residual funcional es la confirmación interna no autenticada de
 de procesos por CLI. Los escenarios de prompt injection y jailbreak se
 recalcularán cuando exista un modelo real o el perfil vulnerable cambie su
 alcanzabilidad. No se ejecutó ningún ataque durante la priorización.
+
+## Crosswalk de amenazas
+
+[docs/threat-crosswalk.md](./docs/threat-crosswalk.md) fija
+`GSL-THREAT-CROSSWALK-001` y asigna a cada uno de los 17 casos una relación
+directa, parcial o ausente con:
+
+- OWASP Top 10 for LLM Applications 2025;
+- OWASP Top 10 for Agentic Applications 2026;
+- MITRE ATLAS data release `v2026.06`.
+
+El crosswalk conserva gaps deliberados. No usa `LLM08:2025` porque el sistema
+no tiene vectores ni embeddings, no fuerza los casos de disponibilidad local
+dentro de categorías agentic y no presenta una invocación genérica de
+herramienta como equivalente exacto de consentimiento o replay.
+
+La revalidación previa detectó que MITRE publicó `v2026.06` después del
+snapshot original. La release mantiene `version: 5.6.0` en `ATLAS.yaml`; las
+18 técnicas candidatas conservan identificador, nombre, madurez y tácticas,
+aunque cambió la descripción de `AML.T0054 LLM Jailbreak`. No se modificaron
+las prioridades ni se ejecutaron ataques.
 
 ## Por qué existe
 
@@ -780,8 +801,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Crear la matriz de autoridad y consecuencias.
 - [x] Enumerar los abuse cases del sistema actual.
 - [x] Priorizar los abuse cases por impacto, probabilidad condicionada y capacidad real.
+- [x] Mapear las amenazas a OWASP y MITRE ATLAS.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M06, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **19 de 66 microtareas (28,8 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 avanza con el backlog priorizado, pero sigue abierta hasta completar los mapeos y las pruebas.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M07, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **20 de 66 microtareas (30,3 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 avanza con el backlog y el crosswalk, pero sigue abierta hasta completar las pruebas.
 
 ## Roadmap
 
@@ -791,7 +813,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-02-M07 — mapear las amenazas a OWASP y MITRE ATLAS.**
+**PGS-02-M08 — mapear responsabilidades y controles previstos a NIST AI RMF y NIST SP 800-218A.**
 
 ## Uso responsable
 

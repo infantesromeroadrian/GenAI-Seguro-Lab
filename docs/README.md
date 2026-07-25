@@ -24,6 +24,9 @@ real.
 - [Priorización de abuse cases](./risk-prioritization.md): método reproducible
   que combina impacto, probabilidad condicionada y capacidad real, con los 17
   casos ordenados como backlog de pruebas.
+- [Crosswalk de amenazas](./threat-crosswalk.md): correspondencias directas,
+  parciales y gaps explícitos entre los 17 casos, OWASP LLM 2025, OWASP
+  Agentic 2026 y MITRE ATLAS `v2026.06`.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

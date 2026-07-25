@@ -5,11 +5,12 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-PRIORITY-001` |
-| Versión | `1.0.0` |
+| Versión | `1.1.0` |
 | Fecha de corte | 2026-07-25 |
 | Estado de código observado | commit `9393e893b80276c78d4398626eb2d75cac16f363` |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
+| Crosswalk actual | [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
 | Alcance | sistema local, determinista y exclusivamente sintético actual |
 
 Esta priorización ordena el backlog de pruebas del laboratorio. No es una
@@ -163,7 +164,7 @@ Los 17 abuse cases aparecen exactamente una vez y conservan la alcanzabilidad
 de `GSL-ABUSE-CASES-001`. No se ha ejecutado ningún ataque, creado un corpus
 adversario ni habilitado un perfil vulnerable.
 
-PGS-02-M07 mapeará los casos a OWASP y MITRE ATLAS. Ese crosswalk puede
-detectar un error de alcance, pero no cambia automáticamente una puntuación:
-cualquier corrección deberá quedar justificada en una nueva versión de este
-registro.
+[`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) relaciona los casos con
+OWASP y MITRE ATLAS sin cambiar sus puntuaciones. PGS-02-M08 continuará con
+NIST AI RMF y NIST SP 800-218A. Cualquier corrección de alcance deberá quedar
+justificada en una nueva versión de este registro.

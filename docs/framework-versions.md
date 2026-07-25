@@ -7,8 +7,8 @@ arquitectura, threat model, controles y trazabilidad. La fotografía se consult�
 el **25 de julio de 2026** exclusivamente en fuentes oficiales.
 
 Fijar una versión no convierte la guía en requisito legal, certificación o
-control implementado. Los mapeos concretos pertenecen a PGS-02-M07 y
-PGS-02-M08.
+control implementado. El crosswalk de amenazas pertenece a PGS-02-M07 y el
+mapeo de responsabilidades y controles a PGS-02-M08.
 
 ## Versiones seleccionadas
 
@@ -16,7 +16,7 @@ PGS-02-M08.
 |---|---|---|---|---|
 | OWASP Top 10 for LLM Applications | **Version 2025**; el documento se identifica también como **v2.0** | 18-11-2024 en el PDF; página del recurso publicada el 17-11-2024 | Edición publicada que el catálogo oficial mantiene como referencia para aplicaciones LLM | Identificar y mapear riesgos de prompt injection, divulgación, supply chain, tratamiento de salidas, agencia y consumo |
 | OWASP Top 10 for Agentic Applications | **Version 2026** | 09-12-2025; el PDF indica diciembre de 2025 | Edición publicada para aplicaciones agentic | Cubrir secuestro de objetivos, abuso de herramientas, identidad, supply chain agentic, ejecución y cascadas entre agentes |
-| MITRE ATLAS data | **v5.6.0**, commit **`c1050fc`** | 04-05-2026 | Release etiquetada del repositorio oficial; `ATLAS.yaml` declara `version: 5.6.0` | Relacionar abuse cases con tácticas, técnicas, mitigaciones y estudios de caso |
+| MITRE ATLAS data | release **`v2026.06`**, commit **`651dad90d3c007e797c89356fa1f4d8732f90c8d`**; `ATLAS.yaml` declara **`version: 5.6.0`** | 30-06-2026 | Última release oficial al revalidar para PGS-02-M07 | Relacionar abuse cases con tácticas, técnicas, mitigaciones y estudios de caso |
 | NIST AI Risk Management Framework | **AI RMF 1.0**, **NIST AI 100-1** | 26-01-2023 | Vigente como versión publicada; NIST avisa de que está siendo revisada | Estructurar gobierno y gestión del riesgo mediante Govern, Map, Measure y Manage |
 | NIST SP 800-218A | **Final**, sin revisión numerada adicional | 26-07-2024 | Publicación final | Aplicar prácticas de desarrollo seguro específicas para modelos y sistemas de IA |
 
@@ -41,11 +41,32 @@ NIST AI 100-1 ni se contabiliza como una nueva versión del marco base.
 ### MITRE
 
 - [MITRE ATLAS](https://atlas.mitre.org/)
-- [MITRE ATLAS data v5.6.0 — release oficial](https://github.com/mitre-atlas/atlas-data/releases/tag/v5.6.0)
-- [ATLAS.yaml de la etiqueta v5.6.0](https://raw.githubusercontent.com/mitre-atlas/atlas-data/v5.6.0/dist/ATLAS.yaml)
+- [MITRE ATLAS data v2026.06 — release oficial](https://github.com/mitre-atlas/atlas-data/releases/tag/v2026.06)
+- [ATLAS.yaml de la etiqueta v2026.06](https://raw.githubusercontent.com/mitre-atlas/atlas-data/v2026.06/dist/ATLAS.yaml)
+- [Snapshot anterior v5.6.0](https://github.com/mitre-atlas/atlas-data/releases/tag/v5.6.0)
 
 La etiqueta y el commit fijan una base reproducible. La web de ATLAS es una
 base viva y puede mostrar contenido posterior sin cambiar este registro.
+
+## Revalidación para PGS-02-M07
+
+La fotografía inicial utilizaba la etiqueta `v5.6.0`, commit `c1050fc`, del 4
+de mayo de 2026. La consulta previa al crosswalk encontró una release posterior:
+
+- etiqueta `v2026.06`;
+- fecha de publicación 30 de junio de 2026;
+- commit `651dad90d3c007e797c89356fa1f4d8732f90c8d`;
+- 170 técnicas y `version: 5.6.0` dentro de `dist/ATLAS.yaml`.
+
+Se compararon las 18 técnicas candidatas para los abuse cases. Conservan ID,
+nombre, madurez y tácticas. Entre ellas, solo cambió el campo de descripción de
+`AML.T0054 LLM Jailbreak`; la release añadió además técnicas no necesarias
+para este crosswalk. La decisión versionada es utilizar `v2026.06` en
+`GSL-THREAT-CROSSWALK-001` y conservar `v5.6.0` como snapshot histórico, sin
+reescribir silenciosamente análisis anteriores.
+
+La revalidación oficial mantuvo OWASP LLM 2025 y OWASP Agentic 2026 como las
+ediciones publicadas usadas por el proyecto.
 
 ### NIST
 
