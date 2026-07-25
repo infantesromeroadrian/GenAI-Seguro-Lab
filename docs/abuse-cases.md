@@ -153,13 +153,13 @@ proceso o del Mac local, y no debe presentarse como una caída multiusuario.
 
 ## Supply chain y mantenimiento
 
-Este caso cubre la autoridad máxima observada. No presupone que Adrián sea un
-actor malicioso: representa compromiso de cuenta, dependencia o error de
-mantenimiento con el mismo nivel de permisos.
+Este caso cubre la autoridad máxima observada. No presupone que la persona
+responsable del mantenimiento sea un actor malicioso: representa compromiso de
+cuenta, dependencia o error de mantenimiento con el mismo nivel de permisos.
 
 | ID | Escenario y objetivo adversario | Precondición y camino | Activos y límites | Resultado esperado en el estado actual | Evidencia pendiente |
 |---|---|---|---|---|---|
-| `AC-SC-01` | Alterar código, allowlists, `uv.lock`, corpus o snapshot para debilitar controles o presentar una baseline falsa | `MANTENIMIENTO`: comprometer o usar indebidamente la autoridad de `ACT-02`; cadenas `AUTH-08/09` | `TB-01`, `TB-06`, código, dependencias, `DAT-01` a `DAT-04`; techo `C3` | Git y el lock permiten detectar diferencias y reproducir resolución, pero no hay remoto, firma, CI o revisión independiente que impidan por sí solos la mutación local | Escenarios separados de cambio de código, lock y evidencia; definir oráculo de integridad antes de ejecutarlos |
+| `AC-SC-01` | Alterar código, allowlists, `uv.lock`, corpus o snapshot para debilitar controles o presentar una baseline falsa | `MANTENIMIENTO`: comprometer o usar indebidamente la autoridad de `ACT-02`; cadenas `AUTH-08/09` | `TB-01`, `TB-06`, código, dependencias, `DAT-01` a `DAT-04`; techo `C3` | Git, el remoto público y el lock permiten detectar diferencias y reproducir resolución, pero no hay firma, CI o revisión independiente que impidan por sí solos una mutación autorizada o comprometida | Escenarios separados de cambio de código, lock y evidencia; definir oráculo de integridad antes de ejecutarlos |
 
 ## Backlog de observables para el harness
 

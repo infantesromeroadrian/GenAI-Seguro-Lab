@@ -17,8 +17,6 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 - **Visibilidad:** pública.
 - **Rama publicada:** `main`, con seguimiento de `origin/main`.
 
-La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar o mover esa carpeta superior.
-
 ## Estructura actual
 
 ```text
@@ -468,7 +466,7 @@ Los nombres técnicos y esquemas de implementación se fijarán más adelante. S
 
 ### Decisión PGS-00-M01
 
-Adrián aprobó esta definición el 25 de julio de 2026:
+Esta definición quedó aprobada el 25 de julio de 2026:
 
 - **Producto:** asistente GenAI local para analizar incidentes de ciberseguridad ficticios.
 - **Usuario:** persona que practica análisis de incidentes en un laboratorio propio.

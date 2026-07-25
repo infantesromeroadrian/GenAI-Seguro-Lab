@@ -4,13 +4,15 @@
 
 - **Proyecto:** GenAI Seguro Lab.
 - **Nombre de carpeta confirmado:** `GenAI-Seguro-Lab`.
-- **Ruta local confirmada:** `/Users/adrianinfantes/Desktop/AIR/Carreer/AI-Security-Architec/Portfolio/GenAI-Seguro-Lab`.
+- **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01, P01-M04, P01-M05 y P01-M06.
 - **Estado actual:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08 y PGS-03-M01 a PGS-03-M03 completadas; el perfil vulnerable y el corpus adversario están fijados, separados de la CLI y sin ejecución de ataques.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
-- **Publicación, cloud y gasto:** fuera de alcance hasta una autorización específica.
+- **Publicación, cloud y gasto:** repositorio de código público ya autorizado;
+  releases, resultados externos, cloud y gasto requieren autorización
+  específica.
 
 ## Objetivo
 
@@ -18,7 +20,8 @@ Construir desde cero una aplicación GenAI pequeña y reproducible que permita d
 
 `baseline vulnerable → ataque controlado → control de seguridad → retest → métricas → riesgo residual`
 
-El resultado debe producir evidencia verificable de que Adrián puede:
+El resultado debe producir evidencia verificable de que la persona responsable
+puede:
 
 1. delimitar un sistema GenAI y sus límites de confianza;
 2. identificar y priorizar amenazas;
@@ -39,7 +42,9 @@ Un asistente local para analizar incidentes de seguridad ficticios. El sistema u
 
 El laboratorio incluirá documentos adversarios preparados para intentar cambiar las instrucciones, extraer información o provocar un uso no autorizado de herramientas.
 
-Esta definición fue aprobada por Adrián al completar **PGS-00-M01** el 25 de julio de 2026. Las capacidades quedaron fijadas en PGS-00-M02 y el stack, la estrategia de modelo y el presupuesto en PGS-00-M04.
+Esta definición quedó aprobada al completar **PGS-00-M01** el 25 de julio de
+2026. Las capacidades quedaron fijadas en PGS-00-M02 y el stack, la estrategia
+de modelo y el presupuesto en PGS-00-M04.
 
 ## Capacidades y autoridad aprobadas
 

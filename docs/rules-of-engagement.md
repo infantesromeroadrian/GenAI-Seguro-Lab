@@ -63,9 +63,8 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
 
 ### Activos incluidos
 
-- El repositorio local
-  `/Users/adrianinfantes/Desktop/AIR/Carreer/AI-Security-Architec/Portfolio/GenAI-Seguro-Lab`
-  para lectura, build, tests y cambios deliberados de desarrollo.
+- El checkout canónico de este repositorio para lectura, build, tests y cambios
+  deliberados de desarrollo.
 - El código, la CLI, el adaptador determinista, las herramientas internas y
   `GSL-PROFILE-VULNERABLE-001`, creado expresamente en PGS-03-M02.
 - El corpus benigno actual y el corpus adversario 100 % sintético de
@@ -81,9 +80,9 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
 
 - Cualquier cuenta, modelo, API, sitio, repositorio, dispositivo o sistema de
   terceros.
-- Otros proyectos de AIR, el vault de Obsidian, iCloud como servicio y
-  cualquier ruta personal ajena al repositorio o al directorio temporal
-  específico de la ejecución.
+- Otros proyectos y repositorios, cualquier vault personal, servicios de
+  sincronización en la nube y toda ruta ajena al checkout o al directorio
+  temporal específico de la ejecución.
 - Datos personales, corporativos, confidenciales, credenciales, secretos,
   incidentes reales o material de procedencia no verificada.
 - GitHub, remotos Git, CI/CD, cloud, Docker, proveedores GenAI y cualquier
