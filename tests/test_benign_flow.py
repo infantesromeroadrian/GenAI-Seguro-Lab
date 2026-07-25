@@ -15,9 +15,8 @@ from genai_seguro_lab.benign_flow import (
 )
 from genai_seguro_lab.data_contract import IncidentRecord, load_dataset
 from genai_seguro_lab.local_tools import (
-    KnowledgeSearchTool,
+    KnowledgeCatalog,
     ToolDeniedError,
-    ToolExecutionPolicy,
 )
 from genai_seguro_lab.model_adapter import (
     DeterministicModelAdapter,
@@ -36,8 +35,8 @@ def incident() -> IncidentRecord:
 
 
 @pytest.fixture(scope="module")
-def knowledge_tool() -> KnowledgeSearchTool:
-    return KnowledgeSearchTool(load_dataset(DATA_DIR).knowledge)
+def knowledge_catalog() -> KnowledgeCatalog:
+    return KnowledgeCatalog(load_dataset(DATA_DIR).knowledge)
 
 
 def _search_request(incident: IncidentRecord) -> ModelToolRequest:
@@ -58,7 +57,7 @@ def _search_request(incident: IncidentRecord) -> ModelToolRequest:
 
 def _configured_flow(
     incident: IncidentRecord,
-    knowledge_tool: KnowledgeSearchTool,
+    knowledge_catalog: KnowledgeCatalog,
 ) -> BenignAnalysisFlow:
     initial = BenignAnalysisFlow.build_initial_request(incident)
     tool_request = _search_request(incident)
@@ -66,12 +65,14 @@ def _configured_flow(
         finish_reason="tool_request",
         tool_requests=(tool_request,),
     )
+    knowledge_tool = knowledge_catalog.for_incident(
+        incident,
+        principal="benign-flow",
+        scope=f"incident:{incident.id}",
+    )
     knowledge = knowledge_tool.search(
         tool_request,
-        policy=ToolExecutionPolicy(
-            allowed_tools=initial.available_tools,
-            allowed_knowledge_ids=incident.knowledge_refs,
-        ),
+        grant=knowledge_tool.execution_grant,
     )
     followup = BenignAnalysisFlow.build_followup_request(
         initial,
@@ -99,14 +100,14 @@ def _configured_flow(
             ScriptedExchange(request=followup, response=final_response),
         )
     )
-    return BenignAnalysisFlow(adapter, knowledge_tool)
+    return BenignAnalysisFlow(adapter, knowledge_catalog)
 
 
 def test_benign_flow_searches_once_and_returns_final_text(
     incident: IncidentRecord,
-    knowledge_tool: KnowledgeSearchTool,
+    knowledge_catalog: KnowledgeCatalog,
 ) -> None:
-    flow = _configured_flow(incident, knowledge_tool)
+    flow = _configured_flow(incident, knowledge_catalog)
 
     first = flow.analyze(incident)
     second = flow.analyze(incident)
@@ -124,7 +125,7 @@ def test_benign_flow_searches_once_and_returns_final_text(
 
 def test_flow_fails_if_model_skips_required_search(
     incident: IncidentRecord,
-    knowledge_tool: KnowledgeSearchTool,
+    knowledge_catalog: KnowledgeCatalog,
 ) -> None:
     initial = BenignAnalysisFlow.build_initial_request(incident)
     adapter = DeterministicModelAdapter(
@@ -138,7 +139,7 @@ def test_flow_fails_if_model_skips_required_search(
             ),
         )
     )
-    flow = BenignAnalysisFlow(adapter, knowledge_tool)
+    flow = BenignAnalysisFlow(adapter, knowledge_catalog)
 
     with pytest.raises(BenignFlowError, match="exactly one tool"):
         flow.analyze(incident)
@@ -146,7 +147,7 @@ def test_flow_fails_if_model_skips_required_search(
 
 def test_flow_denies_a_non_knowledge_tool(
     incident: IncidentRecord,
-    knowledge_tool: KnowledgeSearchTool,
+    knowledge_catalog: KnowledgeCatalog,
 ) -> None:
     initial = BenignAnalysisFlow.build_initial_request(incident)
     adapter = DeterministicModelAdapter(
@@ -166,7 +167,7 @@ def test_flow_denies_a_non_knowledge_tool(
             ),
         )
     )
-    flow = BenignAnalysisFlow(adapter, knowledge_tool)
+    flow = BenignAnalysisFlow(adapter, knowledge_catalog)
 
     with pytest.raises(ToolDeniedError, match="not allowed"):
         flow.analyze(incident)
@@ -174,7 +175,7 @@ def test_flow_denies_a_non_knowledge_tool(
 
 def test_flow_fails_closed_when_search_has_no_hits(
     incident: IncidentRecord,
-    knowledge_tool: KnowledgeSearchTool,
+    knowledge_catalog: KnowledgeCatalog,
 ) -> None:
     initial = BenignAnalysisFlow.build_initial_request(incident)
     tool_request = ModelToolRequest(
@@ -201,7 +202,7 @@ def test_flow_fails_closed_when_search_has_no_hits(
             ),
         )
     )
-    flow = BenignAnalysisFlow(adapter, knowledge_tool)
+    flow = BenignAnalysisFlow(adapter, knowledge_catalog)
 
     with pytest.raises(BenignFlowError, match="no authorized hits"):
         flow.analyze(incident)
@@ -209,9 +210,9 @@ def test_flow_fails_closed_when_search_has_no_hits(
 
 def test_flow_does_not_generalize_to_an_unscripted_incident(
     incident: IncidentRecord,
-    knowledge_tool: KnowledgeSearchTool,
+    knowledge_catalog: KnowledgeCatalog,
 ) -> None:
-    flow = _configured_flow(incident, knowledge_tool)
+    flow = _configured_flow(incident, knowledge_catalog)
     other_incident = load_dataset(DATA_DIR).incidents[1]
 
     with pytest.raises(UnknownModelRequestError):

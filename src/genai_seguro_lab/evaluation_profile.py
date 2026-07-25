@@ -237,7 +237,12 @@ def create_vulnerable_evaluation_profile(
             "profile requires dataset counts validated against its manifest"
         )
 
-    DraftWriterTool(drafts_dir)
+    with DraftWriterTool(
+        drafts_dir,
+        principal="evaluation-profile",
+        scope="draft:evaluation-profile",
+    ):
+        pass
     resolved_drafts = drafts_dir.resolve(strict=True)
     temporary_root = Path(tempfile.gettempdir()).resolve(strict=True)
     repository_root = Path(__file__).resolve().parents[2]

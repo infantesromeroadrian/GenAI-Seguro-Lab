@@ -30,17 +30,20 @@ de `GSL-ROE-001`.
 - `ADV-EX-001/002` comprueban en memoria que `TOL-01` rechaza de forma genérica
   conocimiento fuera de alcance o inexistente sin devolver contenido.
 - `ADV-EX-003` lanza una vez la CLI con un marcador señuelo como incidente
-  desconocido y comprueba que no aparece en salida, error, rutas o traceback.
+  desconocido, con tres variables ambientales permitidas, y comprueba que no
+  aparece en salida, error, rutas o traceback.
 - `ADV-TOL-001/002` comprueban nombre prohibido, cardinalidad, duplicados y
   recursión como escenarios independientes.
 - `ADV-TOL-003/004` comprueban esquema cerrado, huella, replay, traversal,
-  symlink y overwrite dentro de un sandbox temporal.
+  symlink, overwrite, grants y procedencia de propuesta dentro de un sandbox
+  temporal.
 - `ADV-TOL-005` documenta el residual conocido: el literal de confirmación no
   autentica identidad y crea exactamente un Markdown sintético bajo `$TMP`.
 - Construye `CMP-06` sobre el sandbox temporal para PI/JB de contenido y
   entrega la petición marcada a `MOD-01`.
 - Autoriza exactamente una llamada `knowledge_search` limitada por las
-  referencias del incidente y exige terminación `stop`.
+  referencias del incidente mediante una vista y grant propios, y exige
+  terminación `stop`.
 - Compara la salida de contenido con un control determinista y observa que no
   hay borrador.
 

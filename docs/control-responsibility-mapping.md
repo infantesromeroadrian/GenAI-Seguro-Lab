@@ -5,9 +5,10 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-NIST-CONTROLS-001` |
-| Versión | `1.0.8` |
+| Versión | `1.0.9` |
 | Fecha de corte | 2026-07-25 |
-| Baseline de código | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
+| Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
+| Control vigente | PGS-04-M03 en esta revisión; el commit exacto se obtiene del historial Git |
 | Threat model de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md), [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) y [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Baseline normativa | [NIST AI RMF 1.0 y NIST SP 800-218A](./framework-versions.md) |
@@ -89,10 +90,10 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 | `CTL-02` | Inventario, límites, autoridad, threat model y disparadores de cambio | `PRESENTE` | `A/R ACT-02`; `C REV-01` planificado | Los 17 casos de `GSL-ABUSE-CASES-001` | Inventario, C4, autoridad, catálogo y priorización incorporan `CMP-06` y el alcance PI/JB/EX/TOL de `CMP-07`; deberán revisarse cuando el harness conecte nuevos casos o cambie de target | Revisión en cada disparador y matriz final PGS-07-M06 |
 | `CTL-03` | Procedencia, esquema e integridad del corpus y artefactos | `PRESENTE` para los corpus sintéticos actuales | `A/R ACT-02` | `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | Los corpus benigno y adversario aplican esquemas estrictos, procedencia, conteos y SHA-256; entradas y oráculos adversarios están separados. No hay firma, control de acceso propio ni límite global para un futuro dataset dimensionado | Límites PGS-04-M06 y supply chain PGS-06-M08 |
 | `CTL-04` | Separación de instrucciones y contenido no confiable, resistencia a inyección y jailbreak | `PARCIAL` | `A/R ACT-02` | `AC-PI-01`, `AC-PI-02`, `AC-PI-03`, `AC-JB-01` | `ModelMessage` clasifica instrucciones confiables, datos de usuario, contenido no confiable y salidas del modelo; `ModelRequest` exige los tres dominios de entrada y una única instrucción confiable inicial. El flujo ordinario declara `separated`, las salidas de herramienta vuelven como no confiables y el perfil aislado conserva `deliberately_merged`. La evidencia es estructural y determinista: todavía falta el retest y un modelo GenAI real | Retest PGS-05-M01 a M03 |
-| `CTL-05` | Validación de entradas, salidas y argumentos; allowlist de herramientas | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-EX-01`, `AC-EX-02`, `AC-TOL-01`, `AC-TOL-02` | `BenignTaskInput`, `BenignIncidentInput` y `BenignFinalOutput` cierran los sobres del flujo ordinario; `ToolExecutionPolicy` exige allowlists explícitas de herramientas, datos y referencias. La salida se vincula al incidente y al resultado autorizado. `CMP-07` conserva la evidencia adversaria previa y `tests/test_validation_policy.py` verifica el fallo cerrado. Faltan filtrado semántico, retest y validación del futuro modelo real | PGS-04-M05 y PGS-05 |
-| `CTL-06` | Mínimo privilegio y separación modelo–identidad–datos–herramientas | `PARCIAL` | `A/R ACT-02` | `AC-TOL-01`, `AC-TOL-02`, `AC-TOL-05`, `AC-SC-01` | El modelo solo propone datos y la aplicación autoriza `TOL-01`; `CMP-07` prueba la allowlist y demuestra que la confirmación literal no aporta identidad. Todo el proceso conserva los permisos amplios de `IDN-01` y no hay identidad de servicio | PGS-04-M03 y revisión de la matriz de autoridad |
+| `CTL-05` | Validación de entradas, salidas y argumentos; allowlist de herramientas | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-EX-01`, `AC-EX-02`, `AC-TOL-01`, `AC-TOL-02` | `BenignTaskInput`, `BenignIncidentInput` y `BenignFinalOutput` cierran los sobres; `ToolExecutionGrant` conserva nombre e IDs en un contrato de una sola herramienta. La salida se vincula al incidente y `tests/test_validation_policy.py` verifica el fallo cerrado. Faltan filtrado semántico, retest y modelo real | PGS-04-M05 y PGS-05 |
+| `CTL-06` | Mínimo privilegio y separación modelo–identidad–datos–herramientas | `PARCIAL` | `A/R ACT-02` | `AC-TOL-01`, `AC-TOL-02`, `AC-TOL-05`, `AC-SC-01` | `IDN-05` liga grants opacos a principal, scope, herramienta e instancia; `TOL-01` retiene la vista exacta del incidente; `TOL-02` separa preparación y efecto y crea por descriptor no-follow `0600`; EX-003 recibe un entorno allowlisted. El proceso conserva los permisos amplios de `IDN-01`, no existe identidad de servicio y `IDN-03` no autentica a la persona | PGS-04-M04, retest PGS-05 y revisión de aislamiento cuando cambie el runtime |
 | `CTL-07` | Confirmación humana autenticada, ligada al contenido y no reutilizable | `PARCIAL` | `A ACT-02`; `R ACT-03` | `AC-TOL-03`, `AC-TOL-05` | `CMP-07` verifica huella exacta, esquema cerrado y consumo único, y confirma como residual que `IDN-03` no acredita quién confirmó | PGS-04-M04 y retest PGS-05 |
-| `CTL-08` | Efectos de filesystem confinados, creación exclusiva, parada y recuperación segura | `PARCIAL` | `A/R ACT-02`; `R ACT-01` para parada | `AC-TOL-03`, `AC-TOL-04`, `AC-TOL-05` | `CMP-07` verifica en `$TMP` el rechazo de traversal, symlink y overwrite y limita el residual a un archivo; no existe aún un flujo operativo de parada, rollback o recuperación | PGS-04-M08, PGS-06-M07 y PGS-05 |
+| `CTL-08` | Efectos de filesystem confinados, creación exclusiva, parada y recuperación segura | `PARCIAL` | `A/R ACT-02`; `R ACT-01` para parada | `AC-TOL-03`, `AC-TOL-04`, `AC-TOL-05` | `CMP-07` verifica en `$TMP` el rechazo de traversal, symlink y overwrite. La creación se ancla al descriptor de la raíz con `O_EXCL`, `O_NOFOLLOW` y `0600`; no existe aún un flujo operativo de parada, rollback o recuperación | PGS-04-M08, PGS-06-M07 y PGS-05 |
 | `CTL-09` | Política de salida, redacción, errores saneados y detección de fugas | `PARCIAL` | `A/R ACT-02` | `AC-JB-01`, `AC-EX-03` | Salida tipada y errores genéricos limitan la exposición actual; `CMP-07` comprueba que los jailbreak de contenido no se reflejan y que un marcador señuelo no aparece en la respuesta de proceso. Faltan filtros, reglas de redacción y pruebas sobre un modelo real | PGS-04-M05 y PGS-05 |
 | `CTL-10` | Límites de tamaño, tiempo, iteraciones, concurrencia y consumo | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-TOL-02`, `AC-DOS-01`, `AC-DOS-03` | `GSL-ROE-001` fija topes operativos y `CMP-08` registra tiempo, procesos, turnos, solicitudes, bytes, archivos y RSS del run canónico. Todavía no hay rate limit del producto ni tope global preventivo para un corpus dimensionado | PGS-04-M06 y PGS-05-M04 |
 | `CTL-11` | Integridad de código, dependencias, cambios y releases | `PARCIAL` | `A/R ACT-02`; `C REV-01` planificado | `AC-DOS-02`, `AC-SC-01` | Git, remoto público, `uv.lock`, hashes del corpus y commits granulares permiten detectar diferencias; faltan firma, CI, SBOM, revisión independiente y política de release | PGS-06-M08 y PGS-07-M01/M03/M04 |
@@ -162,7 +163,8 @@ y `CMP-08` fija la baseline canónica de 14 fixtures PI/JB/EX/TOL con
 configuración, resultados, eventos y manifiesto saneados.
 [`GSL-FINDINGS-ADVERSARIAL-001`](./adversarial-baseline-findings.md) documenta
 los hallazgos, impacto, reproducción y límites. PGS-04-M01 añade la separación
-estructural de dominios de confianza al flujo ordinario y PGS-04-M02 aplica
-los sobres estrictos y las allowlists descritos en
-[`GSL-VALIDATION-POLICY-001`](./validation-policy.md). El siguiente tratamiento
-es el mínimo privilegio de PGS-04-M03.
+estructural de dominios de confianza; PGS-04-M02 aplica los sobres estrictos y
+PGS-04-M03 liga los grants, datos y efectos descritos en
+[`GSL-VALIDATION-POLICY-001`](./validation-policy.md) y
+[`GSL-LEAST-PRIVILEGE-001`](./least-privilege-policy.md). El siguiente
+tratamiento es la confirmación humana de PGS-04-M04.

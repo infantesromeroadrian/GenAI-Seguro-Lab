@@ -5,11 +5,12 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYS-INV-001` |
-| Versión | `1.7.0` |
+| Versión | `1.8.0` |
 | Fecha de corte | 2026-07-25 |
-| Baseline de código | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
+| Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
+| Control vigente | PGS-04-M03 en esta revisión; el commit exacto se obtiene del historial Git |
 | Entorno | checkout local de desarrollo |
-| Alcance | estado implementado y medido por PGS-03-M07, con publicación PGS-07-M08 |
+| Alcance | estado implementado hasta PGS-04-M03, con baseline histórica PGS-03-M07 y publicación PGS-07-M08 |
 
 Este documento inventaría el sistema que existe en el repositorio, no la
 solución futura descrita en el roadmap. PGS-03-M04/M05/M06 conectan 14 fixtures
@@ -37,7 +38,7 @@ PGS-02-M04.
 |---|---|---|---|
 | `ACT-01` | Operador local del laboratorio | Expuesto | Lanza `analyze` o `baseline`, elige un identificador de incidente y recibe JSON por `stdout`. No inicia sesión en la aplicación; el proceso hereda los permisos de su cuenta local. |
 | `ACT-02` | Mantenedor y ejecutor de pruebas | Soporte | Modifica código y corpus, sincroniza dependencias, ejecuta pytest, construye explícitamente el perfil de evaluación y conserva snapshots mediante Git. Puede publicar commits revisados en `origin`; su autoridad procede del sistema operativo y de GitHub, no de un rol interno de la aplicación. |
-| `ACT-03` | Llamador que confirma un borrador | Interno | Puede aportar a `DraftWriterTool` una confirmación separada y ligada a la propuesta exacta. La implementación comprueba consentimiento declarado, pero no autentica quién confirma; la CLI actual no expone este flujo. |
+| `ACT-03` | Llamador que confirma un borrador | Interno | Puede aportar a `DraftWriterTool` una confirmación separada y ligada a la propuesta exacta. La instancia emite después un grant de efecto de un solo uso; la implementación no autentica quién confirma y la CLI actual no expone este flujo. |
 
 No existen usuarios remotos, cuentas de cliente, administradores de aplicación
 ni procesos desatendidos.
@@ -47,11 +48,11 @@ ni procesos desatendidos.
 | ID | Activo | Clasificación y persistencia | Acceso actual | Evidencia |
 |---|---|---|---|---|
 | `DAT-01` | 12 incidentes benignos | `synthetic_internal`; JSONL versionado | Lectura por `CMP-02`; selección por `ACT-01` mediante ID | `data/incidents.jsonl` |
-| `DAT-02` | 8 documentos de conocimiento | `synthetic_internal`; JSONL versionado | Lectura por `CMP-02`; búsqueda en memoria por `TOL-01` | `data/knowledge.jsonl` |
+| `DAT-02` | 8 documentos de conocimiento | `synthetic_internal`; JSONL versionado | Lectura y validación completa por `CMP-02`; cada instancia de `TOL-01` retiene solo las referencias exactas del incidente | `data/knowledge.jsonl` |
 | `DAT-03` | Manifiesto del dataset | Sintético; JSON versionado con conteos, procedencia y SHA-256 | Lectura y validación por `CMP-02` | `data/manifest.json` |
 | `DAT-04` | Baseline funcional benigna | Evidencia JSON versionada; no es baseline de seguridad ni evaluación semántica | Se regenera por `CMP-05` y se compara de forma reproducible | `evaluations/benign-baseline-v1.json` |
 | `DAT-05` | Resultado de proceso | JSON efímero por `stdout` y error saneado por `stderr` | Emisión por `CMP-01`; no hay almacenamiento o logging persistente automático | `src/genai_seguro_lab/cli.py` |
-| `DAT-06` | Borradores ficticios | Markdown sintético local; ignorado por Git | Creación exclusiva por `TOL-02`; actualmente no hay borradores generados en el checkout | `sandbox/drafts/` |
+| `DAT-06` | Borradores ficticios | Markdown sintético local; ignorado por Git | Creación exclusiva y no-follow por `TOL-02`, anclada al descriptor de `sandbox/drafts/` y con modo `0600`; actualmente no hay borradores generados en el checkout | `sandbox/drafts/` |
 | `DAT-07` | 18 entradas adversarias | `synthetic_internal`; JSONL versionado | `CMP-07` selecciona las 14 PI/JB/EX/TOL; las otras 4 permanecen `inert_not_wired`; la CLI ordinaria no expone el corpus | `data/adversarial/inputs.jsonl` |
 | `DAT-08` | 18 oráculos adversarios | `synthetic_internal`; JSONL versionado y fijado antes de ejecutar | Pytest los compara después de observar el target; nunca entran en la petición, el modelo o la herramienta | `data/adversarial/oracles.jsonl` |
 | `DAT-09` | Manifiesto adversario | Sintético; JSON versionado con RoE, perfil objetivo, conteos y SHA-256 | Lectura y validación interna por `CMP-02`; declara 14 fixtures conectadas y evaluadas canónicamente, más 4 inertes | `data/adversarial/manifest.json` |
@@ -80,23 +81,23 @@ descriptor no materializado que conserva
 | `CMP-02` | Contrato y cargador de datos | Expuesto para benigno; interno para adversario | `load_dataset()` entrega el corpus benigno a la CLI; `load_adversarial_corpus()` valida entradas y oráculos separados, cobertura, límites RoE, conteos y hashes, pero no interpreta ni ejecuta las fixtures | `src/genai_seguro_lab/data_contract.py`, `tests/test_adversarial_corpus.py` |
 | `CMP-03` | Flujo benigno | Expuesto | Coordina exactamente dos invocaciones de modelo, una petición de herramienta y una respuesta final; no hay bucle abierto ni reintento | `src/genai_seguro_lab/benign_flow.py` |
 | `MOD-01` | `DeterministicModelAdapter` | Expuesto | Doble `deterministic/scripted-v1` en el mismo proceso; responde solo a peticiones guionizadas, falla cerrado, hace 0 llamadas externas y registra 0 € | `src/genai_seguro_lab/model_adapter.py` |
-| `TOL-01` | `KnowledgeSearchTool` | Expuesto | Consulta solo documentos ya validados y cargados en memoria; restringe los IDs a las referencias del incidente y no usa red ni filesystem | `src/genai_seguro_lab/local_tools.py` |
-| `TOL-02` | `DraftWriterTool` | Interno | Prepara una propuesta y, tras confirmación exacta separada, solo crea un Markdown nuevo en `sandbox/drafts/`; impide rutas, symlinks y sobrescritura | `src/genai_seguro_lab/local_tools.py`, `tests/test_local_tools.py` |
+| `TOL-01` | `KnowledgeSearchTool` | Expuesto | Se crea desde `KnowledgeCatalog` con la vista física exacta del incidente y un grant opaco de una sola herramienta ligado a principal, scope e instancia; no usa red ni filesystem | `src/genai_seguro_lab/local_tools.py` |
+| `TOL-02` | `DraftWriterTool` | Interno | Separa grant de preparación y grant de efecto; solo acepta una propuesta emitida por la misma instancia y raíz y crea un Markdown nuevo mediante descriptor, `O_EXCL`, `O_NOFOLLOW` y modo `0600` | `src/genai_seguro_lab/local_tools.py`, `tests/test_local_tools.py` |
 | `CMP-04` | Constructor de escenarios deterministas | Expuesto | Construye los intercambios guionizados para los incidentes benignos; no es un proveedor GenAI | `src/genai_seguro_lab/baseline.py` |
 | `CMP-05` | Ejecutor de baseline funcional | Expuesto | Ejecuta los 12 incidentes y serializa evidencia canónica por `stdout`; no escribe el snapshot por sí mismo | `src/genai_seguro_lab/baseline.py` |
 | `CMP-06` | Perfil vulnerable de evaluación | Interno | Requiere una declaración exacta de `GSL-ROE-001`, el bundle sintético y un `$TMP/sandbox/drafts`; construye una `ModelRequest` débil marcada, pero no llama al modelo, ejecuta herramientas ni escribe | `src/genai_seguro_lab/evaluation_profile.py`, `tests/test_evaluation_profile.py` |
-| `CMP-07` | Harness adversario acotado | Interno de test | Selecciona exactamente 14 fixtures PI/JB/EX/TOL; combina copias y sandboxes `$TMP`, dobles deterministas, guardas de `CMP-03`, rechazos de `TOL-01`, pruebas confinadas de `TOL-02` y errores saneados de `CMP-01`; `AC-TOL-05` crea un único Markdown temporal y no guarda una baseline | `src/genai_seguro_lab/evaluation_harness.py`, `tests/test_prompt_injection_evaluation.py`, `tests/test_jailbreak_disclosure_evaluation.py`, `tests/test_tool_abuse_evaluation.py` |
+| `CMP-07` | Harness adversario acotado | Interno de test | Selecciona exactamente 14 fixtures PI/JB/EX/TOL; combina copias y sandboxes `$TMP`, grants lógicos, dobles deterministas, guardas de `CMP-03`, rechazos de `TOL-01`, pruebas confinadas de `TOL-02` y un subproceso con tres variables ambientales permitidas; `AC-TOL-05` conserva un único Markdown temporal | `src/genai_seguro_lab/evaluation_harness.py`, `tests/test_prompt_injection_evaluation.py`, `tests/test_jailbreak_disclosure_evaluation.py`, `tests/test_tool_abuse_evaluation.py` |
 | `CMP-08` | Runner de baseline adversaria | Soporte interno | Verifica commit, rama y limpieza; impone la autorización y los presupuestos, ejecuta `CMP-07`, calcula métricas y escribe evidencia bruta solo bajo `$TMP`; el mantenedor versiona después la proyección saneada | `src/genai_seguro_lab/adversarial_baseline.py`, `evaluations/run_adversarial_baseline.py`, `tests/test_adversarial_baseline.py` |
 
 `MOD-01` es el único modelo activo, pero no es un modelo GenAI real. Tampoco
 hay un agente autónomo: `CMP-03` es un flujo acotado y determinista con una sola
 herramienta disponible por incidente. `CMP-06` anuncia dos herramientas en el
 objeto de petición, pero no contiene un adaptador ni un dispatcher.
-`CMP-07` conduce únicamente dobles deterministas, autoriza como máximo una
-`knowledge_search` en los flujos que la necesitan y observa rechazos
-adicionales. Solo `ADV-TOL-005` ejecuta `draft_create`, con una confirmación
-literal no autenticada y un único efecto sintético bajo `$TMP`; no conecta
-`TOL-02` a la CLI ni al flujo benigno.
+`CMP-07` conduce únicamente dobles deterministas. Cada operación recibe un
+principal y un scope lógicos, y cada instancia autoriza como máximo una
+`knowledge_search`. Solo `ADV-TOL-005` obtiene un grant de efecto
+`draft_create`, con una confirmación literal no autenticada y un único efecto
+sintético bajo `$TMP`; no conecta `TOL-02` a la CLI ni al flujo benigno.
 `CMP-08` no añade una ruta de producto: solo puede iniciarse mediante su
 script explícito, exige un commit limpio exacto y escribe en un directorio
 temporal nuevo.
@@ -109,6 +110,7 @@ temporal nuevo.
 | `IDN-02` | Identidad de aplicación o servicio | Ausente. No hay cuenta interna, token de servicio, IAM role, OAuth, API key ni credencial de proveedor. |
 | `IDN-03` | Identidad humana de confirmación | No autenticada. `confirmed_by_user: true` y la huella SHA-256 demuestran coincidencia con una propuesta, no la identidad de la persona. |
 | `IDN-04` | Autoridad del modelo | El modelo solo puede emitir datos tipados. La aplicación valida y ejecuta `TOL-01`; el adaptador no autoriza ni ejecuta herramientas. |
+| `IDN-05` | Principal lógico de operación | Presente como control de aplicación. Liga un grant a principal, scope, herramienta e instancia; no es login, credencial, usuario de SO ni aislamiento frente a Python arbitrario. |
 
 La separación entre `MOD-01`, `IDN-01`, `TOL-01` y `TOL-02` será el punto de
 partida de la matriz de autoridad de PGS-02-M04.
@@ -152,15 +154,17 @@ consulta durante la ejecución y, por tanto, no es una dependencia del sistema.
 2. `CMP-02` lee `DAT-01`, `DAT-02` y `DAT-03`, y valida el bundle completo.
 3. `CMP-04` prepara los intercambios exactos de `MOD-01`.
 4. `CMP-03` solicita a `MOD-01` una decisión inicial.
-5. La aplicación autoriza y ejecuta una única consulta de `TOL-01` sobre el
-   subconjunto de `DAT-02` permitido por el incidente.
-6. `CMP-03` devuelve ese resultado a `MOD-01` y exige una respuesta final.
-7. `CMP-01` emite `DAT-05`. En modo `baseline`, el ciclo se repite para los 12
+5. La aplicación crea una vista de `TOL-01` con solo las referencias del
+   incidente y emite un grant `IDN-05` independiente del catálogo anunciado.
+6. `TOL-01` acepta una única consulta con ese principal, scope e instancia.
+7. `CMP-03` devuelve ese resultado a `MOD-01` y exige una respuesta final.
+8. `CMP-01` emite `DAT-05`. En modo `baseline`, el ciclo se repite para los 12
    casos; la CLI no escribe automáticamente `DAT-04`.
 
 El flujo interno de borradores es independiente: `TOL-02` puede preparar una
-propuesta y crear `DAT-06` tras recibir una confirmación exacta de `ACT-03`,
-pero no existe una ruta desde `CMP-01` hasta esa herramienta.
+propuesta sin efecto y emitir después un grant de creación ligado a esa
+propuesta, instancia y raíz tras recibir la confirmación exacta de `ACT-03`.
+No existe una ruta desde `CMP-01` hasta esa herramienta.
 
 El perfil de evaluación también es independiente: `ACT-02` puede construir
 `CMP-06` mediante su factory Python con autorización y sandbox temporal
@@ -200,6 +204,8 @@ reclasifica aquí como un requisito pendiente.
 
 - La frontera de seguridad efectiva empieza en el proceso local y en los
   permisos de `IDN-01`; no existe aislamiento de sistema operativo adicional.
+- `IDN-05` reduce la autoridad lógica de cada operación, pero un llamador con
+  ejecución arbitraria de Python continúa dentro de la autoridad de `IDN-01`.
 - `ACT-01` no se autentica y `IDN-03` no demuestra identidad humana.
 - `TOL-02` tiene efecto local, pero actualmente solo es alcanzable mediante su
   API Python interna y las pruebas.

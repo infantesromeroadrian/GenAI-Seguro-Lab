@@ -14,9 +14,8 @@ from .data_contract import (
     KnowledgeId,
 )
 from .local_tools import (
+    KnowledgeCatalog,
     KnowledgeSearchResult,
-    KnowledgeSearchTool,
-    ToolExecutionPolicy,
 )
 from .model_adapter import (
     ModelAdapter,
@@ -120,14 +119,14 @@ class BenignAnalysisFlow:
     def __init__(
         self,
         adapter: ModelAdapter,
-        knowledge_tool: KnowledgeSearchTool,
+        knowledge_catalog: KnowledgeCatalog,
     ) -> None:
         if not isinstance(adapter, ModelAdapter):
             raise TypeError("adapter must implement ModelAdapter")
-        if not isinstance(knowledge_tool, KnowledgeSearchTool):
-            raise TypeError("knowledge_tool must be a KnowledgeSearchTool")
+        if not isinstance(knowledge_catalog, KnowledgeCatalog):
+            raise TypeError("knowledge_catalog must be a KnowledgeCatalog")
         self._adapter = adapter
-        self._knowledge_tool = knowledge_tool
+        self._knowledge_catalog = knowledge_catalog
 
     @staticmethod
     def build_initial_request(incident: IncidentRecord) -> ModelRequest:
@@ -230,13 +229,14 @@ class BenignAnalysisFlow:
             )
 
         tool_request = tool_requests[0]
-        policy = ToolExecutionPolicy(
-            allowed_tools=initial.available_tools,
-            allowed_knowledge_ids=incident.knowledge_refs,
+        knowledge_tool = self._knowledge_catalog.for_incident(
+            incident,
+            principal="benign-flow",
+            scope=f"incident:{incident.id}",
         )
-        knowledge = self._knowledge_tool.search(
+        knowledge = knowledge_tool.search(
             tool_request,
-            policy=policy,
+            grant=knowledge_tool.execution_grant,
         )
         if not knowledge.hits:
             raise BenignFlowError(

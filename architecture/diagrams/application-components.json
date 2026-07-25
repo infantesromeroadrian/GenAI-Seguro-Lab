@@ -13,7 +13,8 @@
         "isContainer": true,
         "trustBoundary": true,
         "boundaryId": "TB-02",
-        "isolation": "logical-same-process"
+        "isolation": "logical-same-process",
+        "leastPrivilege": "application-grants"
       }
     },
     {
@@ -80,7 +81,10 @@
         "inventoryIds": [
           "CMP-03"
         ],
-        "state": "exposed"
+        "state": "exposed",
+        "logicalPrincipal": "benign-flow",
+        "grantSource": "validated-incident",
+        "grantDerivedFromModelCatalog": false
       }
     },
     {
@@ -160,7 +164,12 @@
         ],
         "cliReachable": false,
         "externalCalls": false,
-        "canonicalEvidence": false
+        "canonicalEvidence": false,
+        "subprocessEnvironment": [
+          "PYTHONDONTWRITEBYTECODE",
+          "PYTHONIOENCODING",
+          "PYTHONUTF8"
+        ]
       }
     },
     {
@@ -207,7 +216,10 @@
           "TOL-01"
         ],
         "state": "exposed",
-        "sourcePath": "src/genai_seguro_lab/local_tools.py"
+        "sourcePath": "src/genai_seguro_lab/local_tools.py",
+        "retainedData": "exact-incident-references",
+        "grantTools": 1,
+        "osIsolation": false
       }
     },
     {
@@ -221,7 +233,12 @@
           "TOL-02"
         ],
         "state": "internal-test-reachable",
-        "sourcePath": "src/genai_seguro_lab/local_tools.py"
+        "sourcePath": "src/genai_seguro_lab/local_tools.py",
+        "separatePrepareAndEffectGrants": true,
+        "directoryDescriptorAnchored": true,
+        "noFollow": true,
+        "fileMode": "0600",
+        "humanIdentityAuthenticated": false
       }
     }
   ],
@@ -286,10 +303,11 @@
       "id": "components-flow-authorizes-search",
       "source": "benign-flow",
       "target": "knowledge-search",
-      "label": "search(): IDs ∩ allowlist del incidente",
+      "label": "search(): grant + vista exacta del incidente",
       "meta": {
         "type": "calls",
-        "crossesBoundary": "TB-04"
+        "crossesBoundary": "TB-04",
+        "grantDerivedFromModelCatalog": false
       }
     },
     {
@@ -385,7 +403,7 @@
       "id": "components-harness-authorizes-search",
       "source": "adversarial-evaluation-harness",
       "target": "knowledge-search",
-      "label": "search(): permitido, nombre/argumentos rechazados; máximo 2",
+      "label": "search(): principal/scope por caso; máximo 2 propuestas",
       "meta": {
         "type": "calls",
         "crossesBoundary": "TB-04",
@@ -407,18 +425,19 @@
       "id": "components-harness-checks-cli-errors",
       "source": "adversarial-evaluation-harness",
       "target": "cli-dispatcher",
-      "label": "PI directa y EX-003: rechazo saneado; máximo 1 subproceso",
+      "label": "PI directa y EX-003: entorno allowlisted; máximo 1 subproceso",
       "meta": {
         "type": "calls",
         "maxSubprocesses": 1,
-        "canonicalEvidence": false
+        "canonicalEvidence": false,
+        "inheritedEnvironment": false
       }
     },
     {
       "id": "components-harness-tests-draft-boundary",
       "source": "adversarial-evaluation-harness",
       "target": "draft-writer",
-      "label": "TOL-003/004 rechazan; TOL-005 crea 1 Markdown en $TMP",
+      "label": "TOL: propuesta registrada + grant de efecto; 1 Markdown máximo",
       "meta": {
         "type": "calls",
         "crossesBoundary": "TB-04",

@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-04-M02, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria canónica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`. Cuatro fixtures permanecen inertes y `ADV-TOL-005` conserva como residual conocido una única escritura confinada a `$TMP`. El flujo ordinario ya valida entradas, salidas y herramientas con esquemas y allowlists. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-04-M03, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria canónica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`. Cuatro fixtures permanecen inertes y `ADV-TOL-005` conserva como residual conocido una única escritura confinada a `$TMP`. El flujo ordinario aplica validación estricta y mínimo privilegio lógico mediante scopes, vistas de datos y grants de una sola herramienta. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
 
 ## En una frase
 
@@ -88,6 +88,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── authority-matrix.md
 │   ├── control-responsibility-mapping.md
 │   ├── framework-versions.md
+│   ├── least-privilege-policy.md
 │   ├── risk-prioritization.md
 │   ├── rules-of-engagement.md
 │   ├── system-inventory.md
@@ -99,7 +100,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
         └── README.md
 ```
 
-PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado, PGS-03-M03 prepara el corpus adversario, PGS-03-M04/M05/M06 conectan 14 fixtures PI/JB/EX/TOL a pruebas internas, PGS-03-M07 fija su primera ejecución canónica y PGS-04-M01/M02 separan dominios de confianza y aplican validación estructural con allowlists. Todavía no existe un modelo GenAI real.
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado, PGS-03-M03 prepara el corpus adversario, PGS-03-M04/M05/M06 conectan 14 fixtures PI/JB/EX/TOL a pruebas internas, PGS-03-M07 fija su primera ejecución canónica y PGS-04-M01/M02/M03 separan dominios de confianza, validan esquemas y aplican mínimo privilegio lógico. Todavía no existe un modelo GenAI real.
 
 ## Entorno reproducible
 
@@ -195,23 +196,22 @@ incidente sintético
   inicial o si faltan los dominios de datos de usuario y contenido no
   confiable. La respuesta de una herramienta siempre vuelve al modelo como
   `untrusted_content`.
-- `knowledge_search` solo consulta los documentos sintéticos ya cargados en
-  memoria y referenciados por el incidente. Cada llamada exige una
-  `ToolExecutionPolicy` aportada por la aplicación, que autoriza el nombre de
-  herramienta y los IDs exactos. No accede al sistema de archivos ni a la red
-  y el flujo falla cerrado si no obtiene coincidencias autorizadas.
+- `KnowledgeCatalog` crea para cada incidente una instancia de
+  `knowledge_search` que retiene únicamente sus referencias exactas. Cada
+  llamada exige un `ToolExecutionGrant` ligado a principal, scope, una sola
+  herramienta e instancia. El catálogo anunciado al modelo no concede
+  autoridad. La búsqueda no accede al filesystem o la red.
 - El adaptador transporta la salida final como texto no confiable. El flujo la
   acepta únicamente si cumple `BenignFinalOutput`, pertenece al incidente,
   cita exactamente el conocimiento devuelto y declara que no ejecutó acciones
   ni confirmó un compromiso.
-- `draft_create` solo prepara una propuesta tipada cuando su herramienta y
-  referencias están en la política explícita. Escribir exige que el
-  llamador aporte por separado una confirmación marcada como humana y con la
-  huella SHA-256 exacta de esa propuesta; el modelo no puede incluir ni
-  fabricar esa confirmación en sus argumentos.
-- El nombre del borrador no admite rutas. La escritura queda limitada al
-  directorio físico `sandbox/drafts/`, rechaza enlaces simbólicos y utiliza
-  creación exclusiva: nunca modifica, sobrescribe o borra.
+- `draft_create` solo prepara una propuesta tipada con el grant exacto de su
+  instancia. Escribir exige otro grant de efecto, ligado a la propuesta,
+  principal, scope y raíz después de la confirmación separada; una propuesta
+  directa o cruzada falla antes de I/O.
+- El nombre del borrador no admite rutas. La escritura queda anclada al
+  descriptor de `sandbox/drafts/`, usa `O_EXCL`, `O_NOFOLLOW` y modo `0600`:
+  nunca modifica, sobrescribe o borra.
 - La confirmación se consume una sola vez durante el proceso. La política
   `create-only` del destino mantiene el bloqueo de sobrescritura entre
   ejecuciones.
@@ -222,6 +222,8 @@ Este control estructura la frontera del doble determinista actual; todavía no
 demuestra resistencia de un modelo GenAI real ni sustituye los filtros de
 contenido de PGS-04-M05. La política completa está en
 [Política de validación y allowlists](./docs/validation-policy.md).
+El contrato de autoridad y sus límites están en
+[Política de mínimo privilegio](./docs/least-privilege-policy.md).
 Comprobación específica:
 
 ```bash
@@ -350,9 +352,11 @@ cadenas de autoridad observables:
 - `MOD-01` carece de identidad de ejecución y solo devuelve datos tipados;
 - `CMP-03` decide si una propuesta pertenece al único flujo permitido;
 - `IDN-01`, la cuenta macOS del proceso, aporta la autoridad efectiva;
-- `TOL-01` limita la lectura al subconjunto autorizado del corpus sintético;
-- `TOL-02` solo puede crear un borrador confinado mediante su API interna y
-  una confirmación exacta que todavía no autentica a la persona;
+- `IDN-05` liga un principal y scope lógicos a una sola herramienta e
+  instancia, sin sustituir `IDN-01`;
+- `TOL-01` retiene únicamente la vista exacta del incidente;
+- `TOL-02` separa preparación y efecto, y solo crea por descriptor mediante su
+  API interna; la confirmación todavía no autentica a la persona;
 - `ACT-02`, mediante su cuenta macOS y Git fuera del runtime, posee la mayor
   autoridad actual porque puede modificar código, datos, dependencias y
   evidencia.
@@ -713,7 +717,8 @@ Si la arquitectura cambia, el threat model deberá revisarse antes de ampliar la
 
 - Separación entre instrucciones de sistema, entrada del usuario y contenido no confiable.
 - Esquemas y allowlists para entradas, salidas y argumentos de herramientas.
-- Mínimo privilegio para datos, identidades y capacidades.
+- Mínimo privilegio lógico para datos, identidades y capacidades
+  **implementado en PGS-04-M03**; el aislamiento de SO sigue abierto.
 - Confirmación humana antes de cualquier acción con efecto.
 - Filtrado y redacción de información sensible.
 - Límites de tamaño, tiempo, iteraciones y consumo.
@@ -981,9 +986,10 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Documentar hallazgos, impacto, reproducción y límites.
 - [x] Separar instrucciones de sistema, contenido no confiable y datos de usuario.
 - [x] Validar entradas, salidas y argumentos de herramientas mediante esquemas y allowlists.
+- [x] Aplicar mínimo privilegio a identidades, datos y herramientas.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
 
-**PGS-00-M01 a PGS-04-M02, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **32 de 66 microtareas (48,5 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
+**PGS-00-M01 a PGS-04-M03, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **33 de 66 microtareas (50,0 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
 
 ## Roadmap
 
@@ -993,7 +999,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-04-M03 — aplicar mínimo privilegio a identidades, datos y herramientas.**
+**PGS-04-M04 — exigir confirmación humana para acciones con efecto.**
 
 ## Uso responsable
 

@@ -4,7 +4,8 @@ o doce incidentes.
 ## Responsabilidades
 
 - Guionizar las dos respuestas esperadas para cada incidente.
-- Instanciar el modelo determinista y la búsqueda de conocimiento.
+- Instanciar el modelo determinista, el catálogo y una vista/grant de
+  conocimiento independiente por incidente.
 - Ejecutar `run_incident()` o `run_functional_baseline()`.
 - Contar invocaciones, tool requests, coste y llamadas externas.
 

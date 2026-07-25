@@ -48,7 +48,9 @@
           "MOD-01",
           "TOL-01",
           "TOL-02"
-        ]
+        ],
+        "logicalLeastPrivilege": true,
+        "osIdentityIsolation": false
       }
     },
     {
@@ -160,11 +162,12 @@
       "id": "containers-process-writes-draft",
       "source": "python-application-process",
       "target": "draft-sandbox-store",
-      "label": "API interna: Markdown confirmado y create-only",
+      "label": "API interna: grant de efecto, descriptor, no-follow y 0600",
       "meta": {
         "type": "writes",
         "crossesBoundary": "TB-05",
-        "cliReachable": false
+        "cliReachable": false,
+        "directoryDescriptorAnchored": true
       }
     }
   ]

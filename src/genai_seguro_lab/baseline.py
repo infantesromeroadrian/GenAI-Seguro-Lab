@@ -24,7 +24,7 @@ from .data_contract import (
     KnowledgeId,
     load_dataset,
 )
-from .local_tools import KnowledgeSearchTool, ToolExecutionPolicy
+from .local_tools import KnowledgeCatalog
 from .model_adapter import (
     DeterministicModelAdapter,
     ModelResponse,
@@ -167,7 +167,7 @@ def _output_text(
 
 def _build_flow(
     incidents: tuple[IncidentRecord, ...],
-    knowledge_tool: KnowledgeSearchTool,
+    knowledge_catalog: KnowledgeCatalog,
 ) -> BenignAnalysisFlow:
     scripts: list[ScriptedExchange] = []
     for incident in incidents:
@@ -177,12 +177,14 @@ def _build_flow(
             finish_reason="tool_request",
             tool_requests=(tool_request,),
         )
+        knowledge_tool = knowledge_catalog.for_incident(
+            incident,
+            principal="benign-flow",
+            scope=f"incident:{incident.id}",
+        )
         knowledge = knowledge_tool.search(
             tool_request,
-            policy=ToolExecutionPolicy(
-                allowed_tools=initial.available_tools,
-                allowed_knowledge_ids=incident.knowledge_refs,
-            ),
+            grant=knowledge_tool.execution_grant,
         )
         if not knowledge.hits:
             raise ValueError("baseline configuration produced no knowledge hits")
@@ -221,7 +223,7 @@ def _build_flow(
 
     return BenignAnalysisFlow(
         DeterministicModelAdapter(scripts),
-        knowledge_tool,
+        knowledge_catalog,
     )
 
 
@@ -275,8 +277,8 @@ def run_incident(
     if incident is None:
         raise UnknownIncidentError("unknown benign incident identifier")
 
-    knowledge_tool = KnowledgeSearchTool(bundle.knowledge)
-    result = _build_flow((incident,), knowledge_tool).analyze(incident)
+    knowledge_catalog = KnowledgeCatalog(bundle.knowledge)
+    result = _build_flow((incident,), knowledge_catalog).analyze(incident)
     return _case_result(incident, result)
 
 
@@ -286,8 +288,8 @@ def run_functional_baseline(data_dir: Path) -> FunctionalBaseline:
     if not isinstance(data_dir, Path):
         raise TypeError("data_dir must be a Path")
     bundle = load_dataset(data_dir)
-    knowledge_tool = KnowledgeSearchTool(bundle.knowledge)
-    flow = _build_flow(bundle.incidents, knowledge_tool)
+    knowledge_catalog = KnowledgeCatalog(bundle.knowledge)
+    flow = _build_flow(bundle.incidents, knowledge_catalog)
     cases = tuple(
         _case_result(incident, flow.analyze(incident))
         for incident in bundle.incidents

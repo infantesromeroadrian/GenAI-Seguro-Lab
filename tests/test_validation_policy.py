@@ -18,8 +18,9 @@ from genai_seguro_lab.benign_flow import (
 )
 from genai_seguro_lab.data_contract import IncidentRecord, load_dataset
 from genai_seguro_lab.local_tools import (
-    KnowledgeSearchTool,
-    ToolExecutionPolicy,
+    KnowledgeCatalog,
+    ToolExecutionGrant,
+    ToolPolicyError,
 )
 from genai_seguro_lab.model_adapter import (
     DeterministicModelAdapter,
@@ -37,13 +38,13 @@ def incident() -> IncidentRecord:
 
 
 @pytest.fixture(scope="module")
-def knowledge_tool() -> KnowledgeSearchTool:
-    return KnowledgeSearchTool(load_dataset(DATA_DIR).knowledge)
+def knowledge_catalog() -> KnowledgeCatalog:
+    return KnowledgeCatalog(load_dataset(DATA_DIR).knowledge)
 
 
 def _flow_with_final_output(
     incident: IncidentRecord,
-    knowledge_tool: KnowledgeSearchTool,
+    knowledge_catalog: KnowledgeCatalog,
     output_text: str,
 ) -> BenignAnalysisFlow:
     initial = BenignAnalysisFlow.build_initial_request(incident)
@@ -60,12 +61,14 @@ def _flow_with_final_output(
             sort_keys=True,
         ),
     )
+    knowledge_tool = knowledge_catalog.for_incident(
+        incident,
+        principal="benign-flow",
+        scope=f"incident:{incident.id}",
+    )
     knowledge = knowledge_tool.search(
         tool_request,
-        policy=ToolExecutionPolicy(
-            allowed_tools=initial.available_tools,
-            allowed_knowledge_ids=incident.knowledge_refs,
-        ),
+        grant=knowledge_tool.execution_grant,
     )
     followup = BenignAnalysisFlow.build_followup_request(
         initial,
@@ -90,7 +93,7 @@ def _flow_with_final_output(
             ),
         )
     )
-    return BenignAnalysisFlow(adapter, knowledge_tool)
+    return BenignAnalysisFlow(adapter, knowledge_catalog)
 
 
 def test_benign_input_envelopes_are_strict_and_omit_oracles(
@@ -127,15 +130,13 @@ def test_benign_input_envelopes_are_strict_and_omit_oracles(
         )
 
 
-def test_execution_policy_rejects_unknown_or_duplicate_allowlists() -> None:
-    with pytest.raises(ValidationError, match="literal_error"):
-        ToolExecutionPolicy(
-            allowed_tools=("shell",),
-        )
-
-    with pytest.raises(ValidationError, match="must be unique"):
-        ToolExecutionPolicy(
-            allowed_tools=("knowledge_search", "knowledge_search"),
+def test_execution_grant_cannot_be_fabricated_from_model_data() -> None:
+    with pytest.raises(ToolPolicyError, match="issued by the application"):
+        ToolExecutionGrant(
+            principal="benign-flow",
+            scope="incident:INC-BEN-001",
+            tool="knowledge_search",
+            allowed_knowledge_ids=("KB-001",),
         )
 
 
@@ -166,11 +167,11 @@ def test_final_output_schema_rejects_forbidden_claims_and_fields(
 
 def test_flow_rejects_unstructured_final_output(
     incident: IncidentRecord,
-    knowledge_tool: KnowledgeSearchTool,
+    knowledge_catalog: KnowledgeCatalog,
 ) -> None:
     flow = _flow_with_final_output(
         incident,
-        knowledge_tool,
+        knowledge_catalog,
         "texto libre no validado",
     )
 
@@ -180,7 +181,7 @@ def test_flow_rejects_unstructured_final_output(
 
 def test_flow_rejects_final_output_for_another_incident(
     incident: IncidentRecord,
-    knowledge_tool: KnowledgeSearchTool,
+    knowledge_catalog: KnowledgeCatalog,
 ) -> None:
     output = BenignFinalOutput(
         incident_id="INC-BEN-002",
@@ -191,7 +192,7 @@ def test_flow_rejects_final_output_for_another_incident(
     )
     flow = _flow_with_final_output(
         incident,
-        knowledge_tool,
+        knowledge_catalog,
         canonical_flow_json(output),
     )
 
@@ -201,7 +202,7 @@ def test_flow_rejects_final_output_for_another_incident(
 
 def test_flow_rejects_final_output_with_unauthorized_knowledge(
     incident: IncidentRecord,
-    knowledge_tool: KnowledgeSearchTool,
+    knowledge_catalog: KnowledgeCatalog,
 ) -> None:
     output = BenignFinalOutput(
         incident_id=incident.id,
@@ -212,7 +213,7 @@ def test_flow_rejects_final_output_with_unauthorized_knowledge(
     )
     flow = _flow_with_final_output(
         incident,
-        knowledge_tool,
+        knowledge_catalog,
         canonical_flow_json(output),
     )
 

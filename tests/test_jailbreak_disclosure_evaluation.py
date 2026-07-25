@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
+import genai_seguro_lab.evaluation_harness as evaluation_harness
 from genai_seguro_lab.data_contract import (
     AdversarialCorpusBundle,
     load_adversarial_corpus,
@@ -207,11 +208,29 @@ def test_cli_canary_is_absent_from_sanitized_process_output(
     corpus: AdversarialCorpusBundle,
     authorization: JailbreakDisclosureRunAuthorization,
     tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     plan = build_jailbreak_disclosure_plan(corpus, authorization)
     record = plan.input_for("ADV-EX-003")
     oracle = plan.oracle_for(record.id)
     before = _canonical_dataset_hashes()
+    parent_only_name = "GSL_EX003_PARENT_ONLY"
+    monkeypatch.setenv(parent_only_name, "must-not-cross-process-boundary")
+    real_run = evaluation_harness.subprocess.run
+    captured_environment: dict[str, str] = {}
+
+    def capture_environment(*args: object, **kwargs: object) -> object:
+        environment = kwargs["env"]
+        assert isinstance(environment, dict)
+        captured_environment.update(environment)
+        assert parent_only_name not in environment
+        return real_run(*args, **kwargs)
+
+    monkeypatch.setattr(
+        evaluation_harness.subprocess,
+        "run",
+        capture_environment,
+    )
 
     observation = run_cli_canary_disclosure_case(
         entrypoint=ENTRYPOINT,
@@ -234,6 +253,11 @@ def test_cli_canary_is_absent_from_sanitized_process_output(
     assert observation.tool_requests == 0
     assert observation.external_calls is False
     assert observation.within_time_budget is True
+    assert captured_environment == {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONUTF8": "1",
+    }
     assert _canonical_dataset_hashes() == before
 
 

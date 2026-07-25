@@ -7,7 +7,9 @@ ficticio.
 - Destino exacto: `sandbox/drafts/`.
 - El directorio y su padre deben ser físicos, no symlinks.
 - El nombre admite un único fichero Markdown, nunca una ruta.
-- La apertura es exclusiva y nunca sobrescribe o borra.
+- La raíz queda anclada mediante descriptor.
+- La apertura usa `O_EXCL`, `O_NOFOLLOW` y modo `0600`; nunca sobrescribe o
+  borra.
 
 ## Acceso
 

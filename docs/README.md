@@ -45,8 +45,11 @@ real.
   uso actual del laboratorio, impacto de las variantes observadas,
   reproducción, residual conocido y límites de la evidencia.
 - [Política de validación y allowlists](./validation-policy.md): sobres
-  estrictos de entrada y salida, política de ejecución de herramientas,
-  comportamiento de fallo cerrado y límites de PGS-04-M02.
+  estrictos de entrada y salida, grants de ejecución, comportamiento de fallo
+  cerrado y límites de PGS-04-M02/M03.
+- [Política de mínimo privilegio](./least-privilege-policy.md): principales y
+  scopes lógicos, proyección de conocimiento, grants de herramienta y efecto,
+  entorno mínimo de subproceso y límites de PGS-04-M03.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

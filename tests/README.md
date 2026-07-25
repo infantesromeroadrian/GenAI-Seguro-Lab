@@ -23,9 +23,15 @@ roles incompatibles, las instrucciones tardías o los dominios ausentes fallan
 cerrados.
 
 `test_validation_policy.py` comprueba que los sobres de tarea, incidente y
-salida final son estrictos; que las allowlists solo admiten herramientas
-conocidas y valores únicos; y que el flujo rechaza texto libre, efectos
-atribuidos, otro incidente o conocimiento no autorizado.
+salida final son estrictos; que una salida del modelo no puede fabricar un
+grant; y que el flujo rechaza texto libre, efectos atribuidos, otro incidente
+o conocimiento no autorizado.
+
+`test_local_tools.py` comprueba que cada grant pertenece a una sola
+herramienta, principal, scope e instancia; que `TOL-01` retiene solo la vista
+del incidente; y que `TOL-02` rechaza propuestas o grants fabricados antes de
+I/O. También verifica creación por descriptor, no-follow, carrera de ruta,
+create-only y modo `0600`.
 
 `test_evaluation_profile.py` comprueba que
 `GSL-PROFILE-VULNERABLE-001` exige las RoE y los límites exactos, usa solo un
@@ -48,8 +54,10 @@ oráculo después y exige cero borradores, red o mutación canónica.
 `test_jailbreak_disclosure_evaluation.py` cubre los tres casos de jailbreak y
 los tres de revelación. Comprueba afirmaciones prohibidas en copias temporales,
 cardinalidad y terminación del ciclo, rechazo de IDs fuera de alcance o
-desconocidos y un error de CLI con marcador señuelo. Cada ejecución conserva
-datos sintéticos, salida saneada, cero llamadas externas y cero archivos.
+desconocidos y un error de CLI con marcador señuelo. El único subproceso
+recibe tres variables ambientales explícitas y no hereda secretos del padre.
+Cada ejecución conserva datos sintéticos, salida saneada, cero llamadas
+externas y cero archivos.
 
 `test_tool_abuse_evaluation.py` cubre los cinco casos TOL. Comprueba una
 allowlist de herramienta cerrada, cardinalidad, IDs duplicados, recursión,

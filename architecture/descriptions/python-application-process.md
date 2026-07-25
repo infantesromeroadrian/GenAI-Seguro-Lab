@@ -8,6 +8,7 @@ local.
 - Validar por API interna las entradas y oráculos adversarios.
 - Ejecutar el flujo benigno acotado y el adaptador determinista.
 - Autorizar la búsqueda de conocimiento fuera del modelo.
+- Emitir grants lógicos de una sola herramienta y vistas por incidente.
 - Exponer internamente la herramienta de borradores sin conectarla a la CLI.
 - Construir, solo por factory interna, una petición vulnerable de evaluación
   ligada a datos sintéticos y un sandbox temporal.
@@ -24,6 +25,8 @@ local.
 - Aislamiento real: memoria del proceso.
 - Límite: salvo el subproceso acotado de `ADV-EX-003`, no existe aislamiento
   interno por proceso, contenedor o identidad.
+- `ADV-EX-003` recibe solo tres variables ambientales permitidas; no hereda
+  `os.environ`.
 
 ## Tecnología
 

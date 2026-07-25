@@ -1,7 +1,7 @@
 # Política de validación y allowlists
 
 - **ID:** `GSL-VALIDATION-POLICY-001`
-- **Versión:** 1.0
+- **Versión:** 1.1
 - **Fecha:** 2026-07-25
 - **Microtarea:** PGS-04-M02
 - **Ámbito:** flujo benigno determinista y herramientas locales
@@ -58,28 +58,36 @@ impide atribuir efectos o conocimiento no autorizados, pero no determina si el
 resumen es veraz, seguro o está correctamente redactado; esa política de
 contenido pertenece a PGS-04-M05.
 
-## Política de ejecución de herramientas
+## Validación y autoridad de herramientas
 
-`ToolExecutionPolicy` es un objeto Pydantic estricto, inmutable y construido
-por la aplicación. Contiene:
+PGS-04-M03 sustituyó la allowlist autocontenida por
+`ToolExecutionGrant`, un grant inmutable emitido y ligado por la aplicación.
+Contiene:
 
-- `allowed_tools`: subconjunto único de `knowledge_search` y `draft_create`;
+- `principal` y `scope` lógicos de la operación;
+- exactamente una herramienta: `knowledge_search` o `draft_create`;
 - `allowed_knowledge_ids`: IDs de conocimiento únicos autorizados para esa
-  invocación.
+  invocación;
+- un binding opaco a la instancia que puede aceptarlo.
 
 El nombre recibido en `ModelToolRequest` permanece como texto bruto para que
 un intento de usar `shell` u otra capacidad desconocida pueda transportarse,
 observarse y rechazarse. En cambio, una herramienta desconocida no puede
 anunciarse en `ModelRequest.available_tools`.
 
+El catálogo anunciado al modelo no concede autoridad y no se usa para
+construir el grant. La política de mínimo privilegio completa está en
+[`GSL-LEAST-PRIVILEGE-001`](./least-privilege-policy.md).
+
 ### `knowledge_search`
 
 La búsqueda solo se ejecuta cuando:
 
-1. la política permite `knowledge_search`;
-2. los argumentos cumplen `KnowledgeSearchArguments`;
-3. la allowlist de la política contiene únicamente documentos cargados;
-4. todos los IDs solicitados están en esa allowlist.
+1. el catálogo de aplicación crea una vista exacta para el incidente;
+2. el grant pertenece a esa instancia, principal y scope;
+3. el grant permite únicamente `knowledge_search`;
+4. los argumentos cumplen `KnowledgeSearchArguments`;
+5. todos los IDs solicitados pertenecen a los documentos retenidos.
 
 La salida se construye como `KnowledgeSearchResult`, también estricto e
 inmutable.
@@ -88,13 +96,15 @@ inmutable.
 
 La preparación de un borrador solo se acepta cuando:
 
-1. la política permite `draft_create`;
+1. el grant de preparación pertenece a la instancia y permite únicamente
+   `draft_create`;
 2. los argumentos cumplen `DraftCreateArguments`;
-3. todas las referencias de la propuesta están en la allowlist.
+3. todas las referencias de la propuesta están en el scope autorizado.
 
-La política no concede permiso para escribir. La creación continúa separada de
-la propuesta y exige la confirmación exacta ya existente; la autenticación de
-la identidad humana sigue pendiente de PGS-04-M04.
+El grant de preparación no concede permiso para escribir. La creación exige
+otro `DraftEffectGrant`, ligado a la propuesta, instancia y raíz después de una
+confirmación exacta. La autenticación de la identidad humana sigue pendiente
+de PGS-04-M04.
 
 ## Fallo cerrado
 
@@ -102,7 +112,7 @@ la identidad humana sigue pendiente de PGS-04-M04.
 |---|---|
 | Argumentos con forma, tipo o campos inválidos | `ToolArgumentsError` |
 | Herramienta o referencia fuera de la allowlist | `ToolDeniedError` |
-| Allowlist de búsqueda que cita datos inexistentes | `ToolPolicyError` |
+| Grant fabricado o scope que no pertenece a la instancia | `ToolPolicyError` o `ToolDeniedError` |
 | Salida final sin esquema o inconsistente con la ejecución | `BenignFlowError` |
 
 Los errores no incluyen el contenido adversario ni habilitan una segunda
@@ -115,7 +125,7 @@ herramienta, un reintento o una ruta alternativa.
 - `tests/test_model_adapter.py`: separación entre transporte de nombres brutos
   y catálogo anunciado.
 - `tests/test_local_tools.py`: esquemas, política obligatoria, alcance de datos
-  y referencias de borrador.
+  y referencias de borrador, además de los grants ligados por M03.
 - `tests/test_benign_flow.py`: integración del ciclo completo.
 - `tests/test_instruction_boundary.py`: conservación de las clases de
   confianza.
@@ -129,8 +139,8 @@ esta microtarea.
 - La evidencia actual usa un adaptador determinista, no un modelo GenAI real.
 - El perfil vulnerable aislado conserva su frontera débil para evaluación y no
   representa el comportamiento ordinario.
-- PGS-04-M03 debe reducir los permisos efectivos de identidades, datos y
-  herramientas.
+- PGS-04-M03 reduce la autoridad lógica de identidades, datos y herramientas;
+  `IDN-01` conserva los permisos de la cuenta macOS.
 - PGS-04-M04 debe autenticar la confirmación humana.
 - PGS-04-M05 debe filtrar y redactar contenido.
 - PGS-04-M06 debe imponer límites preventivos de recursos.

@@ -6,6 +6,7 @@ borradores, fuera de las operaciones expuestas por la CLI.
 - Entregar una petición `draft_create` válida.
 - Revisar la propuesta resultante.
 - Aportar después una confirmación ligada a la huella exacta.
+- Recibir de la instancia un grant de efecto que no prueba identidad humana.
 
 ## Límite
 
