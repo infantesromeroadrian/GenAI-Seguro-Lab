@@ -4,7 +4,7 @@
 
 - **Proyecto:** GenAI Seguro Lab.
 - **Nombre de carpeta confirmado:** `GenAI-Seguro-Lab`.
-- **Ruta local confirmada:** `/Users/adrianinfantes/Desktop/AIR/Carreer/AI-Security-Architec/GenAI-Seguro-Lab`.
+- **Ruta local confirmada:** `/Users/adrianinfantes/Desktop/AIR/Carreer/AI-Security-Architec/Portfolio/GenAI-Seguro-Lab`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01, P01-M04, P01-M05 y P01-M06.
 - **Estado actual:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07 y PGS-02-M01 a PGS-02-M07 completadas; el esqueleto reproducible, las fuentes, el inventario, el mapa C4, la matriz de autoridad, el catálogo, la priorización y el crosswalk de amenazas ya están fijados.
