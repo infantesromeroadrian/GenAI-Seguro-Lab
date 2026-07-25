@@ -13,14 +13,16 @@ del modelo.
 - Proyecta para `TOL-01` únicamente las referencias del incidente validado.
 - El harness selecciona solo 14 fixtures PI/JB/EX/TOL y nunca entrega el
   oráculo al target.
-- `CMP-08` exige un commit limpio exacto, aplica los presupuestos y escribe
-  evidencia bruta únicamente bajo `$TMP`; no forma parte de la CLI de producto.
+- `CMP-08` exige exclusivamente el commit histórico limpio, aplica los
+  presupuestos y escribe evidencia bruta únicamente bajo `$TMP`; no forma
+  parte de la CLI de producto ni evalúa el checkout endurecido.
 - Los casos indirectos conectan una copia temporal al perfil, al doble
   determinista y a una búsqueda autorizada; los JB/EX añaden guardas,
   rechazos de búsqueda y una comprobación CLI saneada. TOL añade llamadas
-  internas confinadas a las fronteras existentes y un único efecto temporal
-  conocido. Ninguno forma parte del flujo ordinario ni habilita una ruta
-  adversaria en la CLI.
+  internas confinadas a las fronteras existentes. El checkout actual rechaza
+  el literal TOL-005; el efecto residual pertenece al candidato histórico.
+  Ninguno forma parte del flujo ordinario ni habilita una ruta adversaria en
+  la CLI.
 
 ## Límite
 

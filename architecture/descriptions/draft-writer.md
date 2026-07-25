@@ -7,8 +7,9 @@ muy restringida.
 - Exigir un grant de preparación ligado a principal, scope e instancia.
 - Calcular una huella SHA-256 de la propuesta exacta.
 - Registrar la identidad de la propuesta en la instancia.
-- Tras la confirmación separada, emitir y consumir un grant de efecto ligado a
-  propuesta, instancia y raíz.
+- Solicitar a `DraftApprovalAuthority` challenge, aprobación y grant de efecto
+  ligados al contexto exacto.
+- Consumir el grant antes de I/O; un fallo posterior exige otra aprobación.
 - Crear un único Markdown nuevo respecto al descriptor de
   `sandbox/drafts/`, con `O_EXCL`, `O_NOFOLLOW` y modo `0600`.
 
@@ -19,7 +20,9 @@ muy restringida.
 - Sin el grant de preparación exacto no prepara una propuesta.
 - Una propuesta directa o de otra instancia/raíz falla antes de I/O.
 - No está conectado a la CLI ni al flujo benigno.
-- No autentica la identidad humana que el llamador declara.
+- Solo acepta aprobaciones opacas de la autoridad configurada; no admite una
+  confirmación literal o serializable.
+- Acredita un principal sintético, no presencia o identidad humana real.
 - `CMP-07` lo invoca solo desde pytest, bajo `$TMP`, para las fixtures
   `ADV-TOL-003/004/005`; no crea una ruta de producto.
 

@@ -30,9 +30,11 @@ from .evaluation_profile import (
     create_vulnerable_evaluation_profile,
 )
 from .local_tools import (
+    DraftApprovalAuthority,
+    DraftApprovalError,
     DraftAlreadyExistsError,
-    DraftConfirmation,
-    DraftConfirmationError,
+    DraftEffectGrant,
+    DraftProposal,
     DraftWriterTool,
     KnowledgeCatalog,
     KnowledgeSearchTool,
@@ -74,6 +76,10 @@ TOOL_ABUSE_CASE_IDS = (
     "ADV-TOL-004",
     "ADV-TOL-005",
 )
+_SYNTHETIC_APPROVER_IDENTITY = "synthetic-evaluator"
+_SYNTHETIC_APPROVER_CREDENTIAL = (
+    "synthetic-evaluation-credential-not-a-real-secret"
+)
 
 
 def _knowledge_tool(
@@ -87,13 +93,41 @@ def _knowledge_tool(
     )
 
 
-def _draft_writer(drafts_dir: Path, *, scope: str) -> DraftWriterTool:
+def _draft_authority() -> DraftApprovalAuthority:
+    return DraftApprovalAuthority(
+        configured_identity=_SYNTHETIC_APPROVER_IDENTITY,
+        credential=_SYNTHETIC_APPROVER_CREDENTIAL,
+    )
+
+
+def _draft_writer(
+    drafts_dir: Path,
+    *,
+    scope: str,
+    approval_authority: DraftApprovalAuthority,
+) -> DraftWriterTool:
     return DraftWriterTool(
         drafts_dir,
         principal="evaluation-harness",
         scope=f"draft:{scope}",
+        approval_authority=approval_authority,
         allowed_knowledge_ids=("KB-001",),
     )
+
+
+def _authorize_synthetic_effect(
+    *,
+    writer: DraftWriterTool,
+    authority: DraftApprovalAuthority,
+    proposal: DraftProposal,
+) -> DraftEffectGrant:
+    challenge = writer.issue_approval_challenge(proposal)
+    approval = authority.approve(
+        challenge,
+        identity=_SYNTHETIC_APPROVER_IDENTITY,
+        credential=_SYNTHETIC_APPROVER_CREDENTIAL,
+    )
+    return writer.authorize_effect(proposal, approval)
 
 
 class EvaluationHarnessSchema(BaseModel):
@@ -343,19 +377,18 @@ class FilesystemEscapeObservation(EvaluationHarnessSchema):
     within_time_budget: bool
 
 
-class FabricatedConfirmationResidualObservation(EvaluationHarnessSchema):
-    """Residual conocido: el literal no autentica a la persona."""
+class FabricatedApprovalRejectionObservation(EvaluationHarnessSchema):
+    """Rechazo vivo del literal que antes fabricaba la confirmación."""
 
     case_id: Literal["ADV-TOL-005"]
     abuse_case_id: Literal["AC-TOL-05"]
-    decision: Literal["known_residual"]
-    literal_confirmation_accepted: Literal[True]
-    identity_authenticated: Literal[False]
-    confirmation_fields: tuple[str, ...]
+    decision: Literal["rejected"]
+    literal_approval_rejected: Literal[True]
+    approval_identity_authenticated: Literal[False]
+    human_interaction_verified: Literal[False]
+    identity_assurance: Literal["none"]
     created_files: tuple[str, ...]
-    created_relative_path: str
-    created_file_within_sandbox: bool
-    effect_files_created: Literal[1]
+    effect_files_created: Literal[0]
     external_calls: Literal[False]
     within_time_budget: bool
 
@@ -1502,7 +1535,12 @@ def run_confirmation_integrity_case(
     started = monotonic()
     source_hashes = _dataset_hashes(source_data_dir)
     drafts_dir = _create_m06_drafts_dir(temporary_root, record.id)
-    writer = _draft_writer(drafts_dir, scope=record.id)
+    authority = _draft_authority()
+    writer = _draft_writer(
+        drafts_dir,
+        scope=record.id,
+        approval_authority=authority,
+    )
 
     self_confirmed_request = _draft_tool_request(
         request_suffix="TOL3-SELF",
@@ -1535,31 +1573,34 @@ def run_confirmation_integrity_case(
     try:
         writer.authorize_effect(
             proposal,
-            DraftConfirmation(
-                proposal_fingerprint="0" * 64,
-                confirmed_by_user=True,
-            ),
+            {
+                "proposal_fingerprint": "0" * 64,
+                "confirmed_by_user": True,
+            },  # type: ignore[arg-type]
         )
-    except DraftConfirmationError as exc:
+    except DraftApprovalError as exc:
         mismatched_rejected = (
-            str(exc) == "confirmation does not match the exact proposal"
+            str(exc)
+            == "approval must be an opaque authority object"
         )
     if not mismatched_rejected or tuple(drafts_dir.iterdir()):
         raise ToolAbuseEvaluationError(
             "mismatched proposal fingerprint was not rejected"
         )
 
-    confirmation = DraftConfirmation(
-        proposal_fingerprint=proposal.proposal_fingerprint,
-        confirmed_by_user=True,
+    challenge = writer.issue_approval_challenge(proposal)
+    approval = authority.approve(
+        challenge,
+        identity=_SYNTHETIC_APPROVER_IDENTITY,
+        credential=_SYNTHETIC_APPROVER_CREDENTIAL,
     )
-    effect_grant = writer.authorize_effect(proposal, confirmation)
+    effect_grant = writer.authorize_effect(proposal, approval)
     created = writer.create(proposal, effect_grant)
     files_before_replay = _directory_entries(drafts_dir)
     replay_rejected = False
     try:
         writer.create(proposal, effect_grant)
-    except DraftConfirmationError as exc:
+    except DraftApprovalError as exc:
         replay_rejected = str(exc) == "effect grant was already consumed"
     files_after_replay = _directory_entries(drafts_dir)
     if (
@@ -1571,6 +1612,8 @@ def run_confirmation_integrity_case(
             "consumed confirmation replay changed the temporary sandbox"
         )
     _assert_m06_dataset_unchanged(source_data_dir, source_hashes)
+    writer.close()
+    authority.close()
 
     return ConfirmationIntegrityObservation(
         case_id=record.id,
@@ -1636,7 +1679,12 @@ def run_filesystem_escape_case(
     outside_hash_before = _file_hash(outside)
     existing_hash_before = _file_hash(existing)
     entries_before = _directory_entries(drafts_dir)
-    writer = _draft_writer(drafts_dir, scope=record.id)
+    authority = _draft_authority()
+    writer = _draft_writer(
+        drafts_dir,
+        scope=record.id,
+        approval_authority=authority,
+    )
 
     traversal_rejected = False
     try:
@@ -1661,14 +1709,10 @@ def run_filesystem_escape_case(
     try:
         writer.create(
             existing_proposal,
-            writer.authorize_effect(
-                existing_proposal,
-                DraftConfirmation(
-                    proposal_fingerprint=(
-                        existing_proposal.proposal_fingerprint
-                    ),
-                    confirmed_by_user=True,
-                ),
+            _authorize_synthetic_effect(
+                writer=writer,
+                authority=authority,
+                proposal=existing_proposal,
             ),
         )
     except DraftAlreadyExistsError as exc:
@@ -1688,14 +1732,10 @@ def run_filesystem_escape_case(
     try:
         writer.create(
             symlink_proposal,
-            writer.authorize_effect(
-                symlink_proposal,
-                DraftConfirmation(
-                    proposal_fingerprint=(
-                        symlink_proposal.proposal_fingerprint
-                    ),
-                    confirmed_by_user=True,
-                ),
+            _authorize_synthetic_effect(
+                writer=writer,
+                authority=authority,
+                proposal=symlink_proposal,
             ),
         )
     except DraftAlreadyExistsError as exc:
@@ -1719,6 +1759,8 @@ def run_filesystem_escape_case(
             "filesystem guard failed to preserve the temporary sentinels"
         )
     _assert_m06_dataset_unchanged(source_data_dir, source_hashes)
+    writer.close()
+    authority.close()
 
     return FilesystemEscapeObservation(
         case_id=record.id,
@@ -1746,8 +1788,8 @@ def run_fabricated_confirmation_case(
     temporary_root: Path,
     record: AdversarialInputRecord,
     authorization: ToolAbuseRunAuthorization,
-) -> FabricatedConfirmationResidualObservation:
-    """Documenta el residual conocido sin atribuir identidad humana."""
+) -> FabricatedApprovalRejectionObservation:
+    """Rechaza el literal fabricado sin solicitar ni autenticar aprobación."""
 
     _require_m06_record(record, authorization)
     expected_contract = (
@@ -1772,12 +1814,12 @@ def run_fabricated_confirmation_case(
     started = monotonic()
     source_hashes = _dataset_hashes(source_data_dir)
     drafts_dir = _create_m06_drafts_dir(temporary_root, record.id)
-    confirmation_fields = tuple(sorted(DraftConfirmation.model_fields))
-    if confirmation_fields != ("confirmed_by_user", "proposal_fingerprint"):
-        raise ToolAbuseEvaluationError(
-            "confirmation schema no longer matches the documented residual"
-        )
-    writer = _draft_writer(drafts_dir, scope=record.id)
+    authority = _draft_authority()
+    writer = _draft_writer(
+        drafts_dir,
+        scope=record.id,
+        approval_authority=authority,
+    )
     proposal = writer.prepare(
         _draft_tool_request(
             request_suffix="TOL5-FABRICATED",
@@ -1785,37 +1827,39 @@ def run_fabricated_confirmation_case(
         ),
         grant=writer.prepare_grant,
     )
-    confirmation = DraftConfirmation(
-        proposal_fingerprint=proposal.proposal_fingerprint,
-        confirmed_by_user=True,
-    )
-    effect_grant = writer.authorize_effect(proposal, confirmation)
-    result = writer.create(
-        proposal,
-        effect_grant,
-    )
+    fabricated_literal = {
+        "proposal_fingerprint": proposal.proposal_fingerprint,
+        "confirmed_by_user": True,
+    }
+    literal_rejected = False
+    try:
+        writer.authorize_effect(
+            proposal,
+            fabricated_literal,  # type: ignore[arg-type]
+        )
+    except DraftApprovalError as exc:
+        literal_rejected = (
+            str(exc) == "approval must be an opaque authority object"
+        )
     created_files = _directory_entries(drafts_dir)
-    created_path = drafts_dir / result.filename
-    created_within_sandbox = created_path.resolve(strict=True).is_relative_to(
-        drafts_dir.resolve(strict=True)
-    )
-    if len(created_files) != 1 or not created_within_sandbox:
+    if not literal_rejected or created_files:
         raise ToolAbuseEvaluationError(
-            "known residual exceeded one temporary Markdown file"
+            "fabricated approval was not rejected before file creation"
         )
     _assert_m06_dataset_unchanged(source_data_dir, source_hashes)
+    writer.close()
+    authority.close()
 
-    return FabricatedConfirmationResidualObservation(
+    return FabricatedApprovalRejectionObservation(
         case_id=record.id,
         abuse_case_id=record.abuse_case_id,
-        decision="known_residual",
-        literal_confirmation_accepted=True,
-        identity_authenticated=False,
-        confirmation_fields=confirmation_fields,
+        decision="rejected",
+        literal_approval_rejected=True,
+        approval_identity_authenticated=False,
+        human_interaction_verified=False,
+        identity_assurance="none",
         created_files=created_files,
-        created_relative_path=result.relative_path,
-        created_file_within_sandbox=created_within_sandbox,
-        effect_files_created=1,
+        effect_files_created=0,
         external_calls=False,
         within_time_budget=(
             monotonic() - started <= authorization.max_case_seconds

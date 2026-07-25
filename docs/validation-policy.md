@@ -1,9 +1,9 @@
 # Política de validación y allowlists
 
 - **ID:** `GSL-VALIDATION-POLICY-001`
-- **Versión:** 1.1
-- **Fecha:** 2026-07-25
-- **Microtarea:** PGS-04-M02
+- **Versión:** 1.2
+- **Fecha:** 2026-07-26
+- **Microtareas:** PGS-04-M02 a PGS-04-M04
 - **Ámbito:** flujo benigno determinista y herramientas locales
 
 ## Objetivo
@@ -102,9 +102,11 @@ La preparación de un borrador solo se acepta cuando:
 3. todas las referencias de la propuesta están en el scope autorizado.
 
 El grant de preparación no concede permiso para escribir. La creación exige
-otro `DraftEffectGrant`, ligado a la propuesta, instancia y raíz después de una
-confirmación exacta. La autenticación de la identidad humana sigue pendiente
-de PGS-04-M04.
+un challenge opaco, autenticación de la identidad sintética configurada y una
+aprobación opaca, todos fuera de los datos del modelo. El
+`DraftEffectGrant` queda ligado a propuesta, identidad, principal, scope,
+herramienta, efecto, writer, sesión, instancia y raíz; caduca y se consume una
+sola vez antes de I/O. Este mecanismo no verifica presencia humana real.
 
 ## Fallo cerrado
 
@@ -113,6 +115,7 @@ de PGS-04-M04.
 | Argumentos con forma, tipo o campos inválidos | `ToolArgumentsError` |
 | Herramienta o referencia fuera de la allowlist | `ToolDeniedError` |
 | Grant fabricado o scope que no pertenece a la instancia | `ToolPolicyError` o `ToolDeniedError` |
+| Credencial, challenge, aprobación o grant de efecto inválidos | `DraftApprovalError` |
 | Salida final sin esquema o inconsistente con la ejecución | `BenignFlowError` |
 
 Los errores no incluyen el contenido adversario ni habilitan una segunda
@@ -141,7 +144,8 @@ esta microtarea.
   representa el comportamiento ordinario.
 - PGS-04-M03 reduce la autoridad lógica de identidades, datos y herramientas;
   `IDN-01` conserva los permisos de la cuenta macOS.
-- PGS-04-M04 debe autenticar la confirmación humana.
+- PGS-04-M04 autentica un principal sintético local; una futura interfaz debe
+  añadir presencia e identidad humanas reales.
 - PGS-04-M05 debe filtrar y redactar contenido.
 - PGS-04-M06 debe imponer límites preventivos de recursos.
 - PGS-05 debe repetir el mismo corpus y medir el control frente a la baseline.

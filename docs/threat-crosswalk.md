@@ -5,8 +5,8 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-THREAT-CROSSWALK-001` |
-| Versión | `1.2.0` |
-| Fecha de corte | 2026-07-25 |
+| Versión | `1.3.0` |
+| Fecha de corte | 2026-07-26 |
 | Baseline de código | commit `3c4657efbc7dc92b232b83f3185d27968c2ba78b` + candidato PGS-03-M03 |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Priorización de origen | [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) |
@@ -126,7 +126,7 @@ Los identificadores y nombres se verificaron en
 | `AC-TOL-02` | `D LLM06:2025`; `P LLM10:2025` | `D ASI02`; `P ASI08` | `D AML.T0053`; `P AML.T0034.002` | Múltiples solicitudes o recursión amplían agencia y consumo, aunque no existe efecto persistente actual |
 | `AC-TOL-03` | `D LLM06:2025` | `D ASI03` | `—` | Autoconsentimiento, huella alterada y replay son fallos de autorización; ATLAS no contiene una técnica específica para este consentimiento |
 | `AC-TOL-04` | `P LLM06:2025` | `D ASI02` | `P AML.T0053` | Traversal, symlink y overwrite son abuso de una herramienta; las categorías LLM y ATLAS son más generales que el fallo de filesystem |
-| `AC-TOL-05` | `D LLM06:2025` | `D ASI03`; `P ASI09` | `P AML.T0053` | El sistema confía en un literal de confirmación sin autenticar identidad; ATLAS solo representa de forma genérica la invocación |
+| `AC-TOL-05` | `D LLM06:2025` | `D ASI03`; `P ASI09` | `P AML.T0053` | La baseline histórica confió en un literal; el checkout actual exige una aprobación sintética autenticada. ATLAS solo representa de forma genérica la invocación |
 | `AC-DOS-01` | `D LLM10:2025` | `—` | `D AML.T0034.000`; `P AML.T0029` | Muchas ejecuciones CLI equivalen a consultas excesivas sobre un proceso local, no a una cascada agentic |
 | `AC-DOS-02` | `P LLM04:2025` | `P ASI06` | `D AML.T0059` | La corrupción del corpus erosiona su integridad y disponibilidad, pero no envenena datos de entrenamiento |
 | `AC-DOS-03` | `D LLM10:2025` | `—` | `D AML.T0029`; `P AML.T0034.001` | Un corpus válido sobredimensionado consume recursos al cargar y recorrer el proceso local |
@@ -148,6 +148,8 @@ Las relaciones adicionales no aumentan el número de casos cubiertos.
 - `AC-TOL-03` conserva un gap en ATLAS: usar `AI Agent Tool Invocation` como
   equivalencia de consentimiento, huella o replay ocultaría el problema real.
 - `AC-TOL-05` solo recibe un mapeo ATLAS parcial por la misma razón.
+  El control de PGS-04-M04 cambia su tratamiento, no la categoría de la
+  amenaza ni este gap taxonómico.
 - `AC-EX-03`, `AC-DOS-01` y `AC-DOS-03` no se fuerzan dentro del Top 10
   Agentic cuando el caso no depende de autonomía, delegación o cascadas.
 - `AC-SC-01` es compuesto y deberá dividirse en pruebas distintas antes de

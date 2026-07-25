@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-04-M03, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria canónica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`. Cuatro fixtures permanecen inertes y `ADV-TOL-005` conserva como residual conocido una única escritura confinada a `$TMP`. El flujo ordinario aplica validación estricta y mínimo privilegio lógico mediante scopes, vistas de datos y grants de una sola herramienta. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-04-M04, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria histórica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`; su evidencia permanece inmutable. El checkout actual rechaza el literal de `ADV-TOL-005` antes de I/O mediante una aprobación sintética autenticada, ligada y de un solo uso. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
 
 ## En una frase
 
@@ -206,17 +206,20 @@ incidente sintético
   cita exactamente el conocimiento devuelto y declara que no ejecutó acciones
   ni confirmó un compromiso.
 - `draft_create` solo prepara una propuesta tipada con el grant exacto de su
-  instancia. Escribir exige otro grant de efecto, ligado a la propuesta,
-  principal, scope y raíz después de la confirmación separada; una propuesta
-  directa o cruzada falla antes de I/O.
+  instancia. Escribir exige challenge, autenticación sintética, aprobación y
+  otro grant de efecto, ligados a identidad configurada, propuesta, principal,
+  scope, herramienta, efecto, writer, sesión y raíz; una propuesta directa o
+  cruzada falla antes de I/O.
 - El nombre del borrador no admite rutas. La escritura queda anclada al
   descriptor de `sandbox/drafts/`, usa `O_EXCL`, `O_NOFOLLOW` y modo `0600`:
   nunca modifica, sobrescribe o borra.
-- La confirmación se consume una sola vez durante el proceso. La política
+- Challenge, aprobación y grant caducan y se consumen una sola vez durante el
+  proceso. La política
   `create-only` del destino mantiene el bloqueo de sobrescritura entre
   ejecuciones.
-- Esta capa verifica contenido y consentimiento declarado, pero todavía no
-  autentica la identidad humana: esa frontera pertenecerá a la futura interfaz.
+- Esta capa autentica un principal sintético local mediante una credencial
+  verificada fuera del modelo. No demuestra presencia o identidad de una
+  persona real: esa frontera pertenecerá a una futura interfaz/autenticador.
 
 Este control estructura la frontera del doble determinista actual; todavía no
 demuestra resistencia de un modelo GenAI real ni sustituye los filtros de
@@ -309,10 +312,11 @@ dibujar su arquitectura:
 - asigna IDs estables que PGS-02-M03 y PGS-02-M04 reutilizarán para los trust
   boundaries y la matriz de autoridad.
 
-`DraftWriterTool` existe y está probado, pero no está conectado a `main.py`.
-Su confirmación demuestra coincidencia con la propuesta, no autentica la
-identidad humana. El inventario describe estas limitaciones sin convertir
-componentes planificados en infraestructura desplegada.
+`DraftWriterTool` y `DraftApprovalAuthority` existen y están probados, pero no
+están conectados a `main.py`. La autoridad acredita una identidad sintética
+configurada; no verifica presencia humana real. El inventario describe estas
+limitaciones sin convertir componentes planificados en infraestructura
+desplegada.
 
 ## Arquitectura y trust boundaries
 
@@ -325,7 +329,8 @@ C4 compatible con Tecture, derivado de `GSL-SYS-INV-001`:
 - **L2 — contenedores locales:** terminal, proceso Python, datos versionados,
   evidencia funcional y sandbox de borradores dentro del mismo Mac;
 - **L3 — componentes:** CLI, contrato de datos, motor de baseline, flujo
-  benigno, modelo determinista, búsqueda autorizada y escritor de borradores.
+  benigno, modelo determinista, búsqueda autorizada, autoridad de aprobación
+  sintética y escritor de borradores.
 
 El mapa hace visibles seis límites:
 
@@ -355,8 +360,8 @@ cadenas de autoridad observables:
 - `IDN-05` liga un principal y scope lógicos a una sola herramienta e
   instancia, sin sustituir `IDN-01`;
 - `TOL-01` retiene únicamente la vista exacta del incidente;
-- `TOL-02` separa preparación y efecto, y solo crea por descriptor mediante su
-  API interna; la confirmación todavía no autentica a la persona;
+- `TOL-02` separa preparación, aprobación y efecto; autentica un principal
+  sintético y solo crea por descriptor mediante su API interna;
 - `ACT-02`, mediante su cuenta macOS y Git fuera del runtime, posee la mayor
   autoridad actual porque puede modificar código, datos, dependencias y
   evidencia.
@@ -388,10 +393,9 @@ Git/filesystem.
 
 Los hallazgos más relevantes son que la CLI no acepta prompts libres, que
 `TOL-01` permite construir pruebas internas de autorización, que
-`DraftWriterTool` sigue sin estar conectada pero acepta una confirmación exacta
-sin autenticar a la persona, y que la repetición de procesos es el único caso
-de disponibilidad alcanzable por la interfaz ordinaria. No se ejecutó ningún
-ataque en esta microtarea.
+`DraftWriterTool` sigue sin estar conectado y ahora exige una aprobación
+sintética autenticada, y que la repetición de procesos es el único caso de
+disponibilidad alcanzable por la interfaz ordinaria.
 
 ## Priorización del riesgo actual
 
@@ -402,16 +406,16 @@ No representa frecuencia de incidentes ni severidad universal.
 
 | Prioridad | Casos | Tratamiento |
 |---|---:|---|
-| `PR-1` | 2 | `AC-TOL-05` y `AC-DOS-01`, después de aprobar las Rules of Engagement |
-| `PR-2` | 3 | `AC-EX-03`, `AC-EX-02` y `AC-SC-01` |
-| `PR-3` | 11 | regresiones o casos que necesitan un perfil específico |
+| `PR-1` | 1 | `AC-DOS-01`, pendiente de límites preventivos |
+| `PR-2` | 1 | `AC-SC-01`, requiere autoridad de mantenimiento |
+| `PR-3` | 14 | controles ya observados o casos que necesitan un perfil específico |
 | `PR-0` | 1 | `AC-PI-01`, en espera porque no existe prompt libre |
 
-El primer residual funcional es la confirmación interna no autenticada de
-`DraftWriterTool`. La única superficie adversaria ordinaria es la repetición
-de procesos por CLI. Los escenarios de prompt injection y jailbreak se
-recalcularán cuando exista un modelo real o el perfil vulnerable cambie su
-alcanzabilidad. No se ejecutó ningún ataque durante la priorización.
+El residual de confirmación pertenece a la baseline histórica; el checkout
+actual reduce `AC-TOL-05` a `PR-3` para la variante literal probada. La única
+superficie adversaria ordinaria sigue siendo la repetición de procesos por
+CLI. Los escenarios de prompt injection y jailbreak se recalcularán cuando
+exista un modelo real o cambie la alcanzabilidad del perfil.
 
 ## Rules of Engagement
 
@@ -436,9 +440,9 @@ CLI ordinaria. PGS-03-M05 añade seis fixtures JB/EX: dos jailbreak de contenido
 comparados con su control, dos guardas de flujo, dos rechazos genéricos de
 conocimiento y una comprobación de marcador señuelo mediante un subproceso
 acotado. No crea evidencia canónica, usa proveedor ni habilita nuevas rutas de
-producto. PGS-03-M06 añade cinco fixtures TOL: nombre prohibido, cardinalidad,
+producto. PGS-03-M06 añadió cinco fixtures TOL: nombre prohibido, cardinalidad,
 IDs duplicados, recursión, integridad de confirmación, traversal, symlink,
-overwrite y el residual conocido de confirmación literal sin identidad.
+overwrite y el residual histórico de confirmación literal sin identidad.
 
 ## Pruebas adversarias internas
 
@@ -457,8 +461,8 @@ de observar el target.
   desconocido en `stdout`, `stderr`, rutas o traceback.
 - Abuso de herramientas: rechaza `shell`, exceso de cardinalidad, IDs
   duplicados, recursión, autoconsentimiento, huellas distintas, replay,
-  traversal, symlink y overwrite. `ADV-TOL-005` registra sin reinterpretarlo
-  el residual actual y permite exactamente un Markdown sintético bajo `$TMP`.
+  traversal, symlink y overwrite. En el checkout actual `ADV-TOL-005` rechaza
+  el literal histórico antes de I/O y crea cero archivos bajo `$TMP`.
 
 La autorización de PGS-03-M06 exige los cinco IDs TOL, datos sintéticos, 15
 segundos, como máximo tres escenarios por caso, dos turnos y dos solicitudes
@@ -719,7 +723,8 @@ Si la arquitectura cambia, el threat model deberá revisarse antes de ampliar la
 - Esquemas y allowlists para entradas, salidas y argumentos de herramientas.
 - Mínimo privilegio lógico para datos, identidades y capacidades
   **implementado en PGS-04-M03**; el aislamiento de SO sigue abierto.
-- Confirmación humana antes de cualquier acción con efecto.
+- Aprobación sintética autenticada, ligada, efímera y de un solo uso
+  **implementada en PGS-04-M04**; la presencia humana real sigue abierta.
 - Filtrado y redacción de información sensible.
 - Límites de tamaño, tiempo, iteraciones y consumo.
 - Registro de decisiones y eventos de seguridad.
@@ -987,9 +992,10 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Separar instrucciones de sistema, contenido no confiable y datos de usuario.
 - [x] Validar entradas, salidas y argumentos de herramientas mediante esquemas y allowlists.
 - [x] Aplicar mínimo privilegio a identidades, datos y herramientas.
+- [x] Exigir una aprobación sintética autenticada, ligada y de un solo uso para efectos.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
 
-**PGS-00-M01 a PGS-04-M03, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **33 de 66 microtareas (50,0 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
+**PGS-00-M01 a PGS-04-M04, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **34 de 66 microtareas (51,5 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
 
 ## Roadmap
 
@@ -999,7 +1005,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-04-M04 — exigir confirmación humana para acciones con efecto.**
+**PGS-04-M05 — incorporar filtros, redacción de datos y política de salida.**
 
 ## Uso responsable
 

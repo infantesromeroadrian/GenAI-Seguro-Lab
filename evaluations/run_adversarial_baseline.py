@@ -19,6 +19,7 @@ sys.path.insert(0, str(SOURCE_ROOT))
 from genai_seguro_lab.adversarial_baseline import (  # noqa: E402
     AdversarialBaselineError,
     CandidateSnapshot,
+    HISTORICAL_ADVERSARIAL_CANDIDATE_COMMIT,
     RuntimeSnapshot,
     default_adversarial_baseline_authorization,
     run_adversarial_baseline,
@@ -47,6 +48,13 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     arguments = build_parser().parse_args(argv)
     try:
+        if (
+            arguments.expected_commit
+            != HISTORICAL_ADVERSARIAL_CANDIDATE_COMMIT
+        ):
+            raise AdversarialBaselineError(
+                "runner is fixed to the historical baseline candidate"
+            )
         executed_at = _parse_utc(arguments.executed_at_utc)
         before = _candidate_snapshot(
             expected_commit=arguments.expected_commit,

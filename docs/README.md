@@ -38,7 +38,7 @@ real.
   18 oráculos separados para los 17 casos y seis familias; 14 fixtures están
   conectadas al harness interno, evaluadas canónicamente y 4 permanecen
   inertes.
-- [Baseline adversaria canónica](../evaluations/adversarial-baseline-v1/README.md):
+- [Baseline adversaria histórica](../evaluations/adversarial-baseline-v1/README.md):
   candidato exacto, reproducción, 13 `PASS`, 1 `RESIDUAL`, métricas, artefactos
   saneados y límites de interpretación.
 - [Hallazgos de la baseline adversaria](./adversarial-baseline-findings.md):
@@ -46,10 +46,11 @@ real.
   reproducción, residual conocido y límites de la evidencia.
 - [Política de validación y allowlists](./validation-policy.md): sobres
   estrictos de entrada y salida, grants de ejecución, comportamiento de fallo
-  cerrado y límites de PGS-04-M02/M03.
+  cerrado y límites de PGS-04-M02/M03/M04.
 - [Política de mínimo privilegio](./least-privilege-policy.md): principales y
   scopes lógicos, proyección de conocimiento, grants de herramienta y efecto,
-  entorno mínimo de subproceso y límites de PGS-04-M03.
+  aprobación sintética autenticada, entorno mínimo de subproceso y límites de
+  PGS-04-M03/M04.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

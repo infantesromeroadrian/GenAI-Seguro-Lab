@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-PRIORITY-001` |
-| Versión | `1.7.1` |
-| Fecha de corte | 2026-07-25 |
-| Baseline de código | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
+| Versión | `1.8.0` |
+| Fecha de corte | 2026-07-26 |
+| Baseline histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Crosswalk actual | [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
@@ -15,8 +15,9 @@
 
 Esta priorización ordena el backlog de pruebas del laboratorio. No es una
 clasificación CVSS ni estima la frecuencia de incidentes reales. La baseline
-reproduce el residual concreto de `AC-TOL-05`; cada caso sigue valorándose
-únicamente contra las capacidades presentes en el checkout observado.
+histórica reproduce el residual concreto de `AC-TOL-05`; el checkout actual
+rechaza ese literal y la tabla incorpora el control de PGS-04-M04. Cada caso
+se valora únicamente contra las capacidades presentes en el corte indicado.
 
 ## Método
 
@@ -92,11 +93,11 @@ severidad.
 
 | Orden | Caso | `I` | `L` | `K` | `S` | Prioridad | Fundamento actual |
 |---:|---|---:|---:|---:|---:|---|---|
-| 1 | `AC-TOL-05` | 2 | 3 | 2 | 18 | `PR-1` | `DraftWriterTool` acepta hoy una confirmación exacta que no autentica a la persona y puede crear un Markdown confinado |
-| 2 | `AC-DOS-01` | 1 | 3 | 3 | 18 | `PR-1` | La repetición de procesos está expuesta por CLI y no existe cuota, rate limit ni control de concurrencia |
-| 3 | `AC-SC-01` | 3 | 2 | 1 | 8 | `PR-2` | Posee el mayor impacto, aunque exige autoridad de mantenimiento; no hay firma, CI ni revisión independiente |
-| 4 | `AC-TOL-03` | 2 | 1 | 2 | 6 | `PR-3` | Huella, campos extra y replay ya tienen cobertura unitaria; el efecto potencial queda confinado a un borrador |
-| 5 | `AC-TOL-04` | 2 | 1 | 2 | 6 | `PR-3` | Traversal, symlinks y overwrite ya se rechazan mediante validación de ruta y creación exclusiva |
+| 1 | `AC-DOS-01` | 1 | 3 | 3 | 18 | `PR-1` | La repetición de procesos está expuesta por CLI y no existe cuota, rate limit ni control de concurrencia |
+| 2 | `AC-SC-01` | 3 | 2 | 1 | 8 | `PR-2` | Posee el mayor impacto, aunque exige autoridad de mantenimiento; no hay firma, CI ni revisión independiente |
+| 3 | `AC-TOL-03` | 2 | 1 | 2 | 6 | `PR-3` | Huella, campos extra, binding y replay tienen cobertura; el efecto potencial queda confinado a un borrador |
+| 4 | `AC-TOL-04` | 2 | 1 | 2 | 6 | `PR-3` | Traversal, symlinks y overwrite se rechazan mediante validación de ruta y creación exclusiva |
+| 5 | `AC-TOL-05` | 2 | 1 | 2 | 6 | `PR-3` | La confirmación literal histórica se rechaza; una aprobación exige identidad sintética, credencial, contexto exacto, TTL y consumo único |
 | 6 | `AC-DOS-02` | 1 | 3 | 1 | 6 | `PR-3` | Un mantenedor puede inutilizar la carga al corromper los datos, pero los controles deben fallar cerrado |
 | 7 | `AC-DOS-03` | 1 | 3 | 1 | 6 | `PR-3` | No hay límite global de tamaño, pero solo mantenimiento puede versionar un corpus grande válido |
 | 8 | `AC-EX-03` | 1 | 1 | 2 | 4 | `PR-3` | El marcador señuelo usado como ID desconocido no aparece en salida, error, rutas o traceback; faltan un modelo real y otros fallos inducidos |
@@ -110,7 +111,7 @@ severidad.
 | 16 | `AC-JB-01` | 1 | 1 | 1 | 2 | `PR-3` | Dos copias temporales muestran los payloads al doble, que conserva incertidumbre y cero acciones |
 | 17 | `AC-PI-01` | 0 | 1 | 0 | 0 | `PR-0` | La CLI no acepta prompt libre; `argparse` o la selección de ID detienen el intento antes del modelo |
 
-Distribución: 2 casos `PR-1`, 1 `PR-2`, 13 `PR-3` y 1 `PR-0`.
+Distribución: 1 caso `PR-1`, 1 `PR-2`, 14 `PR-3` y 1 `PR-0`.
 
 ## Recálculo de PGS-03-M02
 
@@ -223,6 +224,25 @@ La distribución se mantiene en 2 `PR-1`, 1 `PR-2`, 13 `PR-3` y 1 `PR-0`.
 Un resultado `PASS` no permite extrapolar a un modelo GenAI real ni a variantes
 no incluidas.
 
+## Recálculo de PGS-04-M04
+
+El checkout endurecido cambia solo la probabilidad condicionada de
+`AC-TOL-05`: `L3 → L1`.
+
+- el literal histórico ya no construye una aprobación;
+- la identidad y credencial sintéticas se verifican fuera del modelo;
+- challenge, aprobación y grant se ligan al contexto exacto, caducan y se
+  consumen una vez antes de I/O;
+- `ADV-TOL-005` observa rechazo y cero archivos;
+- `I2` y `K2` se mantienen porque una aprobación legítima aún puede producir
+  un borrador `C2` mediante la API interna;
+- no se modifica la evidencia histórica ni se atribuye su oráculo al candidato
+  actual.
+
+La distribución pasa a 1 `PR-1`, 1 `PR-2`, 14 `PR-3` y 1 `PR-0`. Este
+recálculo no afirma identidad humana real ni sustituye el retest completo de
+PGS-05.
+
 ## Backlog posterior a PGS-03-M07
 
 Las cuatro fixtures todavía inertes delimitan el backlog ejecutable posterior:
@@ -275,7 +295,9 @@ de estos supuestos:
 Los 17 abuse cases aparecen exactamente una vez y conservan la alcanzabilidad
 de `GSL-ABUSE-CASES-001`. El perfil vulnerable está construido y aislado;
 `CMP-08` fija la baseline de las 14 fixtures PI/JB/EX/TOL sin crear una ruta
-de producto y las otras cuatro permanecen sin ejecutar.
+de producto y las otras cuatro permanecen sin ejecutar. El runner queda
+reservado al commit histórico; el checkout actual se verifica por su suite sin
+reescribir aquella evidencia.
 [`GSL-FINDINGS-ADVERSARIAL-001`](./adversarial-baseline-findings.md) documenta
 los hallazgos, impacto, reproducción y límites y cierra PGS-03-M08 sin cambiar
 las puntuaciones.

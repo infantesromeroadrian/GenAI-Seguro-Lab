@@ -61,11 +61,12 @@ externas y cero archivos.
 
 `test_tool_abuse_evaluation.py` cubre los cinco casos TOL. Comprueba una
 allowlist de herramienta cerrada, cardinalidad, IDs duplicados, recursión,
-integridad y consumo único de confirmaciones, traversal, symlink y overwrite.
-También registra `AC-TOL-05` como residual conocido: una confirmación literal
-sin identidad crea exactamente un Markdown sintético bajo `$TMP`.
+integridad, credencial sintética, binding, caducidad y consumo único de
+aprobaciones, traversal, symlink y overwrite. `AC-TOL-05` conserva el literal
+de la baseline histórica, pero el checkout actual lo rechaza antes de I/O y
+crea cero archivos bajo `$TMP`.
 
-`test_adversarial_baseline.py` comprueba la autorización exacta de `CMP-08`,
-la ejecución de los 14 casos, el residual esperado, el fallo cerrado ante
-deriva del candidato, la escritura solo en un directorio temporal nuevo y la
+`test_adversarial_baseline.py` comprueba que `CMP-08` queda fijado al commit
+histórico, la ejecución de sus 14 casos, el residual esperado, el fallo cerrado
+ante otro candidato, la escritura solo en un directorio temporal nuevo y la
 integridad y saneado de la evidencia versionada.

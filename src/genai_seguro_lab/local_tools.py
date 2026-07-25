@@ -3,15 +3,19 @@
 from __future__ import annotations
 
 import errno
+import hmac
 import json
 import os
 import re
+import secrets
 import stat
+import threading
 import weakref
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
-from hashlib import sha256
+from hashlib import pbkdf2_hmac, sha256
 from pathlib import Path
+from time import monotonic
 from typing import Annotated, Literal, Self
 
 from pydantic import (
@@ -70,10 +74,13 @@ OperationScope = Annotated[
     ),
 ]
 
-HUMAN_CONFIRMATION_RESIDUAL = "PGS-04-M04"
+AUTHENTICATED_APPROVAL_CONTROL = "PGS-04-M04"
+_CREDENTIAL_KDF_ITERATIONS = 120_000
 _GRANT_ISSUER_TOKEN = object()
 _KNOWLEDGE_TOOL_FACTORY_TOKEN = object()
+_DRAFT_APPROVAL_ISSUER_TOKEN = object()
 _DRAFT_EFFECT_ISSUER_TOKEN = object()
+_DRAFT_AUTHORITY_CHANNEL_TOKEN = object()
 
 
 class ToolSchema(BaseModel):
@@ -98,8 +105,8 @@ class DraftProposalError(PermissionError):
     """La propuesta no fue preparada por esta instancia de escritura."""
 
 
-class DraftConfirmationError(PermissionError):
-    """La confirmación no autoriza esta propuesta exacta."""
+class DraftApprovalError(PermissionError):
+    """La aprobación no autoriza esta propuesta y efecto exactos."""
 
 
 class DraftAlreadyExistsError(FileExistsError):
@@ -453,69 +460,121 @@ class DraftProposal(DraftContent):
         return self
 
 
-class DraftConfirmation(ToolSchema):
-    """Consentimiento literal no autenticado; residual de PGS-04-M04."""
+class DraftApprovalChallenge:
+    """Challenge opaco emitido para una propuesta exacta."""
 
-    proposal_fingerprint: Sha256
-    confirmed_by_user: Literal[True]
+    __slots__ = ("_marker",)
+
+    def __init__(self, *, _issuer_token: object | None = None) -> None:
+        if _issuer_token is not _DRAFT_APPROVAL_ISSUER_TOKEN:
+            raise DraftApprovalError(
+                "approval challenges must be issued by the authority"
+            )
+        self._marker = object()
+
+    def __repr__(self) -> str:
+        return "DraftApprovalChallenge(<opaque>)"
+
+
+class DraftApproval:
+    """Aprobación opaca autenticada por una autoridad local."""
+
+    __slots__ = ("_marker",)
+
+    def __init__(self, *, _issuer_token: object | None = None) -> None:
+        if _issuer_token is not _DRAFT_APPROVAL_ISSUER_TOKEN:
+            raise DraftApprovalError(
+                "draft approvals must be issued by the authority"
+            )
+        self._marker = object()
+
+    def __repr__(self) -> str:
+        return "DraftApproval(<opaque>)"
 
 
 class _DraftEffectContract(ToolSchema):
+    approval_identity: OperationPrincipal
     principal: OperationPrincipal
     scope: OperationScope
     tool: Literal["draft_create"]
     proposal_fingerprint: Sha256
     effect: Literal["create"]
-    human_identity_authenticated: Literal[False]
-    residual_control: Literal["PGS-04-M04"]
+    approval_identity_authenticated: Literal[True]
+    human_interaction_verified: Literal[False]
+    identity_assurance: Literal["synthetic_local_credential"]
+    approval_control: Literal["PGS-04-M04"]
 
 
-@dataclass(frozen=True, slots=True, init=False)
+@dataclass(frozen=True, slots=True, init=False, eq=False)
 class DraftEffectGrant:
-    """Grant explícito de creación, ligado a una propuesta y una instancia."""
+    """Grant de creación ligado a aprobación, propuesta y sesiones exactas."""
 
+    approval_identity: str
     principal: str
     scope: str
     tool: Literal["draft_create"]
     proposal_fingerprint: str
     effect: Literal["create"]
-    human_identity_authenticated: Literal[False]
-    residual_control: Literal["PGS-04-M04"]
+    approval_identity_authenticated: Literal[True]
+    human_interaction_verified: Literal[False]
+    identity_assurance: Literal["synthetic_local_credential"]
+    approval_control: Literal["PGS-04-M04"]
     _writer_binding: object = field(repr=False, compare=False)
-    _proposal_identity: int = field(repr=False, compare=False)
+    _writer_session: object = field(repr=False, compare=False)
+    _root_identity: tuple[int, int] = field(repr=False, compare=False)
+    _authority_session: object = field(repr=False, compare=False)
+    _proposal: DraftProposal = field(repr=False, compare=False)
+    _expires_at: float = field(repr=False, compare=False)
 
     def __init__(
         self,
         *,
+        approval_identity: str,
         principal: str,
         scope: str,
         proposal_fingerprint: str,
         _issuer_token: object | None = None,
         _writer_binding: object | None = None,
-        _proposal_identity: int | None = None,
+        _writer_session: object | None = None,
+        _root_identity: tuple[int, int] | None = None,
+        _authority_session: object | None = None,
+        _proposal: DraftProposal | None = None,
+        _expires_at: float | None = None,
     ) -> None:
         if (
             _issuer_token is not _DRAFT_EFFECT_ISSUER_TOKEN
             or _writer_binding is None
-            or _proposal_identity is None
+            or _writer_session is None
+            or _root_identity is None
+            or _authority_session is None
+            or _proposal is None
+            or _expires_at is None
         ):
             raise ToolPolicyError(
-                "draft effect grants must be issued by the writer"
+                "draft effect grants must be issued by the approval authority"
             )
         try:
             contract = _DraftEffectContract(
+                approval_identity=approval_identity,
                 principal=principal,
                 scope=scope,
                 tool="draft_create",
                 proposal_fingerprint=proposal_fingerprint,
                 effect="create",
-                human_identity_authenticated=False,
-                residual_control=HUMAN_CONFIRMATION_RESIDUAL,
+                approval_identity_authenticated=True,
+                human_interaction_verified=False,
+                identity_assurance="synthetic_local_credential",
+                approval_control=AUTHENTICATED_APPROVAL_CONTROL,
             )
         except ValidationError as exc:
             raise ToolPolicyError(
                 "draft effect grant contract is invalid"
             ) from exc
+        object.__setattr__(
+            self,
+            "approval_identity",
+            contract.approval_identity,
+        )
         object.__setattr__(self, "principal", contract.principal)
         object.__setattr__(self, "scope", contract.scope)
         object.__setattr__(self, "tool", contract.tool)
@@ -527,16 +586,552 @@ class DraftEffectGrant:
         object.__setattr__(self, "effect", contract.effect)
         object.__setattr__(
             self,
-            "human_identity_authenticated",
-            contract.human_identity_authenticated,
+            "approval_identity_authenticated",
+            contract.approval_identity_authenticated,
         )
         object.__setattr__(
             self,
-            "residual_control",
-            contract.residual_control,
+            "human_interaction_verified",
+            contract.human_interaction_verified,
+        )
+        object.__setattr__(
+            self,
+            "identity_assurance",
+            contract.identity_assurance,
+        )
+        object.__setattr__(
+            self,
+            "approval_control",
+            contract.approval_control,
         )
         object.__setattr__(self, "_writer_binding", _writer_binding)
-        object.__setattr__(self, "_proposal_identity", _proposal_identity)
+        object.__setattr__(self, "_writer_session", _writer_session)
+        object.__setattr__(self, "_root_identity", _root_identity)
+        object.__setattr__(self, "_authority_session", _authority_session)
+        object.__setattr__(self, "_proposal", _proposal)
+        object.__setattr__(self, "_expires_at", _expires_at)
+
+
+class _ApprovalAuthorityContract(ToolSchema):
+    configured_identity: OperationPrincipal
+    approval_ttl_seconds: Annotated[float, Field(gt=0, le=300)]
+
+
+@dataclass(frozen=True, slots=True)
+class _WriterAuthorityContext:
+    writer_binding: object
+    writer_session: object
+    root_identity: tuple[int, int]
+    principal: str
+    scope: str
+
+
+@dataclass(frozen=True, slots=True)
+class _DraftAuthorizationContext:
+    configured_identity: str
+    principal: str
+    scope: str
+    tool: Literal["draft_create"]
+    effect: Literal["create"]
+    proposal: DraftProposal
+    proposal_fingerprint: str
+    writer_binding: object
+    writer_session: object
+    root_identity: tuple[int, int]
+    authority_session: object
+
+
+@dataclass(frozen=True, slots=True)
+class _TimedAuthorizationRecord:
+    context: _DraftAuthorizationContext
+    expires_at: float
+
+
+def _same_authorization_context(
+    left: _DraftAuthorizationContext,
+    right: _DraftAuthorizationContext,
+) -> bool:
+    return (
+        left.configured_identity == right.configured_identity
+        and left.principal == right.principal
+        and left.scope == right.scope
+        and left.tool == right.tool
+        and left.effect == right.effect
+        and left.proposal is right.proposal
+        and left.proposal_fingerprint == right.proposal_fingerprint
+        and left.writer_binding is right.writer_binding
+        and left.writer_session is right.writer_session
+        and left.root_identity == right.root_identity
+        and left.authority_session is right.authority_session
+    )
+
+
+class DraftApprovalAuthority:
+    """Autoridad local y efímera para autenticar aprobaciones sintéticas."""
+
+    __slots__ = (
+        "_approval_ttl_seconds",
+        "_approvals",
+        "_challenges",
+        "_clock",
+        "_closed",
+        "_configured_identity",
+        "_consumed_approvals",
+        "_consumed_challenges",
+        "_consumed_effect_grants",
+        "_credential_digest",
+        "_credential_salt",
+        "_effect_grants",
+        "_lock",
+        "_session",
+        "_writers",
+    )
+
+    def __init__(
+        self,
+        *,
+        configured_identity: str,
+        credential: str,
+        approval_ttl_seconds: float = 30.0,
+        clock: Callable[[], float] = monotonic,
+    ) -> None:
+        if not isinstance(credential, str):
+            raise TypeError("credential must be a string")
+        credential_bytes = credential.encode("utf-8")
+        if not credential_bytes or len(credential_bytes) > 1024:
+            raise ValueError("credential must contain between 1 and 1024 bytes")
+        if not callable(clock):
+            raise TypeError("clock must be callable")
+        if isinstance(approval_ttl_seconds, bool) or not isinstance(
+            approval_ttl_seconds,
+            (int, float),
+        ):
+            raise TypeError("approval_ttl_seconds must be numeric")
+        try:
+            contract = _ApprovalAuthorityContract(
+                configured_identity=configured_identity,
+                approval_ttl_seconds=float(approval_ttl_seconds),
+            )
+        except ValidationError as exc:
+            raise ToolPolicyError(
+                "draft approval authority configuration is invalid"
+            ) from exc
+
+        self._configured_identity = contract.configured_identity
+        self._approval_ttl_seconds = contract.approval_ttl_seconds
+        self._clock = clock
+        self._credential_salt = secrets.token_bytes(32)
+        self._credential_digest = self._digest_credential(credential_bytes)
+        self._session = object()
+        self._lock = threading.RLock()
+        self._closed = False
+        self._writers: dict[object, _WriterAuthorityContext] = {}
+        self._challenges: dict[
+            DraftApprovalChallenge,
+            _TimedAuthorizationRecord,
+        ] = {}
+        self._approvals: dict[
+            DraftApproval,
+            _TimedAuthorizationRecord,
+        ] = {}
+        self._effect_grants: dict[
+            DraftEffectGrant,
+            _TimedAuthorizationRecord,
+        ] = {}
+        self._consumed_challenges: set[DraftApprovalChallenge] = set()
+        self._consumed_approvals: set[DraftApproval] = set()
+        self._consumed_effect_grants: set[DraftEffectGrant] = set()
+
+    @property
+    def configured_identity(self) -> str:
+        return self._configured_identity
+
+    def __repr__(self) -> str:
+        state = "closed" if self._closed else "open"
+        return (
+            "DraftApprovalAuthority("
+            f"configured_identity={self._configured_identity!r}, "
+            f"state={state!r})"
+        )
+
+    def close(self) -> None:
+        with self._lock:
+            if self._closed:
+                return
+            self._closed = True
+            self._writers.clear()
+            self._challenges.clear()
+            self._approvals.clear()
+            self._effect_grants.clear()
+            self._credential_salt = b""
+            self._credential_digest = b""
+
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(self, *_: object) -> None:
+        self.close()
+
+    def approve(
+        self,
+        challenge: DraftApprovalChallenge,
+        *,
+        identity: str,
+        credential: str,
+    ) -> DraftApproval:
+        """Autentica la identidad configurada y consume un challenge válido."""
+
+        if not isinstance(challenge, DraftApprovalChallenge):
+            raise DraftApprovalError(
+                "approval challenge must be an opaque authority object"
+            )
+        if not isinstance(identity, str) or not isinstance(credential, str):
+            raise DraftApprovalError("approval credentials were rejected")
+        identity_bytes = identity.encode("utf-8")
+        credential_bytes = credential.encode("utf-8")
+        if (
+            not identity_bytes
+            or len(identity_bytes) > 64
+            or not credential_bytes
+            or len(credential_bytes) > 1024
+        ):
+            raise DraftApprovalError("approval credentials were rejected")
+        with self._lock:
+            self._require_open()
+            record = self._challenges.get(challenge)
+            if record is None:
+                if challenge in self._consumed_challenges:
+                    raise DraftApprovalError(
+                        "approval challenge was already consumed"
+                    )
+                raise DraftApprovalError(
+                    "approval challenge was not issued by this authority session"
+                )
+            now = self._clock()
+            if now >= record.expires_at:
+                self._challenges.pop(challenge, None)
+                self._consumed_challenges.add(challenge)
+                raise DraftApprovalError("approval challenge expired")
+            self._require_context_writer(record.context)
+            supplied = self._digest_credential(credential_bytes)
+            identity_matches = hmac.compare_digest(
+                identity_bytes,
+                self._configured_identity.encode("utf-8"),
+            )
+            credential_matches = hmac.compare_digest(
+                supplied,
+                self._credential_digest,
+            )
+            if not (identity_matches and credential_matches):
+                raise DraftApprovalError("approval credentials were rejected")
+
+            self._challenges.pop(challenge)
+            self._consumed_challenges.add(challenge)
+            approval = DraftApproval(
+                _issuer_token=_DRAFT_APPROVAL_ISSUER_TOKEN
+            )
+            self._approvals[approval] = _TimedAuthorizationRecord(
+                context=record.context,
+                expires_at=now + self._approval_ttl_seconds,
+            )
+            return approval
+
+    def _digest_credential(self, credential: bytes) -> bytes:
+        return pbkdf2_hmac(
+            "sha256",
+            credential,
+            self._credential_salt,
+            _CREDENTIAL_KDF_ITERATIONS,
+        )
+
+    def _register_writer(
+        self,
+        *,
+        writer_binding: object,
+        root_identity: tuple[int, int],
+        principal: str,
+        scope: str,
+        _channel_token: object | None,
+    ) -> object:
+        self._require_channel(_channel_token)
+        with self._lock:
+            self._require_open()
+            writer_session = object()
+            self._writers[writer_session] = _WriterAuthorityContext(
+                writer_binding=writer_binding,
+                writer_session=writer_session,
+                root_identity=root_identity,
+                principal=principal,
+                scope=scope,
+            )
+            return writer_session
+
+    def _assert_writer_active(
+        self,
+        *,
+        writer_binding: object,
+        writer_session: object,
+        root_identity: tuple[int, int],
+        principal: str,
+        scope: str,
+        _channel_token: object | None,
+    ) -> None:
+        self._require_channel(_channel_token)
+        with self._lock:
+            self._require_open()
+            writer = self._writers.get(writer_session)
+            if (
+                writer is None
+                or writer.writer_binding is not writer_binding
+                or writer.root_identity != root_identity
+                or writer.principal != principal
+                or writer.scope != scope
+            ):
+                raise DraftApprovalError(
+                    "writer is not active in this approval authority session"
+                )
+
+    def _revoke_writer(
+        self,
+        *,
+        writer_binding: object,
+        writer_session: object,
+        _channel_token: object | None,
+    ) -> None:
+        self._require_channel(_channel_token)
+        with self._lock:
+            if self._closed:
+                return
+            writer = self._writers.get(writer_session)
+            if writer is None or writer.writer_binding is not writer_binding:
+                return
+            self._writers.pop(writer_session)
+            self._revoke_records_for_writer(
+                self._challenges,
+                self._consumed_challenges,
+                writer_session,
+            )
+            self._revoke_records_for_writer(
+                self._approvals,
+                self._consumed_approvals,
+                writer_session,
+            )
+            self._revoke_records_for_writer(
+                self._effect_grants,
+                self._consumed_effect_grants,
+                writer_session,
+            )
+
+    def _issue_challenge(
+        self,
+        *,
+        proposal: DraftProposal,
+        writer_binding: object,
+        writer_session: object,
+        root_identity: tuple[int, int],
+        principal: str,
+        scope: str,
+        _channel_token: object | None,
+    ) -> DraftApprovalChallenge:
+        self._require_channel(_channel_token)
+        with self._lock:
+            self._require_open()
+            writer = self._writers.get(writer_session)
+            if (
+                writer is None
+                or writer.writer_binding is not writer_binding
+                or writer.root_identity != root_identity
+                or writer.principal != principal
+                or writer.scope != scope
+            ):
+                raise DraftApprovalError(
+                    "writer is not active in this approval authority session"
+                )
+            context = _DraftAuthorizationContext(
+                configured_identity=self._configured_identity,
+                principal=principal,
+                scope=scope,
+                tool="draft_create",
+                effect="create",
+                proposal=proposal,
+                proposal_fingerprint=proposal.proposal_fingerprint,
+                writer_binding=writer_binding,
+                writer_session=writer_session,
+                root_identity=root_identity,
+                authority_session=self._session,
+            )
+            challenge = DraftApprovalChallenge(
+                _issuer_token=_DRAFT_APPROVAL_ISSUER_TOKEN
+            )
+            self._challenges[challenge] = _TimedAuthorizationRecord(
+                context=context,
+                expires_at=self._clock() + self._approval_ttl_seconds,
+            )
+            return challenge
+
+    def _authorize_effect(
+        self,
+        *,
+        proposal: DraftProposal,
+        approval: DraftApproval,
+        writer_binding: object,
+        writer_session: object,
+        root_identity: tuple[int, int],
+        principal: str,
+        scope: str,
+        _channel_token: object | None,
+    ) -> DraftEffectGrant:
+        self._require_channel(_channel_token)
+        if not isinstance(approval, DraftApproval):
+            raise DraftApprovalError(
+                "approval must be an opaque authority object"
+            )
+        with self._lock:
+            self._require_open()
+            record = self._approvals.get(approval)
+            if record is None:
+                if approval in self._consumed_approvals:
+                    raise DraftApprovalError("draft approval was already consumed")
+                raise DraftApprovalError(
+                    "draft approval was not issued by this authority session"
+                )
+            now = self._clock()
+            if now >= record.expires_at:
+                self._approvals.pop(approval, None)
+                self._consumed_approvals.add(approval)
+                raise DraftApprovalError("draft approval expired")
+            expected = _DraftAuthorizationContext(
+                configured_identity=self._configured_identity,
+                principal=principal,
+                scope=scope,
+                tool="draft_create",
+                effect="create",
+                proposal=proposal,
+                proposal_fingerprint=proposal.proposal_fingerprint,
+                writer_binding=writer_binding,
+                writer_session=writer_session,
+                root_identity=root_identity,
+                authority_session=self._session,
+            )
+            if not _same_authorization_context(record.context, expected):
+                raise DraftApprovalError(
+                    "draft approval does not match the exact effect context"
+                )
+            self._require_context_writer(record.context)
+            self._approvals.pop(approval)
+            self._consumed_approvals.add(approval)
+            effect_grant = DraftEffectGrant(
+                approval_identity=record.context.configured_identity,
+                principal=record.context.principal,
+                scope=record.context.scope,
+                proposal_fingerprint=record.context.proposal_fingerprint,
+                _issuer_token=_DRAFT_EFFECT_ISSUER_TOKEN,
+                _writer_binding=record.context.writer_binding,
+                _writer_session=record.context.writer_session,
+                _root_identity=record.context.root_identity,
+                _authority_session=record.context.authority_session,
+                _proposal=record.context.proposal,
+                _expires_at=record.expires_at,
+            )
+            self._effect_grants[effect_grant] = _TimedAuthorizationRecord(
+                context=record.context,
+                expires_at=record.expires_at,
+            )
+            return effect_grant
+
+    def _consume_effect_grant(
+        self,
+        *,
+        proposal: DraftProposal,
+        effect_grant: DraftEffectGrant,
+        writer_binding: object,
+        writer_session: object,
+        root_identity: tuple[int, int],
+        principal: str,
+        scope: str,
+        _channel_token: object | None,
+    ) -> None:
+        self._require_channel(_channel_token)
+        with self._lock:
+            self._require_open()
+            record = self._effect_grants.get(effect_grant)
+            if record is None:
+                if effect_grant in self._consumed_effect_grants:
+                    raise DraftApprovalError(
+                        "effect grant was already consumed"
+                    )
+                raise DraftApprovalError(
+                    "effect grant was not issued by this authority session"
+                )
+            now = self._clock()
+            if now >= record.expires_at:
+                self._effect_grants.pop(effect_grant, None)
+                self._consumed_effect_grants.add(effect_grant)
+                raise DraftApprovalError("effect grant expired")
+            expected = _DraftAuthorizationContext(
+                configured_identity=self._configured_identity,
+                principal=principal,
+                scope=scope,
+                tool="draft_create",
+                effect="create",
+                proposal=proposal,
+                proposal_fingerprint=proposal.proposal_fingerprint,
+                writer_binding=writer_binding,
+                writer_session=writer_session,
+                root_identity=root_identity,
+                authority_session=self._session,
+            )
+            if not _same_authorization_context(record.context, expected):
+                raise DraftApprovalError(
+                    "effect grant does not match the exact effect context"
+                )
+            self._require_context_writer(record.context)
+            self._effect_grants.pop(effect_grant)
+            self._consumed_effect_grants.add(effect_grant)
+
+    def _require_context_writer(
+        self,
+        context: _DraftAuthorizationContext,
+    ) -> None:
+        writer = self._writers.get(context.writer_session)
+        if (
+            writer is None
+            or writer.writer_binding is not context.writer_binding
+            or writer.root_identity != context.root_identity
+            or writer.principal != context.principal
+            or writer.scope != context.scope
+            or context.authority_session is not self._session
+            or context.configured_identity != self._configured_identity
+        ):
+            raise DraftApprovalError(
+                "approval context is no longer active"
+            )
+
+    @staticmethod
+    def _require_channel(channel_token: object | None) -> None:
+        if channel_token is not _DRAFT_AUTHORITY_CHANNEL_TOKEN:
+            raise DraftApprovalError(
+                "approval authority operations require a bound writer"
+            )
+
+    def _require_open(self) -> None:
+        if self._closed:
+            raise DraftApprovalError("draft approval authority is closed")
+
+    @staticmethod
+    def _revoke_records_for_writer(
+        records: dict[object, _TimedAuthorizationRecord],
+        consumed: set[object],
+        writer_session: object,
+    ) -> None:
+        revoked = tuple(
+            token
+            for token, record in records.items()
+            if record.context.writer_session is writer_session
+        )
+        for token in revoked:
+            records.pop(token, None)
+            consumed.add(token)
 
 
 class DraftCreationResult(ToolSchema):
@@ -547,8 +1142,24 @@ class DraftCreationResult(ToolSchema):
     created: Literal[True] = True
 
 
+def _finalize_draft_writer(
+    root_fd: int,
+    authority: DraftApprovalAuthority,
+    writer_binding: object,
+    writer_session: object,
+) -> None:
+    try:
+        authority._revoke_writer(
+            writer_binding=writer_binding,
+            writer_session=writer_session,
+            _channel_token=_DRAFT_AUTHORITY_CHANNEL_TOKEN,
+        )
+    finally:
+        os.close(root_fd)
+
+
 class DraftWriterTool:
-    """Prepara sin efecto y crea con un grant explícito dentro de drafts."""
+    """Prepara y crea solo tras una aprobación autenticada y efímera."""
 
     def __init__(
         self,
@@ -556,10 +1167,15 @@ class DraftWriterTool:
         *,
         principal: str,
         scope: str,
+        approval_authority: DraftApprovalAuthority,
         allowed_knowledge_ids: tuple[str, ...] = (),
     ) -> None:
         if not isinstance(drafts_dir, Path):
             raise TypeError("drafts_dir must be a Path")
+        if not isinstance(approval_authority, DraftApprovalAuthority):
+            raise TypeError(
+                "approval_authority must be a DraftApprovalAuthority"
+            )
         if not drafts_dir.is_absolute():
             raise ValueError("drafts_dir must be absolute")
         if drafts_dir.name != "drafts" or drafts_dir.parent.name != "sandbox":
@@ -599,18 +1215,40 @@ class DraftWriterTool:
         self._root = root
         self._root_fd = root_fd
         self._root_identity = (root_stat.st_dev, root_stat.st_ino)
-        self._finalizer = weakref.finalize(self, os.close, root_fd)
         self._principal = principal
         self._scope = scope
         self._binding = object()
-        self._prepare_grant = _issue_tool_grant(
-            principal=principal,
-            scope=scope,
-            tool="draft_create",
-            binding=self._binding,
-            allowed_knowledge_ids=allowed_knowledge_ids,
+        self._approval_authority = approval_authority
+        try:
+            self._prepare_grant = _issue_tool_grant(
+                principal=principal,
+                scope=scope,
+                tool="draft_create",
+                binding=self._binding,
+                allowed_knowledge_ids=allowed_knowledge_ids,
+            )
+            self._writer_session = approval_authority._register_writer(
+                writer_binding=self._binding,
+                root_identity=self._root_identity,
+                principal=principal,
+                scope=scope,
+                _channel_token=_DRAFT_AUTHORITY_CHANNEL_TOKEN,
+            )
+        except Exception:
+            os.close(root_fd)
+            raise
+        self._finalizer = weakref.finalize(
+            self,
+            _finalize_draft_writer,
+            root_fd,
+            approval_authority,
+            self._binding,
+            self._writer_session,
         )
+        self._lifecycle_lock = threading.RLock()
+        self._closed = False
         self._prepared: dict[int, DraftProposal] = {}
+        self._challenge_issued: set[int] = set()
         self._effect_grants: dict[int, DraftEffectGrant] = {}
         self._consumed_proposals: set[int] = set()
 
@@ -619,7 +1257,11 @@ class DraftWriterTool:
         return self._prepare_grant
 
     def close(self) -> None:
-        self._finalizer()
+        with self._lifecycle_lock:
+            if self._closed:
+                return
+            self._closed = True
+            self._finalizer()
 
     def __enter__(self) -> Self:
         return self
@@ -633,77 +1275,120 @@ class DraftWriterTool:
         *,
         grant: ToolExecutionGrant,
     ) -> DraftProposal:
-        if not isinstance(request, ModelToolRequest):
-            raise TypeError("request must be a ModelToolRequest")
-        self._require_prepare_grant(grant)
-        if request.name != "draft_create":
-            raise ToolDeniedError("requested tool is not allowed in this flow")
+        with self._lifecycle_lock:
+            self._require_active()
+            if not isinstance(request, ModelToolRequest):
+                raise TypeError("request must be a ModelToolRequest")
+            self._require_prepare_grant(grant)
+            if request.name != "draft_create":
+                raise ToolDeniedError(
+                    "requested tool is not allowed in this flow"
+                )
 
-        try:
-            arguments = DraftCreateArguments.model_validate_json(
-                request.arguments_json
+            try:
+                arguments = DraftCreateArguments.model_validate_json(
+                    request.arguments_json
+                )
+            except ValidationError as exc:
+                raise ToolArgumentsError(
+                    "draft_create arguments were rejected"
+                ) from exc
+            if not set(arguments.references).issubset(
+                grant.allowed_knowledge_ids
+            ):
+                raise ToolDeniedError(
+                    "draft references exceed the authorized scope"
+                )
+            proposal = DraftProposal.from_arguments(arguments)
+            self._prepared[id(proposal)] = proposal
+            return proposal
+
+    def issue_approval_challenge(
+        self,
+        proposal: DraftProposal,
+    ) -> DraftApprovalChallenge:
+        with self._lifecycle_lock:
+            self._require_active()
+            self._require_prepared_proposal(proposal)
+            proposal_identity = id(proposal)
+            if proposal_identity in self._challenge_issued:
+                raise DraftApprovalError(
+                    "an approval challenge was already issued for this proposal"
+                )
+            challenge = self._approval_authority._issue_challenge(
+                proposal=proposal,
+                writer_binding=self._binding,
+                writer_session=self._writer_session,
+                root_identity=self._root_identity,
+                principal=self._principal,
+                scope=self._scope,
+                _channel_token=_DRAFT_AUTHORITY_CHANNEL_TOKEN,
             )
-        except ValidationError as exc:
-            raise ToolArgumentsError(
-                "draft_create arguments were rejected"
-            ) from exc
-        if not set(arguments.references).issubset(
-            grant.allowed_knowledge_ids
-        ):
-            raise ToolDeniedError(
-                "draft references exceed the authorized scope"
-            )
-        proposal = DraftProposal.from_arguments(arguments)
-        self._prepared[id(proposal)] = proposal
-        return proposal
+            self._challenge_issued.add(proposal_identity)
+            return challenge
 
     def authorize_effect(
         self,
         proposal: DraftProposal,
-        confirmation: DraftConfirmation,
+        approval: DraftApproval,
     ) -> DraftEffectGrant:
-        self._require_prepared_proposal(proposal)
-        if not isinstance(confirmation, DraftConfirmation):
-            raise TypeError("confirmation must be a DraftConfirmation")
-        if confirmation.proposal_fingerprint != proposal.proposal_fingerprint:
-            raise DraftConfirmationError(
-                "confirmation does not match the exact proposal"
+        with self._lifecycle_lock:
+            self._require_active()
+            self._require_prepared_proposal(proposal)
+            proposal_identity = id(proposal)
+            if proposal_identity in self._effect_grants:
+                raise DraftApprovalError(
+                    "an effect grant was already issued for this proposal"
+                )
+            effect_grant = self._approval_authority._authorize_effect(
+                proposal=proposal,
+                approval=approval,
+                writer_binding=self._binding,
+                writer_session=self._writer_session,
+                root_identity=self._root_identity,
+                principal=self._principal,
+                scope=self._scope,
+                _channel_token=_DRAFT_AUTHORITY_CHANNEL_TOKEN,
             )
-        proposal_identity = id(proposal)
-        if proposal_identity in self._effect_grants:
-            raise DraftConfirmationError(
-                "an effect grant was already issued for this proposal"
-            )
-        effect_grant = DraftEffectGrant(
-            principal=self._principal,
-            scope=self._scope,
-            proposal_fingerprint=proposal.proposal_fingerprint,
-            _issuer_token=_DRAFT_EFFECT_ISSUER_TOKEN,
-            _writer_binding=self._binding,
-            _proposal_identity=proposal_identity,
-        )
-        self._effect_grants[proposal_identity] = effect_grant
-        return effect_grant
+            self._effect_grants[proposal_identity] = effect_grant
+            return effect_grant
 
     def create(
         self,
         proposal: DraftProposal,
         effect_grant: DraftEffectGrant,
     ) -> DraftCreationResult:
+        with self._lifecycle_lock:
+            with self._approval_authority._lock:
+                return self._create_locked(proposal, effect_grant)
+
+    def _create_locked(
+        self,
+        proposal: DraftProposal,
+        effect_grant: DraftEffectGrant,
+    ) -> DraftCreationResult:
+        self._require_active()
         self._require_prepared_proposal(proposal)
         self._require_effect_grant(proposal, effect_grant)
         proposal_identity = id(proposal)
         if proposal_identity in self._consumed_proposals:
-            raise DraftConfirmationError("effect grant was already consumed")
+            raise DraftApprovalError("effect grant was already consumed")
+
+        self._approval_authority._consume_effect_grant(
+            proposal=proposal,
+            effect_grant=effect_grant,
+            writer_binding=self._binding,
+            writer_session=self._writer_session,
+            root_identity=self._root_identity,
+            principal=self._principal,
+            scope=self._scope,
+            _channel_token=_DRAFT_AUTHORITY_CHANNEL_TOKEN,
+        )
+        self._consumed_proposals.add(proposal_identity)
 
         self._assert_root_unchanged()
         content = self._render(proposal)
-        flags = (
-            os.O_WRONLY
-            | os.O_CREAT
-            | os.O_EXCL
-            | os.O_NOFOLLOW
-        )
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW
         try:
             file_fd = os.open(
                 proposal.filename,
@@ -734,7 +1419,6 @@ class DraftWriterTool:
             if file_fd >= 0:
                 os.close(file_fd)
 
-        self._consumed_proposals.add(proposal_identity)
         encoded = content.encode("utf-8")
         return DraftCreationResult(
             filename=proposal.filename,
@@ -779,7 +1463,17 @@ class DraftWriterTool:
         if (
             self._effect_grants.get(proposal_identity) is not effect_grant
             or effect_grant._writer_binding is not self._binding
-            or effect_grant._proposal_identity != proposal_identity
+            or effect_grant._writer_session is not self._writer_session
+            or effect_grant._root_identity != self._root_identity
+            or (
+                effect_grant._authority_session
+                is not self._approval_authority._session
+            )
+            or effect_grant._proposal is not proposal
+            or (
+                effect_grant.approval_identity
+                != self._approval_authority.configured_identity
+            )
             or effect_grant.principal != self._principal
             or effect_grant.scope != self._scope
             or effect_grant.tool != "draft_create"
@@ -787,9 +1481,21 @@ class DraftWriterTool:
             != proposal.proposal_fingerprint
             or effect_grant.effect != "create"
         ):
-            raise DraftConfirmationError(
+            raise DraftApprovalError(
                 "effect grant does not authorize this writer and proposal"
             )
+
+    def _require_active(self) -> None:
+        if self._closed or not self._finalizer.alive:
+            raise DraftApprovalError("draft writer is closed")
+        self._approval_authority._assert_writer_active(
+            writer_binding=self._binding,
+            writer_session=self._writer_session,
+            root_identity=self._root_identity,
+            principal=self._principal,
+            scope=self._scope,
+            _channel_token=_DRAFT_AUTHORITY_CHANNEL_TOKEN,
+        )
 
     def _assert_root_unchanged(self) -> None:
         if not self._finalizer.alive:

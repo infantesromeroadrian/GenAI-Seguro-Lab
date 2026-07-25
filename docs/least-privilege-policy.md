@@ -1,9 +1,9 @@
 # Política de mínimo privilegio
 
 - **ID:** `GSL-LEAST-PRIVILEGE-001`
-- **Versión:** 1.0
-- **Fecha:** 2026-07-25
-- **Microtarea:** PGS-04-M03
+- **Versión:** 1.1
+- **Fecha:** 2026-07-26
+- **Microtareas:** PGS-04-M03 y PGS-04-M04
 - **Ámbito:** identidades lógicas, datos y herramientas del runtime local
 
 ## Resultado
@@ -15,7 +15,9 @@ cuatro límites independientes:
 2. cada grant autoriza exactamente una herramienta;
 3. la búsqueda retiene únicamente los documentos referenciados por el
    incidente validado;
-4. preparar un borrador y crear el archivo son autoridades distintas.
+4. preparar un borrador y crear el archivo son autoridades distintas;
+5. el efecto exige una aprobación opaca emitida tras autenticar un principal
+   sintético local.
 
 Estos controles reducen la autoridad que puede alcanzar una salida del modelo
 o un llamador ordinario. No crean una identidad de servicio, no reducen los
@@ -62,20 +64,26 @@ nivel de sistema operativo.
 
 ## Separación de propuesta y efecto
 
-`DraftWriterTool` aplica dos autoridades:
+`DraftWriterTool` y `DraftApprovalAuthority` aplican tres autoridades:
 
 1. `prepare_grant` permite validar una petición `draft_create` y producir una
    propuesta sin I/O;
-2. `DraftEffectGrant` permite crear una vez el archivo exacto después de
+2. un challenge y una aprobación opacos acreditan el principal sintético
+   configurado mediante una credencial local;
+3. `DraftEffectGrant` permite crear una vez el archivo exacto después de
    `authorize_effect()`.
 
-El grant de efecto queda ligado al principal, scope, instancia, raíz,
-identidad del objeto propuesta y huella de su contenido. Antes de cualquier
-I/O se rechazan:
+Challenge, aprobación y grant tienen TTL, pertenecen a una única sesión y
+quedan ligados a identidad configurada, principal, scope, herramienta,
+efecto, writer, instancia, raíz, identidad del objeto propuesta y huella de su
+contenido. Antes de cualquier I/O se rechazan:
 
 - propuestas construidas directamente;
 - propuestas de otra instancia o raíz;
 - grants fabricados o de otro scope;
+- identidad o credencial incorrectas;
+- challenge, aprobación o grant fabricados, caducados, consumidos o de otra
+  sesión;
 - huellas distintas y replays.
 
 La raíz `sandbox/drafts/` se abre y conserva mediante un descriptor de
@@ -83,9 +91,15 @@ directorio. El destino se crea respecto a ese descriptor con
 `O_EXCL | O_NOFOLLOW` y modo `0600`. No se admiten rutas, sobrescritura,
 borrado ni seguimiento de symlinks.
 
-`confirmed_by_user: true` sigue siendo una declaración literal no autenticada.
-Por eso `ADV-TOL-005` continúa como residual de PGS-04-M04 incluso después de
-emitir correctamente el grant de efecto.
+La credencial se verifica con PBKDF2-HMAC-SHA256 y no forma parte del
+`ModelToolRequest`, del `repr` de los objetos opacos ni de la evidencia del
+harness. El consumo del grant se realiza antes de I/O: un fallo posterior
+exige una nueva aprobación y nunca reintenta implícitamente.
+
+`ADV-TOL-005` conserva su entrada literal para poder comparar el control con
+la baseline histórica, pero el checkout actual la rechaza antes de I/O y crea
+cero archivos. La evidencia publicada de PGS-03-M07 permanece inmutable y
+continúa describiendo el commit histórico.
 
 ## Entorno de subprocesos
 
@@ -102,8 +116,9 @@ No hereda por esa ruta tokens, credenciales, configuración de proveedor,
 ## Evidencia ejecutable
 
 - `tests/test_local_tools.py`: proyección física, grants fabricados y
-  extranjeros, propuesta fabricada o cruzada, efecto, replay, symlinks,
-  carrera de ruta y modo `0600`.
+  extranjeros, propuesta fabricada o cruzada, credenciales, binding, TTL,
+  cierre, consumo concurrente, efecto, replay, symlinks, carrera de ruta y
+  modo `0600`.
 - `tests/test_benign_flow.py`: integración del principal y scope por incidente.
 - `tests/test_validation_policy.py`: una salida del modelo no puede emitir un
   grant.
@@ -118,10 +133,12 @@ la aplicación, pero no:
 
 - reduce los permisos de `IDN-01` sobre el checkout;
 - crea un usuario, proceso o sandbox de sistema operativo;
-- autentica a la persona que confirma;
+- autentica a una persona real o verifica su presencia; PGS-04-M04 solo
+  acredita un principal sintético local;
 - protege frente a ejecución arbitraria de Python bajo la cuenta local;
 - incorpora filtros M05, cuotas M06 o recuperación M08;
 - demuestra robustez frente a un modelo GenAI real.
 
-La siguiente mejora es PGS-04-M04: autenticar y vincular la confirmación humana
-sin ampliar las capacidades del modelo.
+`CTL-07` permanece `PARCIAL`: el contrato ya autentica y vincula un principal
+sintético, caduca y consume cada aprobación, pero una futura interfaz deberá
+mostrar el contenido y usar un autenticador con presencia humana verificable.

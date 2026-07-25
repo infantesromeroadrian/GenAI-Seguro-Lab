@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
+import genai_seguro_lab.evaluation_profile as evaluation_profile
 from genai_seguro_lab.cli import build_parser
 from genai_seguro_lab.data_contract import DatasetBundle, load_dataset
 from genai_seguro_lab.evaluation_profile import (
@@ -111,8 +112,29 @@ def test_factory_binds_only_a_temporary_sandbox(
     authorization: EvaluationAuthorization,
     dataset: DatasetBundle,
     temporary_drafts: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     before = tuple(temporary_drafts.iterdir())
+    closed_authorities: list[object] = []
+    real_close = evaluation_profile.DraftApprovalAuthority.close
+
+    def reject_unexpected_approval(*_: object, **__: object) -> None:
+        raise AssertionError("the inert profile must not authenticate approval")
+
+    def track_close(authority: object) -> None:
+        closed_authorities.append(authority)
+        real_close(authority)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(
+        evaluation_profile.DraftApprovalAuthority,
+        "approve",
+        reject_unexpected_approval,
+    )
+    monkeypatch.setattr(
+        evaluation_profile.DraftApprovalAuthority,
+        "close",
+        track_close,
+    )
 
     profile = create_vulnerable_evaluation_profile(
         authorization=authorization,
@@ -124,6 +146,8 @@ def test_factory_binds_only_a_temporary_sandbox(
     assert profile.dataset_id == "GSL-DATASET-001"
     assert profile.drafts_dir == temporary_drafts.resolve()
     assert tuple(temporary_drafts.iterdir()) == before == ()
+    assert len(closed_authorities) == 1
+    assert closed_authorities[0]._closed is True  # type: ignore[attr-defined]
 
 
 def test_factory_rejects_the_canonical_checkout_sandbox(

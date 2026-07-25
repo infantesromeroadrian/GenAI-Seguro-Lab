@@ -15,10 +15,10 @@ mediante un flujo determinista y herramientas con autoridad acotada.
   búsqueda autorizada.
 - Evaluar jailbreak de contenido y de flujo, rechazos de conocimiento y un
   marcador señuelo de CLI sin persistencia ni red.
-- Evaluar abuso de herramientas, confirmaciones y filesystem dentro de `$TMP`,
-  conservando explícitamente un único residual de confirmación sin identidad.
-- Fijar mediante `CMP-08` una baseline adversaria reproducible y conservar solo
-  su proyección saneada y revisada.
+- Evaluar abuso de herramientas, aprobaciones y filesystem dentro de `$TMP`;
+  el checkout actual rechaza la confirmación literal con cero archivos.
+- Fijar mediante `CMP-08` la baseline adversaria histórica y conservar solo su
+  proyección saneada y revisada.
 
 ## Límites de confianza
 
@@ -28,7 +28,7 @@ mediante un flujo determinista y herramientas con autoridad acotada.
 | `TB-02` | Control de aplicación | Esquemas y orquestación dentro de un único proceso Python |
 | `TB-03` | Salida del modelo | Toda respuesta se valida como datos tipados antes de interpretarse |
 | `TB-04` | Autoridad de herramientas | El adaptador no autoriza ni ejecuta herramientas |
-| `TB-05` | Efecto en filesystem | Solo creación confirmada de Markdown dentro de `sandbox/drafts/` |
+| `TB-05` | Efecto en filesystem | Solo creación aprobada mediante identidad sintética dentro de `sandbox/drafts/` |
 | `TB-06` | Integridad de datos versionados | Esquema estricto, referencias, conteos y hashes SHA-256 |
 
 `TB-02`, `TB-03` y `TB-04` son límites lógicos dentro del mismo proceso; no
@@ -38,9 +38,10 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 
 - No hay modelo GenAI real, proveedor, red, API web, Docker, cloud o base de
   datos.
-- No hay autenticación interna, service account o telemetría. El remoto GitHub
-  público es una integración manual de desarrollo y distribución; no es
-  alcanzable desde el runtime.
+- No hay autenticación general, service account o telemetría. Solo existe la
+  autoridad sintética interna de borradores; no verifica presencia humana. El
+  remoto GitHub público es una integración manual de desarrollo y
+  distribución; no es alcanzable desde el runtime.
 - El corpus adversario conserva fixtures y oráculos separados; `CMP-07` cubre
   14 PI/JB/EX/TOL, `CMP-08` fija su baseline canónica y las otras cuatro
   entradas siguen inertes.

@@ -5,10 +5,10 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-NIST-CONTROLS-001` |
-| Versión | `1.0.9` |
-| Fecha de corte | 2026-07-25 |
+| Versión | `1.1.0` |
+| Fecha de corte | 2026-07-26 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-04-M03 en esta revisión; el commit exacto se obtiene del historial Git |
+| Control vigente | PGS-04-M04 en esta revisión; el commit exacto se obtiene del historial Git |
 | Threat model de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md), [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) y [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Baseline normativa | [NIST AI RMF 1.0 y NIST SP 800-218A](./framework-versions.md) |
@@ -55,7 +55,7 @@ separado en el registro de controles.
 |---|---|---|
 | `ACT-02` — mantenedor y ejecutor de pruebas | Actual | Responsable último del riesgo del laboratorio, sus requisitos, cambios, dependencias, pruebas, evidencias y decisiones de aceptación. Su autoridad procede de la cuenta local y Git. |
 | `ACT-01` — operador local | Actual | Ejecuta únicamente los escenarios autorizados, respeta las Rules of Engagement y comunica resultados, anomalías y necesidad de parada. No acepta riesgo residual ni cambia controles. |
-| `ACT-03` — confirmador de un borrador | Actual, interno | Confirma una propuesta concreta antes de un efecto `C2`. La huella y el anti-replay no autentican todavía a la persona. |
+| `ACT-03` — confirmador de un borrador | Actual, interno | Autentica un principal sintético configurado y aprueba una propuesta concreta antes de un efecto `C2`. No acredita presencia ni identidad de una persona real. |
 | `REV-01` — revisor independiente | Planificado | Persona cualificada distinta de quien diseñó e implementó el candidato. Revisará threat model y al menos una prueba en PGS-07-M04; todavía no hay una persona asignada. |
 
 ### Matriz RACI del ciclo
@@ -78,8 +78,9 @@ activarán cuando exista una persona independiente.
 
 La concentración actual de `A` y `R` en `ACT-02` es una limitación conocida
 del laboratorio individual. No se presenta como separación de funciones.
-`ACT-03` tampoco constituye una identidad humana autenticada. Si se incorpora
-un proveedor, repositorio remoto o servicio operado por un tercero, deberá
+`ACT-03` constituye una identidad sintética autenticada, no una identidad
+humana real. Si se incorpora un proveedor, repositorio remoto o servicio
+operado por un tercero, deberá
 definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 
 ## Registro de controles
@@ -91,8 +92,8 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 | `CTL-03` | Procedencia, esquema e integridad del corpus y artefactos | `PRESENTE` para los corpus sintéticos actuales | `A/R ACT-02` | `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | Los corpus benigno y adversario aplican esquemas estrictos, procedencia, conteos y SHA-256; entradas y oráculos adversarios están separados. No hay firma, control de acceso propio ni límite global para un futuro dataset dimensionado | Límites PGS-04-M06 y supply chain PGS-06-M08 |
 | `CTL-04` | Separación de instrucciones y contenido no confiable, resistencia a inyección y jailbreak | `PARCIAL` | `A/R ACT-02` | `AC-PI-01`, `AC-PI-02`, `AC-PI-03`, `AC-JB-01` | `ModelMessage` clasifica instrucciones confiables, datos de usuario, contenido no confiable y salidas del modelo; `ModelRequest` exige los tres dominios de entrada y una única instrucción confiable inicial. El flujo ordinario declara `separated`, las salidas de herramienta vuelven como no confiables y el perfil aislado conserva `deliberately_merged`. La evidencia es estructural y determinista: todavía falta el retest y un modelo GenAI real | Retest PGS-05-M01 a M03 |
 | `CTL-05` | Validación de entradas, salidas y argumentos; allowlist de herramientas | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-EX-01`, `AC-EX-02`, `AC-TOL-01`, `AC-TOL-02` | `BenignTaskInput`, `BenignIncidentInput` y `BenignFinalOutput` cierran los sobres; `ToolExecutionGrant` conserva nombre e IDs en un contrato de una sola herramienta. La salida se vincula al incidente y `tests/test_validation_policy.py` verifica el fallo cerrado. Faltan filtrado semántico, retest y modelo real | PGS-04-M05 y PGS-05 |
-| `CTL-06` | Mínimo privilegio y separación modelo–identidad–datos–herramientas | `PARCIAL` | `A/R ACT-02` | `AC-TOL-01`, `AC-TOL-02`, `AC-TOL-05`, `AC-SC-01` | `IDN-05` liga grants opacos a principal, scope, herramienta e instancia; `TOL-01` retiene la vista exacta del incidente; `TOL-02` separa preparación y efecto y crea por descriptor no-follow `0600`; EX-003 recibe un entorno allowlisted. El proceso conserva los permisos amplios de `IDN-01`, no existe identidad de servicio y `IDN-03` no autentica a la persona | PGS-04-M04, retest PGS-05 y revisión de aislamiento cuando cambie el runtime |
-| `CTL-07` | Confirmación humana autenticada, ligada al contenido y no reutilizable | `PARCIAL` | `A ACT-02`; `R ACT-03` | `AC-TOL-03`, `AC-TOL-05` | `CMP-07` verifica huella exacta, esquema cerrado y consumo único, y confirma como residual que `IDN-03` no acredita quién confirmó | PGS-04-M04 y retest PGS-05 |
+| `CTL-06` | Mínimo privilegio y separación modelo–identidad–datos–herramientas | `PARCIAL` | `A/R ACT-02` | `AC-TOL-01`, `AC-TOL-02`, `AC-TOL-05`, `AC-SC-01` | `IDN-05` liga grants opacos a principal, scope, herramienta e instancia; `TOL-01` retiene la vista exacta del incidente; `TOL-02` separa preparación y efecto, autentica `IDN-03` de forma sintética y crea por descriptor no-follow `0600`; EX-003 recibe un entorno allowlisted. `IDN-01` conserva permisos amplios y no existe identidad de servicio | Retest PGS-05 y revisión de aislamiento cuando cambie el runtime |
+| `CTL-07` | Confirmación humana autenticada, ligada al contenido y no reutilizable | `PARCIAL` | `A ACT-02`; `R ACT-03` | `AC-TOL-03`, `AC-TOL-05` | `DraftApprovalAuthority` autentica una identidad sintética mediante credencial local, liga challenge, aprobación y grant a todo el contexto, aplica TTL y consumo único y rechaza el literal histórico antes de I/O. No verifica presencia humana real ni muestra el contenido en una interfaz | Interfaz/autenticador con presencia humana y retest PGS-05 |
 | `CTL-08` | Efectos de filesystem confinados, creación exclusiva, parada y recuperación segura | `PARCIAL` | `A/R ACT-02`; `R ACT-01` para parada | `AC-TOL-03`, `AC-TOL-04`, `AC-TOL-05` | `CMP-07` verifica en `$TMP` el rechazo de traversal, symlink y overwrite. La creación se ancla al descriptor de la raíz con `O_EXCL`, `O_NOFOLLOW` y `0600`; no existe aún un flujo operativo de parada, rollback o recuperación | PGS-04-M08, PGS-06-M07 y PGS-05 |
 | `CTL-09` | Política de salida, redacción, errores saneados y detección de fugas | `PARCIAL` | `A/R ACT-02` | `AC-JB-01`, `AC-EX-03` | Salida tipada y errores genéricos limitan la exposición actual; `CMP-07` comprueba que los jailbreak de contenido no se reflejan y que un marcador señuelo no aparece en la respuesta de proceso. Faltan filtros, reglas de redacción y pruebas sobre un modelo real | PGS-04-M05 y PGS-05 |
 | `CTL-10` | Límites de tamaño, tiempo, iteraciones, concurrencia y consumo | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-TOL-02`, `AC-DOS-01`, `AC-DOS-03` | `GSL-ROE-001` fija topes operativos y `CMP-08` registra tiempo, procesos, turnos, solicitudes, bytes, archivos y RSS del run canónico. Todavía no hay rate limit del producto ni tope global preventivo para un corpus dimensionado | PGS-04-M06 y PGS-05-M04 |
@@ -110,7 +111,7 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 | `CTL-04` | `MAP 2.2`, `3.3`; `MEASURE 2.7`; `MANAGE 1.3` | `D PW.1.1`, `PW.5.1`, `PW.8.1`, `PW.8.2` | Lleva amenazas de inyección al diseño, manejo de entradas y pruebas ejecutables |
 | `CTL-05` | `MAP 2.1`, `4.2`; `MEASURE 2.7`; `MANAGE 1.3` | `D PW.5.1`, `PW.9.1`, `PW.9.2` | Exige manejo seguro y configuración por defecto de entradas, salidas y capacidades |
 | `CTL-06` | `GOVERN 3.2`; `MAP 3.5`, `4.2`; `MEASURE 2.7` | `D PO.5.1`, `PW.1.1`, `PW.9.1` | Separa supervisión y autoridad y aplica mínimo privilegio; la identidad macOS compartida mantiene un gap |
-| `CTL-07` | `GOVERN 3.2`; `MAP 3.5`; `MEASURE 2.8` | `D PO.1.2`, `PW.1.1`, `PW.9.1` | Define la responsabilidad humana y el requisito de aprobación; falta identidad autenticada |
+| `CTL-07` | `GOVERN 3.2`; `MAP 3.5`; `MEASURE 2.8` | `D PO.1.2`, `PW.1.1`, `PW.9.1` | Define responsabilidad y aprobación; autentica un principal sintético, pero falta presencia e identidad humana real |
 | `CTL-08` | `MAP 4.2`; `MEASURE 2.6`, `2.7`; `MANAGE 2.4` | `D PO.5.1`, `PW.5.1`, `PW.9.1`, `PW.9.2`; `P RV.2.2` | El confinamiento y los defaults son de desarrollo; parada y rollback atraviesan la frontera operativa que 800-218A no cubre completamente |
 | `CTL-09` | `MEASURE 2.7`, `2.8`; `MANAGE 1.3` | `D PW.5.1`; `P RV.1.1` | Validar y sanear salidas es desarrollo; monitorizarlas durante operación solo tiene correspondencia parcial en el perfil |
 | `CTL-10` | `MEASURE 1.1`, `2.7`; `MANAGE 1.2`, `1.3`, `4.1` | `D PO.5.1`, `PW.1.1`, `PW.9.1`; `P RV.1.1` | Los límites se diseñan y prueban antes del uso; rate limiting y consumo de runtime exceden parte del alcance de 800-218A |
@@ -125,7 +126,7 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 | Documentar propietario, ejecutores y comunicación | `GOVERN 2.1` | `PO.2.1` | `ACT-02`, `ACT-01` y `ACT-03` están definidos; falta incorporar formalmente `REV-01` |
 | Formar a cada rol según amenazas y mitigaciones | `GOVERN 2.2` | `PO.2.2` | El curso aporta base formativa, pero todavía no existe un registro de competencia por rol |
 | Mantener compromiso de la autoridad que acepta el riesgo | `GOVERN 2.3` | `PO.2.3` | En este laboratorio individual, `ACT-02` actúa como autoridad del proyecto; no se equipara a gobierno ejecutivo empresarial |
-| Separar responsabilidades humanas y de la IA | `GOVERN 3.2`, `MAP 3.5` | `PW.1.1` | La matriz distingue propuesta, autorización y ejecución; la confirmación humana sigue sin autenticarse |
+| Separar responsabilidades humanas y de la IA | `GOVERN 3.2`, `MAP 3.5` | `PW.1.1` | La matriz distingue propuesta, aprobación y ejecución; el principal sintético está autenticado, pero no existe prueba de presencia humana |
 | Usar revisión independiente | `MEASURE 1.3` | `PW.2.1` | `REV-01` está planificado y sin asignar; `ACT-02` no puede revisar de forma independiente su propio diseño |
 | Definir comunicación y respuesta ante fallos | `GOVERN 4.3`, `MANAGE 4.3` | `RV.1.3`, `RV.2.2` | Responsabilidad asignada, pero procedimientos y evidencia permanecen planificados |
 
@@ -136,8 +137,9 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
   `CTL-12`.
 - Los controles existentes conservan sus límites actuales: un camino ausente
   o un adaptador determinista no equivale a resistencia de un modelo GenAI.
-- `AC-TOL-05` permanece como riesgo residual conocido hasta autenticar la
-  confirmación humana.
+- `AC-TOL-05` permanece como residual de la baseline histórica. El checkout
+  actual rechaza su literal, aunque `CTL-07` sigue parcial por no verificar
+  presencia humana real.
 - `AC-DOS-01` y `AC-DOS-03` no están mitigados por el simple acotamiento de una
   ejecución; faltan límites entre procesos y de tamaño global.
 - `AC-SC-01` no puede cerrarse solo con Git local y un lockfile.
@@ -166,5 +168,6 @@ los hallazgos, impacto, reproducción y límites. PGS-04-M01 añade la separaci�
 estructural de dominios de confianza; PGS-04-M02 aplica los sobres estrictos y
 PGS-04-M03 liga los grants, datos y efectos descritos en
 [`GSL-VALIDATION-POLICY-001`](./validation-policy.md) y
-[`GSL-LEAST-PRIVILEGE-001`](./least-privilege-policy.md). El siguiente
-tratamiento es la confirmación humana de PGS-04-M04.
+[`GSL-LEAST-PRIVILEGE-001`](./least-privilege-policy.md). PGS-04-M04 añade la
+aprobación sintética ligada y de un solo uso. El siguiente tratamiento es la
+política de salida de PGS-04-M05.

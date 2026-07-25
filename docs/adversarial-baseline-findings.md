@@ -16,6 +16,11 @@
 Este informe cierra PGS-03-M08. Describe lo observado, su impacto y cómo
 revisarlo sin cambiar los oráculos ni reinterpretar los resultados.
 
+> **Addendum de tratamiento (2026-07-26):** PGS-04-M04 hace que el checkout
+> actual rechace el literal de `ADV-TOL-005` antes de I/O y cree cero archivos.
+> Este informe y la evidencia enlazada siguen describiendo exclusivamente el
+> candidato histórico indicado en la ficha; no se han reescrito sus resultados.
+
 ## Resultado ejecutivo
 
 La primera porción operativa del laboratorio ya es utilizable: ejecuta un

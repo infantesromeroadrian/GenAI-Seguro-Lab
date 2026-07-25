@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M07.
-- **Estado actual:** PGS-00-M01 a PGS-04-M03 completadas; la baseline canónica fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED` sobre 14 fixtures PI/JB/EX/TOL, mientras las otras cuatro permanecen inertes. El flujo ordinario separa dominios de confianza, valida esquemas y aplica mínimo privilegio lógico mediante scopes, vistas de conocimiento y grants de una sola herramienta. `CTL-06` permanece parcial porque `IDN-01` conserva los permisos de macOS y la confirmación humana no está autenticada.
+- **Estado actual:** PGS-00-M01 a PGS-04-M04 completadas; la baseline histórica fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED` sobre 14 fixtures PI/JB/EX/TOL, mientras las otras cuatro permanecen inertes. El checkout actual separa dominios, valida esquemas, aplica mínimo privilegio lógico y exige una aprobación sintética autenticada, ligada, efímera y de un solo uso. `CTL-06` y `CTL-07` permanecen parciales porque `IDN-01` conserva los permisos de macOS y no se verifica presencia humana real.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** repositorio público ya autorizado y evidencia
@@ -93,7 +93,10 @@ El contrato completo está documentado en [README.md](./README.md#capacidades-y-
 5. **Defensa en profundidad:** ningún control único se considerará protección completa.
 6. **Utilidad medible:** la seguridad no podrá evaluarse ignorando la capacidad legítima del sistema.
 7. **Riesgo residual visible:** los límites y fallos conocidos no se ocultarán.
-8. **Sin secretos en el repositorio:** credenciales y datos sensibles quedarán fuera del código y de los logs.
+8. **Sin secretos en el repositorio:** credenciales operativas y datos sensibles
+   quedarán fuera del código y de los logs. Las cadenas públicas usadas como
+   fixtures sintéticas no se tratarán como secretos ni se reutilizarán fuera
+   de test.
 
 ## Stack, modelo y presupuesto aprobados
 
@@ -270,7 +273,9 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-04-M01** Separar instrucciones de sistema, contenido no confiable y datos de usuario.
 - [x] **PGS-04-M02** Validar entradas, salidas y argumentos de herramientas mediante esquemas y allowlists.
 - [x] **PGS-04-M03** Aplicar mínimo privilegio a identidades, datos y herramientas.
-- [ ] **PGS-04-M04** Exigir confirmación humana para acciones con efecto.
+- [x] **PGS-04-M04** Exigir aprobación autenticada para acciones con efecto:
+  principal sintético local implementado; presencia humana real pendiente de
+  una futura interfaz/autenticador.
 - [ ] **PGS-04-M05** Incorporar filtros, redacción de datos y política de salida.
 - [ ] **PGS-04-M06** Añadir límites de tamaño, tiempo, iteraciones y consumo.
 - [ ] **PGS-04-M07** Añadir eventos de seguridad, correlación y señales de comportamiento anómalo.
@@ -359,9 +364,10 @@ requiriendo una decisión separada.
 - El flujo benigno exige una única búsqueda sobre las referencias del incidente
   y una respuesta final. `KnowledgeCatalog` crea una vista exacta por caso y
   su grant no deriva del catálogo anunciado al modelo. La escritura queda
-  separada, exige una propuesta registrada y un grant de efecto, y crea por
-  descriptor con `O_EXCL`, `O_NOFOLLOW` y modo `0600`. La identidad humana y
-  el aislamiento de la cuenta macOS continúan abiertos.
+  separada, exige una propuesta registrada, autenticación sintética y un grant
+  de efecto de un solo uso, y crea por descriptor con `O_EXCL`, `O_NOFOLLOW`
+  y modo `0600`. La presencia humana real y el aislamiento de la cuenta macOS
+  continúan abiertos.
 - PGS-04-M01 incorpora `instruction_boundary` y una clase de confianza por
   mensaje. El flujo ordinario exige una instrucción confiable inicial, datos de
   usuario y contenido no confiable separados; marca los resultados de
@@ -373,8 +379,10 @@ requiriendo una decisión separada.
   `ToolExecutionGrant`, liga principal, scope, herramienta e instancia,
   proyecta datos por incidente, separa el grant de efecto de `TOL-02` y limita
   el entorno de EX-003 a tres variables. Los contratos están en
-  `docs/validation-policy.md` y `docs/least-privilege-policy.md`; filtrado,
-  confirmación humana y retest continúan pendientes.
+  `docs/validation-policy.md` y `docs/least-privilege-policy.md`. PGS-04-M04
+  añade `DraftApprovalAuthority`, con credencial sintética fuera del modelo,
+  tokens opacos, TTL, binding completo y consumo antes de I/O; filtrado y
+  retest continúan pendientes.
 - El proyecto permanece deliberadamente sin empaquetar mediante `[tool.uv] package = false`. `main.py` ofrece el punto de entrada local estable desde el propio checkout, sin instalación editable ni `PYTHONPATH`.
 - La baseline `GSL-BASELINE-BENIGN-001` fija 12/12 ejecuciones funcionales, 24 invocaciones deterministas, 12 consultas autorizadas, 0 llamadas externas y 0 €. Sus campos declaran que no es una baseline de seguridad ni una evaluación de utilidad semántica.
 - `docs/framework-versions.md` fija OWASP LLM 2025, OWASP Agentic 2026, MITRE ATLAS release `v2026.06` con `ATLAS.yaml` 5.6.0, NIST AI RMF 1.0 y NIST SP 800-218A final; NIST AI 600-1 queda como perfil GenAI complementario. La revalidación para PGS-02-M07 conserva el snapshot ATLAS anterior y documenta la actualización de `AML.T0054`.
@@ -383,13 +391,14 @@ requiriendo una decisión separada.
   infraestructura e integraciones verificadas. Distingue la CLI expuesta de
   `DraftWriterTool`, que solo está implementada como API interna, y separa el
   remoto público de desarrollo del runtime local, que continúa sin modelo
-  GenAI real, red, autenticación, Docker, cloud, bases de datos o telemetría.
+  GenAI real, red, autenticación general, Docker, cloud, bases de datos o
+  telemetría.
 - `architecture/manifest.json` y sus diagramas Tecture fijan contexto, contenedores y componentes con seis trust boundaries. El mapa incorpora `CMP-06` como perfil interno y `CMP-07` como harness adversario acotado para 14 fixtures PI/JB/EX/TOL; `DraftWriterTool` permanece desconectada de la CLI y del flujo benigno, aunque el harness la invoca de forma confinada para TOL. TB-02 a TB-04 siguen siendo límites lógicos dentro del mismo proceso. PGS-02-M03 cierra P01-M06.
-- `docs/authority-matrix.md` fija `GSL-AUTH-MATRIX-001` con catorce cadenas actuales y cuatro niveles de consecuencia. Separa la construcción `C0` de `CMP-06`, la evaluación temporal `C1` de PI/JB/EX, la evaluación TOL con residual máximo `C2`, la propuesta sin autoridad de `MOD-01`, la ejecución con `IDN-01`, los grants lógicos `IDN-05`, el efecto interno create-only de `TOL-02` y la autoridad externa de mantenimiento de `ACT-02`.
+- `docs/authority-matrix.md` fija `GSL-AUTH-MATRIX-001` con catorce cadenas actuales y cuatro niveles de consecuencia. Separa la construcción `C0` de `CMP-06`, la evaluación temporal `C1` de PI/JB/EX, la capacidad TOL máxima `C2`, la propuesta sin autoridad de `MOD-01`, la ejecución con `IDN-01`, los grants lógicos `IDN-05`, la aprobación sintética `IDN-03`, el efecto interno create-only de `TOL-02` y la autoridad externa de mantenimiento de `ACT-02`.
 - `docs/abuse-cases.md` fija `GSL-ABUSE-CASES-001` con 17 escenarios: 3 de prompt injection, 2 de jailbreak, 3 de exfiltración, 5 de abuso de herramientas, 3 de denegación de servicio y 1 de supply chain. Los separa como `SIN-RUTA`, `INTERNO`, `MANTENIMIENTO` o `CLI` y conserva los gaps de evidencia.
-- `docs/risk-prioritization.md` fija `GSL-RISK-PRIORITY-001` con impacto `I0`–`I3`, probabilidad condicionada `L1`–`L3`, capacidad real `K0`–`K3` y una puntuación reproducible para los 17 casos. Tras PGS-03-M07 sitúa 2 en `PR-1`, 1 en `PR-2`, 13 en `PR-3` y 1 en `PR-0`.
+- `docs/risk-prioritization.md` fija `GSL-RISK-PRIORITY-001` con impacto `I0`–`I3`, probabilidad condicionada `L1`–`L3`, capacidad real `K0`–`K3` y una puntuación reproducible para los 17 casos. Tras PGS-04-M04 sitúa 1 en `PR-1`, 1 en `PR-2`, 14 en `PR-3` y 1 en `PR-0`.
 - `docs/threat-crosswalk.md` fija `GSL-THREAT-CROSSWALK-001` con una fila por abuse case y relaciones directas, parciales o ausentes frente a OWASP LLM 2025, OWASP Agentic 2026 y MITRE ATLAS `v2026.06`. Conserva los gaps de consentimiento, filesystem y escenarios no agentic sin cambiar la prioridad.
-- `docs/control-responsibility-mapping.md` fija `GSL-NIST-CONTROLS-001` con cuatro roles, trece controles en estado presente, parcial o planificado, cobertura de los 17 abuse cases y correspondencias acotadas con NIST AI RMF 1.0 y NIST SP 800-218A. Declara la concentración de responsabilidad en `ACT-02`, la falta de autenticación de `ACT-03`, el futuro `REV-01` sin asignar y los límites de alcance del perfil; PGS-02-M08 avanza P01-M08, que permanece abierta hasta implementar PGS-04.
+- `docs/control-responsibility-mapping.md` fija `GSL-NIST-CONTROLS-001` con cuatro roles, trece controles en estado presente, parcial o planificado, cobertura de los 17 abuse cases y correspondencias acotadas con NIST AI RMF 1.0 y NIST SP 800-218A. Declara la concentración de responsabilidad en `ACT-02`, la autenticación solo sintética de `ACT-03`, el futuro `REV-01` sin asignar y los límites del perfil; PGS-02-M08 avanza P01-M08, que permanece abierta hasta implementar PGS-04.
 - `docs/rules-of-engagement.md` fija `GSL-ROE-001` con autorización por ejecución, activos incluidos y excluidos, acciones permitidas y prohibidas, presupuestos cuantitativos, evidencia, parada y un vehículo acotado para cada uno de los 17 abuse cases. `AC-DOS-01` solo admite un piloto limitado y `AC-DOS-03` necesita una ampliación posterior; PGS-03-M04/M05/M06 aplican esos límites a 14 fixtures PI/JB/EX/TOL sin red, proveedor o evidencia canónica.
 - `src/genai_seguro_lab/evaluation_profile.py` implementa `GSL-PROFILE-VULNERABLE-001`: requiere autorización estricta de `GSL-ROE-001`, datos sintéticos y un sandbox temporal, construye peticiones débiles claramente marcadas y carece de llamadas al modelo, ejecución de herramientas, red, escritura o ruta CLI. Su aislamiento queda probado en `tests/test_evaluation_profile.py`.
 - `data/adversarial/` y `load_adversarial_corpus()` fijan las entradas y los
@@ -398,12 +407,13 @@ requiriendo una decisión separada.
   selecciona 14 casos PI/JB/EX/TOL, materializa únicamente copias o sandboxes
   bajo `$TMP`, ejecuta dobles deterministas, guardas de flujo, rechazos de
   búsqueda, comprobaciones de borrador y un subproceso CLI saneado, mantiene el
-  oráculo fuera del target y produce observaciones tipadas. `AC-TOL-05`
-  conserva el residual conocido de una confirmación literal sin identidad y
-  permite un único Markdown temporal. `AC-DOS-03` permanece como descriptor no
-  materializado que requiere ampliar las RoE.
+  oráculo fuera del target y produce observaciones tipadas. El checkout actual
+  rechaza el literal histórico de `AC-TOL-05` y crea cero archivos; la
+  evidencia del residual de `93aefa45` permanece inmutable. `AC-DOS-03`
+  permanece como descriptor no materializado que requiere ampliar las RoE.
 - `src/genai_seguro_lab/adversarial_baseline.py` y
-  `evaluations/run_adversarial_baseline.py` implementan `CMP-08`. El run
+  `evaluations/run_adversarial_baseline.py` implementan `CMP-08`, fijado al
+  candidato histórico. El run
   `GSL-ADV-BL-20260725-001` evaluó el commit limpio `93aefa45` y conserva bajo
   `evaluations/adversarial-baseline-v1/` configuración, resultados, eventos y
   un manifiesto de integridad saneados: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL`, 0
@@ -421,6 +431,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-04-M04 — exigir confirmación humana para acciones con efecto.**
+**PGS-04-M05 — incorporar filtros, redacción de datos y política de salida.**
 
-**Progreso interno:** 33 de 66 microtareas completadas, 33 abiertas (**50,0 %**).
+**Progreso interno:** 34 de 66 microtareas completadas, 32 abiertas (**51,5 %**).

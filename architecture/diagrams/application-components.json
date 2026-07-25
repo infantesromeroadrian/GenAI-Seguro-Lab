@@ -238,7 +238,29 @@
         "directoryDescriptorAnchored": true,
         "noFollow": true,
         "fileMode": "0600",
-        "humanIdentityAuthenticated": false
+        "approvalIdentityAuthenticated": true,
+        "humanInteractionVerified": false,
+        "identityAssurance": "synthetic-local-credential"
+      }
+    },
+    {
+      "id": "draft-approval-authority",
+      "label": "IDN-03 · Autoridad de aprobación sintética",
+      "parentId": "tool-authority-boundary",
+      "meta": {
+        "type": "service",
+        "technology": "python-stdlib",
+        "inventoryIds": [
+          "IDN-03",
+          "TOL-02"
+        ],
+        "state": "internal-test-reachable",
+        "sourcePath": "src/genai_seguro_lab/local_tools.py",
+        "credentialVerifier": "PBKDF2-HMAC-SHA256",
+        "tokenTransport": "opaque-in-memory",
+        "approvalTtlSeconds": 30,
+        "singleUse": true,
+        "humanInteractionVerified": false
       }
     }
   ],
@@ -370,6 +392,17 @@
       }
     },
     {
+      "id": "components-profile-creates-inert-approval-authority",
+      "source": "vulnerable-evaluation-profile",
+      "target": "draft-approval-authority",
+      "label": "__init__/close: sin challenge, aprobación o efecto",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-04",
+        "executionEnabled": false
+      }
+    },
+    {
       "id": "components-harness-loads-cases",
       "source": "adversarial-evaluation-harness",
       "target": "dataset-loader",
@@ -444,6 +477,30 @@
         "maxEffectFiles": 1,
         "cliReachable": false,
         "canonicalEvidence": false
+      }
+    },
+    {
+      "id": "components-harness-tests-approval-authority",
+      "source": "adversarial-evaluation-harness",
+      "target": "draft-approval-authority",
+      "label": "TOL-003/004: aprobación legítima; TOL-005: literal rechazado",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-04",
+        "credentialSource": "synthetic-test-configuration",
+        "humanInteractionVerified": false,
+        "canonicalEvidence": false
+      }
+    },
+    {
+      "id": "components-writer-consumes-approval",
+      "source": "draft-writer",
+      "target": "draft-approval-authority",
+      "label": "challenge → aprobación → grant; TTL + binding + consumo único",
+      "meta": {
+        "type": "calls",
+        "singleUse": true,
+        "consumeBeforeIo": true
       }
     },
     {

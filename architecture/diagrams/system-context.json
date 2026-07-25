@@ -36,7 +36,9 @@
           "ACT-03"
         ],
         "state": "internal-not-cli",
-        "humanIdentityAuthenticated": false
+        "approvalIdentityAuthenticated": true,
+        "humanInteractionVerified": false,
+        "identityAssurance": "synthetic-local-credential"
       }
     },
     {
@@ -74,7 +76,7 @@
       "id": "context-draft-caller-uses-internal-api",
       "source": "draft-caller",
       "target": "genai-seguro-lab",
-      "label": "API Python interna + confirmación SHA-256",
+      "label": "API Python interna + credencial sintética + aprobación opaca",
       "meta": {
         "type": "calls",
         "cliReachable": false

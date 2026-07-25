@@ -34,11 +34,11 @@ de `GSL-ROE-001`.
   aparece en salida, error, rutas o traceback.
 - `ADV-TOL-001/002` comprueban nombre prohibido, cardinalidad, duplicados y
   recursión como escenarios independientes.
-- `ADV-TOL-003/004` comprueban esquema cerrado, huella, replay, traversal,
-  symlink, overwrite, grants y procedencia de propuesta dentro de un sandbox
-  temporal.
-- `ADV-TOL-005` documenta el residual conocido: el literal de confirmación no
-  autentica identidad y crea exactamente un Markdown sintético bajo `$TMP`.
+- `ADV-TOL-003/004` usan una aprobación sintética legítima para comprobar
+  esquema cerrado, huella, replay, traversal, symlink, overwrite, grants y
+  procedencia de propuesta dentro de un sandbox temporal.
+- `ADV-TOL-005` conserva el literal histórico, pero el checkout actual lo
+  rechaza antes de I/O y crea cero archivos bajo `$TMP`.
 - Construye `CMP-06` sobre el sandbox temporal para PI/JB de contenido y
   entrega la petición marcada a `MOD-01`.
 - Autoriza exactamente una llamada `knowledge_search` limitada por las
@@ -53,4 +53,6 @@ de `GSL-ROE-001`.
 - No modifica el corpus canónico, escribe evidencia por sí mismo, abre red o
   conecta un proveedor.
 - No generaliza sus resultados a un modelo GenAI real.
+- La baseline publicada sigue describiendo su commit histórico; este harness
+  actual no reinterpreta aquella evidencia.
 - Las otras cuatro fixtures permanecen fuera de este harness.

@@ -11,6 +11,9 @@ local.
   o un ID no retenido falla cerrado.
 - `TOL-02` registra la propuesta en su instancia y exige otro grant de efecto,
   ligado a propuesta y raíz, antes de crear.
+- `DraftApprovalAuthority` autentica una identidad sintética, emite tokens
+  opacos con TTL y liga identidad, propuesta, principal, scope, herramienta,
+  efecto, writer, sesión y raíz.
 - La creación se ancla a un descriptor de `sandbox/drafts/` con `O_EXCL`,
   `O_NOFOLLOW` y modo `0600`.
 - `MOD-01` no contiene código de autorización o ejecución.
@@ -20,7 +23,8 @@ local.
 ## Límite
 
 La búsqueda está conectada al flujo benigno. El borrador permanece como API
-interna desconectada de la CLI y su confirmación no autentica al humano. La
-validación del sandbox del perfil no concede autoridad para usar la
-herramienta. `CMP-07` la invoca únicamente con autorización TOL exacta y un
-sandbox efímero bajo `$TMP`. Todo el límite sigue dentro de `IDN-01`.
+interna desconectada de la CLI. Su autoridad acredita un principal sintético,
+no presencia humana real. La validación del sandbox del perfil no emite
+challenge ni concede autoridad para usar la herramienta. `CMP-07` la invoca
+únicamente con autorización TOL exacta y un sandbox efímero bajo `$TMP`. Todo
+el límite sigue dentro de `IDN-01`.

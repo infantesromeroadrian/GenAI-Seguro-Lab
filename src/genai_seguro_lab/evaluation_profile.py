@@ -11,7 +11,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict
 
 from .data_contract import DatasetBundle
-from .local_tools import DraftWriterTool
+from .local_tools import DraftApprovalAuthority, DraftWriterTool
 from .model_adapter import ModelMessage, ModelRequest
 
 PROFILE_ID = "GSL-PROFILE-VULNERABLE-001"
@@ -237,12 +237,20 @@ def create_vulnerable_evaluation_profile(
             "profile requires dataset counts validated against its manifest"
         )
 
-    with DraftWriterTool(
-        drafts_dir,
-        principal="evaluation-profile",
-        scope="draft:evaluation-profile",
-    ):
-        pass
+    approval_authority = DraftApprovalAuthority(
+        configured_identity="synthetic-profile-validator",
+        credential="synthetic-profile-credential-not-a-real-secret",
+    )
+    try:
+        with DraftWriterTool(
+            drafts_dir,
+            principal="evaluation-profile",
+            scope="draft:evaluation-profile",
+            approval_authority=approval_authority,
+        ):
+            pass
+    finally:
+        approval_authority.close()
     resolved_drafts = drafts_dir.resolve(strict=True)
     temporary_root = Path(tempfile.gettempdir()).resolve(strict=True)
     repository_root = Path(__file__).resolve().parents[2]
