@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 y P01-M01 completadas. El contrato del proyecto está cerrado y versionado en un repositorio Git local sobre `main`; todavía no existe implementación, proveedor real, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01, PGS-01-M02 y P01-M01 completadas. El contrato y el esqueleto del proyecto están versionados en un repositorio Git local sobre `main`; todavía no existe implementación funcional, proveedor real, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -18,6 +18,31 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 - **Repositorio remoto y visibilidad:** no configurados; pendientes de una decisión posterior.
 
 La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar o mover esa carpeta superior.
+
+## Estructura actual
+
+```text
+.
+├── README.md
+├── plan-proyecto-GenAI-Seguro-Lab.md
+├── src/
+│   └── genai_seguro_lab/
+│       └── __init__.py
+├── tests/
+│   └── README.md
+├── evaluations/
+│   └── README.md
+├── data/
+│   └── README.md
+├── docs/
+│   └── README.md
+└── sandbox/
+    ├── README.md
+    └── drafts/
+        └── README.md
+```
+
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. No añade todavía dependencias, configuración de pytest, datasets, modelos ni comportamiento ejecutable.
 
 ## Por qué existe
 
@@ -443,9 +468,10 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Fijar datos admitidos, acciones prohibidas y límites éticos.
 - [x] Aprobar criterios de éxito, entregables y no-objetivos.
 - [x] Inicializar el repositorio Git local y crear el commit inicial del contrato.
-- [ ] Crear código.
+- [x] Crear la estructura mínima de código, tests, evaluaciones, datos y documentación.
+- [ ] Configurar dependencias reproducibles y exclusión de secretos.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 y P01-M01 están completadas.** El avance interno es **7 de 66 microtareas (10,6 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01, PGS-01-M02 y P01-M01 están completadas.** El avance interno es **8 de 66 microtareas (12,1 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -455,7 +481,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-01-M02 — crear la estructura mínima de código, tests, evaluaciones, datos y documentación.**
+**PGS-01-M03 — configurar dependencias reproducibles y exclusión de secretos.**
 
 ## Uso responsable
 
