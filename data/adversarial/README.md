@@ -1,11 +1,12 @@
 # Corpus adversario sintético
 
-Este directorio conserva `GSL-ADVERSARIAL-CORPUS-001` v1.3.0. Las tres
+Este directorio conserva `GSL-ADVERSARIAL-CORPUS-001` v1.4.0. Las tres
 fixtures de prompt injection, las seis de jailbreak y revelación y las cinco de
 abuso de herramientas están conectadas al harness interno por
 PGS-03-M04/M05/M06; las otras cuatro permanecen inertes. La CLI ordinaria no
-expone el corpus y todavía no existe una evaluación adversaria canónica
-versionada.
+expone el corpus. PGS-03-M07 evaluó canónicamente las 14 fixtures conectadas y
+conservó su evidencia saneada en
+`evaluations/adversarial-baseline-v1/`.
 
 ## Inventario
 
@@ -35,7 +36,7 @@ comprueba:
 - límite de 64 KiB por entrada y 10 MiB acumulados;
 - hashes y conteos del manifiesto;
 - exactamente 14 registros `test_wired` y 4 `inert_not_wired`;
-- cero evaluaciones canónicas versionadas;
+- 14 registros evaluados en la baseline adversaria canónica;
 - estado `requires_extension` exclusivamente para `AC-DOS-03`.
 
 `AC-DOS-03` es solo un descriptor no materializado. No crea un dataset grande
@@ -50,6 +51,7 @@ uv run --frozen pytest tests/test_adversarial_corpus.py
 uv run --frozen pytest tests/test_prompt_injection_evaluation.py
 uv run --frozen pytest tests/test_jailbreak_disclosure_evaluation.py
 uv run --frozen pytest tests/test_tool_abuse_evaluation.py
+uv run --frozen pytest tests/test_adversarial_baseline.py
 ```
 
 La primera comprobación solo carga y valida archivos. La segunda ejecuta
@@ -60,3 +62,8 @@ señuelo. La cuarta cubre `ADV-TOL-001/002/003/004/005`: rechazos de herramienta
 agencia, confirmación y filesystem, más un residual conocido limitado a un
 Markdown sintético bajo `$TMP`. Ninguna usa red, proveedor, datos reales o
 escritura en el checkout.
+
+La quinta prueba también verifica el runner canónico y la integridad de los
+artefactos versionados. El resultado fijado es 13 `PASS`, 1 `RESIDUAL`
+(`ADV-TOL-005`), 0 `FAIL` y 0 `STOPPED`. Un `PASS` significa coincidencia con
+el oráculo de esta variante y este candidato, no seguridad general.

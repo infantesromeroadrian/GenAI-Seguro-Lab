@@ -5,18 +5,18 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-PRIORITY-001` |
-| Versión | `1.6.0` |
+| Versión | `1.7.0` |
 | Fecha de corte | 2026-07-25 |
-| Baseline de código | commit `b1850e93` + candidato PGS-03-M06 |
+| Baseline de código | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Crosswalk actual | [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
-| Alcance | sistema local sintético, incluidos `CMP-06` y el harness adversario `CMP-07` |
+| Alcance | sistema local sintético, incluidos `CMP-06`, `CMP-07` y el runner canónico `CMP-08` |
 
 Esta priorización ordena el backlog de pruebas del laboratorio. No es una
-clasificación CVSS, no estima la frecuencia de incidentes reales y no afirma
-que un ataque haya sido reproducido. Cada caso se valora únicamente contra las
-capacidades presentes en el checkout observado.
+clasificación CVSS ni estima la frecuencia de incidentes reales. La baseline
+reproduce el residual concreto de `AC-TOL-05`; cada caso sigue valorándose
+únicamente contra las capacidades presentes en el checkout observado.
 
 ## Método
 
@@ -205,7 +205,25 @@ La distribución se mantiene en 2 `PR-1`, 1 `PR-2`, 13 `PR-3` y 1 `PR-0`.
 Este recálculo caracteriza las variantes implementadas y no sustituye la
 baseline canónica de PGS-03-M07.
 
-## Backlog posterior a PGS-03-M06
+## Confirmación de PGS-03-M07
+
+`CMP-08` ejecuta el mismo alcance PI/JB/EX/TOL contra el commit limpio
+`93aefa45` y fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`. La
+evidencia:
+
+- vuelve a reproducir `AC-TOL-05` como el único residual, con un archivo de
+  efecto temporal y sin identidad autenticada;
+- registra 0 llamadas externas y 0 €;
+- conserva los oráculos fuera del target y no altera el candidato;
+- no contradice las probabilidades condicionadas de PGS-03-M05/M06;
+- no cambia `I`, `L` o `K`, porque mide las mismas variantes y capacidades ya
+  utilizadas para el último recálculo.
+
+La distribución se mantiene en 2 `PR-1`, 1 `PR-2`, 13 `PR-3` y 1 `PR-0`.
+Un resultado `PASS` no permite extrapolar a un modelo GenAI real ni a variantes
+no incluidas.
+
+## Backlog posterior a PGS-03-M07
 
 Las cuatro fixtures todavía inertes delimitan el backlog ejecutable posterior:
 
@@ -256,9 +274,9 @@ de estos supuestos:
 
 Los 17 abuse cases aparecen exactamente una vez y conservan la alcanzabilidad
 de `GSL-ABUSE-CASES-001`. El perfil vulnerable está construido y aislado;
-`CMP-07` cubre 14 fixtures PI/JB/EX/TOL sin crear una ruta de producto y las
-otras cuatro permanecen sin ejecutar. PGS-03-M07 fijará el candidato,
-configuración, resultados y logs saneados de la baseline adversaria.
+`CMP-08` fija la baseline de las 14 fixtures PI/JB/EX/TOL sin crear una ruta
+de producto y las otras cuatro permanecen sin ejecutar. PGS-03-M08
+documentará los hallazgos, impacto, reproducción y límites.
 
 [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) relaciona los casos con
 OWASP y MITRE ATLAS sin cambiar sus puntuaciones.

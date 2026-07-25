@@ -2,8 +2,8 @@
 
 Este directorio contiene las pruebas automatizadas del contrato de datos, el
 adaptador determinista, las herramientas locales, el flujo benigno, el perfil
-vulnerable aislado, el harness adversario acotado y la interfaz de proceso
-completo.
+vulnerable aislado, el harness adversario acotado, el runner canónico y la
+interfaz de proceso completo.
 
 Ejecución completa:
 
@@ -25,8 +25,8 @@ ataques ni herramientas.
 `test_adversarial_corpus.py` carga las 18 fixtures y sus 18 oráculos separados,
 verifica la cobertura de los 17 abuse cases y seis familias, la procedencia,
 los límites RoE, la relación uno a uno y los hashes. También demuestra que el
-manifiesto fija 14 fixtures conectadas a test, 4 inertes y 0 evaluaciones
-canónicas.
+manifiesto fija 14 fixtures conectadas a test y evaluadas canónicamente, más 4
+inertes.
 
 `test_prompt_injection_evaluation.py` cubre los tres casos PI. Comprueba en un
 proceso real que `--prompt` se rechaza antes de cargar datos; para las dos
@@ -45,3 +45,8 @@ allowlist de herramienta cerrada, cardinalidad, IDs duplicados, recursión,
 integridad y consumo único de confirmaciones, traversal, symlink y overwrite.
 También registra `AC-TOL-05` como residual conocido: una confirmación literal
 sin identidad crea exactamente un Markdown sintético bajo `$TMP`.
+
+`test_adversarial_baseline.py` comprueba la autorización exacta de `CMP-08`,
+la ejecución de los 14 casos, el residual esperado, el fallo cerrado ante
+deriva del candidato, la escritura solo en un directorio temporal nuevo y la
+integridad y saneado de la evidencia versionada.

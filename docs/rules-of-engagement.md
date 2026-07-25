@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `1.5.0` |
+| Versión | `1.6.0` |
 | Fecha de entrada en vigor | 2026-07-25 |
-| Baseline técnica de origen | commit `b1850e93` + candidato PGS-03-M06 |
+| Baseline técnica de origen | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
 | Operador | `ACT-01` — operador local |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
@@ -22,8 +22,8 @@ vigente que identifique los casos, el perfil, el candidato y los límites.
 PGS-03-M03 preparó `GSL-ADVERSARIAL-CORPUS-001` con entradas y oráculos
 separados. PGS-03-M04/M05/M06 conectan `ADV-PI-001/002/003`,
 `ADV-JB-001/002/003`, `ADV-EX-001/002/003` y `ADV-TOL-001/002/003/004/005`
-al test interno. Las otras cuatro fixtures permanecen inertes y no existe
-todavía una evaluación adversaria canónica versionada.
+al test interno. PGS-03-M07 ejecuta canónicamente esas 14 fixtures; las otras
+cuatro permanecen inertes.
 
 ## Objetivo y resultado permitido
 
@@ -147,10 +147,11 @@ para depurar, pero debe fijar el diff observado y no cuenta como baseline
 canónica. La baseline de PGS-03-M07 y los retests sí deben utilizar un commit
 exacto con el checkout limpio.
 
-PGS-03-M02 a PGS-03-M06 ya están satisfechas. `CMP-07` cubre 14 fixtures y
-exige autorizaciones tipadas con estos límites. Para cualquier otra fixture
-siguen faltando el harness aplicable y una petición vigente; no existe una
-campaña general ni una continuación automática.
+PGS-03-M02 a PGS-03-M07 ya están satisfechas. `CMP-08` fijó el commit, aplicó
+la autorización tipada de estas reglas y condujo las 14 fixtures de `CMP-07`
+una sola vez. Para cualquier otra fixture siguen faltando el harness aplicable
+y una petición vigente; no existe una campaña general ni una continuación
+automática.
 
 ## Presupuesto operativo de seguridad
 
@@ -245,7 +246,7 @@ su ejecución esté autorizada. PGS-03-M03 aporta una o dos fixtures por caso en
 `DAT-07` y su oráculo correspondiente en `DAT-08`; PGS-03-M04/M05/M06 conectan
 las 14 fixtures PI, JB, EX y TOL.
 
-| Caso | Vehículo autorizado | Restricción específica | Estado RoE tras PGS-03-M06 |
+| Caso | Vehículo autorizado | Restricción específica | Estado RoE tras PGS-03-M07 |
 |---|---|---|---|
 | `AC-PI-01` | Proceso CLI con argumento no reconocido | Prueba negativa; no añadir un prompt libre para simular la ruta | `IMPLEMENTADO EN TEST` |
 | `AC-PI-02` | Copia temporal de incidentes y manifiesto | Material sintético; nunca alterar el corpus canónico durante el run | `IMPLEMENTADO EN TEST` |
@@ -284,6 +285,7 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-13` | PGS-03-M04 debe quedar limitada a los tres casos PI | `CMP-07` exige sus tres IDs, `$TMP`, 15 s, 2 turnos, 1 consulta, 0 archivos, sin red ni evidencia canónica; `DAT-08` queda fuera del target |
 | `ROE-14` | PGS-03-M05 debe quedar limitada a los seis casos JB/EX | La autorización exige seis IDs, datos sintéticos, 15 s por ejecución, hasta 4 turnos, 2 solicitudes, 1 subproceso, 0 archivos, sin red ni evidencia canónica; las dos guardas de `ADV-JB-003` se ejecutan de forma independiente |
 | `ROE-15` | PGS-03-M06 debe quedar limitada a los cinco casos TOL | La autorización exige cinco IDs, datos sintéticos, 15 s, hasta 3 escenarios, 2 turnos y 2 solicitudes por escenario, 0 subprocesos y como máximo 1 archivo temporal; el único efecto permitido es el residual `ADV-TOL-005` |
+| `ROE-16` | PGS-03-M07 debe ejecutar un candidato limpio y conservar solo evidencia saneada | `CMP-08` exige commit y rama exactos, 14 IDs, 600 s totales, 15 s por caso, 1 proceso objetivo, 512 MiB RSS, 25 MiB temporales, 1 archivo de efecto, 0 red y 0 mutación canónica; los artefactos revisados excluyen payloads, salida bruta, traceback y rutas personales |
 
 ## Disparadores de revisión
 
@@ -302,12 +304,12 @@ Estas reglas deben revisarse y versionarse antes de:
 Una revisión no autoriza por sí misma la ejecución. Debe conservar versión,
 motivo, cambios y nueva petición aplicable.
 
-## Estado de cierre de PGS-03-M06
+## Estado de cierre de PGS-03-M07
 
 Las RoE siguen delimitando los 17 casos, responsables, targets, acciones,
-datos, presupuesto, evidencia y parada. `CMP-07` aplica el contrato de 14
-fixtures: tres PI, tres JB, tres EX y cinco TOL. M06 añade rechazo de nombre,
-cardinalidad, duplicados, recursión, integridad de confirmación y filesystem,
-y registra `AC-TOL-05` como residual conocido con un único Markdown temporal.
-Los oráculos no se entregan al target, las otras cuatro fixtures permanecen
-inertes y PGS-03-M07 continúa siendo responsable de fijar la baseline canónica.
+datos, presupuesto, evidencia y parada. `CMP-08` ejecutó el contrato de 14
+fixtures contra el commit limpio `93aefa45`: 13 `PASS`, 1 `RESIDUAL`, 0
+`FAIL` y 0 `STOPPED`. `AC-TOL-05` conserva un único Markdown temporal como
+residual; los oráculos no se entregaron al target, el checkout permaneció
+limpio, no hubo red ni llamadas externas y las otras cuatro fixtures continúan
+inertes. Solo la proyección revisada y saneada se versiona.

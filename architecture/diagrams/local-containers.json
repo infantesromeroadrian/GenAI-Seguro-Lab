@@ -44,6 +44,7 @@
           "CMP-05",
           "CMP-06",
           "CMP-07",
+          "CMP-08",
           "MOD-01",
           "TOL-01",
           "TOL-02"
@@ -72,19 +73,24 @@
         "testWiredRecords": 14,
         "inertRecords": 4,
         "adversarialCliReachable": false,
-        "canonicalEvaluationRecorded": false
+        "canonicalEvaluationRecorded": true,
+        "canonicalEvaluationRecords": 14
       }
     },
     {
       "id": "evaluation-evidence-store",
-      "label": "Evidencia funcional versionada",
+      "label": "Evidencia revisada y versionada",
       "parentId": "local-host-boundary",
       "path": "evaluations/",
       "meta": {
         "type": "storage",
         "technology": "json",
         "inventoryIds": [
-          "DAT-04"
+          "DAT-04",
+          "DAT-10",
+          "DAT-11",
+          "DAT-12",
+          "DAT-13"
         ],
         "writeMode": "manual-versioning"
       }
@@ -112,7 +118,7 @@
       "id": "containers-terminal-invokes-process",
       "source": "terminal-session",
       "target": "python-application-process",
-      "label": "argv local: analyze | baseline",
+      "label": "argv: analyze | baseline; soporte: runner canónico",
       "meta": {
         "type": "calls",
         "crossesBoundary": "TB-02"
@@ -144,7 +150,7 @@
       "id": "containers-process-projects-evidence",
       "source": "python-application-process",
       "target": "evaluation-evidence-store",
-      "label": "stdout canónico → snapshot versionado manualmente",
+      "label": "stdout o proyección saneada desde $TMP → versionado manual",
       "meta": {
         "type": "data-flow",
         "directWrite": false

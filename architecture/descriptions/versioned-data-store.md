@@ -10,6 +10,7 @@ incidente.
   inertes.
 - `DAT-08`: 18 oráculos fijados antes de cualquier ejecución.
 - `DAT-09`: manifiesto adversario con RoE, perfil objetivo, conteos y SHA-256.
+  Declara 14 evaluaciones canónicas y 4 fixtures inertes.
 
 ## Trust boundary
 
@@ -31,4 +32,4 @@ incidente.
 - JSON y JSONL versionados bajo `data/`.
 - `data/manifest.json` sigue describiendo solo el corpus benigno.
 - `data/adversarial/manifest.json` declara 14 fixtures conectadas a test, 4
-  inertes y 0 evaluaciones canónicas versionadas.
+  inertes y 14 evaluaciones canónicas versionadas.

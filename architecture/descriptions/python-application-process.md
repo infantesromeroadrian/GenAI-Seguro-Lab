@@ -15,6 +15,8 @@ local.
   temporales, dobles deterministas, guardas del flujo, rechazos de búsqueda y
   herramienta, controles de borrador y un subproceso CLI saneado, siempre sin
   red y con un único efecto temporal conocido.
+- Ejecutar mediante `CMP-08` la baseline adversaria sobre un commit limpio,
+  medir límites y producir evidencia bruta solo bajo `$TMP`.
 
 ## Trust boundary
 

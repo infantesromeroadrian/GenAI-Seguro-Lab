@@ -164,6 +164,24 @@
       }
     },
     {
+      "id": "adversarial-baseline-runner",
+      "label": "CMP-08 · Runner de baseline adversaria",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/adversarial_baseline.py",
+      "meta": {
+        "type": "service",
+        "technology": "pydantic",
+        "inventoryIds": [
+          "CMP-08"
+        ],
+        "state": "internal-support-only",
+        "cliProductReachable": false,
+        "externalCalls": false,
+        "canonicalEvidence": true,
+        "canonicalCases": 14
+      }
+    },
+    {
       "id": "deterministic-model",
       "label": "MOD-01 · Modelo determinista",
       "parentId": "model-output-boundary",
@@ -407,6 +425,27 @@
         "maxEffectFiles": 1,
         "cliReachable": false,
         "canonicalEvidence": false
+      }
+    },
+    {
+      "id": "components-runner-loads-and-snapshots-data",
+      "source": "adversarial-baseline-runner",
+      "target": "dataset-loader",
+      "label": "valida corpus, hashes y 14 IDs; oráculos fuera del target",
+      "meta": {
+        "type": "calls",
+        "oraclesDeliveredToTarget": false
+      }
+    },
+    {
+      "id": "components-runner-drives-harness",
+      "source": "adversarial-baseline-runner",
+      "target": "adversarial-evaluation-harness",
+      "label": "ejecución canónica acotada → evidencia bruta en $TMP",
+      "meta": {
+        "type": "calls",
+        "canonicalEvidence": true,
+        "directCheckoutWrite": false
       }
     }
   ]

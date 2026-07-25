@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-NIST-CONTROLS-001` |
-| Versión | `1.0.6` |
+| Versión | `1.0.7` |
 | Fecha de corte | 2026-07-25 |
-| Baseline de código | commit `b1850e93` + candidato PGS-03-M06 |
+| Baseline de código | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Threat model de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md), [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) y [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Baseline normativa | [NIST AI RMF 1.0 y NIST SP 800-218A](./framework-versions.md) |
@@ -94,9 +94,9 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 | `CTL-07` | Confirmación humana autenticada, ligada al contenido y no reutilizable | `PARCIAL` | `A ACT-02`; `R ACT-03` | `AC-TOL-03`, `AC-TOL-05` | `CMP-07` verifica huella exacta, esquema cerrado y consumo único, y confirma como residual que `IDN-03` no acredita quién confirmó | PGS-04-M04 y retest PGS-05 |
 | `CTL-08` | Efectos de filesystem confinados, creación exclusiva, parada y recuperación segura | `PARCIAL` | `A/R ACT-02`; `R ACT-01` para parada | `AC-TOL-03`, `AC-TOL-04`, `AC-TOL-05` | `CMP-07` verifica en `$TMP` el rechazo de traversal, symlink y overwrite y limita el residual a un archivo; no existe aún un flujo operativo de parada, rollback o recuperación | PGS-04-M08, PGS-06-M07 y PGS-05 |
 | `CTL-09` | Política de salida, redacción, errores saneados y detección de fugas | `PARCIAL` | `A/R ACT-02` | `AC-JB-01`, `AC-EX-03` | Salida tipada y errores genéricos limitan la exposición actual; `CMP-07` comprueba que los jailbreak de contenido no se reflejan y que un marcador señuelo no aparece en la respuesta de proceso. Faltan filtros, reglas de redacción y pruebas sobre un modelo real | PGS-04-M05 y PGS-05 |
-| `CTL-10` | Límites de tamaño, tiempo, iteraciones, concurrencia y consumo | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-TOL-02`, `AC-DOS-01`, `AC-DOS-03` | `GSL-ROE-001` fija topes operativos; M06 exige 15 s, 3 escenarios, 2 turnos y 2 solicitudes por escenario, 0 subprocesos y 1 efecto temporal máximo. Todavía no hay rate limit del producto, tope global del corpus ni métricas de consumo | PGS-04-M06 y PGS-05-M04 |
+| `CTL-10` | Límites de tamaño, tiempo, iteraciones, concurrencia y consumo | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-TOL-02`, `AC-DOS-01`, `AC-DOS-03` | `GSL-ROE-001` fija topes operativos y `CMP-08` registra tiempo, procesos, turnos, solicitudes, bytes, archivos y RSS del run canónico. Todavía no hay rate limit del producto ni tope global preventivo para un corpus dimensionado | PGS-04-M06 y PGS-05-M04 |
 | `CTL-11` | Integridad de código, dependencias, cambios y releases | `PARCIAL` | `A/R ACT-02`; `C REV-01` planificado | `AC-DOS-02`, `AC-SC-01` | Git, remoto público, `uv.lock`, hashes del corpus y commits granulares permiten detectar diferencias; faltan firma, CI, SBOM, revisión independiente y política de release | PGS-06-M08 y PGS-07-M01/M03/M04 |
-| `CTL-12` | Harness adversario, métricas, regresión y revisión independiente | `PARCIAL` | `A/R ACT-02`; `R REV-01` solo para revisión independiente | Los 17 casos de `GSL-ABUSE-CASES-001` | `CMP-07` y pytest cubren 14 fixtures PI/JB/EX/TOL correspondientes a 13 abuse cases, con oráculos separados; faltan 4 casos, baseline de seguridad, métricas agregadas, retest y revisor independiente | PGS-03-M07/M08, PGS-05 y PGS-07-M01 a M06 |
+| `CTL-12` | Harness adversario, métricas, regresión y revisión independiente | `PARCIAL` | `A/R ACT-02`; `R REV-01` solo para revisión independiente | Los 17 casos de `GSL-ABUSE-CASES-001` | `CMP-07` cubre 14 fixtures PI/JB/EX/TOL con oráculos separados y `CMP-08` fija una baseline reproducible con 13 `PASS`, 1 `RESIDUAL`, métricas y evidencia saneada. Faltan 4 casos, documentación de hallazgos, retest y revisor independiente | PGS-03-M08, PGS-05 y PGS-07-M01 a M06 |
 | `CTL-13` | Eventos, monitorización, respuesta, rollback, comunicación y retirada | `PLANIFICADO` | `A/R ACT-02`; `R ACT-01` para avisos y parada | `AC-EX-03`, `AC-DOS-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | No hay logging persistente, telemetría, correlación, runbook, rollback ni procedimiento de retirada | PGS-04-M07/M08, PGS-06-M05 a M07 y PGS-07 |
 
 ## Mapeo de controles a NIST
@@ -158,6 +158,6 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 autorización por ejecución, los targets, los presupuestos y la parada.
 `GSL-PROFILE-VULNERABLE-001` ya está aislado y sin capacidad de ejecución.
 `GSL-ADVERSARIAL-CORPUS-001` ya fija entradas y oráculos sintéticos separados,
-y `CMP-07` cubre 14 fixtures PI/JB/EX/TOL sin convertir ese resultado en una
-baseline canónica. PGS-03-M07 debe fijar y ejecutar el candidato, conservar
-configuración, resultados y logs saneados.
+y `CMP-08` fija la baseline canónica de 14 fixtures PI/JB/EX/TOL con
+configuración, resultados, eventos y manifiesto saneados. PGS-03-M08 debe
+documentar los hallazgos, impacto, reproducción y límites.

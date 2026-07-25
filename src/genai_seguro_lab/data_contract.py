@@ -380,12 +380,12 @@ class AdversarialManifestExpectedResult(StrictModel):
     threat_families: Literal[6]
     test_wired_records: Literal[14]
     inert_records: Literal[4]
-    canonical_evaluation_records: Literal[0]
+    canonical_evaluation_records: Literal[14]
 
 
 class AdversarialCorpusManifest(StrictModel):
     id: AdversarialCorpusId
-    version: Literal["1.3.0"]
+    version: Literal["1.4.0"]
     type: Literal["adversarial_corpus_manifest"]
     rules_of_engagement: Literal["GSL-ROE-001"]
     target_profile: Literal["GSL-PROFILE-VULNERABLE-001"]

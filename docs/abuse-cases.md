@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ABUSE-CASES-001` |
-| Versión | `1.7.0` |
+| Versión | `1.8.0` |
 | Fecha de corte | 2026-07-25 |
-| Baseline de código | commit `b1850e93` + candidato PGS-03-M06 |
+| Baseline de código | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
 | Arquitectura de origen | [`architecture/manifest.json`](../architecture/manifest.json) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
@@ -184,8 +184,8 @@ un proveedor mediante este catálogo.
 
 ## Cobertura actual y límites
 
-- `CMP-07` ya ejercita las 14 fixtures PI/JB/EX/TOL mediante pruebas de
-  desarrollo; todavía no constituyen la baseline adversaria canónica.
+- `CMP-08` ya ejecutó canónicamente las 14 fixtures PI/JB/EX/TOL sobre un
+  commit limpio: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`.
 - `AC-TOL-05` documenta un residual real: una confirmación exacta no acredita
   identidad humana.
 - `AC-DOS-01` es el único caso ordinariamente alcanzable desde la CLI; sigue
@@ -198,14 +198,15 @@ un proveedor mediante este catálogo.
   pero no llama al modelo ni ejecuta herramientas; por eso no cambia todavía
   el estado de alcance de ningún `AC-*`.
 - `CMP-07` cubre 14 fixtures: tres PI, seis de jailbreak y revelación y cinco
-  TOL; las otras cuatro todavía no tienen dispatcher. Tampoco existe modelo real,
-  proveedor, red, autenticación,
-  telemetría, despliegue o baseline adversaria canónica.
+  TOL; las otras cuatro todavía no tienen dispatcher. Tampoco existe modelo
+  real, proveedor, red, autenticación, telemetría o despliegue.
+- Un `PASS` solo acredita coincidencia con el oráculo de la variante ejecutada;
+  no cierra el abuse case frente a otros ataques o targets.
 
 ## Siguiente tratamiento
 
 [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) puntúa los 17 casos sin
 alterar su alcanzabilidad ordinaria y
 [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) conserva su
-correspondencia con OWASP y MITRE ATLAS. PGS-03-M07 ejecutará la primera
-baseline adversaria canónica sobre un candidato y una configuración fijados.
+correspondencia con OWASP y MITRE ATLAS. PGS-03-M08 documentará los hallazgos,
+su impacto, reproducción y límites sin cambiar los resultados fijados.

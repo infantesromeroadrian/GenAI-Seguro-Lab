@@ -1,0 +1,153 @@
+{
+  "allowed_components": [
+    "CMP-01",
+    "CMP-02",
+    "CMP-03",
+    "CMP-06",
+    "CMP-07",
+    "CMP-08",
+    "MOD-01",
+    "TOL-01",
+    "TOL-02"
+  ],
+  "authorization": {
+    "canonical_checkout_mutation": false,
+    "canonical_write_mode": "manual_after_review",
+    "case_ids": [
+      "ADV-PI-001",
+      "ADV-PI-002",
+      "ADV-PI-003",
+      "ADV-JB-001",
+      "ADV-JB-002",
+      "ADV-JB-003",
+      "ADV-EX-001",
+      "ADV-EX-002",
+      "ADV-EX-003",
+      "ADV-TOL-001",
+      "ADV-TOL-002",
+      "ADV-TOL-003",
+      "ADV-TOL-004",
+      "ADV-TOL-005"
+    ],
+    "external_network": false,
+    "max_case_seconds": 15,
+    "max_effect_files_per_case": 1,
+    "max_effect_files_per_run": 1,
+    "max_input_bytes_per_run": 10485760,
+    "max_model_turns_per_scenario": 4,
+    "max_rss_bytes": 536870912,
+    "max_run_seconds": 600,
+    "max_scenarios_per_case": 3,
+    "max_subprocesses_per_case": 1,
+    "max_target_processes": 1,
+    "max_temporary_bytes_per_run": 26214400,
+    "max_tool_requests_per_scenario": 2,
+    "raw_evidence_location": "temporary_directory",
+    "rules_of_engagement": "GSL-ROE-001",
+    "synthetic_data": true,
+    "target_profile": "GSL-PROFILE-VULNERABLE-001"
+  },
+  "baseline_id": "GSL-BASELINE-ADVERSARIAL-001",
+  "candidate": {
+    "branch": "main",
+    "clean_before_run": true,
+    "commit": "93aefa45eac687d219bfed32f03be4e60e4a13ed",
+    "tree": "e9ec04ae4d3f599b4cf9b074f500f8a6fe17a3e5"
+  },
+  "cleanup_policy": [
+    "raw_evidence_to_trash_after_review",
+    "version_only_sanitized_artifacts",
+    "no_automatic_retry"
+  ],
+  "command": [
+    "uv",
+    "run",
+    "--frozen",
+    "python",
+    "evaluations/run_adversarial_baseline.py",
+    "--expected-commit",
+    "93aefa45eac687d219bfed32f03be4e60e4a13ed",
+    "--expected-branch",
+    "main",
+    "--run-id",
+    "GSL-ADV-BL-20260725-001",
+    "--executed-at-utc",
+    "2026-07-25T20:00:32Z",
+    "--uv-version",
+    "0.6.10",
+    "--run-root",
+    "$TMP/adversarial-baseline-v1"
+  ],
+  "corpus": {
+    "corpus_id": "GSL-ADVERSARIAL-CORPUS-001",
+    "corpus_version": "1.3.0",
+    "files": [
+      {
+        "bytes": 13325,
+        "path": "data/incidents.jsonl",
+        "sha256": "928af933a23ffe2851f5bf5206fa691e18dd7e3a6a6d621d3ad8af06d4c4870a"
+      },
+      {
+        "bytes": 7253,
+        "path": "data/knowledge.jsonl",
+        "sha256": "f62fd7bb0051c5b97f5f5ce40941e77c1c8019d2b0ac6ceb3d2fa099d8ab92da"
+      },
+      {
+        "bytes": 815,
+        "path": "data/manifest.json",
+        "sha256": "e758a72747dd33dbd78f17551a436dd6ae6278ca5e5306bf2ddb10fe56124926"
+      },
+      {
+        "bytes": 15633,
+        "path": "data/adversarial/inputs.jsonl",
+        "sha256": "ebf1d1f58a2969e856291640a97c74e6071405c202f415ecba02cef54f35e6b4"
+      },
+      {
+        "bytes": 12776,
+        "path": "data/adversarial/oracles.jsonl",
+        "sha256": "ab0f70a8d225101168aa1be0e720b86320d9d910d1ef8358b3688ff7a5c6a9f0"
+      },
+      {
+        "bytes": 1138,
+        "path": "data/adversarial/manifest.json",
+        "sha256": "324cf5d83dd9d253446015d0950ed3c78177817c7d726f3e3f03fdd874c88cdf"
+      }
+    ],
+    "inert_records": 4,
+    "input_records": 18,
+    "oracle_records": 18,
+    "oracles_delivered_to_target": false,
+    "total_input_bytes": 50940,
+    "wired_records": 14
+  },
+  "evidence_directory": "$TMP/adversarial-baseline-v1/reviewed",
+  "executed_at_utc": "2026-07-25T20:00:32Z",
+  "operator": "ACT-02",
+  "request_authority": "user_go_for_pgs_03_m07",
+  "run_id": "GSL-ADV-BL-20260725-001",
+  "runtime": {
+    "cost_eur": "0.00",
+    "external_calls": false,
+    "platform": "darwin",
+    "pydantic": "2.13.4",
+    "python": "3.12.8",
+    "uv": "0.6.10"
+  },
+  "sanitization": [
+    "allowlisted_fields",
+    "paths_tokenized",
+    "raw_observations_not_versioned",
+    "no_payloads_or_full_outputs"
+  ],
+  "schema_version": "1.0.0",
+  "stop_conditions": [
+    "network_attempt",
+    "non_synthetic_data",
+    "out_of_scope_write",
+    "unapproved_tool",
+    "budget_exceeded",
+    "candidate_or_oracle_drift",
+    "user_interrupt"
+  ],
+  "temporary_root": "$TMP/adversarial-baseline-v1"
+}

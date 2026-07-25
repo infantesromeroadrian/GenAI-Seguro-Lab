@@ -36,7 +36,11 @@ real.
   para los 17 abuse cases del laboratorio propio.
 - [Corpus adversario sintético](../data/adversarial/README.md): 18 entradas y
   18 oráculos separados para los 17 casos y seis familias; 14 fixtures están
-  conectadas al harness interno y 4 permanecen inertes.
+  conectadas al harness interno, evaluadas canónicamente y 4 permanecen
+  inertes.
+- [Baseline adversaria canónica](../evaluations/adversarial-baseline-v1/README.md):
+  candidato exacto, reproducción, 13 `PASS`, 1 `RESIDUAL`, métricas, artefactos
+  saneados y límites de interpretación.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

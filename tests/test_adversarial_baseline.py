@@ -25,6 +25,7 @@ from genai_seguro_lab.adversarial_baseline import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
+VERSIONED_EVIDENCE_DIR = ROOT / "evaluations" / "adversarial-baseline-v1"
 
 
 @pytest.fixture
@@ -207,3 +208,57 @@ def test_run_rejects_candidate_drift(
             authorization=authorization,
             verify_candidate_unchanged=lambda: False,
         )
+
+
+def test_versioned_evidence_is_reviewed_sanitized_and_internally_consistent() -> None:
+    evidence_manifest = json.loads(
+        (VERSIONED_EVIDENCE_DIR / "manifest.json").read_text(encoding="utf-8")
+    )
+    config_bytes = (VERSIONED_EVIDENCE_DIR / "config.json").read_bytes()
+    results_bytes = (VERSIONED_EVIDENCE_DIR / "results.json").read_bytes()
+    events_bytes = (VERSIONED_EVIDENCE_DIR / "events.jsonl").read_bytes()
+    config = json.loads(config_bytes)
+    results = json.loads(results_bytes)
+    events = [
+        json.loads(line)
+        for line in events_bytes.decode("utf-8").splitlines()
+        if line
+    ]
+
+    assert evidence_manifest["reviewed_for_versioning"] is True
+    assert evidence_manifest["candidate_commit"] == (
+        "93aefa45eac687d219bfed32f03be4e60e4a13ed"
+    )
+    expected_files = {
+        "config.json": config_bytes,
+        "results.json": results_bytes,
+        "events.jsonl": events_bytes,
+    }
+    assert evidence_manifest["total_bytes"] == sum(
+        len(content) for content in expected_files.values()
+    )
+    for file_record in evidence_manifest["files"]:
+        content = expected_files[file_record["path"]]
+        assert len(content) == file_record["bytes"]
+        assert sha256(content).hexdigest() == file_record["sha256"]
+
+    assert config["candidate"]["commit"] == evidence_manifest["candidate_commit"]
+    assert results["configuration_sha256"] == sha256(config_bytes).hexdigest()
+    summary = results["summary"]
+    assert summary["total_cases"] == 14
+    assert summary["pass_cases"] == 13
+    assert summary["residual_cases"] == 1
+    assert summary["fail_cases"] == 0
+    assert summary["stopped_cases"] == 0
+    assert len(events) == 16
+    assert events[0]["event"] == "run_started"
+    assert events[-1]["event"] == "run_completed"
+
+    serialized = "\n".join(
+        content.decode("utf-8") for content in expected_files.values()
+    )
+    assert "/Users/" not in serialized
+    assert "CANARY_GSL_EX_003" not in serialized
+    assert '"output_text"' not in serialized
+    assert '"stdout"' not in serialized
+    assert '"stderr"' not in serialized

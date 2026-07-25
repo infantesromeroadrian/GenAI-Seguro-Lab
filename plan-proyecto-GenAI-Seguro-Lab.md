@@ -7,12 +7,12 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01, P01-M04, P01-M05 y P01-M06.
-- **Estado actual:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08 y PGS-03-M01 a PGS-03-M06 completadas; 14 fixtures PI/JB/EX/TOL están conectadas a pruebas internas acotadas y las otras cuatro permanecen inertes.
+- **Estado actual:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08 y PGS-03-M01 a PGS-03-M07 completadas; la baseline canónica fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED` sobre 14 fixtures PI/JB/EX/TOL, mientras las otras cuatro permanecen inertes.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
-- **Publicación, cloud y gasto:** repositorio de código público ya autorizado;
-  releases, resultados externos, cloud y gasto requieren autorización
-  específica.
+- **Publicación, cloud y gasto:** repositorio público ya autorizado y evidencia
+  saneada de PGS-03-M07 versionada; releases, cloud, gasto y cualquier otra
+  publicación externa requieren autorización específica.
 
 ## Objetivo
 
@@ -258,7 +258,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-03-M04** Implementar pruebas para prompt injection directa e indirecta.
 - [x] **PGS-03-M05** Implementar pruebas para jailbreak y revelación de información.
 - [x] **PGS-03-M06** Implementar pruebas para llamadas de herramienta no autorizadas y exceso de agencia.
-- [ ] **PGS-03-M07** Ejecutar la baseline y conservar configuración, resultados y logs saneados.
+- [x] **PGS-03-M07** Ejecutar la baseline y conservar configuración, resultados y logs saneados.
 - [ ] **PGS-03-M08** Documentar hallazgos, impacto, reproducción y límites.
 
 **Salida:** al menos un fallo reproducible y medido contra una baseline fija.
@@ -326,9 +326,10 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [ ] **PGS-07-M09** Revisar P01-M01 y P01-M04–P01-M11 contra sus criterios.
 - [ ] **PGS-07-M10** Registrar el estado de SEC-1 sin cerrarlo mientras BASE siga pendiente.
 
-**Salida:** proyecto reproducible, revisado y trazable; el código fuente ya
-dispone de publicación pública autorizada, mientras que releases, resultados y
-otros artefactos externos siguen requiriendo una decisión separada.
+**Salida:** proyecto reproducible, revisado y trazable; el código fuente y la
+evidencia saneada concreta de PGS-03-M07 disponen de publicación pública
+autorizada, mientras que releases y otros artefactos externos siguen
+requiriendo una decisión separada.
 
 ## Trazabilidad con la fase 01
 
@@ -353,7 +354,7 @@ otros artefactos externos siguen requiriendo una decisión separada.
   `origin/main` del remoto público
   [infantesromeroadrian/GenAI-Seguro-Lab](https://github.com/infantesromeroadrian/GenAI-Seguro-Lab).
 - La estructura mínima ya separa código, tests, evaluaciones, datos, documentación y sandbox; Python 3.12, Pydantic 2, pytest 9 y sus dependencias están fijados mediante `pyproject.toml` y `uv.lock`.
-- El corpus benigno inicial contiene 12 incidentes y 8 documentos de conocimiento sintéticos; su esquema estricto, referencias, conteos y hashes están verificados automáticamente. `GSL-ADVERSARIAL-CORPUS-001` añade de forma separada 18 fixtures y 18 oráculos para los 17 abuse cases y seis familias; 14 PI/JB/EX/TOL están conectadas a tests, cuatro permanecen inertes y todavía no existe una evaluación canónica versionada.
+- El corpus benigno inicial contiene 12 incidentes y 8 documentos de conocimiento sintéticos; su esquema estricto, referencias, conteos y hashes están verificados automáticamente. `GSL-ADVERSARIAL-CORPUS-001` añade de forma separada 18 fixtures y 18 oráculos para los 17 abuse cases y seis familias; 14 PI/JB/EX/TOL están conectadas a tests y evaluadas canónicamente, mientras cuatro permanecen inertes.
 - El adaptador determinista ejecutado en proceso responde solo a peticiones completas previamente guionizadas, no usa red, registra coste cero y no autoriza ni ejecuta solicitudes de herramienta.
 - El flujo benigno exige una única búsqueda sobre las referencias del incidente y una respuesta final. La búsqueda solo usa conocimiento sintético cargado en memoria; la escritura de borradores queda separada del modelo, requiere una confirmación declarada por el llamador y ligada a la huella exacta de la propuesta, y aplica creación exclusiva dentro de `sandbox/drafts/`. Esta capa todavía no autentica la identidad humana.
 - El proyecto permanece deliberadamente sin empaquetar mediante `[tool.uv] package = false`. `main.py` ofrece el punto de entrada local estable desde el propio checkout, sin instalación editable ni `PYTHONPATH`.
@@ -383,13 +384,20 @@ otros artefactos externos siguen requiriendo una decisión separada.
   conserva el residual conocido de una confirmación literal sin identidad y
   permite un único Markdown temporal. `AC-DOS-03` permanece como descriptor no
   materializado que requiere ampliar las RoE.
+- `src/genai_seguro_lab/adversarial_baseline.py` y
+  `evaluations/run_adversarial_baseline.py` implementan `CMP-08`. El run
+  `GSL-ADV-BL-20260725-001` evaluó el commit limpio `93aefa45` y conserva bajo
+  `evaluations/adversarial-baseline-v1/` configuración, resultados, eventos y
+  un manifiesto de integridad saneados: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL`, 0
+  `STOPPED`, 0 llamadas externas y 0 €.
 - PGS-07-M08 quedó adelantada mediante autorización específica: remoto público
-  creado y `main` publicado el 2026-07-25. Esto no autoriza releases,
-  resultados de evaluación ni otros artefactos externos.
+  creado y `main` publicado el 2026-07-25. PGS-03-M07 autoriza además su
+  evidencia saneada concreta; releases y otros artefactos externos siguen
+  fuera de alcance.
 - Completar P00-M08, P00-M09 y P00-M10 antes de declarar superado SEC-1.
 
 ## Próxima microtarea
 
-**PGS-03-M07 — ejecutar la baseline y conservar configuración, resultados y logs saneados.**
+**PGS-03-M08 — documentar hallazgos, impacto, reproducción y límites.**
 
-**Progreso interno:** 28 de 66 microtareas completadas, 38 abiertas (**42,4 %**).
+**Progreso interno:** 29 de 66 microtareas completadas, 37 abiertas (**43,9 %**).

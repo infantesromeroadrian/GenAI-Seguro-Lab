@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M06, PGS-07-M08, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local y baseline funcional; el harness interno cubre 14 fixtures de prompt injection, jailbreak, revelación y abuso de herramientas con datos sintéticos y límites estrictos. Cuatro fixtures permanecen inertes y `AC-TOL-05` conserva como residual conocido una única escritura confinada a `$TMP`. El código está publicado en un repositorio público, pero todavía no existe un modelo GenAI real, baseline adversaria canónica, proveedor o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M07, PGS-07-M08, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. La baseline adversaria canónica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`. Cuatro fixtures permanecen inertes y `ADV-TOL-005` conserva como residual conocido una única escritura confinada a `$TMP`. El código y la evidencia saneada están publicados en el repositorio público, pero todavía no existe un modelo GenAI real, proveedor o despliegue cloud.
 
 ## En una frase
 
@@ -42,6 +42,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │       ├── benign_flow.py
 │       ├── cli.py
 │       ├── data_contract.py
+│       ├── adversarial_baseline.py
 │       ├── evaluation_harness.py
 │       ├── evaluation_profile.py
 │       ├── local_tools.py
@@ -53,6 +54,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── test_data_contract.py
 │   ├── test_evaluation_profile.py
 │   ├── test_adversarial_corpus.py
+│   ├── test_adversarial_baseline.py
 │   ├── test_local_tools.py
 │   ├── test_model_adapter.py
 │   ├── test_jailbreak_disclosure_evaluation.py
@@ -60,6 +62,13 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   └── test_tool_abuse_evaluation.py
 ├── evaluations/
 │   ├── README.md
+│   ├── run_adversarial_baseline.py
+│   ├── adversarial-baseline-v1/
+│   │   ├── README.md
+│   │   ├── config.json
+│   │   ├── events.jsonl
+│   │   ├── manifest.json
+│   │   └── results.json
 │   └── benign-baseline-v1.json
 ├── data/
 │   ├── README.md
@@ -87,7 +96,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
         └── README.md
 ```
 
-PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado, PGS-03-M03 prepara el corpus adversario y PGS-03-M04/M05/M06 conectan 14 fixtures PI/JB/EX/TOL a pruebas internas. Todavía no existe un modelo GenAI real.
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado, PGS-03-M03 prepara el corpus adversario, PGS-03-M04/M05/M06 conectan 14 fixtures PI/JB/EX/TOL a pruebas internas y PGS-03-M07 fija su primera ejecución canónica. Todavía no existe un modelo GenAI real.
 
 ## Entorno reproducible
 
@@ -121,7 +130,7 @@ uv run --frozen pytest --version
 - El corpus declara `synthetic: true`, sensibilidad `synthetic_internal` y procedencia `authored_for_lab`.
 - `data/adversarial/` contiene 18 entradas y 18 oráculos separados para los 17
   abuse cases y seis familias; su manifiesto declara 14 fixtures PI/JB/EX/TOL
-  conectadas a test, 4 inertes y 0 evaluaciones canónicas versionadas.
+  conectadas a test, 4 inertes y 14 registros evaluados canónicamente.
 - El dataset benigno conserva cero registros adversarios y sigue siendo el
   único que consume la CLI.
 
@@ -419,6 +428,39 @@ segundos, como máximo tres escenarios por caso, dos turnos y dos solicitudes
 por escenario, cero subprocesos, cero red, cero evidencia canónica y como
 máximo un archivo de efecto temporal por caso. Estos tests caracterizan el
 sistema determinista actual; no demuestran robustez de un modelo GenAI real.
+
+## Baseline adversaria canónica
+
+PGS-03-M07 añade `CMP-08` y fija
+`GSL-BASELINE-ADVERSARIAL-001` contra el commit exacto
+`93aefa45eac687d219bfed32f03be4e60e4a13ed`, con checkout limpio y los
+oráculos separados del target.
+
+```bash
+uv run --frozen python evaluations/run_adversarial_baseline.py \
+  --expected-commit 93aefa45eac687d219bfed32f03be4e60e4a13ed \
+  --expected-branch main \
+  --run-id GSL-ADV-BL-20260725-001 \
+  --executed-at-utc 2026-07-25T20:00:32Z \
+  --uv-version 0.6.10 \
+  --run-root "$TMP/adversarial-baseline-v1"
+```
+
+La evidencia revisada está en
+[`evaluations/adversarial-baseline-v1/`](./evaluations/adversarial-baseline-v1/):
+
+- 14 casos, 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`;
+- residual crítico reproducido en `ADV-TOL-005`;
+- 14 invocaciones de modelo, 22 solicitudes de herramienta, 23 operaciones
+  sobre fronteras de herramienta y 2 subprocesos;
+- 1 archivo de efecto temporal, 0 llamadas externas y 0 €;
+- configuración, resultados y eventos saneados, más un manifiesto con tamaños
+  y hashes SHA-256.
+
+Los artefactos omiten payloads completos, salida bruta, traceback y rutas
+personales. Un `PASS` solo acredita coincidencia con el oráculo de esa
+variante y ese candidato; no demuestra seguridad general ni robustez de un
+modelo GenAI real.
 
 ## Crosswalk de amenazas
 
@@ -833,9 +875,10 @@ Toda acción no enumerada como permitida queda denegada por defecto.
 - No construirá interfaz gráfica, arquitectura multiagente, múltiples proveedores o toda la plataforma Docker AI sin una necesidad demostrada.
 - No ejecutará acciones autónomas fuera del sandbox ni pruebas contra terceros.
 - No obtendrá una certificación regulatoria ni afirmará cumplimiento legal integral.
-- No publicará resultados de evaluación, releases u otros artefactos externos
-  sin una decisión posterior independiente; la publicación pública del código
-  fuente fue autorizada expresamente el 2026-07-25.
+- La única publicación de resultados autorizada hasta ahora es la evidencia
+  saneada de `GSL-BASELINE-ADVERSARIAL-001` incorporada por PGS-03-M07.
+  Releases y cualquier otro artefacto externo requieren una decisión posterior
+  independiente.
 
 ## Criterios de éxito aprobados
 
@@ -898,9 +941,10 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Implementar pruebas para prompt injection directa e indirecta.
 - [x] Implementar pruebas para jailbreak y revelación de información.
 - [x] Implementar pruebas para llamadas de herramienta no autorizadas y exceso de agencia.
+- [x] Ejecutar la baseline y conservar configuración, resultados y logs saneados.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M06, PGS-07-M08, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **28 de 66 microtareas (42,4 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta completar las pruebas y P01-M08 hasta implementar y verificar PGS-04.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 a PGS-03-M07, PGS-07-M08, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **29 de 66 microtareas (43,9 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta documentar los hallazgos en PGS-03-M08 y P01-M08 hasta implementar y verificar PGS-04.
 
 ## Roadmap
 
@@ -910,7 +954,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-03-M07 — ejecutar la baseline y conservar configuración, resultados y logs saneados.**
+**PGS-03-M08 — documentar hallazgos, impacto, reproducción y límites.**
 
 ## Uso responsable
 

@@ -14,8 +14,8 @@ de `GSL-ROE-001`.
 - PGS-03-M06 limita cada caso TOL a 15 segundos, hasta 3 escenarios, 2 turnos
   y 2 solicitudes por escenario, 0 subprocesos, 0 llamadas externas y como
   máximo 1 archivo temporal de efecto.
-- Evidencia: observación tipada en memoria; no crea la baseline canónica de
-  PGS-03-M07.
+- Evidencia propia: observación tipada en memoria. `CMP-08` consume estas
+  observaciones para crear la baseline canónica sin ampliar el target.
 
 ## Flujo
 
@@ -47,7 +47,7 @@ de `GSL-ROE-001`.
 ## Límites
 
 - No entrega `DAT-08` al perfil, al modelo o a la herramienta.
-- No modifica el corpus canónico, escribe evidencia, abre red o conecta un
-  proveedor.
+- No modifica el corpus canónico, escribe evidencia por sí mismo, abre red o
+  conecta un proveedor.
 - No generaliza sus resultados a un modelo GenAI real.
 - Las otras cuatro fixtures permanecen fuera de este harness.

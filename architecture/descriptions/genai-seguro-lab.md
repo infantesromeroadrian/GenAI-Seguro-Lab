@@ -17,6 +17,8 @@ mediante un flujo determinista y herramientas con autoridad acotada.
   marcador señuelo de CLI sin persistencia ni red.
 - Evaluar abuso de herramientas, confirmaciones y filesystem dentro de `$TMP`,
   conservando explícitamente un único residual de confirmación sin identidad.
+- Fijar mediante `CMP-08` una baseline adversaria reproducible y conservar solo
+  su proyección saneada y revisada.
 
 ## Límites de confianza
 
@@ -40,7 +42,8 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
   público es una integración manual de desarrollo y distribución; no es
   alcanzable desde el runtime.
 - El corpus adversario conserva fixtures y oráculos separados; `CMP-07` cubre
-  14 PI/JB/EX/TOL y las otras cuatro entradas siguen inertes.
+  14 PI/JB/EX/TOL, `CMP-08` fija su baseline canónica y las otras cuatro
+  entradas siguen inertes.
 - El perfil vulnerable existe como API interna `C0`; solo `CMP-07` conduce sus
   peticiones hacia el doble determinista y `TOL-01`; M06 invoca `TOL-02`
   únicamente desde pytest y bajo `$TMP`, nunca desde la CLI o el flujo benigno.
@@ -53,3 +56,4 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 - `data/manifest.json`
 - `data/adversarial/manifest.json`
 - `evaluations/benign-baseline-v1.json`
+- `evaluations/adversarial-baseline-v1/`

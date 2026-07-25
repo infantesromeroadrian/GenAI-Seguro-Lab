@@ -46,7 +46,7 @@ def test_manifest_fixes_scope_counts_and_partial_test_wiring(
     expected = adversarial_bundle.manifest.expected_result
 
     assert adversarial_bundle.manifest.id == "GSL-ADVERSARIAL-CORPUS-001"
-    assert adversarial_bundle.manifest.version == "1.3.0"
+    assert adversarial_bundle.manifest.version == "1.4.0"
     assert adversarial_bundle.manifest.rules_of_engagement == "GSL-ROE-001"
     assert (
         adversarial_bundle.manifest.target_profile
@@ -58,7 +58,7 @@ def test_manifest_fixes_scope_counts_and_partial_test_wiring(
     assert expected.threat_families == 6
     assert expected.test_wired_records == 14
     assert expected.inert_records == 4
-    assert expected.canonical_evaluation_records == 0
+    assert expected.canonical_evaluation_records == 14
     assert (
         adversarial_bundle.manifest.fixture_state
         == "partially_wired_for_tests"
@@ -202,7 +202,7 @@ def test_input_contract_rejects_extra_and_non_synthetic_fields() -> None:
         )
 
 
-def test_manifest_cannot_claim_more_wired_or_canonical_records() -> None:
+def test_manifest_cannot_claim_more_wired_or_different_canonical_records() -> None:
     payload = json.loads(
         (ADVERSARIAL_DIR / "manifest.json").read_text(encoding="utf-8")
     )
@@ -212,8 +212,8 @@ def test_manifest_cannot_claim_more_wired_or_canonical_records() -> None:
         AdversarialCorpusManifest.model_validate_json(json.dumps(payload))
 
     payload["expected_result"]["test_wired_records"] = 14
-    payload["expected_result"]["canonical_evaluation_records"] = 1
-    with pytest.raises(ValidationError, match="Input should be 0"):
+    payload["expected_result"]["canonical_evaluation_records"] = 13
+    with pytest.raises(ValidationError, match="Input should be 14"):
         AdversarialCorpusManifest.model_validate_json(json.dumps(payload))
 
 

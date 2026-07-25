@@ -12,7 +12,7 @@ por separado el corpus adversario mediante una API interna.
 - Exigir 18 fixtures, los 17 abuse cases, seis familias y los límites de las
   RoE.
 - Verificar que 14 fixtures PI/JB/EX/TOL están conectadas al harness de test y
-  que las otras cuatro permanecen inertes.
+  evaluadas canónicamente, y que las otras cuatro permanecen inertes.
 - Devolver el bundle en memoria sin interpretar payloads ni entregar oráculos
   al target.
 
