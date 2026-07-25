@@ -1,5 +1,16 @@
 # Tests
 
-Este directorio contendrá las pruebas automatizadas del laboratorio.
+Este directorio contiene las pruebas automatizadas del contrato de datos, el
+adaptador determinista, las herramientas locales, el flujo benigno y la
+interfaz de proceso completo.
 
-PGS-01-M02 solo crea el límite. La configuración de pytest pertenece a PGS-01-M03 y las primeras pruebas de comportamiento se incorporarán junto a las capacidades que verifiquen.
+Ejecución completa:
+
+```bash
+uv run --frozen pytest
+```
+
+`test_cli_smoke.py` comprueba el punto de entrada desde fuera del repositorio,
+la reproducción exacta de la baseline versionada, el resultado byte a byte de
+un caso repetido, el error saneado ante un identificador desconocido y que la
+ejecución no cree borradores.

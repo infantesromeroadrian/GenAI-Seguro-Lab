@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M06 y P01-M01 completadas. El contrato, el esqueleto, el entorno reproducible, el corpus benigno, el adaptador determinista y el primer flujo benigno con herramientas locales están versionados en un repositorio Git local sobre `main`; todavía no existe CLI, smoke baseline, modelo GenAI real, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07 y P01-M01 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional reproducible sobre el corpus sintético. Todavía no existe un modelo GenAI real, perfil vulnerable, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -26,24 +26,29 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 ├── .gitignore
 ├── .python-version
 ├── README.md
+├── main.py
 ├── plan-proyecto-GenAI-Seguro-Lab.md
 ├── pyproject.toml
 ├── uv.lock
 ├── src/
 │   └── genai_seguro_lab/
 │       ├── __init__.py
+│       ├── baseline.py
 │       ├── benign_flow.py
+│       ├── cli.py
 │       ├── data_contract.py
 │       ├── local_tools.py
 │       └── model_adapter.py
 ├── tests/
 │   ├── README.md
 │   ├── test_benign_flow.py
+│   ├── test_cli_smoke.py
 │   ├── test_data_contract.py
 │   ├── test_local_tools.py
 │   └── test_model_adapter.py
 ├── evaluations/
-│   └── README.md
+│   ├── README.md
+│   └── benign-baseline-v1.json
 ├── data/
 │   ├── README.md
 │   ├── incidents.jsonl
@@ -57,7 +62,7 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
         └── README.md
 ```
 
-PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo y PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas. Todavía no existe una CLI ni un modelo GenAI real.
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas y PGS-01-M07 fija su interfaz y primera baseline funcional. Todavía no existe un modelo GenAI real.
 
 ## Entorno reproducible
 
@@ -65,10 +70,11 @@ PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, dat
 - `uv.lock` fija la resolución completa. En la verificación actual utiliza Python 3.12.8, Pydantic 2.13.4 y pytest 9.1.1.
 - Pydantic 2 es una dependencia de ejecución y pytest 9 pertenece al grupo de desarrollo.
 - pytest usa configuración TOML nativa, modo estricto, `tests/` como raíz de descubrimiento y `src/` como ruta de importación.
-- `[tool.uv] package = false` evita una instalación editable mientras todavía
-  no existe un punto de entrada estable. pytest añade `src/` a su ruta de
-  importación; una ejecución manual provisional requiere `PYTHONPATH=src`.
-  Esta decisión se revisará en PGS-01-M07.
+- `[tool.uv] package = false` mantiene deliberadamente el proyecto como
+  aplicación local plana. `main.py` resuelve el `src/` del propio checkout y
+  ofrece un punto de entrada estable sin instalación editable ni
+  `PYTHONPATH`; pytest conserva `src/` como ruta de importación para las
+  pruebas.
 
 Reconstrucción y comprobación:
 
@@ -156,6 +162,37 @@ Comprobación específica:
 
 ```bash
 uv run --frozen pytest tests/test_benign_flow.py tests/test_local_tools.py
+```
+
+## Interfaz local y baseline funcional
+
+`main.py` expone dos operaciones locales, de solo lectura y con salida JSON:
+
+```bash
+uv run --frozen python main.py analyze --incident INC-BEN-001
+uv run --frozen python main.py baseline
+```
+
+- `analyze` ejecuta un incidente benigno por su identificador exacto.
+- `baseline` ejecuta los 12 incidentes del corpus y emite el resultado
+  completo por `stdout`.
+- La ejecución es determinista y no usa red, proveedor externo, secretos,
+  escritura de borradores ni gasto.
+- `evaluations/benign-baseline-v1.json` conserva la instantánea canónica:
+  12/12 casos completados, 24 invocaciones del doble de modelo, 12 consultas
+  autorizadas, 0 llamadas externas y 0 €.
+- `passed` significa únicamente que el flujo técnico benigno terminó según su
+  contrato. Esta evidencia declara `security_baseline: false` y
+  `semantic_utility_evaluated: false`; no demuestra resistencia a ataques ni
+  calidad semántica.
+- Las pruebas smoke comprueban también la ejecución desde fuera del
+  repositorio, la estabilidad byte a byte, el fallo saneado ante un
+  identificador desconocido y la ausencia de borradores reales.
+
+Comprobación específica:
+
+```bash
+uv run --frozen pytest tests/test_cli_smoke.py
 ```
 
 ## Por qué existe
@@ -587,9 +624,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Crear el dataset sintético de incidentes y la base de conocimiento.
 - [x] Implementar el adaptador determinista de modelo para tests.
 - [x] Implementar el flujo benigno mínimo y las herramientas confinadas al sandbox.
-- [ ] Añadir smoke tests y registrar la primera baseline funcional.
+- [x] Añadir smoke tests y registrar la primera baseline funcional.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M06 y P01-M01 están completadas.** El avance interno es **12 de 66 microtareas (18,2 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07 y P01-M01 están completadas.** El avance interno es **13 de 66 microtareas (19,7 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -599,7 +636,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-01-M07 — añadir smoke tests y registrar la primera baseline funcional.**
+**PGS-02-M01 — registrar las versiones consultadas de OWASP, MITRE ATLAS y NIST.**
 
 ## Uso responsable
 

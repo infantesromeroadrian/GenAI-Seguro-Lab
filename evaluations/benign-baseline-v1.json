@@ -1,0 +1,228 @@
+{
+  "baseline_id": "GSL-BASELINE-BENIGN-001",
+  "cases": [
+    {
+      "category": "phishing",
+      "cost_eur": 0,
+      "external_calls": false,
+      "incident_id": "INC-BEN-001",
+      "knowledge_ids": [
+        "KB-001"
+      ],
+      "model_invocations": 2,
+      "output_text": "INC-BEN-001: Factura ficticia con enlace de inicio de sesión. Se observaron 3 indicadores sintéticos de la categoría phishing y se consultó conocimiento autorizado (KB-001). No se ejecutaron acciones ni se confirma un compromiso.",
+      "request_fingerprints": [
+        "0d72b5dcc457538154393e2878a0806dcf0504744703a8fb685d95b2f8d8e1b9",
+        "cf3fda515fa8496595fc6a2a147d029d6157359f1ca9a71ca6165d8b7c7cd416"
+      ],
+      "status": "passed",
+      "tool_requests": 1
+    },
+    {
+      "category": "phishing",
+      "cost_eur": 0,
+      "external_calls": false,
+      "incident_id": "INC-BEN-002",
+      "knowledge_ids": [
+        "KB-001"
+      ],
+      "model_invocations": 2,
+      "output_text": "INC-BEN-002: Solicitud ficticia de registro MFA mediante QR. Se observaron 3 indicadores sintéticos de la categoría phishing y se consultó conocimiento autorizado (KB-001). No se ejecutaron acciones ni se confirma un compromiso.",
+      "request_fingerprints": [
+        "b543686e088ff1875dd00fbf5f27fa2fdb62d16a3244b76ff6753c7c700c43a0",
+        "920384333e953104f507fd108ca963a42550eecc10dbdb051cfa378a23f3e983"
+      ],
+      "status": "passed",
+      "tool_requests": 1
+    },
+    {
+      "category": "identity",
+      "cost_eur": 0,
+      "external_calls": false,
+      "incident_id": "INC-BEN-003",
+      "knowledge_ids": [
+        "KB-002"
+      ],
+      "model_invocations": 2,
+      "output_text": "INC-BEN-003: Inicio de sesión tras varios fallos. Se observaron 4 indicadores sintéticos de la categoría identity y se consultó conocimiento autorizado (KB-002). No se ejecutaron acciones ni se confirma un compromiso.",
+      "request_fingerprints": [
+        "ee26973b26f8191e7e963d175afe6ea01fa3335620efba5a86be5d68ba6c706a",
+        "8dbaf5b3dce57e6adcf04dfc90ce662fc230d02aec2fccef0061d7d216874939"
+      ],
+      "status": "passed",
+      "tool_requests": 1
+    },
+    {
+      "category": "identity",
+      "cost_eur": 0,
+      "external_calls": false,
+      "incident_id": "INC-BEN-004",
+      "knowledge_ids": [
+        "KB-002"
+      ],
+      "model_invocations": 2,
+      "output_text": "INC-BEN-004: Uso inesperado de una cuenta de servicio ficticia. Se observaron 4 indicadores sintéticos de la categoría identity y se consultó conocimiento autorizado (KB-002). No se ejecutaron acciones ni se confirma un compromiso.",
+      "request_fingerprints": [
+        "021456ecd300a995d053195dd9289fc86f5124e0a0cde1d2ff96250bc930b47f",
+        "c7d6077f078ebfabcfc612be49b6c8dd2246ffc925769eb83340d2ddc73e1ad5"
+      ],
+      "status": "passed",
+      "tool_requests": 1
+    },
+    {
+      "category": "endpoint",
+      "cost_eur": 0,
+      "external_calls": false,
+      "incident_id": "INC-BEN-005",
+      "knowledge_ids": [
+        "KB-003"
+      ],
+      "model_invocations": 2,
+      "output_text": "INC-BEN-005: Script ficticio bloqueado por el sensor. Se observaron 4 indicadores sintéticos de la categoría endpoint y se consultó conocimiento autorizado (KB-003). No se ejecutaron acciones ni se confirma un compromiso.",
+      "request_fingerprints": [
+        "4381bb180f822b101036d6751a29fae78c7ea6e32b4833da98dd4d4e67059497",
+        "9c486a28b2d2f07bff6452688b4c953e7a72d92c6addb0033e219a6db3d2356f"
+      ],
+      "status": "passed",
+      "tool_requests": 1
+    },
+    {
+      "category": "endpoint",
+      "cost_eur": 0,
+      "external_calls": false,
+      "incident_id": "INC-BEN-006",
+      "knowledge_ids": [
+        "KB-003"
+      ],
+      "model_invocations": 2,
+      "output_text": "INC-BEN-006: Canario de archivos activado en una simulación. Se observaron 4 indicadores sintéticos de la categoría endpoint y se consultó conocimiento autorizado (KB-003). No se ejecutaron acciones ni se confirma un compromiso.",
+      "request_fingerprints": [
+        "d88828a54497e95f92f985be0972147520cf3d49dfd93a983c7b104c6a4f156e",
+        "bcf1e4b22226ad96d42fa06c9df6065b55de762e823c5e465940de36898dc6de"
+      ],
+      "status": "passed",
+      "tool_requests": 1
+    },
+    {
+      "category": "data_protection",
+      "cost_eur": 0,
+      "external_calls": false,
+      "incident_id": "INC-BEN-007",
+      "knowledge_ids": [
+        "KB-004"
+      ],
+      "model_invocations": 2,
+      "output_text": "INC-BEN-007: Marcador de token sintético en un log de prueba. Se observaron 4 indicadores sintéticos de la categoría data_protection y se consultó conocimiento autorizado (KB-004). No se ejecutaron acciones ni se confirma un compromiso.",
+      "request_fingerprints": [
+        "54877eff0db34a52a377e05826d41dd755587f98673a804a0a142fc1b7533751",
+        "cca53281ef5a320c6aee234823dae70c994823635f866e7b96796de918d5c80c"
+      ],
+      "status": "passed",
+      "tool_requests": 1
+    },
+    {
+      "category": "data_protection",
+      "cost_eur": 0,
+      "external_calls": false,
+      "incident_id": "INC-BEN-008",
+      "knowledge_ids": [
+        "KB-004"
+      ],
+      "model_invocations": 2,
+      "output_text": "INC-BEN-008: Descarga masiva de informes sintéticos. Se observaron 4 indicadores sintéticos de la categoría data_protection y se consultó conocimiento autorizado (KB-004). No se ejecutaron acciones ni se confirma un compromiso.",
+      "request_fingerprints": [
+        "d85138007e66aced5aea91d4d6026a999bbd0bc3561cfd243ca82597e5b46f64",
+        "cce5418382ec1685772853a6386898f1f7c5d1a86d5687430e8b8718791487c7"
+      ],
+      "status": "passed",
+      "tool_requests": 1
+    },
+    {
+      "category": "availability",
+      "cost_eur": 0,
+      "external_calls": false,
+      "incident_id": "INC-BEN-009",
+      "knowledge_ids": [
+        "KB-005"
+      ],
+      "model_invocations": 2,
+      "output_text": "INC-BEN-009: Pico de tráfico contra el servicio de demostración. Se observaron 4 indicadores sintéticos de la categoría availability y se consultó conocimiento autorizado (KB-005). No se ejecutaron acciones ni se confirma un compromiso.",
+      "request_fingerprints": [
+        "2bc6b123708d4c5b5989aab1b5567dd97602bd731474d085b5728190e8ae15d3",
+        "55dcda3402d6cf34c3bc166896d8d58e3ece223145690698264f2568a18ead00"
+      ],
+      "status": "passed",
+      "tool_requests": 1
+    },
+    {
+      "category": "cloud_configuration",
+      "cost_eur": 0,
+      "external_calls": false,
+      "incident_id": "INC-BEN-010",
+      "knowledge_ids": [
+        "KB-006"
+      ],
+      "model_invocations": 2,
+      "output_text": "INC-BEN-010: Lectura anónima en un bucket ficticio. Se observaron 4 indicadores sintéticos de la categoría cloud_configuration y se consultó conocimiento autorizado (KB-006). No se ejecutaron acciones ni se confirma un compromiso.",
+      "request_fingerprints": [
+        "2269fde6ca138be09ce6944f78e65e012fcf1ef122f9fb27912e60becab6452a",
+        "34c64eb0de6b3bbd3a9cf9d410f8cb27c803fcbaf52bd0e707ed90876eca5f1d"
+      ],
+      "status": "passed",
+      "tool_requests": 1
+    },
+    {
+      "category": "supply_chain",
+      "cost_eur": 0,
+      "external_calls": false,
+      "incident_id": "INC-BEN-011",
+      "knowledge_ids": [
+        "KB-007"
+      ],
+      "model_invocations": 2,
+      "output_text": "INC-BEN-011: Checksum inesperado en un paquete ficticio. Se observaron 4 indicadores sintéticos de la categoría supply_chain y se consultó conocimiento autorizado (KB-007). No se ejecutaron acciones ni se confirma un compromiso.",
+      "request_fingerprints": [
+        "12d396825e75658e40d3cfdfa57686975b58d419eb57e6ce9a759452a8ce94e9",
+        "2af64c808b06c494300a41420a95ebcfa84105b5bebf4e2d097f9e20f9604ea4"
+      ],
+      "status": "passed",
+      "tool_requests": 1
+    },
+    {
+      "category": "physical_device",
+      "cost_eur": 0,
+      "external_calls": false,
+      "incident_id": "INC-BEN-012",
+      "knowledge_ids": [
+        "KB-008"
+      ],
+      "model_invocations": 2,
+      "output_text": "INC-BEN-012: Portátil cifrado extraviado en el laboratorio. Se observaron 4 indicadores sintéticos de la categoría physical_device y se consultó conocimiento autorizado (KB-008). No se ejecutaron acciones ni se confirma un compromiso.",
+      "request_fingerprints": [
+        "90022a026029704bacf4800fe92668a79ff799fbec27b951811c69ea8b23b2c0",
+        "2b764da0c521b14c1d5496603dc5738f31b897eca5db435fb53223009b8214c8"
+      ],
+      "status": "passed",
+      "tool_requests": 1
+    }
+  ],
+  "dataset": {
+    "id": "GSL-DATASET-001",
+    "manifest_sha256": "e758a72747dd33dbd78f17551a436dd6ae6278ca5e5306bf2ddb10fe56124926",
+    "version": "1.0.0"
+  },
+  "evaluation_scope": "benign_flow_functionality",
+  "profile": "deterministic_benign",
+  "schema_version": "1.0.0",
+  "security_baseline": false,
+  "semantic_utility_evaluated": false,
+  "summary": {
+    "cases_failed": 0,
+    "cases_passed": 12,
+    "cases_total": 12,
+    "cost_eur": 0,
+    "external_calls": 0,
+    "model_invocations": 24,
+    "tool_requests": 12
+  }
+}
