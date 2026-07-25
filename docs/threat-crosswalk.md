@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-THREAT-CROSSWALK-001` |
-| Versión | `1.0.1` |
+| Versión | `1.1.0` |
 | Fecha de corte | 2026-07-25 |
-| Estado de código observado | commit `8e575eae14b8dffd1a7ff4922fa9b83841c87f79` |
+| Baseline de código | commit `5b76303c56eda7544165fc8c08738c9eb0f8edd2` + candidato PGS-03-M02 |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Priorización de origen | [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) |
 | Baseline de marcos | [Versiones y fuentes fijadas](./framework-versions.md) |
@@ -16,6 +16,10 @@
 Este documento relaciona los abuse cases propios con taxonomías externas. No
 convierte una categoría en una vulnerabilidad demostrada, no acredita
 conformidad y no implica que el laboratorio sea un agente autónomo.
+
+PGS-03-M02 revisa el crosswalk por el alta de `CMP-06`. No cambia ninguna
+correspondencia: el perfil solo construye una petición `C0`, no incorpora un
+caso nuevo ni crea una ruta hacia el modelo o las herramientas.
 
 ## Fuentes y versiones
 
@@ -165,5 +169,5 @@ Las relaciones adicionales no aumentan el número de casos cubiertos.
 [`GSL-NIST-CONTROLS-001`](./control-responsibility-mapping.md) asigna
 responsables y controles previstos a los 17 casos y los relaciona con NIST AI
 RMF 1.0 y NIST SP 800-218A. Este crosswalk no altera las prioridades actuales
-y debe revisarse si cambia un abuse case, la arquitectura o alguna edición
-fijada.
+y deberá revisarse de nuevo cuando el corpus o el harness cambien la
+alcanzabilidad, o si cambia un abuse case o alguna edición fijada.

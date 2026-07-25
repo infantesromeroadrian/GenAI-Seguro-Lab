@@ -8,6 +8,7 @@ mediante un flujo determinista y herramientas con autoridad acotada.
 - Separar la salida del modelo de la autorización de herramientas.
 - Emitir resultados JSON reproducibles y mantener los efectos locales fuera de
   la ruta ordinaria de la CLI.
+- Preparar una petición vulnerable marcada para evaluación sin ejecutarla.
 
 ## Límites de confianza
 
@@ -28,7 +29,9 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 - No hay modelo GenAI real, proveedor, red, API web, Docker, cloud o base de
   datos.
 - No hay autenticación interna, service account, telemetría o remoto Git.
-- El perfil vulnerable y el corpus adversario todavía no existen.
+- El corpus adversario y el harness ejecutable todavía no existen.
+- El perfil vulnerable existe como API interna `C0`; no está conectado al
+  modelo, las herramientas o la CLI.
 
 ## Evidencia
 

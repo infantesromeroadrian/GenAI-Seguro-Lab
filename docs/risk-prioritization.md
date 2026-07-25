@@ -5,13 +5,13 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-PRIORITY-001` |
-| Versión | `1.1.1` |
+| Versión | `1.2.0` |
 | Fecha de corte | 2026-07-25 |
-| Estado de código observado | commit `9393e893b80276c78d4398626eb2d75cac16f363` |
+| Baseline de código | commit `5b76303c56eda7544165fc8c08738c9eb0f8edd2` + candidato PGS-03-M02 |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Crosswalk actual | [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
-| Alcance | sistema local, determinista y exclusivamente sintético actual |
+| Alcance | sistema local sintético, incluida la configuración aislada `CMP-06` |
 
 Esta priorización ordena el backlog de pruebas del laboratorio. No es una
 clasificación CVSS, no estima la frecuencia de incidentes reales y no afirma
@@ -80,7 +80,7 @@ adversario pudiera ser grave en otro sistema.
 |---|---:|---|
 | `PR-1` | 18–36 | Probar primero después de aprobar las Rules of Engagement |
 | `PR-2` | 8–17 | Incorporar al siguiente bloque del harness |
-| `PR-3` | 1–7 | Mantener como regresión o activar cuando exista el perfil necesario |
+| `PR-3` | 1–7 | Mantener como regresión o activar cuando exista el corpus o la ruta necesaria |
 | `PR-0` | 0 por `K0` | Esperar hasta que una revisión de arquitectura cree una ruta real |
 
 En empates se ordena primero un residual aceptado, después una superficie
@@ -112,6 +112,23 @@ severidad.
 
 Distribución: 2 casos `PR-1`, 3 `PR-2`, 11 `PR-3` y 1 `PR-0`.
 
+## Recálculo de PGS-03-M02
+
+La creación de `GSL-PROFILE-VULNERABLE-001` activó la revisión prevista. Las
+puntuaciones no cambian todavía:
+
+- `CMP-06` construye una petición débil marcada, pero no llama a `MOD-01`;
+- anunciar `knowledge_search` y `draft_create` no crea una ruta de ejecución;
+- no existe corpus adversario, dispatcher, run manifest o evidencia de ataque;
+- la CLI sigue aceptando únicamente `analyze` y `baseline`;
+- el efecto máximo nuevo es `C0`, por lo que no cambia `I`, `L` o `K` de
+  ninguno de los 17 casos.
+
+El cambio es arquitectónico y observable, pero no se presenta como una
+vulnerabilidad explotada. La siguiente revisión deberá producirse cuando
+PGS-03-M03 y el harness conecten una entrada adversaria a un adaptador y un
+oráculo.
+
 ## Backlog inicial de pruebas
 
 Los cinco primeros casos forman el backlog prioritario actual:
@@ -127,9 +144,9 @@ Los cinco primeros casos forman el backlog prioritario actual:
 5. dividir `AC-SC-01` en cambios controlados de código, lock y evidencia sobre
    copias temporales, sin alterar la baseline autoritativa.
 
-La prioridad no autoriza su ejecución. PGS-03-M01 debe fijar primero las Rules
-of Engagement. En particular, `AC-DOS-01` se ejecutará solo con topes
-conservadores y después de definir una parada segura.
+La prioridad no autoriza su ejecución. `GSL-ROE-001` ya fija el marco, pero el
+corpus adversario y el harness siguen siendo precondiciones. En particular,
+`AC-DOS-01` se ejecutará solo con sus topes conservadores y una parada segura.
 
 ## Decisiones derivadas
 
@@ -140,8 +157,9 @@ conservadores y después de definir una parada segura.
 - `AC-SC-01` no se confunde con comportamiento del modelo: su impacto `C3`
   pertenece a la cuenta de mantenimiento.
 - Los casos de prompt injection y jailbreak no encabezan el backlog porque el
-  sistema no tiene prompt libre ni modelo generativo real. Deberán
-  recalcularse al crear el perfil vulnerable.
+  sistema no tiene prompt libre ni modelo generativo real. El recálculo de
+  PGS-03-M02 conserva sus valores: construir una petición vulnerable sin
+  ejecutarla no aumenta su alcanzabilidad.
 - La priorización no altera los gaps de evidencia del catálogo ni permite
   afirmar que un control es eficaz antes del futuro harness.
 
@@ -153,6 +171,7 @@ de estos supuestos:
 - incorporación de un modelo o proveedor real;
 - entrada libre, API, UI, red o usuario remoto;
 - conexión de `TOL-02` al flujo o a la CLI;
+- conexión de `CMP-06` a un adaptador, dispatcher o harness ejecutable;
 - incorporación de nuevas herramientas, shell, secretos o datos sensibles;
 - ejecución desatendida, contenedores, cloud o identidad de servicio;
 - controles que cambien la probabilidad condicionada;
@@ -161,8 +180,9 @@ de estos supuestos:
 ## Cobertura y siguiente tratamiento
 
 Los 17 abuse cases aparecen exactamente una vez y conservan la alcanzabilidad
-de `GSL-ABUSE-CASES-001`. No se ha ejecutado ningún ataque, creado un corpus
-adversario ni habilitado un perfil vulnerable.
+de `GSL-ABUSE-CASES-001`. El perfil vulnerable está construido y aislado, pero
+no se ha ejecutado ningún ataque, creado un corpus adversario ni habilitado una
+ruta de ejecución.
 
 [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) relaciona los casos con
 OWASP y MITRE ATLAS sin cambiar sus puntuaciones.

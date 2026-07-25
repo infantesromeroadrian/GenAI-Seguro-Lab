@@ -21,6 +21,16 @@ Resultado fijado:
 - 0 € de coste.
 
 El snapshot es evidencia de reproducibilidad y funcionamiento del flujo, no
-una medición de resistencia a ataques ni de utilidad semántica. El perfil
-vulnerable, el corpus adversario y la baseline de seguridad pertenecen a
-PGS-03.
+una medición de resistencia a ataques ni de utilidad semántica.
+
+## Perfil vulnerable de evaluación
+
+`GSL-PROFILE-VULNERABLE-001` ya existe como configuración aislada, no
+predeterminada y sin capacidad de ejecución. Construye peticiones claramente
+marcadas, pero no llama al modelo, no ejecuta herramientas y no genera aquí
+ningún resultado.
+
+El corpus adversario, el harness, los runs y la baseline de seguridad siguen
+pendientes de PGS-03-M03 a PGS-03-M07. Este directorio no debe recibir una
+evidencia de ataque antes de fijar el corpus, los oráculos y el candidato
+exacto.

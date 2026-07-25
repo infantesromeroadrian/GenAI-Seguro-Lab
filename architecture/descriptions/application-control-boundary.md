@@ -4,9 +4,12 @@ del modelo.
 ## Trust boundary
 
 - ID: `TB-02`.
-- Incluye CLI, contrato de datos, flujo benigno y motor de baseline.
+- Incluye CLI, contrato de datos, flujo benigno, motor de baseline y perfil
+  vulnerable de evaluación.
 - Decide qué datos se cargan, qué herramienta se autoriza y cuándo termina el
   flujo.
+- El perfil de evaluación solo construye una petición y no participa en el
+  flujo ordinario.
 
 ## Límite
 

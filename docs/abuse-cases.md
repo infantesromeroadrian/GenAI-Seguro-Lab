@@ -5,9 +5,9 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ABUSE-CASES-001` |
-| Versión | `1.2.0` |
+| Versión | `1.3.0` |
 | Fecha de corte | 2026-07-25 |
-| Estado de código observado | commit `ae7d876799659b4025f53b7bf3c1f5ab5c8cfa56` |
+| Baseline de código | commit `5b76303c56eda7544165fc8c08738c9eb0f8edd2` + candidato PGS-03-M02 |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
 | Arquitectura de origen | [`architecture/manifest.json`](../architecture/manifest.json) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
@@ -159,7 +159,10 @@ un proveedor mediante este catálogo.
 - `AC-PI-01` no tiene ruta actual.
 - Los casos de inyección indirecta y supply chain exigen autoridad de
   mantenimiento; el modelo determinista no puede introducirlos por sí mismo.
-- No existe todavía corpus adversario, perfil vulnerable, modelo real,
+- `CMP-06` construye una petición deliberadamente vulnerable como API interna,
+  pero no llama al modelo ni ejecuta herramientas; por eso no cambia todavía
+  el estado de alcance de ningún `AC-*`.
+- No existe todavía corpus adversario, harness de ataque, modelo real,
   proveedor, red, autenticación, telemetría o despliegue.
 
 ## Siguiente tratamiento
@@ -167,6 +170,6 @@ un proveedor mediante este catálogo.
 [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) puntúa los 17 casos sin
 alterar su alcanzabilidad actual y
 [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) conserva su
-correspondencia con OWASP y MITRE ATLAS. PGS-03 seleccionará los casos
-priorizados, creará datos exclusivamente sintéticos y construirá el harness
+correspondencia con OWASP y MITRE ATLAS. PGS-03-M03 creará datos
+exclusivamente sintéticos y las siguientes microtareas construirán el harness
 antes de afirmar que un ataque fue reproducido.

@@ -64,7 +64,7 @@
       "id": "context-maintainer-maintains-lab",
       "source": "lab-maintainer",
       "target": "genai-seguro-lab",
-      "label": "Git local + uv + pytest",
+      "label": "Git + uv + pytest + factory de evaluación",
       "meta": {
         "type": "calls"
       }

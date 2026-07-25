@@ -5,6 +5,8 @@ Mantiene el checkout y reproduce su evidencia mediante Git, uv y pytest.
 - Revisar cambios de código, datos y documentación.
 - Reconstruir el entorno con el lockfile.
 - Ejecutar pruebas y versionar snapshots revisados.
+- Construir el perfil vulnerable únicamente con la declaración de
+  `GSL-ROE-001` y un sandbox temporal.
 
 ## Autoridad
 

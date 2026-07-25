@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; la arquitectura, el threat model, los responsables, el mapa de controles NIST y las Rules of Engagement ya están fijados. Todavía no existe un modelo GenAI real, perfil vulnerable, harness adversario, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 y PGS-03-M02, P01-M01, P01-M04, P01-M05 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; el perfil vulnerable de evaluación ya existe aislado y sin capacidad de ejecución. Todavía no existe un modelo GenAI real, corpus adversario, harness de ataque, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -44,6 +44,7 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 │       ├── benign_flow.py
 │       ├── cli.py
 │       ├── data_contract.py
+│       ├── evaluation_profile.py
 │       ├── local_tools.py
 │       └── model_adapter.py
 ├── tests/
@@ -51,6 +52,7 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 │   ├── test_benign_flow.py
 │   ├── test_cli_smoke.py
 │   ├── test_data_contract.py
+│   ├── test_evaluation_profile.py
 │   ├── test_local_tools.py
 │   └── test_model_adapter.py
 ├── evaluations/
@@ -77,7 +79,7 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
         └── README.md
 ```
 
-PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas y PGS-01-M07 fija su interfaz y primera baseline funcional. Todavía no existe un modelo GenAI real.
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional y PGS-03-M02 añade el perfil vulnerable aislado. Todavía no existe un modelo GenAI real.
 
 ## Entorno reproducible
 
@@ -109,7 +111,7 @@ uv run --frozen pytest --version
 - `data/manifest.json` fija la versión, los conteos, la procedencia y los hashes SHA-256.
 - `src/genai_seguro_lab/data_contract.py` valida el esquema en modo estricto, rechaza campos adicionales y comprueba identificadores, referencias, conteos y hashes.
 - El corpus declara `synthetic: true`, sensibilidad `synthetic_internal` y procedencia `authored_for_lab`.
-- Esta versión contiene cero casos adversarios; se crearán en PGS-03, no en el flujo benigno inicial.
+- Esta versión contiene cero casos adversarios; se crearán en PGS-03-M03, no en el flujo benigno inicial.
 
 Comprobación específica:
 
@@ -364,8 +366,8 @@ alcanzabilidad. No se ejecutó ningún ataque durante la priorización.
 
 `AC-DOS-01` queda limitado a un piloto de dos procesos, 20 invocaciones y 60
 segundos. `AC-DOS-03` no está autorizado por las reglas base y necesitará una
-ampliación posterior. PGS-03-M01 solo define el marco: no ejecuta ataques ni
-habilita el perfil vulnerable.
+ampliación posterior. PGS-03-M02 crea el perfil, pero no ejecuta ataques ni
+habilita una ruta desde la CLI.
 
 ## Crosswalk de amenazas
 
@@ -594,15 +596,24 @@ Si la arquitectura cambia, el threat model deberá revisarse antes de ampliar la
 
 ## Perfil vulnerable
 
-El proyecto incluirá una configuración deliberadamente vulnerable para demostrar al menos un fallo reproducible.
+`src/genai_seguro_lab/evaluation_profile.py` implementa
+`GSL-PROFILE-VULNERABLE-001` como configuración deliberadamente débil y
+exclusiva de evaluación:
 
-Ese perfil:
+- exige una declaración estricta ligada a `GSL-ROE-001`;
+- solo acepta el `DatasetBundle` sintético validado y un
+  `$TMP/sandbox/drafts` ya existente;
+- rechaza el sandbox del checkout canónico;
+- construye una `ModelRequest` marcada que mezcla deliberadamente contenido no
+  confiable con instrucciones y anuncia `knowledge_search` y `draft_create`;
+- no llama al adaptador, no ejecuta herramientas, no escribe archivos, no usa
+  red y no está importado ni expuesto por la CLI;
+- omite el oráculo `expected_result` de la petición preparada.
 
-- solo podrá utilizarse desde el harness aislado de evaluación;
-- no será la configuración predeterminada;
-- utilizará únicamente datos sintéticos;
-- no tendrá acceso a sistemas externos;
-- quedará identificado claramente en logs e informes.
+El descriptor inmutable declara `default_profile: false`,
+`cli_reachable: false`, `external_calls: false` y
+`execution_enabled: false`. PGS-03-M03 añadirá el corpus adversario y las
+microtareas posteriores construirán el harness y su autorización por run.
 
 ## Contrato de evidencia
 
@@ -827,8 +838,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Mapear las amenazas a OWASP y MITRE ATLAS.
 - [x] Mapear responsables y controles previstos a NIST AI RMF y NIST SP 800-218A.
 - [x] Definir las Rules of Engagement del laboratorio propio.
+- [x] Crear el perfil vulnerable aislado y exclusivo para evaluación.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **22 de 66 microtareas (33,3 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta completar las pruebas y P01-M08 hasta implementar y verificar PGS-04.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M08, PGS-03-M01 y PGS-03-M02, P01-M01, P01-M04, P01-M05 y P01-M06 están completadas.** El avance interno es **23 de 66 microtareas (34,8 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M07 sigue abierta hasta completar las pruebas y P01-M08 hasta implementar y verificar PGS-04.
 
 ## Roadmap
 
@@ -838,7 +850,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-03-M02 — crear un perfil vulnerable aislado y exclusivo para evaluación.**
+**PGS-03-M03 — preparar el corpus adversario con entradas y resultados esperados.**
 
 ## Uso responsable
 

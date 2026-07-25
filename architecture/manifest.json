@@ -1,6 +1,6 @@
 {
   "name": "GenAI Seguro Lab",
-  "description": "Laboratorio local que analiza incidentes sintéticos mediante un flujo determinista, una búsqueda de conocimiento autorizada y una salida JSON reproducible.\n\nEl mapa representa únicamente el checkout actual: un proceso Python, almacenes locales y una herramienta de borradores implementada pero no conectada a la CLI. No incluye proveedor GenAI real, red, Docker, cloud, base de datos o telemetría.\n\nLos límites TB-02, TB-03 y TB-04 son separaciones lógicas dentro del mismo proceso, no mecanismos de aislamiento del sistema operativo.",
+  "description": "Laboratorio local que analiza incidentes sintéticos mediante un flujo determinista, una búsqueda de conocimiento autorizada y una salida JSON reproducible.\n\nEl mapa representa únicamente el checkout actual: un proceso Python, almacenes locales, una herramienta de borradores no conectada a la CLI y un perfil vulnerable de evaluación que solo construye ModelRequest marcadas. El perfil exige autorización y sandbox temporal, pero no llama al modelo ni ejecuta herramientas. No incluye corpus adversario, harness ejecutable, proveedor GenAI real, red, Docker, cloud, base de datos o telemetría.\n\nLos límites TB-02, TB-03 y TB-04 son separaciones lógicas dentro del mismo proceso, no mecanismos de aislamiento del sistema operativo.",
   "topDiagram": "system-context",
   "diagrams": [
     "application-components",

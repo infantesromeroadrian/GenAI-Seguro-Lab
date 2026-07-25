@@ -5,16 +5,16 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYS-INV-001` |
-| Versión | `1.0.0` |
+| Versión | `1.1.0` |
 | Fecha de corte | 2026-07-25 |
-| Estado de código observado | commit `bee97645117321a8867496df6abeda117d7f92be` |
+| Baseline de código | commit `5b76303c56eda7544165fc8c08738c9eb0f8edd2` + candidato PGS-03-M02 |
 | Entorno | checkout local de desarrollo |
-| Alcance | estado implementado antes de PGS-02-M03 |
+| Alcance | estado implementado por PGS-03-M02 |
 
 Este documento inventaría el sistema que existe en el repositorio, no la
-solución futura descrita en el roadmap. El commit de corte contiene todo el
-comportamiento ejecutable observado; esta microtarea solo añade documentación
-y no modifica ese comportamiento.
+solución futura descrita en el roadmap. PGS-03-M02 añade una configuración
+interna de evaluación que construye peticiones vulnerables, pero no ejecuta un
+modelo, una herramienta o un ataque.
 
 ## Convenciones de estado
 
@@ -33,7 +33,7 @@ PGS-02-M04.
 | ID | Actor | Estado | Interacción y autoridad real |
 |---|---|---|---|
 | `ACT-01` | Operador local del laboratorio | Expuesto | Lanza `analyze` o `baseline`, elige un identificador de incidente y recibe JSON por `stdout`. No inicia sesión en la aplicación; el proceso hereda los permisos de su cuenta local. |
-| `ACT-02` | Mantenedor y ejecutor de pruebas | Soporte | Modifica código y corpus, sincroniza dependencias, ejecuta pytest y conserva snapshots mediante Git local. Su autoridad procede del sistema operativo y del repositorio, no de un rol interno de la aplicación. |
+| `ACT-02` | Mantenedor y ejecutor de pruebas | Soporte | Modifica código y corpus, sincroniza dependencias, ejecuta pytest, construye explícitamente el perfil de evaluación y conserva snapshots mediante Git local. Su autoridad procede del sistema operativo y del repositorio, no de un rol interno de la aplicación. |
 | `ACT-03` | Llamador que confirma un borrador | Interno | Puede aportar a `DraftWriterTool` una confirmación separada y ligada a la propuesta exacta. La implementación comprueba consentimiento declarado, pero no autentica quién confirma; la CLI actual no expone este flujo. |
 
 No existen usuarios remotos, cuentas de cliente, administradores de aplicación
@@ -66,10 +66,13 @@ corporativos, credenciales, secretos ni incidentes reales.
 | `TOL-02` | `DraftWriterTool` | Interno | Prepara una propuesta y, tras confirmación exacta separada, solo crea un Markdown nuevo en `sandbox/drafts/`; impide rutas, symlinks y sobrescritura | `src/genai_seguro_lab/local_tools.py`, `tests/test_local_tools.py` |
 | `CMP-04` | Constructor de escenarios deterministas | Expuesto | Construye los intercambios guionizados para los incidentes benignos; no es un proveedor GenAI | `src/genai_seguro_lab/baseline.py` |
 | `CMP-05` | Ejecutor de baseline funcional | Expuesto | Ejecuta los 12 incidentes y serializa evidencia canónica por `stdout`; no escribe el snapshot por sí mismo | `src/genai_seguro_lab/baseline.py` |
+| `CMP-06` | Perfil vulnerable de evaluación | Interno | Requiere una declaración exacta de `GSL-ROE-001`, el bundle sintético y un `$TMP/sandbox/drafts`; construye una `ModelRequest` débil marcada, pero no llama al modelo, ejecuta herramientas ni escribe | `src/genai_seguro_lab/evaluation_profile.py`, `tests/test_evaluation_profile.py` |
 
 `MOD-01` es el único modelo activo, pero no es un modelo GenAI real. Tampoco
 hay un agente autónomo: `CMP-03` es un flujo acotado y determinista con una sola
-herramienta disponible por incidente.
+herramienta disponible por incidente. `CMP-06` anuncia dos herramientas en el
+objeto de petición, pero no contiene un adaptador ni un dispatcher capaz de
+invocarlas.
 
 ## Identidades, credenciales y autoridad
 
@@ -131,6 +134,11 @@ El flujo interno de borradores es independiente: `TOL-02` puede preparar una
 propuesta y crear `DAT-06` tras recibir una confirmación exacta de `ACT-03`,
 pero no existe una ruta desde `CMP-01` hasta esa herramienta.
 
+El perfil de evaluación también es independiente: `ACT-02` puede construir
+`CMP-06` mediante su factory Python con autorización y sandbox temporal
+explícitos. `CMP-06` solo devuelve una `ModelRequest` marcada como vulnerable;
+no existe una arista desde el perfil hacia `MOD-01`, `TOL-01` o `TOL-02`.
+
 ## Elementos confirmados como ausentes
 
 | ID | Elemento ausente | Situación prevista |
@@ -141,7 +149,7 @@ pero no existe una ruta desde `CMP-01` hasta esa herramienta.
 | `GAP-04` | Cloud, base de datos, vector store, cola o almacenamiento remoto | Fuera de alcance |
 | `GAP-05` | Autenticación, autorización por roles y service accounts | No implementadas |
 | `GAP-06` | Logging persistente, telemetría y monitorización | No implementados |
-| `GAP-07` | Perfil vulnerable y corpus adversario | Se crearán de forma aislada en PGS-03 |
+| `GAP-07` | Corpus adversario y harness de ataque | Se crearán de forma aislada en PGS-03-M03 a PGS-03-M06 |
 | `GAP-08` | Sistema multiagente, autonomía abierta y ejecución de shell | No forman parte del diseño aprobado |
 | `GAP-09` | Remoto Git y publicación en GitHub | Pendientes de una decisión separada |
 
@@ -152,6 +160,9 @@ pero no existe una ruta desde `CMP-01` hasta esa herramienta.
 - `ACT-01` no se autentica y `IDN-03` no demuestra identidad humana.
 - `TOL-02` tiene efecto local, pero actualmente solo es alcanzable mediante su
   API Python interna y las pruebas.
+- `CMP-06` es alcanzable únicamente por factory Python, queda ligado a un
+  sandbox temporal y termina en `C0`: preparar una petición no equivale a
+  ejecutarla.
 - `DAT-05` no deja un audit trail persistente; `DAT-04` es una instantánea
   funcional versionada manualmente.
 - La ausencia de red y proveedor elimina esas superficies del sistema actual,
@@ -159,10 +170,9 @@ pero no existe una ruta desde `CMP-01` hasta esa herramienta.
 - La baseline solo acredita reproducibilidad del flujo benigno; no acredita
   seguridad, robustez adversarial ni utilidad semántica.
 
-PGS-02-M03 materializa estos IDs en el
-[mapa C4 versionado](../architecture/manifest.json), con componentes, flujos y
-límites de confianza sin añadir infraestructura hipotética. PGS-02-M04
-relaciona los mismos IDs en la
-[matriz de autoridad y consecuencias](./authority-matrix.md), distinguiendo
-propuestas del modelo, ejecución por el proceso, efectos internos y autoridad
-externa de mantenimiento.
+El [mapa C4 versionado](../architecture/manifest.json) materializa estos IDs
+con componentes, flujos y límites de confianza sin añadir infraestructura
+hipotética; PGS-03-M02 incorpora `CMP-06`. La
+[matriz de autoridad y consecuencias](./authority-matrix.md) distingue
+propuestas del modelo, construcción del perfil, ejecución por el proceso,
+efectos internos y autoridad externa de mantenimiento.

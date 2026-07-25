@@ -8,6 +8,8 @@ local.
 - Ejecutar el flujo benigno acotado y el adaptador determinista.
 - Autorizar la búsqueda de conocimiento fuera del modelo.
 - Exponer internamente la herramienta de borradores sin conectarla a la CLI.
+- Construir, solo por factory interna, una petición vulnerable de evaluación
+  ligada a datos sintéticos y un sandbox temporal.
 
 ## Trust boundary
 
