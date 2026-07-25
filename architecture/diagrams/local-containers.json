@@ -1,0 +1,153 @@
+{
+  "name": "Contenedores y almacenes locales",
+  "level": 2,
+  "meta": {
+    "direction": "LR"
+  },
+  "nodes": [
+    {
+      "id": "local-host-boundary",
+      "label": "TB-01 · Host local y cuenta del SO",
+      "meta": {
+        "type": "system",
+        "isContainer": true,
+        "trustBoundary": true,
+        "boundaryId": "TB-01",
+        "isolation": "macos-host"
+      }
+    },
+    {
+      "id": "terminal-session",
+      "label": "Terminal local",
+      "parentId": "local-host-boundary",
+      "meta": {
+        "type": "frontend",
+        "technology": "shell",
+        "interface": "argv-stdout-stderr"
+      }
+    },
+    {
+      "id": "python-application-process",
+      "label": "Proceso Python de GenAI Seguro Lab",
+      "parentId": "local-host-boundary",
+      "subDiagramId": "application-components",
+      "meta": {
+        "type": "service",
+        "technology": "python",
+        "trustBoundary": true,
+        "boundaryId": "TB-02",
+        "inventoryIds": [
+          "CMP-01",
+          "CMP-02",
+          "CMP-03",
+          "CMP-04",
+          "CMP-05",
+          "MOD-01",
+          "TOL-01",
+          "TOL-02"
+        ]
+      }
+    },
+    {
+      "id": "versioned-data-store",
+      "label": "TB-06 · Datos sintéticos versionados",
+      "parentId": "local-host-boundary",
+      "path": "data/",
+      "meta": {
+        "type": "storage",
+        "technology": "jsonl",
+        "trustBoundary": true,
+        "boundaryId": "TB-06",
+        "inventoryIds": [
+          "DAT-01",
+          "DAT-02",
+          "DAT-03"
+        ]
+      }
+    },
+    {
+      "id": "evaluation-evidence-store",
+      "label": "Evidencia funcional versionada",
+      "parentId": "local-host-boundary",
+      "path": "evaluations/",
+      "meta": {
+        "type": "storage",
+        "technology": "json",
+        "inventoryIds": [
+          "DAT-04"
+        ],
+        "writeMode": "manual-versioning"
+      }
+    },
+    {
+      "id": "draft-sandbox-store",
+      "label": "TB-05 · Sandbox de borradores",
+      "parentId": "local-host-boundary",
+      "path": "sandbox/drafts/",
+      "meta": {
+        "type": "storage",
+        "technology": "markdown",
+        "trustBoundary": true,
+        "boundaryId": "TB-05",
+        "inventoryIds": [
+          "DAT-06"
+        ],
+        "writeMode": "create-only",
+        "cliReachable": false
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "containers-terminal-invokes-process",
+      "source": "terminal-session",
+      "target": "python-application-process",
+      "label": "argv local: analyze | baseline",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-02"
+      }
+    },
+    {
+      "id": "containers-process-emits-terminal",
+      "source": "python-application-process",
+      "target": "terminal-session",
+      "label": "JSON stdout | error saneado stderr",
+      "meta": {
+        "type": "data-flow",
+        "crossesBoundary": "TB-02"
+      }
+    },
+    {
+      "id": "containers-process-reads-versioned-data",
+      "source": "python-application-process",
+      "target": "versioned-data-store",
+      "label": "lee JSON/JSONL; valida esquema y SHA-256",
+      "meta": {
+        "type": "reads",
+        "crossesBoundary": "TB-06"
+      }
+    },
+    {
+      "id": "containers-process-projects-evidence",
+      "source": "python-application-process",
+      "target": "evaluation-evidence-store",
+      "label": "stdout canónico → snapshot versionado manualmente",
+      "meta": {
+        "type": "data-flow",
+        "directWrite": false
+      }
+    },
+    {
+      "id": "containers-process-writes-draft",
+      "source": "python-application-process",
+      "target": "draft-sandbox-store",
+      "label": "API interna: Markdown confirmado y create-only",
+      "meta": {
+        "type": "writes",
+        "crossesBoundary": "TB-05",
+        "cliReachable": false
+      }
+    }
+  ]
+}

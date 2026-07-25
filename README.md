@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 y PGS-02-M02, P01-M01 y P01-M04 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las versiones de OWASP, MITRE ATLAS y NIST y el inventario del sistema real ya están fijados. Todavía no existe un threat model, modelo GenAI real, perfil vulnerable, proveedor, despliegue cloud ni publicación externa.
+> **Estado:** PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M03, P01-M01, P01-M04 y P01-M06 completadas. El flujo benigno dispone de interfaz local, pruebas smoke y una primera baseline funcional; las fuentes, el inventario y el mapa C4 con trust boundaries ya están fijados. Todavía no existe un threat model completo, modelo GenAI real, perfil vulnerable, proveedor, despliegue cloud ni publicación externa.
 
 ## En una frase
 
@@ -30,6 +30,13 @@ La ruta conserva el nombre existente `Carreer`. PGS-00-M03 no autoriza renombrar
 ├── plan-proyecto-GenAI-Seguro-Lab.md
 ├── pyproject.toml
 ├── uv.lock
+├── architecture/
+│   ├── manifest.json
+│   ├── diagrams/
+│   │   ├── application-components.json
+│   │   ├── local-containers.json
+│   │   └── system-context.json
+│   └── descriptions/
 ├── src/
 │   └── genai_seguro_lab/
 │       ├── __init__.py
@@ -237,6 +244,35 @@ dibujar su arquitectura:
 Su confirmación demuestra coincidencia con la propuesta, no autentica la
 identidad humana. El inventario describe estas limitaciones sin convertir
 componentes planificados en infraestructura desplegada.
+
+## Arquitectura y trust boundaries
+
+[architecture/manifest.json](./architecture/manifest.json) inicializa un mapa
+C4 compatible con Tecture, derivado de `GSL-SYS-INV-001`:
+
+- **L1 — contexto:** operador, mantenedor, llamador interno de borradores y
+  GenAI Seguro Lab; no aparecen sistemas externos porque no existen
+  integraciones activas;
+- **L2 — contenedores locales:** terminal, proceso Python, datos versionados,
+  evidencia funcional y sandbox de borradores dentro del mismo Mac;
+- **L3 — componentes:** CLI, contrato de datos, motor de baseline, flujo
+  benigno, modelo determinista, búsqueda autorizada y escritor de borradores.
+
+El mapa hace visibles seis límites:
+
+| ID | Límite de confianza |
+|---|---|
+| `TB-01` | Host local e identidad heredada del sistema operativo |
+| `TB-02` | Control de aplicación dentro del proceso Python |
+| `TB-03` | Salida del modelo tratada como datos tipados |
+| `TB-04` | Autoridad de herramientas separada del adaptador |
+| `TB-05` | Efecto `create-only` en `sandbox/drafts/` |
+| `TB-06` | Integridad del corpus mediante esquema y SHA-256 |
+
+`TB-02`, `TB-03` y `TB-04` son límites lógicos en un único proceso, no
+aislamiento por contenedor o identidad. En el diagrama L3,
+`DraftWriterTool` permanece sin arista de ejecución: está implementada, pero
+no conectada a la CLI ni al flujo benigno.
 
 ## Por qué existe
 
@@ -670,8 +706,9 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Añadir smoke tests y registrar la primera baseline funcional.
 - [x] Registrar las versiones consultadas de OWASP, MITRE ATLAS y NIST.
 - [x] Inventariar usuarios, datos, modelo, herramientas, identidades, dependencias e infraestructura.
+- [x] Dibujar componentes, flujo de datos y trust boundaries.
 
-**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 y PGS-02-M02, P01-M01 y P01-M04 están completadas.** El avance interno es **15 de 66 microtareas (22,7 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M05 sigue abierta porque también requiere la matriz de autoridad de PGS-02-M04.
+**PGS-00-M01 a PGS-00-M06, PGS-01-M01 a PGS-01-M07, PGS-02-M01 a PGS-02-M03, P01-M01, P01-M04 y P01-M06 están completadas.** El avance interno es **16 de 66 microtareas (24,2 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M05 sigue abierta porque también requiere la matriz de autoridad de PGS-02-M04.
 
 ## Roadmap
 
@@ -681,7 +718,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-02-M03 — dibujar componentes, flujo de datos y trust boundaries.**
+**PGS-02-M04 — crear la matriz `modelo → identidad → datos → herramientas → acciones → consecuencias`.**
 
 ## Uso responsable
 

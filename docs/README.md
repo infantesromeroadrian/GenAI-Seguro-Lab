@@ -12,6 +12,9 @@ real.
 - [Inventario del sistema actual](./system-inventory.md): actores, datos,
   componentes, modelo, herramientas, identidades, dependencias,
   infraestructura, integraciones y ausencias verificadas.
+- [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
+  contenedores locales, componentes, flujo de datos y seis trust boundaries
+  sustentados por el inventario.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

@@ -1,0 +1,258 @@
+{
+  "name": "Componentes del proceso Python",
+  "level": 3,
+  "meta": {
+    "direction": "LR"
+  },
+  "nodes": [
+    {
+      "id": "application-control-boundary",
+      "label": "TB-02 · Control de aplicación",
+      "meta": {
+        "type": "system",
+        "isContainer": true,
+        "trustBoundary": true,
+        "boundaryId": "TB-02",
+        "isolation": "logical-same-process"
+      }
+    },
+    {
+      "id": "model-output-boundary",
+      "label": "TB-03 · Salida del modelo",
+      "meta": {
+        "type": "system",
+        "isContainer": true,
+        "trustBoundary": true,
+        "boundaryId": "TB-03",
+        "isolation": "logical-same-process"
+      }
+    },
+    {
+      "id": "tool-authority-boundary",
+      "label": "TB-04 · Autoridad de herramientas",
+      "meta": {
+        "type": "system",
+        "isContainer": true,
+        "trustBoundary": true,
+        "boundaryId": "TB-04",
+        "isolation": "logical-same-process"
+      }
+    },
+    {
+      "id": "cli-dispatcher",
+      "label": "CMP-01 · CLI local",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/cli.py",
+      "meta": {
+        "type": "service",
+        "technology": "python",
+        "inventoryIds": [
+          "CMP-01"
+        ],
+        "state": "exposed"
+      }
+    },
+    {
+      "id": "dataset-loader",
+      "label": "CMP-02 · Contrato de datos",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/data_contract.py",
+      "meta": {
+        "type": "service",
+        "technology": "pydantic",
+        "inventoryIds": [
+          "CMP-02"
+        ],
+        "state": "exposed"
+      }
+    },
+    {
+      "id": "benign-flow",
+      "label": "CMP-03 · Flujo benigno",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/benign_flow.py",
+      "meta": {
+        "type": "service",
+        "technology": "python",
+        "inventoryIds": [
+          "CMP-03"
+        ],
+        "state": "exposed"
+      }
+    },
+    {
+      "id": "baseline-engine",
+      "label": "CMP-04/05 · Motor de baseline",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/baseline.py",
+      "meta": {
+        "type": "service",
+        "technology": "python",
+        "inventoryIds": [
+          "CMP-04",
+          "CMP-05"
+        ],
+        "state": "exposed"
+      }
+    },
+    {
+      "id": "deterministic-model",
+      "label": "MOD-01 · Modelo determinista",
+      "parentId": "model-output-boundary",
+      "path": "src/genai_seguro_lab/model_adapter.py",
+      "meta": {
+        "type": "service",
+        "technology": "pydantic",
+        "inventoryIds": [
+          "MOD-01"
+        ],
+        "state": "exposed",
+        "externalCalls": false
+      }
+    },
+    {
+      "id": "knowledge-search",
+      "label": "TOL-01 · Búsqueda autorizada",
+      "parentId": "tool-authority-boundary",
+      "meta": {
+        "type": "service",
+        "technology": "python",
+        "inventoryIds": [
+          "TOL-01"
+        ],
+        "state": "exposed",
+        "sourcePath": "src/genai_seguro_lab/local_tools.py"
+      }
+    },
+    {
+      "id": "draft-writer",
+      "label": "TOL-02 · Borrador create-only",
+      "parentId": "tool-authority-boundary",
+      "meta": {
+        "type": "service",
+        "technology": "python",
+        "inventoryIds": [
+          "TOL-02"
+        ],
+        "state": "internal-not-wired",
+        "sourcePath": "src/genai_seguro_lab/local_tools.py"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "components-cli-loads-data",
+      "source": "cli-dispatcher",
+      "target": "dataset-loader",
+      "label": "load_dataset(): JSON/JSONL + manifest",
+      "meta": {
+        "type": "calls"
+      }
+    },
+    {
+      "id": "components-cli-starts-baseline",
+      "source": "cli-dispatcher",
+      "target": "baseline-engine",
+      "label": "run_incident() | run_functional_baseline()",
+      "meta": {
+        "type": "calls"
+      }
+    },
+    {
+      "id": "components-baseline-loads-data",
+      "source": "baseline-engine",
+      "target": "dataset-loader",
+      "label": "load_dataset() en baseline",
+      "meta": {
+        "type": "calls"
+      }
+    },
+    {
+      "id": "components-baseline-runs-flow",
+      "source": "baseline-engine",
+      "target": "benign-flow",
+      "label": "analyze(): un incidente validado",
+      "meta": {
+        "type": "calls"
+      }
+    },
+    {
+      "id": "components-flow-requests-initial-model",
+      "source": "benign-flow",
+      "target": "deterministic-model",
+      "label": "generate(): ModelRequest inicial tipada",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-03"
+      }
+    },
+    {
+      "id": "components-model-requests-knowledge",
+      "source": "deterministic-model",
+      "target": "benign-flow",
+      "label": "ModelToolRequest: knowledge_search",
+      "meta": {
+        "type": "data-flow",
+        "crossesBoundary": "TB-03"
+      }
+    },
+    {
+      "id": "components-flow-authorizes-search",
+      "source": "benign-flow",
+      "target": "knowledge-search",
+      "label": "search(): IDs ∩ allowlist del incidente",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-04"
+      }
+    },
+    {
+      "id": "components-search-returns-hits",
+      "source": "knowledge-search",
+      "target": "benign-flow",
+      "label": "KnowledgeSearchResult tipado",
+      "meta": {
+        "type": "data-flow",
+        "crossesBoundary": "TB-04"
+      }
+    },
+    {
+      "id": "components-flow-requests-final-model",
+      "source": "benign-flow",
+      "target": "deterministic-model",
+      "label": "generate(): contexto de herramienta",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-03"
+      }
+    },
+    {
+      "id": "components-model-returns-final",
+      "source": "deterministic-model",
+      "target": "benign-flow",
+      "label": "ModelResponse final tipada",
+      "meta": {
+        "type": "data-flow",
+        "crossesBoundary": "TB-03"
+      }
+    },
+    {
+      "id": "components-flow-returns-analysis",
+      "source": "benign-flow",
+      "target": "baseline-engine",
+      "label": "BenignAnalysisResult",
+      "meta": {
+        "type": "data-flow"
+      }
+    },
+    {
+      "id": "components-baseline-emits-json",
+      "source": "baseline-engine",
+      "target": "cli-dispatcher",
+      "label": "resultado → JSON canónico",
+      "meta": {
+        "type": "data-flow"
+      }
+    }
+  ]
+}

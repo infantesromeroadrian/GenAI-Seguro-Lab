@@ -1,0 +1,83 @@
+{
+  "name": "Contexto de GenAI Seguro Lab",
+  "level": 1,
+  "meta": {
+    "direction": "LR"
+  },
+  "nodes": [
+    {
+      "id": "local-operator",
+      "label": "ACT-01 · Operador local",
+      "meta": {
+        "type": "person",
+        "inventoryIds": [
+          "ACT-01"
+        ],
+        "state": "exposed"
+      }
+    },
+    {
+      "id": "lab-maintainer",
+      "label": "ACT-02 · Mantenedor y tester",
+      "meta": {
+        "type": "person",
+        "inventoryIds": [
+          "ACT-02"
+        ],
+        "state": "support"
+      }
+    },
+    {
+      "id": "draft-caller",
+      "label": "ACT-03 · Llamador de borrador",
+      "meta": {
+        "type": "person",
+        "inventoryIds": [
+          "ACT-03"
+        ],
+        "state": "internal-not-cli",
+        "humanIdentityAuthenticated": false
+      }
+    },
+    {
+      "id": "genai-seguro-lab",
+      "label": "GenAI Seguro Lab",
+      "subDiagramId": "local-containers",
+      "meta": {
+        "type": "system",
+        "deployment": "local-only",
+        "externalIntegrations": 0
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "context-operator-runs-lab",
+      "source": "local-operator",
+      "target": "genai-seguro-lab",
+      "label": "CLI local: argv → JSON stdout",
+      "meta": {
+        "type": "calls"
+      }
+    },
+    {
+      "id": "context-maintainer-maintains-lab",
+      "source": "lab-maintainer",
+      "target": "genai-seguro-lab",
+      "label": "Git local + uv + pytest",
+      "meta": {
+        "type": "calls"
+      }
+    },
+    {
+      "id": "context-draft-caller-uses-internal-api",
+      "source": "draft-caller",
+      "target": "genai-seguro-lab",
+      "label": "API Python interna + confirmación SHA-256",
+      "meta": {
+        "type": "calls",
+        "cliReachable": false
+      }
+    }
+  ]
+}
