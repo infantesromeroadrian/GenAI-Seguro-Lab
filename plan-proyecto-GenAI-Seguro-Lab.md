@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-05-M01 completadas; PGS-04 y P01-M08 quedan cerradas. La baseline histórica permanece inmutable y PGS-05-M01 repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido exacto: 14 `COMPLETED`, 13 relaciones `MATCH` y una `DIFF`, mientras las otras cuatro fixtures permanecen inertes. Esta evidencia acredita identidad, cardinalidad, ejecución, integridad y observaciones, no las tasas o llamadas reservadas a PGS-05-M02. El checkout actual separa dominios, valida esquemas, aplica mínimo privilegio lógico, exige aprobación sintética para efectos, controla salida y recursos, registra eventos saneados, publica/reconcilia borradores de forma atómica y mantiene una matriz canónica comprobable de controles. `CTL-06`, `CTL-07`, `CTL-08`, `CTL-09`, `CTL-10` y `CTL-13` permanecen parciales por sus límites declarados y la ausencia de medición comparativa, presencia humana, aislamiento y procedimientos operativos completos.
+- **Estado actual:** PGS-00-M01 a PGS-05-M02 completadas; PGS-04 y P01-M08 quedan cerradas. La baseline histórica permanece inmutable y PGS-05-M01 repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido exacto: 14 `COMPLETED`, 13 relaciones `MATCH` y una `DIFF`, mientras las otras cuatro fixtures permanecen inertes. PGS-05-M02 verificó ambas evidencias y fijó, sin reejecutar el target, una tasa de éxito de 1/14 (7,14 %) → 0/14 (0 %) y operaciones no autorizadas aceptadas o ejecutadas de 1 → 0. El checkout actual separa dominios, valida esquemas, aplica mínimo privilegio lógico, exige aprobación sintética para efectos, controla salida y recursos, registra eventos saneados, publica/reconcilia borradores de forma atómica y mantiene una matriz canónica comprobable de controles. `CTL-06`, `CTL-07`, `CTL-08`, `CTL-09`, `CTL-10`, `CTL-12` y `CTL-13` permanecen parciales por sus límites declarados, las cuatro fixtures inertes y la ausencia de presencia humana, aislamiento, modelo real, medición de utilidad y procedimientos operativos completos.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** repositorio público ya autorizado y evidencia
@@ -293,7 +293,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 **Objetivo:** comprobar la mejora sin ocultar regresiones de utilidad.
 
 - [x] **PGS-05-M01** Repetir exactamente el corpus adversario de la baseline.
-- [ ] **PGS-05-M02** Medir tasa de éxito del ataque y llamadas no autorizadas antes y después.
+- [x] **PGS-05-M02** Medir tasa de éxito del ataque y llamadas no autorizadas antes y después.
 - [ ] **PGS-05-M03** Repetir el corpus benigno y medir éxito de tarea y falsos rechazos.
 - [ ] **PGS-05-M04** Comparar latencia, consumo y complejidad operativa.
 - [ ] **PGS-05-M05** Registrar controles fallidos, bypasses y resultados negativos.
@@ -407,10 +407,10 @@ requiriendo una decisión separada.
   remoto público de desarrollo del runtime local, que continúa sin modelo
   GenAI real, red, autenticación general, Docker, cloud, bases de datos o
   telemetría externa.
-- `architecture/manifest.json` y sus diagramas Tecture fijan contexto, contenedores y componentes con seis trust boundaries. El mapa incorpora `CMP-06` como perfil interno, `CMP-07` como harness adversario acotado para 14 fixtures PI/JB/EX/TOL, `CMP-09` como política de salida, `CMP-10` como control preventivo de recursos, `CMP-11` como journal saneado y `CMP-12` como controlador transaccional del sandbox; `DraftWriterTool` permanece desconectada de la CLI y del flujo benigno. TB-02 a TB-04 siguen siendo límites lógicos dentro del mismo proceso. PGS-02-M03 cierra P01-M06.
-- `docs/authority-matrix.md` fija `GSL-AUTH-MATRIX-001` con diecinueve cadenas actuales y cuatro niveles de consecuencia. `AUTH-15` obliga a pasar resúmenes y borradores por `CMP-09`; `AUTH-16` consume los límites de `CMP-10`; `AUTH-17` observa mediante `CMP-11`; `AUTH-18` publica o reconcilia mediante `CMP-12` sin crear autoridad; y `AUTH-19` acota el retest de soporte de PGS-05-M01 sin convertirlo en una ruta de producto ni en la medición de M02. Mantiene separadas la propuesta sin autoridad de `MOD-01`, la ejecución con `IDN-01`, los grants lógicos `IDN-05`, la aprobación sintética `IDN-03`, el efecto interno create-only de `TOL-02` y la autoridad externa de mantenimiento de `ACT-02`.
+- `architecture/manifest.json` y sus diagramas Tecture fijan contexto, contenedores y componentes con seis trust boundaries. El mapa incorpora `CMP-06` como perfil interno, `CMP-07` como harness adversario acotado para 14 fixtures PI/JB/EX/TOL, `CMP-09` como política de salida, `CMP-10` como control preventivo de recursos, `CMP-11` como journal saneado, `CMP-12` como controlador transaccional del sandbox y `CMP-14` como analizador offline de evidencia; `DraftWriterTool` permanece desconectada de la CLI y del flujo benigno. TB-02 a TB-04 siguen siendo límites lógicos dentro del mismo proceso. PGS-02-M03 cierra P01-M06.
+- `docs/authority-matrix.md` fija `GSL-AUTH-MATRIX-001` con veinte cadenas actuales y cuatro niveles de consecuencia. `AUTH-15` obliga a pasar resúmenes y borradores por `CMP-09`; `AUTH-16` consume los límites de `CMP-10`; `AUTH-17` observa mediante `CMP-11`; `AUTH-18` publica o reconcilia mediante `CMP-12` sin crear autoridad; `AUTH-19` acota el retest de soporte de PGS-05-M01 y `AUTH-20` limita M02 a lectura e interpretación offline. Mantiene separadas la propuesta sin autoridad de `MOD-01`, la ejecución con `IDN-01`, los grants lógicos `IDN-05`, la aprobación sintética `IDN-03`, el efecto interno create-only de `TOL-02` y la autoridad externa de mantenimiento de `ACT-02`.
 - `docs/abuse-cases.md` fija `GSL-ABUSE-CASES-001` con 17 escenarios: 3 de prompt injection, 2 de jailbreak, 3 de exfiltración, 5 de abuso de herramientas, 3 de denegación de servicio y 1 de supply chain. Los separa como `SIN-RUTA`, `INTERNO`, `MANTENIMIENTO` o `CLI` y conserva los gaps de evidencia.
-- `docs/risk-prioritization.md` fija `GSL-RISK-PRIORITY-001` con impacto `I0`–`I3`, probabilidad condicionada `L1`–`L3`, capacidad real `K0`–`K3` y una puntuación reproducible para los 17 casos. PGS-04-M06 no altera el recálculo: 1 en `PR-1`, 1 en `PR-2`, 14 en `PR-3` y 1 en `PR-0`; el lock es cooperativo, los casos DOS no se han ejecutado y PGS-05-M01 aún no aporta la medición comparativa de M02 ni un modelo real.
+- `docs/risk-prioritization.md` fija `GSL-RISK-PRIORITY-001` con impacto `I0`–`I3`, probabilidad condicionada `L1`–`L3`, capacidad real `K0`–`K3` y una puntuación reproducible para los 17 casos. PGS-05-M02 aporta la comparación inicial, pero no altera todavía el recálculo: 1 en `PR-1`, 1 en `PR-2`, 14 en `PR-3` y 1 en `PR-0`; los casos DOS siguen inertes y no existe un modelo real.
 - `docs/threat-crosswalk.md` fija `GSL-THREAT-CROSSWALK-001` con una fila por abuse case y relaciones directas, parciales o ausentes frente a OWASP LLM 2025, OWASP Agentic 2026 y MITRE ATLAS `v2026.06`. Conserva los gaps de consentimiento, filesystem y escenarios no agentic sin cambiar la prioridad.
 - `docs/control-responsibility-mapping.md` fija `GSL-NIST-CONTROLS-001` con cuatro roles y una matriz canónica comprobable: una fila por cada uno de los trece controles, cobertura explícita de los 17 abuse cases, selectores pytest existentes, limitaciones y correspondencias acotadas con NIST AI RMF 1.0 y NIST SP 800-218A. `CTL-08` incorpora la recuperación local de `CMP-12` y `CTL-13` conserva como gaps el runbook, monitorización y respuesta generales. PGS-04 y P01-M08 quedan cerradas sin atribuir eficacia a la validación documental.
 - `docs/security-events-policy.md` fija `GSL-SECURITY-EVENTS-001`: eventos cerrados de hasta 2 KiB, perfiles acotados, secuencia global, correlación primaria y una hija opaca por caso de baseline, cadena SHA-256, diez señales deterministas y exposición CLI opt-in. No persiste logs, exporta telemetría, concede autoridad ni prueba ataques; `CMP-12` actúa por su condición real y no por una señal.
@@ -441,8 +441,14 @@ requiriendo una decisión separada.
   `d236bbee9f371a75e330c227f100aef167b864b0`, conservó 14 casos
   `COMPLETED`, 13 relaciones `MATCH` y una `DIFF` en `ADV-TOL-005`, y
   versionó en `evaluations/adversarial-retest-v1/` solo la proyección saneada
-  y revisada con `final_retest: false`. PGS-05-M02 conserva la interpretación
-  de tasas y llamadas.
+  y revisada con `final_retest: false`.
+- `CMP-14`, implementado en `src/genai_seguro_lab/adversarial_metrics.py` y
+  `evaluations/run_adversarial_metrics.py`, verifica ambos namespaces de
+  evidencia, aplica una política cerrada a los 14 triples emparejados y fija
+  `evaluations/adversarial-metrics-v1.json`: tasa de éxito 1/14 (7,14 %) →
+  0/14 (0 %), una operación no autorizada aceptada/ejecutada → cero, un caso
+  mejorado y ninguna regresión. No reejecuta el target y conserva
+  `source_final_retest: false`.
 - `docs/adversarial-baseline-findings.md` fija
   `GSL-FINDINGS-ADVERSARIAL-001`: explica cómo usar hoy la CLI, consolida seis
   hallazgos, acota el impacto del residual `ADV-TOL-005`, documenta la
@@ -456,6 +462,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-05-M02 — medir tasa de éxito del ataque y llamadas no autorizadas antes y después.**
+**PGS-05-M03 — repetir el corpus benigno y medir éxito de tarea y falsos rechazos.**
 
-**Progreso interno:** 40 de 66 microtareas completadas, 26 abiertas (**60,6 %**).
+**Progreso interno:** 41 de 66 microtareas completadas, 25 abiertas (**62,1 %**).

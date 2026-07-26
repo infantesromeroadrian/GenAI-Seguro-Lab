@@ -211,6 +211,26 @@
       }
     },
     {
+      "id": "adversarial-metrics-analyzer",
+      "label": "CMP-14 · Analizador de métricas adversarias",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/adversarial_metrics.py",
+      "meta": {
+        "type": "service",
+        "technology": "pydantic",
+        "inventoryIds": [
+          "CMP-14"
+        ],
+        "state": "internal-support-only",
+        "cliProductReachable": false,
+        "externalCalls": false,
+        "executesTarget": false,
+        "canonicalEvidence": true,
+        "canonicalCases": 14,
+        "evidenceOutput": "evaluations/adversarial-metrics-v1.json"
+      }
+    },
+    {
       "id": "output-safety-policy",
       "label": "CMP-09 · Política de salida",
       "parentId": "application-control-boundary",
@@ -847,6 +867,29 @@
         "directCheckoutWrite": false,
         "finalRetest": false,
         "effectivenessMeasured": false
+      }
+    },
+    {
+      "id": "components-metrics-imports-baseline-contract",
+      "source": "adversarial-metrics-analyzer",
+      "target": "adversarial-baseline-runner",
+      "label": "importa esquema estricto; verifica DAT-10 a DAT-13",
+      "meta": {
+        "type": "reads",
+        "executesRunner": false,
+        "sourceEvidenceImmutable": true
+      }
+    },
+    {
+      "id": "components-metrics-imports-retest-contract",
+      "source": "adversarial-metrics-analyzer",
+      "target": "adversarial-retest-runner",
+      "label": "importa esquema estricto; verifica DAT-16 a DAT-19",
+      "meta": {
+        "type": "reads",
+        "executesRunner": false,
+        "sourceEvidenceImmutable": true,
+        "sourceFinalRetest": false
       }
     }
   ]

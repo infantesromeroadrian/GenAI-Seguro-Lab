@@ -16,17 +16,19 @@ adversarias de forma reproducible.
 - `DAT-18`: 16 eventos de inicio, observación y cierre.
 - `DAT-19`: manifiesto revisado con tamaños, SHA-256 y
   `final_retest: false`.
+- `DAT-20`: snapshot comparativo de 14 pares con reglas cerradas, tasas,
+  operaciones aceptadas/ejecutadas, cobertura y límites.
 
 ## Flujo de escritura
 
 La CLI ordinaria emite el resultado benigno por `stdout`. `CMP-08` y `CMP-13`
 escriben primero la evidencia adversaria bajo `$TMP`; el mantenedor incorpora
-la proyección saneada al repositorio después de revisarla. No existe una
+la proyección saneada al repositorio después de revisarla. `CMP-14` lee ambos
+namespaces, emite `DAT-20` por `stdout` y tampoco escribe directamente. No existe una
 escritura directa desde la CLI de producto hacia `evaluations/`.
 
 ## Límite
 
-La evidencia adversaria solo demuestra las observaciones de las variantes y
-los commits fijados. Las relaciones del retest inicial no son todavía tasas de
-eficacia. No acredita seguridad general, resistencia a ataques desconocidos ni
-utilidad semántica.
+La evidencia adversaria solo demuestra las observaciones y métricas de las
+variantes y los commits fijados. No acredita seguridad general, resistencia a
+ataques desconocidos ni utilidad semántica.

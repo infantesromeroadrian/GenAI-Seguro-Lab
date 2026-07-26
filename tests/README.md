@@ -2,7 +2,8 @@
 
 Este directorio contiene las pruebas automatizadas del contrato de datos, el
 adaptador determinista, las herramientas locales, el flujo benigno, el perfil
-vulnerable aislado, el harness adversario acotado, el runner canónico y la
+vulnerable aislado, el harness adversario acotado, los runners y el analizador
+offline de métricas, y la
 interfaz de proceso completo, incluidos los límites preventivos de recursos y
 el journal saneado de seguridad, la publicación atómica y la recuperación del
 sandbox.
@@ -108,6 +109,14 @@ del manifiesto, estados y relaciones neutrales, hashes antes/después,
 verificación de la evidencia histórica, saneado cerrado y escritura
 create-only. También fija por hash que el runner y la evidencia históricos no
 cambian.
+
+`test_adversarial_metrics.py` comprueba el contrato de PGS-05-M02: hashes
+históricos fijados, verificación completa de ambos namespaces, emparejamiento de
+14 casos, clasificación cerrada por triple, cálculo entero y porcentajes
+deterministas, fail-closed ante evidencia o estados desconocidos, salida
+canónica saneada y equivalencia byte a byte del wrapper versionable. También
+fija 1/14 → 0/14 y una operación no autorizada aceptada/ejecutada → cero, sin
+interpretar solicitudes rechazadas como llamadas.
 
 `test_control_traceability.py` comprueba exclusivamente el contrato documental
 de la matriz canónica: una fila por `CTL-01` a `CTL-13`, roles conocidos,

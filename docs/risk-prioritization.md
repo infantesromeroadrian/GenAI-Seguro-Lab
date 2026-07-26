@@ -240,8 +240,8 @@ El checkout endurecido cambia solo la probabilidad condicionada de
   actual.
 
 La distribución pasa a 1 `PR-1`, 1 `PR-2`, 14 `PR-3` y 1 `PR-0`. Este
-recálculo no afirma identidad humana real ni sustituye la medición comparativa
-posterior a PGS-05-M01.
+recálculo no afirma identidad humana real. PGS-05-M02 añade medición
+comparativa, pero el tratamiento formal del riesgo permanece reservado a M08.
 
 ## Tratamiento de PGS-04-M05
 
@@ -252,8 +252,8 @@ ninguna puntuación:
 
 - ambos casos ya estaban en `L1` para el target determinista actual;
 - la política es léxica y no cubre paráfrasis, ofuscación o todos los secretos;
-- PGS-05-M01 ya registró observaciones del target determinista, pero aún no
-  calcula las tasas de M02 ni existe un modelo real;
+- PGS-05-M02 ya calcula las tasas sobre esas observaciones, pero no existe un
+  modelo real;
 - impacto y capacidad no cambian.
 
 La distribución permanece en 1 `PR-1`, 1 `PR-2`, 14 `PR-3` y 1 `PR-0`.

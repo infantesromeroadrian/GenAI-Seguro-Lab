@@ -5,10 +5,10 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-AUTH-MATRIX-001` |
-| Versión | `2.3.0` |
+| Versión | `2.4.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-05-M01, ejecutado contra el commit exacto `d236bbee9f371a75e330c227f100aef167b864b0` |
+| Control vigente | PGS-05-M02, derivado de la baseline histórica y del retest PGS-05-M01 |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
 | Arquitectura de origen | [`architecture/manifest.json`](../architecture/manifest.json) |
 | Alcance | autoridad implementada en el checkout local actual |
@@ -43,7 +43,9 @@ En el sistema actual:
    no contiene ni reconstituye autoridad.
 10. La herramienta vuelve a validar sus argumentos y aplica su propio límite.
 11. El efecto máximo depende de la herramienta alcanzable, no de la intención
-   expresada por el modelo.
+    expresada por el modelo.
+12. `CMP-14` solo interpreta evidencia ya versionada; no puede ejecutar el
+    target, conceder autoridad ni convertir una solicitud rechazada en llamada.
 
 `IDN-04` es, por tanto, una ausencia deliberada de autoridad: el modelo no
 posee una identidad de aplicación, credenciales, permisos de filesystem ni
@@ -84,6 +86,7 @@ residual.
 | `AUTH-17` | `CMP-01/03/05/10`, `TOL-01` o `TOL-02` observan una decisión durante una operación | Ningún modelo define el esquema, la señal o la correlación | `IDN-01` ejecuta; `CMP-11` no posee identidad, credenciales o autoridad de efecto | Solo metadatos enumerados de `DAT-14`; no conserva prompts, respuestas, argumentos, contenido, rutas, credenciales, identidad presentada o tokens | `CMP-11` (`SecurityEventJournal`) | Aplicar `GSL-SECURITY-EVENTS-001`, reservar capacidad, correlacionar, encadenar y exponer un snapshot saneado solo por opt-in | Crear o validar grants, ampliar scope, persistir o exportar automáticamente, confirmar un ataque, responder, reintentar o hacer rollback | `C0` en memoria; `C1` solo cuando `ACT-01` pide expresamente el informe por `stdout` |
 | `AUTH-18` | `TOL-02` inicia `CMP-12` durante construcción, creación o parada; API interna, no CLI | Ninguno participa ni configura la recuperación | `IDN-01` ejecuta; `CMP-12` no posee identidad, credenciales o grant | Examina solo `DAT-15`, el descriptor de `sandbox/drafts/` y, si existe, el `DAT-06` final nombrado por un marker válido | `CMP-12` (`SandboxTransactionController`) | Adquirir `flock` sin espera; publicar una vez el staging autorizado; en el siguiente arranque preservar un final coherente o retirar solo artefactos internos válidos; devolver conteos saneados | Publicar durante recuperación, restaurar cuota o autoridad, borrar/modificar el final, recorrer subdirectorios, esperar/reintentar, usar una señal como permiso o exponer contenido y contexto | `C0` si reconcilia sin efecto; conserva como máximo el `C2` ya publicado por `AUTH-07` |
 | `AUTH-19` | `ACT-02` ejecuta `CMP-13` con la petición vigente de PGS-05-M01; soporte interno, no CLI de producto | Conduce el único `MOD-01` determinista mediante la ejecución existente de `CMP-07`; no añade proveedor ni modelo | `IDN-01`; exige commit, tree, rama `main` y checkout endurecido exactos y limpios antes y después | Lee `DAT-01/02/03/07/08/09` y verifica `DAT-10/11/12/13`; escribe primero solo bajo `$TMP` y permite versionar `DAT-16/17/18/19` tras revisión | `CMP-13` reutiliza `CMP-07`, fija hashes y topes y aplica saneado y writer create-only | Ejecutar una vez los mismos 14 IDs y orden, dejar cuatro inertes, comparar el oráculo después del target y conservar solo estado, triple observado, relación e integridad | Entregar el oráculo al target, ampliar casos, usar red o datos reales, mutar el checkout durante el run, reintentar, interpretar tasas de PGS-05-M02 o declarar el retest final | `C2` solo para setups temporales confinados del harness; `C3` pertenece al versionado manual revisado por `ACT-02` |
+| `AUTH-20` | `ACT-02` ejecuta `CMP-14` con la petición vigente de PGS-05-M02; soporte offline, no CLI de producto | Ningún modelo participa | `IDN-01` lee; `CMP-14` no posee identidad, credenciales o autoridad de efecto | Verifica y lee `DAT-10/11/12/13` y `DAT-16/17/18/19`; emite `DAT-20` por `stdout` para versionado manual | `CMP-14` y el wrapper `evaluations/run_adversarial_metrics.py` | Emparejar 14 casos, aplicar reglas cerradas al triple observado y calcular tasas y operaciones aceptadas/ejecutadas sin mutar las fuentes | Ejecutar `CMP-07/08/13`, llamar modelos o herramientas, contar rechazos como llamadas, inferir intentos no conservados, ampliar casos o declarar un retest final | `C1`: lectura y JSON efímero; `C3` pertenece solo al versionado deliberado de `DAT-20` por `ACT-02` |
 
 ## Cadenas de autoridad resumidas
 
@@ -183,6 +186,7 @@ la baseline canónica sin crear una ruta de producto.
 | Las otras 4 entradas de `DAT-07` | Entrar en `CMP-06`, `MOD-01` o una herramienta | Sin ruta tras PGS-03-M07: `CMP-07` y `CMP-08` rechazan cualquier ID fuera de las 14 fixtures PI/JB/EX/TOL |
 | `CMP-01` | Invocar `TOL-02` | Sin ruta: la CLI solo expone `analyze` y `baseline` |
 | Runtime ordinario de aplicación | Escribir `DAT-04` o `DAT-10` a `DAT-13` | Sin ruta directa: la CLI solo emite por `stdout`; `CMP-08` es una operación explícita de soporte y el mantenedor versiona su proyección revisada |
+| `CMP-14` | Ejecutar el target, el harness, runners o herramientas | Sin ruta: solo importa esquemas, verifica evidencia versionada y emite una proyección canónica por `stdout` |
 | Runtime de aplicación | Shell, red, proveedor, cloud, base de datos o secretos | Sin capacidad implementada ni credenciales |
 | Usuario remoto | Entrar en el sistema | Sin interfaz: no hay API, UI remota, cuenta de aplicación o listener |
 | `IDN-03` | Demostrar presencia o identidad de una persona real | Sin mecanismo: la autoridad acredita solo la identidad sintética configurada; no existe UI ni autenticador del sistema operativo |
@@ -255,5 +259,6 @@ PGS-04-M08 añade `AUTH-18` y
 [`GSL-SANDBOX-RECOVERY-001`](./sandbox-recovery-policy.md): publica y
 reconcilia el único efecto local sin convertir estado duradero o señales en
 autoridad. PGS-05-M01 añade `AUTH-19` únicamente como ejecución de soporte
-acotada y ya autorizada: no crea autoridad de producto ni interpreta las
-métricas reservadas a PGS-05-M02.
+acotada y ya autorizada: no crea autoridad de producto. PGS-05-M02 añade
+`AUTH-20` como lectura e interpretación offline: tampoco ejecuta el target ni
+convierte evidencia en autoridad.

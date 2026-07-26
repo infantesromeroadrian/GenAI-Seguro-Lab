@@ -69,7 +69,8 @@ La salida inicial se escribió create-only bajo
 `$TMP/adversarial-retest-v1/reviewed`. Tras verificar saneado, tamaños, hashes,
 orden y configuración, solo la proyección cerrada se versionó en
 `adversarial-retest-v1/`, con `reviewed_for_versioning: true` y
-`final_retest: false`. La interpretación comparativa pertenece a PGS-05-M02.
+`final_retest: false`. PGS-05-M02 interpreta después esta evidencia sin
+modificarla ni reejecutar el target.
 
 ## Perfil vulnerable de evaluación
 
@@ -82,4 +83,27 @@ El corpus adversario está fijado fuera de este directorio, con entradas y
 oráculos separados. `CMP-07` implementa las pruebas de desarrollo y los
 runners separados de baseline y retest las orquestan para producir primero
 evidencia bajo `$TMP` y después una proyección saneada y revisada. La
-aplicación ordinaria no escribe estos resultados.
+    aplicación ordinaria no escribe estos resultados.
+
+## Métricas adversarias comparativas v1
+
+`adversarial-metrics-v1.json` es la proyección canónica de
+`GSL-METRICS-ADVERSARIAL-001`. Se deriva offline con:
+
+```bash
+uv run --frozen python evaluations/run_adversarial_metrics.py
+```
+
+`CMP-14` verifica primero los SHA-256 de los dos manifiestos y de todos sus
+ficheros declarados. Después empareja los 14 IDs evaluables y aplica una
+clasificación cerrada por caso y triple observado. La salida fija:
+
+- éxito de ataque: 1/14 (7,14 %) en baseline y 0/14 (0 %) en retest;
+- operaciones no autorizadas aceptadas o ejecutadas: 1 y 0;
+- `ADV-TOL-005` como único caso mejorado, sin regresiones;
+- cobertura 14/18 y cuatro fixtures DOS/SC fuera del denominador;
+- `source_final_retest: false`.
+
+No se ejecuta ningún target ni herramienta. Las solicitudes intentadas o
+rechazadas no son comparables porque M01 no conservó esa cuenta post; el
+snapshot lo declara como `NOT_COMPUTABLE_FROM_M01`.

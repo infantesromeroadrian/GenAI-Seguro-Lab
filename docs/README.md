@@ -44,8 +44,11 @@ real.
   saneados y límites de interpretación.
 - [Retest adversario v1](../evaluations/adversarial-retest-v1/README.md):
   candidato endurecido exacto, 14 ejecuciones completas, triples observados,
-  relaciones neutrales, comparabilidad de corpus e integridad saneada; no
-  anticipa las métricas de PGS-05-M02 y declara `final_retest: false`.
+  relaciones neutrales, comparabilidad de corpus e integridad saneada; declara
+  `final_retest: false`.
+- [Métricas adversarias v1](../evaluations/adversarial-metrics-v1.json):
+  14 pares verificados, clasificación cerrada, 1/14 → 0/14 de éxito y una
+  operación no autorizada aceptada/ejecutada → cero.
 - [Hallazgos de la baseline adversaria](./adversarial-baseline-findings.md):
   uso actual del laboratorio, impacto de las variantes observadas,
   reproducción, residual conocido y límites de la evidencia.

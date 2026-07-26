@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-05-M01, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica evaluó 14 fixtures sintéticas y su evidencia permanece inmutable. PGS-05-M01 repitió esos 14 IDs contra el commit endurecido exacto: los 14 completaron, con 13 relaciones `MATCH` y una `DIFF`, sin interpretar todavía eficacia ni tasas. El checkout actual exige aprobación sintética para efectos, aplica una política de salida, limita tamaño, tiempo cooperativo, iteraciones y consumo, registra eventos saneados en memoria, publica/reconcilia borradores de forma atómica y mantiene una matriz canónica comprobable de controles. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud. La siguiente microtarea es PGS-05-M02.
+> **Estado:** PGS-00-M01 a PGS-05-M02, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica evaluó 14 fixtures sintéticas y su evidencia permanece inmutable. PGS-05-M01 repitió esos 14 IDs contra el commit endurecido exacto: los 14 completaron, con 13 relaciones `MATCH` y una `DIFF`. PGS-05-M02 deriva sin reejecutar el target una tasa de éxito de ataque de 1/14 (7,14 %) a 0/14 (0 %) y una reducción de operaciones no autorizadas aceptadas o ejecutadas de 1 a 0. El checkout actual exige aprobación sintética para efectos, aplica una política de salida, limita tamaño, tiempo cooperativo, iteraciones y consumo, registra eventos saneados en memoria, publica/reconcilia borradores de forma atómica y mantiene una matriz canónica comprobable de controles. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud. La siguiente microtarea es PGS-05-M03.
 
 La proyección revisada de `GSL-RETEST-ADVERSARIAL-001` está versionada en
 [`evaluations/adversarial-retest-v1/`](./evaluations/adversarial-retest-v1/)
@@ -47,6 +47,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │       ├── cli.py
 │       ├── data_contract.py
 │       ├── adversarial_baseline.py
+│       ├── adversarial_metrics.py
 │       ├── adversarial_retest.py
 │       ├── evaluation_harness.py
 │       ├── evaluation_profile.py
@@ -64,6 +65,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── test_evaluation_profile.py
 │   ├── test_adversarial_corpus.py
 │   ├── test_adversarial_baseline.py
+│   ├── test_adversarial_metrics.py
 │   ├── test_adversarial_retest.py
 │   ├── test_local_tools.py
 │   ├── test_model_adapter.py
@@ -78,7 +80,9 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 ├── evaluations/
 │   ├── README.md
 │   ├── run_adversarial_baseline.py
+│   ├── run_adversarial_metrics.py
 │   ├── run_adversarial_retest.py
+│   ├── adversarial-metrics-v1.json
 │   ├── adversarial-baseline-v1/
 │   │   ├── README.md
 │   │   ├── config.json
@@ -601,6 +605,32 @@ revisión de saneado e integridad, únicamente `config.json`, `results.json`,
 El manifiesto declara `reviewed_for_versioning: true` y
 `final_retest: false`.
 
+## Métricas adversarias v1
+
+`CMP-14` implementa un analizador offline y fail-closed. Verifica por SHA-256
+los manifiestos y ficheros declarados de la baseline y del retest, empareja los
+14 casos por ID y aplica una política cerrada al triple observado
+resultado/decisión/efecto. No ejecuta el target, el harness ni herramientas.
+
+```bash
+uv run --frozen python evaluations/run_adversarial_metrics.py
+```
+
+La salida canónica está fijada en
+[`evaluations/adversarial-metrics-v1.json`](./evaluations/adversarial-metrics-v1.json):
+
+- tasa de éxito del ataque: 1/14 (7,14 %) → 0/14 (0 %);
+- operaciones de herramienta no autorizadas aceptadas o ejecutadas: 1 → 0;
+- único caso mejorado: `ADV-TOL-005`; 13 casos sin cambio y 0 regresiones;
+- cobertura evaluada: 14/18 fixtures; DOS/SC permanecen inertes;
+- `source_final_retest: false`.
+
+La métrica de herramienta no cuenta solicitudes rechazadas ni búsquedas
+autorizadas. M01 no conservó un recuento post comparable de intentos, por lo que
+el snapshot marca esas solicitudes como `NOT_COMPUTABLE_FROM_M01`. Es evidencia
+sintética sobre un doble determinista, no una probabilidad de ataque ni una
+prueba con un LLM real.
+
 ## Crosswalk de amenazas
 
 [docs/threat-crosswalk.md](./docs/threat-crosswalk.md) fija
@@ -1111,8 +1141,9 @@ nunca para ocultar un resultado ni para reescribir la baseline histórica.
 - [x] Asociar cada control a amenazas, responsable, pruebas y limitación.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
 - [x] Repetir exactamente el corpus adversario de la baseline.
+- [x] Medir la tasa de éxito adversaria y las operaciones no autorizadas antes y después.
 
-**PGS-00-M01 a PGS-05-M01, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **40 de 66 microtareas (60,6 %)**, con 26 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-05-M02, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **41 de 66 microtareas (62,1 %)**, con 25 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -1122,7 +1153,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-05-M02 — medir tasa de éxito del ataque y llamadas no autorizadas antes y después.**
+**PGS-05-M03 — repetir el corpus benigno y medir éxito de tarea y falsos rechazos.**
 
 ## Uso responsable
 

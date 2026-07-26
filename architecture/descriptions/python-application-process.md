@@ -27,6 +27,8 @@ local.
 - Ejecutar mediante `CMP-13` el retest inicial sobre un candidato endurecido
   exacto, reutilizando `CMP-07` y produciendo una proyección neutral bajo
   `$TMP` antes del versionado manual.
+- Derivar mediante `CMP-14` métricas offline de los dos namespaces versionados,
+  sin ejecutar targets, runners o herramientas.
 
 ## Trust boundary
 
