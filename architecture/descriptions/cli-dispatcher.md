@@ -8,6 +8,8 @@ Expone las únicas dos operaciones alcanzables por el operador local.
   `data/manifest.json` durante toda la operación.
 - Convertir fallos esperados en errores saneados.
 - Serializar el resultado canónico por `stdout`.
+- Abrir y cerrar `CMP-11`; conservar la salida predeterminada y envolverla
+  junto al snapshot saneado solo con `--security-report`.
 
 ## Restricciones
 
@@ -15,6 +17,7 @@ Expone las únicas dos operaciones alcanzables por el operador local.
 - No escribe snapshots o borradores.
 - No expone `DraftWriterTool`.
 - No espera, reintenta ni crea un lockfile si otra CLI cooperante está activa.
+- No escribe o exporta el journal ni lo mezcla con `stderr`.
 
 ## Evidencia
 
@@ -22,3 +25,4 @@ Expone las únicas dos operaciones alcanzables por el operador local.
 - `src/genai_seguro_lab/cli.py`
 - Inventario `CMP-01`
 - Control `CMP-10`
+- Control `CMP-11`

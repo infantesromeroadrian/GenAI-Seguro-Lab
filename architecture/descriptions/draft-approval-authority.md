@@ -12,6 +12,8 @@ Autentica un principal sintético local antes de permitir un efecto de
 - Consumir en `CMP-10` un challenge, hasta tres intentos de autenticación y un
   grant; los intentos fallidos cuentan.
 - Invalidar el estado pendiente al cerrar la autoridad o el writer.
+- Notificar a `CMP-11` el tercer fallo de autenticación y los replays,
+  caducidades o contextos incompatibles sin serializar identidad o token.
 
 ## Restricciones
 
@@ -21,6 +23,7 @@ Autentica un principal sintético local antes de permitir un efecto de
   humana.
 - La separación es lógica dentro del mismo proceso Python y no limita la
   autoridad efectiva de `IDN-01`.
+- Una señal no invalida o crea autoridad por sí misma.
 - El perfil vulnerable crea y cierra una instancia inerte para validar su
   sandbox, sin emitir challenge, aprobación o efecto.
 
@@ -30,3 +33,4 @@ Autentica un principal sintético local antes de permitir un efecto de
 - `tests/test_local_tools.py`
 - `tests/test_tool_abuse_evaluation.py`
 - `tests/test_resource_control.py`
+- `tests/test_security_events.py`

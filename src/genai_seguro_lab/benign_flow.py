@@ -24,9 +24,15 @@ from .model_adapter import (
     ModelRequest,
     ModelResult,
     ModelToolRequest,
+    UnknownModelRequestError,
 )
-from .output_policy import OutputPolicy, PolicyDecisionMetadata
+from .output_policy import (
+    OutputPolicy,
+    OutputPolicyError,
+    PolicyDecisionMetadata,
+)
 from .resource_control import ProductResourceControl
+from .security_events import SecurityCorrelation
 
 Text = Annotated[str, Field(min_length=1)]
 
@@ -291,6 +297,7 @@ class BenignAnalysisFlow:
         incident: IncidentRecord,
         *,
         resource_control: ProductResourceControl | None = None,
+        security_correlation: SecurityCorrelation | None = None,
     ) -> BenignAnalysisResult:
         control = resource_control or ProductResourceControl("analyze")
         if not isinstance(control, ProductResourceControl):
@@ -299,42 +306,111 @@ class BenignAnalysisFlow:
             )
         if control.profile not in {"analyze", "baseline"}:
             raise ValueError("resource control profile cannot run analysis")
+        journal = control.security_journal
 
-        control.begin_case()
+        control.begin_case(correlation=security_correlation)
         try:
             initial = self.build_initial_request(incident)
-            control.before_model_call(initial)
+            control.before_model_call(
+                initial,
+                correlation=security_correlation,
+            )
+            journal.observe(
+                kind="model_request",
+                source="model_adapter",
+                outcome="observed",
+                correlation=security_correlation,
+            )
             try:
-                first = self._adapter.generate(initial)
+                try:
+                    first = self._adapter.generate(initial)
+                except UnknownModelRequestError:
+                    journal.signal(
+                        "unknown_model_request",
+                        source="model_adapter",
+                        outcome="denied",
+                        correlation=security_correlation,
+                    )
+                    raise
             finally:
-                control.checkpoint()
-            control.after_model_call(first.response)
+                control.checkpoint(correlation=security_correlation)
+            control.after_model_call(
+                first.response,
+                correlation=security_correlation,
+            )
+            journal.observe(
+                kind="model_response",
+                source="model_adapter",
+                outcome="observed",
+                correlation=security_correlation,
+            )
             tool_requests = first.response.tool_requests
             if (
                 first.response.finish_reason != "tool_request"
                 or len(tool_requests) != 1
             ):
+                journal.signal(
+                    "unexpected_flow_sequence",
+                    source="flow",
+                    outcome="denied",
+                    correlation=security_correlation,
+                )
                 raise BenignFlowError(
                     "the first model response must request exactly one tool"
                 )
 
             tool_request = tool_requests[0]
-            control.accept_tool_request(tool_request.arguments_json)
+            if tool_request.name != "knowledge_search":
+                journal.signal(
+                    "unknown_model_request",
+                    source="model_adapter",
+                    outcome="denied",
+                    correlation=security_correlation,
+                )
+            control.accept_tool_request(
+                tool_request.arguments_json,
+                correlation=security_correlation,
+            )
+            journal.observe(
+                kind="tool_request",
+                source="knowledge_search",
+                outcome="observed",
+                correlation=security_correlation,
+            )
             knowledge_tool = self._knowledge_catalog.for_incident(
                 incident,
                 principal="benign-flow",
                 scope=f"incident:{incident.id}",
+                security_journal=journal,
+                security_correlation=security_correlation,
             )
-            control.before_tool_execution()
+            control.before_tool_execution(
+                correlation=security_correlation,
+            )
             try:
                 knowledge = knowledge_tool.search(
                     tool_request,
                     grant=knowledge_tool.execution_grant,
                 )
             finally:
-                control.checkpoint()
-            control.after_tool_execution(knowledge)
+                control.checkpoint(correlation=security_correlation)
+            control.after_tool_execution(
+                knowledge,
+                correlation=security_correlation,
+            )
+            journal.observe(
+                kind="tool_result",
+                source="knowledge_search",
+                outcome="allowed",
+                correlation=security_correlation,
+            )
             if not knowledge.hits:
+                journal.signal(
+                    "unexpected_flow_sequence",
+                    source="flow",
+                    outcome="denied",
+                    correlation=security_correlation,
+                )
                 raise BenignFlowError(
                     "knowledge search returned no authorized hits"
                 )
@@ -343,48 +419,130 @@ class BenignAnalysisFlow:
                 tool_request,
                 knowledge,
             )
-            control.before_model_call(followup)
+            control.before_model_call(
+                followup,
+                correlation=security_correlation,
+            )
+            journal.observe(
+                kind="model_request",
+                source="model_adapter",
+                outcome="observed",
+                correlation=security_correlation,
+            )
             try:
-                second = self._adapter.generate(followup)
+                try:
+                    second = self._adapter.generate(followup)
+                except UnknownModelRequestError:
+                    journal.signal(
+                        "unknown_model_request",
+                        source="model_adapter",
+                        outcome="denied",
+                        correlation=security_correlation,
+                    )
+                    raise
             finally:
-                control.checkpoint()
-            control.after_model_call(second.response)
+                control.checkpoint(correlation=security_correlation)
+            control.after_model_call(
+                second.response,
+                correlation=security_correlation,
+            )
+            journal.observe(
+                kind="model_response",
+                source="model_adapter",
+                outcome="observed",
+                correlation=security_correlation,
+            )
             if second.response.finish_reason != "stop":
+                journal.signal(
+                    "unexpected_flow_sequence",
+                    source="flow",
+                    outcome="denied",
+                    correlation=security_correlation,
+                )
                 raise BenignFlowError("the second model response must be final")
             if second.response.output_text is None:
+                journal.signal(
+                    "unexpected_flow_sequence",
+                    source="flow",
+                    outcome="denied",
+                    correlation=security_correlation,
+                )
                 raise BenignFlowError("the final response must contain text")
             try:
                 output = BenignFinalOutput.model_validate_json(
                     second.response.output_text
                 )
             except ValidationError as exc:
+                journal.signal(
+                    "unexpected_flow_sequence",
+                    source="flow",
+                    outcome="denied",
+                    correlation=security_correlation,
+                )
                 raise BenignFlowError(
                     "the final model output failed schema validation"
                 ) from exc
-            control.accept_final_summary(output.summary)
+            control.accept_final_summary(
+                output.summary,
+                correlation=security_correlation,
+            )
             if output.incident_id != incident.id:
+                journal.signal(
+                    "unexpected_flow_sequence",
+                    source="flow",
+                    outcome="denied",
+                    correlation=security_correlation,
+                )
                 raise BenignFlowError(
                     "the final model output references another incident"
                 )
             authorized_knowledge_ids = tuple(hit.id for hit in knowledge.hits)
             if output.knowledge_ids != authorized_knowledge_ids:
+                journal.signal(
+                    "unexpected_flow_sequence",
+                    source="flow",
+                    outcome="denied",
+                    correlation=security_correlation,
+                )
                 raise BenignFlowError(
                     "the final model output exceeds authorized knowledge"
                 )
-            checked_summary = self._output_policy.check(
-                output.summary,
-                channel="final_summary",
-            )
-            safe_output = BenignFinalOutput(
-                incident_id=output.incident_id,
-                summary=self._output_policy.unwrap(
-                    checked_summary,
+            try:
+                checked_summary = self._output_policy.check(
+                    output.summary,
                     channel="final_summary",
-                ),
-                knowledge_ids=output.knowledge_ids,
-                actions_executed=output.actions_executed,
-                compromise_confirmed=output.compromise_confirmed,
-            )
+                )
+                if checked_summary.metadata.decision == "redact":
+                    journal.signal(
+                        "output_policy_intervention",
+                        source="output_policy",
+                        outcome="intervened",
+                        correlation=security_correlation,
+                    )
+                journal.observe(
+                    kind="policy_decision",
+                    source="output_policy",
+                    outcome="allowed",
+                    correlation=security_correlation,
+                )
+                safe_output = BenignFinalOutput(
+                    incident_id=output.incident_id,
+                    summary=self._output_policy.unwrap(
+                        checked_summary,
+                        channel="final_summary",
+                    ),
+                    knowledge_ids=output.knowledge_ids,
+                    actions_executed=output.actions_executed,
+                    compromise_confirmed=output.compromise_confirmed,
+                )
+            except OutputPolicyError:
+                journal.signal(
+                    "output_policy_intervention",
+                    source="output_policy",
+                    outcome="intervened",
+                    correlation=security_correlation,
+                )
+                raise
 
             return BenignAnalysisResult(
                 incident_id=incident.id,
@@ -399,4 +557,4 @@ class BenignAnalysisFlow:
                 ),
             )
         finally:
-            control.checkpoint()
+            control.checkpoint(correlation=security_correlation)

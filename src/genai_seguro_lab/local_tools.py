@@ -34,15 +34,17 @@ from .data_contract import (
     KnowledgeRecord,
 )
 from .model_adapter import KnownToolName, ModelToolRequest
-from .output_policy import OutputPolicy
+from .output_policy import OutputPolicy, OutputPolicyError
 from .resource_control import (
     MAX_DRAFT_MARKDOWN_BYTES,
     MAX_KNOWLEDGE_RESULT_BYTES,
     MAX_TOOL_ARGUMENTS_BYTES,
     ProductResourceControl,
+    ResourceLimitError,
     require_serialized_size,
     require_utf8_size,
 )
+from .security_events import SecurityCorrelation, SecurityEventJournal
 
 Text = Annotated[str, Field(min_length=1)]
 Query = Annotated[
@@ -265,6 +267,8 @@ class KnowledgeCatalog:
         *,
         principal: str,
         scope: str,
+        security_journal: SecurityEventJournal | None = None,
+        security_correlation: SecurityCorrelation | None = None,
     ) -> KnowledgeSearchTool:
         if not isinstance(incident, IncidentRecord):
             raise TypeError("incident must be an IncidentRecord")
@@ -287,6 +291,8 @@ class KnowledgeCatalog:
             documents=selected,
             principal=principal,
             scope=scope,
+            security_journal=security_journal,
+            security_correlation=security_correlation,
             _factory_token=_KNOWLEDGE_TOOL_FACTORY_TOKEN,
         )
 
@@ -301,6 +307,8 @@ class KnowledgeSearchTool:
         documents: tuple[KnowledgeRecord, ...],
         principal: str,
         scope: str,
+        security_journal: SecurityEventJournal | None = None,
+        security_correlation: SecurityCorrelation | None = None,
         _factory_token: object | None = None,
     ) -> None:
         if _factory_token is not _KNOWLEDGE_TOOL_FACTORY_TOKEN:
@@ -315,9 +323,23 @@ class KnowledgeSearchTool:
             raise ToolPolicyError(
                 "knowledge tool requires the exact incident record subset"
             )
+        if security_journal is not None and not isinstance(
+            security_journal,
+            SecurityEventJournal,
+        ):
+            raise TypeError("security_journal must be a SecurityEventJournal")
+        if security_correlation is not None and (
+            security_journal is None
+            or not isinstance(security_correlation, SecurityCorrelation)
+        ):
+            raise TypeError(
+                "security_correlation requires a security journal"
+            )
         self._documents = indexed
         self._principal = principal
         self._scope = scope
+        self._security_journal = security_journal
+        self._security_correlation = security_correlation
         self._binding = object()
         self._execution_grant = _issue_tool_grant(
             principal=principal,
@@ -345,9 +367,17 @@ class KnowledgeSearchTool:
             raise TypeError("request must be a ModelToolRequest")
         self._require_grant(grant)
         if request.name != "knowledge_search":
+            self._signal_tool_denied()
             raise ToolDeniedError("requested tool is not allowed in this flow")
 
-        require_utf8_size(request.arguments_json, MAX_TOOL_ARGUMENTS_BYTES)
+        try:
+            require_utf8_size(
+                request.arguments_json,
+                MAX_TOOL_ARGUMENTS_BYTES,
+            )
+        except ResourceLimitError:
+            self._signal_resource_limit()
+            raise
         try:
             arguments = KnowledgeSearchArguments.model_validate_json(
                 request.arguments_json
@@ -360,6 +390,7 @@ class KnowledgeSearchTool:
         requested = set(arguments.knowledge_ids)
         retained = set(self._documents)
         if not requested.issubset(retained):
+            self._signal_tool_denied()
             raise ToolDeniedError(
                 "knowledge request exceeds the incident scope"
             )
@@ -395,7 +426,11 @@ class KnowledgeSearchTool:
             for _, document in scored[: arguments.limit]
         )
         result = KnowledgeSearchResult(query=arguments.query, hits=hits)
-        require_serialized_size(result, MAX_KNOWLEDGE_RESULT_BYTES)
+        try:
+            require_serialized_size(result, MAX_KNOWLEDGE_RESULT_BYTES)
+        except ResourceLimitError:
+            self._signal_resource_limit()
+            raise
         return result
 
     def _require_grant(self, grant: ToolExecutionGrant) -> None:
@@ -409,8 +444,33 @@ class KnowledgeSearchTool:
             or grant.tool != "knowledge_search"
             or grant.allowed_knowledge_ids != tuple(self._documents)
         ):
+            self._signal_tool_denied()
             raise ToolDeniedError(
                 "tool grant does not belong to this principal and scope"
+            )
+
+    def _signal_tool_denied(self) -> None:
+        if (
+            self._security_journal is not None
+            and not self._security_journal.is_finished
+        ):
+            self._security_journal.signal(
+                "tool_denied",
+                source="knowledge_search",
+                outcome="denied",
+                correlation=self._security_correlation,
+            )
+
+    def _signal_resource_limit(self) -> None:
+        if (
+            self._security_journal is not None
+            and not self._security_journal.is_finished
+        ):
+            self._security_journal.signal(
+                "resource_limit_exceeded",
+                source="knowledge_search",
+                outcome="limited",
+                correlation=self._security_correlation,
             )
 
 
@@ -698,6 +758,7 @@ class DraftApprovalAuthority:
         "_credential_salt",
         "_effect_grants",
         "_lock",
+        "_observability",
         "_session",
         "_writers",
     )
@@ -756,6 +817,7 @@ class DraftApprovalAuthority:
         self._consumed_challenges: set[DraftApprovalChallenge] = set()
         self._consumed_approvals: set[DraftApproval] = set()
         self._consumed_effect_grants: set[DraftEffectGrant] = set()
+        self._observability: dict[object, SecurityEventJournal] = {}
 
     @property
     def configured_identity(self) -> str:
@@ -781,6 +843,7 @@ class DraftApprovalAuthority:
             self._consumed_challenges.clear()
             self._consumed_approvals.clear()
             self._consumed_effect_grants.clear()
+            self._observability.clear()
             self._credential_salt = b""
             self._credential_digest = b""
 
@@ -808,6 +871,9 @@ class DraftApprovalAuthority:
             record = self._challenges.get(challenge)
             if record is None:
                 if challenge in self._consumed_challenges:
+                    self._signal_authorization(
+                        self._observability.get(challenge)
+                    )
                     raise DraftApprovalError(
                         "approval challenge was already consumed"
                     )
@@ -816,6 +882,7 @@ class DraftApprovalAuthority:
                 )
             record.context.resource_control.reserve_authentication_attempt()
             if not isinstance(identity, str) or not isinstance(credential, str):
+                record.context.resource_control.security_journal.authentication_failed()
                 raise DraftApprovalError("approval credentials were rejected")
             identity_bytes = identity.encode("utf-8")
             credential_bytes = credential.encode("utf-8")
@@ -825,11 +892,15 @@ class DraftApprovalAuthority:
                 or not credential_bytes
                 or len(credential_bytes) > 1024
             ):
+                record.context.resource_control.security_journal.authentication_failed()
                 raise DraftApprovalError("approval credentials were rejected")
             now = self._clock()
             if now >= record.expires_at:
                 self._challenges.pop(challenge, None)
                 self._consumed_challenges.add(challenge)
+                self._signal_authorization(
+                    record.context.resource_control.security_journal
+                )
                 raise DraftApprovalError("approval challenge expired")
             self._require_context_writer(record.context)
             supplied = self._digest_credential(credential_bytes)
@@ -842,8 +913,10 @@ class DraftApprovalAuthority:
                 self._credential_digest,
             )
             if not (identity_matches and credential_matches):
+                record.context.resource_control.security_journal.authentication_failed()
                 raise DraftApprovalError("approval credentials were rejected")
 
+            record.context.resource_control.security_journal.authentication_succeeded()
             self._challenges.pop(challenge)
             self._consumed_challenges.add(challenge)
             approval = DraftApproval(
@@ -852,6 +925,9 @@ class DraftApprovalAuthority:
             self._approvals[approval] = _TimedAuthorizationRecord(
                 context=record.context,
                 expires_at=now + self._approval_ttl_seconds,
+            )
+            self._observability[approval] = (
+                record.context.resource_control.security_journal
             )
             return approval
 
@@ -915,6 +991,10 @@ class DraftApprovalAuthority:
                 or writer.principal != principal
                 or writer.scope != scope
             ):
+                if writer is not None:
+                    self._signal_authorization(
+                        writer.resource_control.security_journal
+                    )
                 raise DraftApprovalError(
                     "writer is not active in this approval authority session"
                 )
@@ -996,6 +1076,9 @@ class DraftApprovalAuthority:
                 context=context,
                 expires_at=self._clock() + self._approval_ttl_seconds,
             )
+            self._observability[challenge] = (
+                writer.resource_control.security_journal
+            )
             return challenge
 
     def _authorize_effect(
@@ -1020,6 +1103,9 @@ class DraftApprovalAuthority:
             record = self._approvals.get(approval)
             if record is None:
                 if approval in self._consumed_approvals:
+                    self._signal_authorization(
+                        self._observability.get(approval)
+                    )
                     raise DraftApprovalError("draft approval was already consumed")
                 raise DraftApprovalError(
                     "draft approval was not issued by this authority session"
@@ -1028,6 +1114,9 @@ class DraftApprovalAuthority:
             if now >= record.expires_at:
                 self._approvals.pop(approval, None)
                 self._consumed_approvals.add(approval)
+                self._signal_authorization(
+                    record.context.resource_control.security_journal
+                )
                 raise DraftApprovalError("draft approval expired")
             expected = _DraftAuthorizationContext(
                 configured_identity=self._configured_identity,
@@ -1044,6 +1133,9 @@ class DraftApprovalAuthority:
                 resource_control=record.context.resource_control,
             )
             if not _same_authorization_context(record.context, expected):
+                self._signal_authorization(
+                    record.context.resource_control.security_journal
+                )
                 raise DraftApprovalError(
                     "draft approval does not match the exact effect context"
                 )
@@ -1067,6 +1159,9 @@ class DraftApprovalAuthority:
                 context=record.context,
                 expires_at=record.expires_at,
             )
+            self._observability[effect_grant] = (
+                record.context.resource_control.security_journal
+            )
             return effect_grant
 
     def _consume_effect_grant(
@@ -1087,6 +1182,9 @@ class DraftApprovalAuthority:
             record = self._effect_grants.get(effect_grant)
             if record is None:
                 if effect_grant in self._consumed_effect_grants:
+                    self._signal_authorization(
+                        self._observability.get(effect_grant)
+                    )
                     raise DraftApprovalError(
                         "effect grant was already consumed"
                     )
@@ -1097,6 +1195,9 @@ class DraftApprovalAuthority:
             if now >= record.expires_at:
                 self._effect_grants.pop(effect_grant, None)
                 self._consumed_effect_grants.add(effect_grant)
+                self._signal_authorization(
+                    record.context.resource_control.security_journal
+                )
                 raise DraftApprovalError("effect grant expired")
             expected = _DraftAuthorizationContext(
                 configured_identity=self._configured_identity,
@@ -1113,12 +1214,26 @@ class DraftApprovalAuthority:
                 resource_control=record.context.resource_control,
             )
             if not _same_authorization_context(record.context, expected):
+                self._signal_authorization(
+                    record.context.resource_control.security_journal
+                )
                 raise DraftApprovalError(
                     "effect grant does not match the exact effect context"
                 )
             self._require_context_writer(record.context)
             self._effect_grants.pop(effect_grant)
             self._consumed_effect_grants.add(effect_grant)
+
+    @staticmethod
+    def _signal_authorization(
+        journal: SecurityEventJournal | None,
+    ) -> None:
+        if journal is not None and not journal.is_finished:
+            journal.signal(
+                "authorization_replay_or_context_mismatch",
+                source="draft_approval",
+                outcome="denied",
+            )
 
     def _require_context_writer(
         self,
@@ -1135,6 +1250,9 @@ class DraftApprovalAuthority:
             or context.configured_identity != self._configured_identity
             or writer.resource_control is not context.resource_control
         ):
+            self._signal_authorization(
+                context.resource_control.security_journal
+            )
             raise DraftApprovalError(
                 "approval context is no longer active"
             )
@@ -1221,11 +1339,17 @@ class DraftWriterTool:
             raise TypeError(
                 "resource_control must use the draft resource profile"
             )
+        security_journal = resource_control.security_journal
         if not drafts_dir.is_absolute():
             raise ValueError("drafts_dir must be absolute")
         if drafts_dir.name != "drafts" or drafts_dir.parent.name != "sandbox":
             raise ValueError("drafts_dir must end with sandbox/drafts")
         if drafts_dir.is_symlink() or drafts_dir.parent.is_symlink():
+            security_journal.signal(
+                "sandbox_violation",
+                source="draft_writer",
+                outcome="denied",
+            )
             raise SandboxViolationError(
                 "sandbox directories cannot be symlinks"
             )
@@ -1233,8 +1357,18 @@ class DraftWriterTool:
         try:
             root = drafts_dir.resolve(strict=True)
         except FileNotFoundError as exc:
+            security_journal.signal(
+                "sandbox_violation",
+                source="draft_writer",
+                outcome="denied",
+            )
             raise ValueError("drafts_dir must already exist") from exc
         if not root.is_dir():
+            security_journal.signal(
+                "sandbox_violation",
+                source="draft_writer",
+                outcome="denied",
+            )
             raise ValueError("drafts_dir must be a directory")
         if (
             not hasattr(os, "O_DIRECTORY")
@@ -1249,12 +1383,22 @@ class DraftWriterTool:
         try:
             root_fd = os.open(root, root_flags)
         except OSError as exc:
+            security_journal.signal(
+                "sandbox_violation",
+                source="draft_writer",
+                outcome="denied",
+            )
             raise SandboxViolationError(
                 "draft sandbox cannot be anchored"
             ) from exc
         root_stat = os.fstat(root_fd)
         if not stat.S_ISDIR(root_stat.st_mode):
             os.close(root_fd)
+            security_journal.signal(
+                "sandbox_violation",
+                source="draft_writer",
+                outcome="denied",
+            )
             raise SandboxViolationError("draft sandbox is not a directory")
 
         self._root = root
@@ -1266,6 +1410,7 @@ class DraftWriterTool:
         self._approval_authority = approval_authority
         self._output_policy = output_policy
         self._resource_control = resource_control
+        self._security_journal = security_journal
         try:
             self._prepare_grant = _issue_tool_grant(
                 principal=principal,
@@ -1318,6 +1463,8 @@ class DraftWriterTool:
             self._challenge_issued.clear()
             self._effect_grants.clear()
             self._consumed_proposals.clear()
+            if not self._security_journal.is_finished:
+                self._security_journal.finish(succeeded=True)
 
     def __enter__(self) -> Self:
         return self
@@ -1337,13 +1484,23 @@ class DraftWriterTool:
                 raise TypeError("request must be a ModelToolRequest")
             self._require_prepare_grant(grant)
             if request.name != "draft_create":
+                self._signal_tool_denied()
                 raise ToolDeniedError(
                     "requested tool is not allowed in this flow"
                 )
 
-            require_utf8_size(
-                request.arguments_json,
-                MAX_TOOL_ARGUMENTS_BYTES,
+            try:
+                require_utf8_size(
+                    request.arguments_json,
+                    MAX_TOOL_ARGUMENTS_BYTES,
+                )
+            except ResourceLimitError:
+                self._signal_resource_limit()
+                raise
+            self._security_journal.observe(
+                kind="tool_request",
+                source="draft_writer",
+                outcome="observed",
             )
             try:
                 arguments = DraftCreateArguments.model_validate_json(
@@ -1356,18 +1513,33 @@ class DraftWriterTool:
             if not set(arguments.references).issubset(
                 grant.allowed_knowledge_ids
             ):
+                self._signal_tool_denied()
                 raise ToolDeniedError(
                     "draft references exceed the authorized scope"
                 )
-            checked_title = self._output_policy.check(
-                arguments.title,
-                channel="draft_title",
-            )
-            checked_body = self._output_policy.check(
-                arguments.body,
-                channel="draft_body",
-            )
             try:
+                checked_title = self._output_policy.check(
+                    arguments.title,
+                    channel="draft_title",
+                )
+                checked_body = self._output_policy.check(
+                    arguments.body,
+                    channel="draft_body",
+                )
+                if (
+                    checked_title.metadata.decision == "redact"
+                    or checked_body.metadata.decision == "redact"
+                ):
+                    self._security_journal.signal(
+                        "output_policy_intervention",
+                        source="output_policy",
+                        outcome="intervened",
+                    )
+                self._security_journal.observe(
+                    kind="policy_decision",
+                    source="output_policy",
+                    outcome="allowed",
+                )
                 safe_arguments = DraftCreateArguments(
                     filename=arguments.filename,
                     title=self._output_policy.unwrap(
@@ -1380,14 +1552,25 @@ class DraftWriterTool:
                     ),
                     references=arguments.references,
                 )
+            except OutputPolicyError:
+                self._security_journal.signal(
+                    "output_policy_intervention",
+                    source="output_policy",
+                    outcome="intervened",
+                )
+                raise
             except ValidationError:
                 raise ToolArgumentsError(
                     "draft_create arguments were rejected"
                 ) from None
-            require_utf8_size(
-                self._render(safe_arguments),
-                MAX_DRAFT_MARKDOWN_BYTES,
-            )
+            try:
+                require_utf8_size(
+                    self._render(safe_arguments),
+                    MAX_DRAFT_MARKDOWN_BYTES,
+                )
+            except ResourceLimitError:
+                self._signal_resource_limit()
+                raise
             self._resource_control.reserve_draft_proposal()
             proposal = DraftProposal.from_arguments(safe_arguments)
             self._prepared[id(proposal)] = proposal
@@ -1402,6 +1585,7 @@ class DraftWriterTool:
             self._require_prepared_proposal(proposal)
             proposal_identity = id(proposal)
             if proposal_identity in self._challenge_issued:
+                self._signal_authorization()
                 raise DraftApprovalError(
                     "an approval challenge was already issued for this proposal"
                 )
@@ -1428,10 +1612,12 @@ class DraftWriterTool:
             self._require_prepared_proposal(proposal)
             proposal_identity = id(proposal)
             if proposal_identity in self._effect_grants:
+                self._signal_authorization()
                 raise DraftApprovalError(
                     "an effect grant was already issued for this proposal"
                 )
             if not isinstance(approval, DraftApproval):
+                self._signal_authorization()
                 raise DraftApprovalError(
                     "approval must be an opaque authority object"
                 )
@@ -1468,54 +1654,80 @@ class DraftWriterTool:
         self._require_effect_grant(proposal, effect_grant)
         proposal_identity = id(proposal)
         if proposal_identity in self._consumed_proposals:
+            self._signal_authorization()
             raise DraftApprovalError("effect grant was already consumed")
 
         content = self._render(proposal)
-        require_utf8_size(content, MAX_DRAFT_MARKDOWN_BYTES)
-        self._resource_control.reserve_draft_file()
-        self._approval_authority._consume_effect_grant(
-            proposal=proposal,
-            effect_grant=effect_grant,
-            writer_binding=self._binding,
-            writer_session=self._writer_session,
-            root_identity=self._root_identity,
-            principal=self._principal,
-            scope=self._scope,
-            _channel_token=_DRAFT_AUTHORITY_CHANNEL_TOKEN,
-        )
-        self._consumed_proposals.add(proposal_identity)
-
-        self._assert_root_unchanged()
-        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW
         try:
-            file_fd = os.open(
-                proposal.filename,
-                flags,
-                0o600,
-                dir_fd=self._root_fd,
+            require_utf8_size(content, MAX_DRAFT_MARKDOWN_BYTES)
+        except ResourceLimitError:
+            self._signal_resource_limit()
+            raise
+
+        event_reservation = self._security_journal.reserve_draft_effect()
+        try:
+            self._resource_control.reserve_draft_file()
+            self._approval_authority._consume_effect_grant(
+                proposal=proposal,
+                effect_grant=effect_grant,
+                writer_binding=self._binding,
+                writer_session=self._writer_session,
+                root_identity=self._root_identity,
+                principal=self._principal,
+                scope=self._scope,
+                _channel_token=_DRAFT_AUTHORITY_CHANNEL_TOKEN,
             )
-        except OSError as exc:
-            if exc.errno in {errno.EEXIST, errno.ELOOP}:
-                raise DraftAlreadyExistsError(
-                    "draft target already exists; overwrite is forbidden"
-                ) from None
-            raise SandboxViolationError(
-                "draft target could not be created safely"
-            ) from exc
+            self._consumed_proposals.add(proposal_identity)
+            self._assert_root_unchanged()
+        except Exception:
+            self._security_journal.cancel_draft_effect(event_reservation)
+            raise
 
+        self._security_journal.begin_draft_effect(event_reservation)
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW
+        file_fd = -1
         try:
-            os.fchmod(file_fd, 0o600)
-            with os.fdopen(
-                file_fd,
-                "w",
-                encoding="utf-8",
-                newline="\n",
-            ) as handle:
-                file_fd = -1
-                handle.write(content)
-        finally:
-            if file_fd >= 0:
-                os.close(file_fd)
+            try:
+                file_fd = os.open(
+                    proposal.filename,
+                    flags,
+                    0o600,
+                    dir_fd=self._root_fd,
+                )
+            except OSError as exc:
+                if exc.errno in {errno.EEXIST, errno.ELOOP}:
+                    self._signal_sandbox_violation()
+                    raise DraftAlreadyExistsError(
+                        "draft target already exists; overwrite is forbidden"
+                    ) from None
+                self._signal_sandbox_violation()
+                raise SandboxViolationError(
+                    "draft target could not be created safely"
+                ) from exc
+
+            try:
+                os.fchmod(file_fd, 0o600)
+                with os.fdopen(
+                    file_fd,
+                    "w",
+                    encoding="utf-8",
+                    newline="\n",
+                ) as handle:
+                    file_fd = -1
+                    handle.write(content)
+            finally:
+                if file_fd >= 0:
+                    os.close(file_fd)
+        except Exception:
+            self._security_journal.complete_draft_effect(
+                event_reservation,
+                succeeded=False,
+            )
+            raise
+        self._security_journal.complete_draft_effect(
+            event_reservation,
+            succeeded=True,
+        )
 
         encoded = content.encode("utf-8")
         return DraftCreationResult(
@@ -1535,6 +1747,7 @@ class DraftWriterTool:
             or grant.scope != self._scope
             or grant.tool != "draft_create"
         ):
+            self._signal_tool_denied()
             raise ToolDeniedError(
                 "tool grant does not belong to this principal and scope"
             )
@@ -1546,6 +1759,7 @@ class DraftWriterTool:
         if not isinstance(proposal, DraftProposal):
             raise TypeError("proposal must be a DraftProposal")
         if self._prepared.get(id(proposal)) is not proposal:
+            self._signal_authorization()
             raise DraftProposalError(
                 "proposal was not prepared by this writer instance and root"
             )
@@ -1579,12 +1793,14 @@ class DraftWriterTool:
             != proposal.proposal_fingerprint
             or effect_grant.effect != "create"
         ):
+            self._signal_authorization()
             raise DraftApprovalError(
                 "effect grant does not authorize this writer and proposal"
             )
 
     def _require_active(self) -> None:
         if self._closed or not self._finalizer.alive:
+            self._signal_authorization()
             raise DraftApprovalError("draft writer is closed")
         self._approval_authority._assert_writer_active(
             writer_binding=self._binding,
@@ -1597,11 +1813,13 @@ class DraftWriterTool:
 
     def _assert_root_unchanged(self) -> None:
         if not self._finalizer.alive:
+            self._signal_sandbox_violation()
             raise SandboxViolationError("draft sandbox is no longer available")
         try:
             path_stat = os.stat(self._root, follow_symlinks=False)
             descriptor_stat = os.fstat(self._root_fd)
         except OSError as exc:
+            self._signal_sandbox_violation()
             raise SandboxViolationError(
                 "draft sandbox is no longer available"
             ) from exc
@@ -1615,7 +1833,40 @@ class DraftWriterTool:
             or path_identity != self._root_identity
             or descriptor_identity != self._root_identity
         ):
+            self._signal_sandbox_violation()
             raise SandboxViolationError("draft sandbox location changed")
+
+    def _signal_authorization(self) -> None:
+        if not self._security_journal.is_finished:
+            self._security_journal.signal(
+                "authorization_replay_or_context_mismatch",
+                source="draft_writer",
+                outcome="denied",
+            )
+
+    def _signal_tool_denied(self) -> None:
+        if not self._security_journal.is_finished:
+            self._security_journal.signal(
+                "tool_denied",
+                source="draft_writer",
+                outcome="denied",
+            )
+
+    def _signal_resource_limit(self) -> None:
+        if not self._security_journal.is_finished:
+            self._security_journal.signal(
+                "resource_limit_exceeded",
+                source="resource_control",
+                outcome="limited",
+            )
+
+    def _signal_sandbox_violation(self) -> None:
+        if not self._security_journal.is_finished:
+            self._security_journal.signal(
+                "sandbox_violation",
+                source="draft_writer",
+                outcome="denied",
+            )
 
     @staticmethod
     def _render(proposal: DraftContent) -> str:

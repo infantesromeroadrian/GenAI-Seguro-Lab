@@ -15,6 +15,10 @@ amplía `GSL-ROE-001`: las Rules of Engagement autorizan y acotan evaluaciones
 adversarias, mientras que esta política limita el comportamiento ordinario de
 la aplicación.
 
+PGS-04-M07 conecta sus rechazos con `GSL-SECURITY-EVENTS-001`. El journal
+posee límites separados de eventos y bytes: no incorpora contenido observado
+ni altera los contadores de esta política.
+
 ## Requisitos
 
 | ID | Requisito verificable |
@@ -87,5 +91,7 @@ contención del lock cooperativo y ausencia de efectos tras un rechazo.
   pero el mismo usuario puede omitirlo al invocar directamente la API Python.
 - No existe rate limiting persistente por usuario, cuota distribuida, cgroup,
   límite de RSS o aislamiento de sistema operativo.
+- El journal de `CMP-11` hace observable un exceso mediante un código cerrado,
+  pero no añade cuota persistente, cancelación o respuesta automática.
 - La política no materializa los casos DOS inertes ni modifica la evidencia
   histórica. PGS-05 medirá latencia y consumo con el mismo corpus de retest.

@@ -7,6 +7,8 @@ local.
 - Validar el dataset benigno antes de utilizarlo.
 - Aplicar `CMP-10` a corpus, fronteras, operaciones, sesiones de borrador y
   concurrencia cooperativa de la CLI.
+- Aplicar `CMP-11` a decisiones y efectos mediante un journal acotado en
+  memoria, sin contenido bruto o exportación automática.
 - Validar por API interna las entradas y oráculos adversarios.
 - Ejecutar el flujo benigno acotado y el adaptador determinista.
 - Autorizar la búsqueda de conocimiento fuera del modelo.
@@ -28,6 +30,8 @@ local.
 - Límite: salvo el subproceso acotado de `ADV-EX-003`, no existe aislamiento
   interno por proceso, contenedor o identidad.
 - El lock y los plazos de `CMP-10` son cooperativos y no cambian ese límite.
+- La cadena de `CMP-11` no autentica al emisor ni resiste código hostil dentro
+  de este mismo proceso.
 - `ADV-EX-003` recibe solo tres variables ambientales permitidas; no hereda
   `os.environ`.
 

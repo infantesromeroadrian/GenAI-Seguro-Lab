@@ -34,7 +34,8 @@ from .model_adapter import (
     ScriptedExchange,
 )
 from .output_policy import OutputPolicy
-from .resource_control import ProductResourceControl
+from .resource_control import ProductResourceControl, ResourceLimitError
+from .security_events import SecurityEventJournal
 
 Text = Annotated[str, Field(min_length=1)]
 Sha256 = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
@@ -289,6 +290,7 @@ def run_incident(
     incident_id: str,
     *,
     clock: Callable[[], float] = monotonic,
+    security_journal: SecurityEventJournal | None = None,
 ) -> FunctionalCaseResult:
     """Ejecuta un único caso benigno por su identificador exacto."""
 
@@ -296,72 +298,137 @@ def run_incident(
         raise TypeError("bundle must be a DatasetBundle")
     if not isinstance(incident_id, str):
         raise TypeError("incident_id must be a string")
-    control = ProductResourceControl("analyze", clock=clock)
-
-    incident = next(
-        (
-            candidate
-            for candidate in bundle.incidents
-            if candidate.id == incident_id
-        ),
-        None,
+    journal = security_journal or SecurityEventJournal(
+        "analyze",
+        clock=clock,
     )
-    if incident is None:
-        raise UnknownIncidentError("unknown benign incident identifier")
-
-    knowledge_catalog = KnowledgeCatalog(bundle.knowledge)
-    result = _build_flow(
-        (incident,),
-        knowledge_catalog,
-        bundle.knowledge,
-    ).analyze(
-        incident,
-        resource_control=control,
+    if (
+        not isinstance(journal, SecurityEventJournal)
+        or journal.profile != "analyze"
+    ):
+        raise TypeError("security_journal must use the analyze profile")
+    control = ProductResourceControl(
+        "analyze",
+        clock=clock,
+        security_journal=journal,
     )
-    return _case_result(incident, result)
+
+    try:
+        incident = next(
+            (
+                candidate
+                for candidate in bundle.incidents
+                if candidate.id == incident_id
+            ),
+            None,
+        )
+        if incident is None:
+            journal.signal(
+                "unknown_model_request",
+                source="flow",
+                outcome="denied",
+            )
+            raise UnknownIncidentError("unknown benign incident identifier")
+
+        knowledge_catalog = KnowledgeCatalog(bundle.knowledge)
+        result = _build_flow(
+            (incident,),
+            knowledge_catalog,
+            bundle.knowledge,
+        ).analyze(
+            incident,
+            resource_control=control,
+        )
+        case = _case_result(incident, result)
+    except Exception:
+        if not journal.is_finished:
+            journal.finish(succeeded=False)
+        raise
+    journal.finish(succeeded=True)
+    return case
 
 
 def run_functional_baseline(
     data_dir: Path,
     *,
     clock: Callable[[], float] = monotonic,
+    security_journal: SecurityEventJournal | None = None,
 ) -> FunctionalBaseline:
     """Ejecuta todo el corpus benigno y devuelve evidencia determinista."""
 
     if not isinstance(data_dir, Path):
         raise TypeError("data_dir must be a Path")
-    control = ProductResourceControl("baseline", clock=clock)
-    bundle = load_dataset(data_dir)
-    knowledge_catalog = KnowledgeCatalog(bundle.knowledge)
-    flow = _build_flow(
-        bundle.incidents,
-        knowledge_catalog,
-        bundle.knowledge,
+    journal = security_journal or SecurityEventJournal(
+        "baseline",
+        clock=clock,
     )
-    cases = tuple(
-        _case_result(
-            incident,
-            flow.analyze(incident, resource_control=control),
+    if (
+        not isinstance(journal, SecurityEventJournal)
+        or journal.profile != "baseline"
+    ):
+        raise TypeError("security_journal must use the baseline profile")
+    control = ProductResourceControl(
+        "baseline",
+        clock=clock,
+        security_journal=journal,
+    )
+    try:
+        try:
+            bundle = load_dataset(data_dir)
+        except ResourceLimitError:
+            journal.signal(
+                "resource_limit_exceeded",
+                source="data_contract",
+                outcome="limited",
+            )
+            raise
+        except (OSError, TypeError, ValueError):
+            journal.signal(
+                "data_integrity_violation",
+                source="data_contract",
+                outcome="denied",
+            )
+            raise
+        knowledge_catalog = KnowledgeCatalog(bundle.knowledge)
+        flow = _build_flow(
+            bundle.incidents,
+            knowledge_catalog,
+            bundle.knowledge,
         )
-        for incident in bundle.incidents
-    )
-    return FunctionalBaseline(
-        baseline_id="GSL-BASELINE-BENIGN-001",
-        schema_version="1.0.0",
-        profile="deterministic_benign",
-        evaluation_scope="benign_flow_functionality",
-        dataset=BaselineDataset(
-            id=bundle.manifest.id,
-            version=bundle.manifest.version,
-            manifest_sha256=bundle.manifest_sha256,
-        ),
-        summary=FunctionalBaselineSummary(
-            cases_total=len(cases),
-            cases_passed=len(cases),
-            model_invocations=sum(
-                case.model_invocations for case in cases
+        cases = tuple(
+            _case_result(
+                incident,
+                flow.analyze(
+                    incident,
+                    resource_control=control,
+                    security_correlation=journal.new_correlation(),
+                ),
+            )
+            for incident in bundle.incidents
+        )
+        result = FunctionalBaseline(
+            baseline_id="GSL-BASELINE-BENIGN-001",
+            schema_version="1.0.0",
+            profile="deterministic_benign",
+            evaluation_scope="benign_flow_functionality",
+            dataset=BaselineDataset(
+                id=bundle.manifest.id,
+                version=bundle.manifest.version,
+                manifest_sha256=bundle.manifest_sha256,
             ),
-            tool_requests=sum(case.tool_requests for case in cases),
-        ),
-        cases=cases,
-    )
+            summary=FunctionalBaselineSummary(
+                cases_total=len(cases),
+                cases_passed=len(cases),
+                model_invocations=sum(
+                    case.model_invocations for case in cases
+                ),
+                tool_requests=sum(case.tool_requests for case in cases),
+            ),
+            cases=cases,
+        )
+    except Exception:
+        if not journal.is_finished:
+            journal.finish(succeeded=False)
+        raise
+    journal.finish(succeeded=True)
+    return result

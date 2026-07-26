@@ -57,6 +57,10 @@ real.
 - [Política de límites de recursos](./resource-limits-policy.md): topes
   preventivos de bytes, registros, tiempo cooperativo, iteraciones, consumo,
   borradores y procesos cooperantes de la CLI para PGS-04-M06.
+- [Política de eventos y señales de seguridad](./security-events-policy.md):
+  journal cerrado y acotado en memoria, correlación por operación y caso,
+  cadena SHA-256, señales deterministas, salida CLI opt-in y límites de
+  PGS-04-M07.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

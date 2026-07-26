@@ -19,7 +19,9 @@ revisarlo sin cambiar los oráculos ni reinterpretar los resultados.
 > **Addendum de tratamiento (2026-07-26):** PGS-04-M04 hace que el checkout
 > actual rechace el literal de `ADV-TOL-005` antes de I/O y cree cero archivos.
 > PGS-04-M06 añade además límites preventivos de iteraciones y consumo al flujo
-> ordinario descrito por `F-03`; los casos DOS siguen sin ejecutarse.
+> ordinario descrito por `F-03`; PGS-04-M07 añade un journal de producto
+> efímero, separado de los eventos históricos, sin ejecutar casos nuevos. Los
+> casos DOS siguen sin ejecutarse.
 > Este informe y la evidencia enlazada siguen describiendo exclusivamente el
 > candidato histórico indicado en la ficha; no se han reescrito sus resultados.
 
@@ -138,7 +140,7 @@ anti-replay no prueban quién autorizó la acción.
 - La CLI solo expone `analyze` y `baseline`; no existe prompt libre.
 - `DraftWriterTool` es una API Python interna y no está conectada a la CLI.
 - No existe frontal web, interfaz gráfica, API pública, autenticación, red,
-  cloud, telemetría o despliegue.
+  cloud, telemetría externa o despliegue.
 - Cuatro fixtures —tres de disponibilidad y una de supply chain— permanecen
   preparadas pero inertes.
 - No se han probado ataques desconocidos, fuzzing, carga, proveedores, modelos

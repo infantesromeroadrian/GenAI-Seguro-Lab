@@ -12,6 +12,8 @@ mediante un flujo determinista y herramientas con autoridad acotada.
   huella o aprobación.
 - Acotar mediante `CMP-10` el corpus, las fronteras, las operaciones y los
   efectos antes de ejecutarlos.
+- Observar mediante `CMP-11` decisiones y señales con correlación opaca,
+  secuencia global y un esquema sin contenido bruto.
 - Emitir resultados JSON reproducibles y mantener los efectos locales fuera de
   la ruta ordinaria de la CLI.
 - Preparar una petición vulnerable marcada para evaluación sin ejecutarla.
@@ -29,7 +31,7 @@ mediante un flujo determinista y herramientas con autoridad acotada.
 | ID | Límite | Garantía actual |
 |---|---|---|
 | `TB-01` | Host local e identidad del SO | El proceso hereda la cuenta local; no hay identidad propia de aplicación |
-| `TB-02` | Control de aplicación | Esquemas, orquestación, política de salida y límites preventivos dentro de un único proceso Python |
+| `TB-02` | Control de aplicación | Esquemas, orquestación, política de salida, límites preventivos y journal saneado dentro de un único proceso Python |
 | `TB-03` | Salida del modelo | Toda respuesta se valida y su resumen atraviesa `CMP-09` antes de entregarse |
 | `TB-04` | Autoridad de herramientas | El adaptador no autoriza ni ejecuta herramientas |
 | `TB-05` | Efecto en filesystem | Solo creación aprobada mediante identidad sintética dentro de `sandbox/drafts/` |
@@ -42,14 +44,17 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 
 - No hay modelo GenAI real, proveedor, red, API web, Docker, cloud o base de
   datos.
-- No hay autenticación general, service account o telemetría. Solo existe la
-  autoridad sintética interna de borradores; no verifica presencia humana. El
-  remoto GitHub público es una integración manual de desarrollo y
-  distribución; no es alcanzable desde el runtime.
+- No hay autenticación general, service account, logging persistente o
+  telemetría externa. Solo existe la autoridad sintética interna de
+  borradores; no verifica presencia humana. El remoto GitHub público es una
+  integración manual de desarrollo y distribución; no es alcanzable desde el
+  runtime.
 - `CMP-09` no usa un clasificador o proveedor y no ofrece detección universal;
   solo aplica las reglas explícitas documentadas.
 - `CMP-10` usa plazos y un lock cooperativos; no cancela llamadas bloqueadas,
   limita llamadas directas a la API o aísla el proceso.
+- `CMP-11` vive en memoria y su cadena no firmada no autentica al emisor,
+  correlaciona sesiones o activa respuesta y recuperación.
 - El corpus adversario conserva fixtures y oráculos separados; `CMP-07` cubre
   14 PI/JB/EX/TOL, `CMP-08` fija su baseline canónica y las otras cuatro
   entradas siguen inertes.

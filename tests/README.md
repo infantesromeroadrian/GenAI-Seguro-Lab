@@ -3,7 +3,8 @@
 Este directorio contiene las pruebas automatizadas del contrato de datos, el
 adaptador determinista, las herramientas locales, el flujo benigno, el perfil
 vulnerable aislado, el harness adversario acotado, el runner canónico y la
-interfaz de proceso completo, incluidos los límites preventivos de recursos.
+interfaz de proceso completo, incluidos los límites preventivos de recursos y
+el journal saneado de seguridad.
 
 Ejecución completa:
 
@@ -39,6 +40,13 @@ presupuesto acumulado, el plazo con reloj inyectado, la cuota de borrador y el
 lock no bloqueante de CLI. También verifica rechazo previo al adaptador o I/O
 y `stdout` vacío; no acredita cancelación de una llamada síncrona bloqueada ni
 rate limiting persistente.
+
+`test_security_events.py` comprueba el esquema cerrado e inmutable, la
+secuencia y cadena SHA-256, los límites de eventos y bytes, la concurrencia,
+las diez señales deterministas y la ausencia de canarios. Verifica además una
+correlación primaria por operación, 12 correlaciones hijas disjuntas para la
+baseline, reserva de intento y resultado antes de I/O, fallo cerrado y el
+sobre CLI opt-in sin alterar la salida predeterminada.
 
 `test_local_tools.py` comprueba que cada grant pertenece a una sola
 herramienta, principal, scope e instancia; que `TOL-01` retiene solo la vista

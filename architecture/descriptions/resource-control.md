@@ -13,6 +13,8 @@ conceder autoridad de ejecución.
 - Aplicar perfiles `analyze`, `baseline` y `draft` con checkpoints observables.
 - Mantener un lock exclusivo y no bloqueante sobre el descriptor existente de
   `data/manifest.json` durante cada operación de la CLI.
+- Señalar en `CMP-11` el exceso de recursos o conflicto de lock mediante
+  códigos cerrados, sin incluir valor, umbral, ruta o excepción.
 
 ## Restricciones
 
@@ -24,6 +26,7 @@ conceder autoridad de ejecución.
   llamada directa a la API Python puede omitirlo.
 - No implementa rate limiting persistente, cuota distribuida, límite RSS,
   cgroup o aislamiento del sistema operativo.
+- El presupuesto del journal es independiente y no amplía estos límites.
 
 ## Evidencia
 
@@ -31,3 +34,4 @@ conceder autoridad de ejecución.
 - `tests/test_resource_control.py`
 - `docs/resource-limits-policy.md`
 - Inventario `CMP-10`
+- Integración `CMP-11`

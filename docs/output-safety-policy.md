@@ -49,6 +49,11 @@ errores no incluyen el texto examinado.
 Las redacciones conservan únicamente categoría y número de coincidencias. No
 conservan los valores encontrados.
 
+PGS-04-M07 registra únicamente que hubo una decisión o intervención mediante
+`GSL-SECURITY-EVENTS-001`. El esquema de eventos no reutiliza esta política
+como sanitizador genérico: impide por contrato que exista un campo para el
+texto examinado o sus valores.
+
 ## Inserción en los flujos
 
 ### Resultado ordinario
@@ -104,4 +109,5 @@ La evidencia actual usa un adaptador determinista. PGS-05 debe repetir el
 corpus fijado y medir seguridad y utilidad; cualquier modelo o proveedor real
 exige revisar estas reglas. `GSL-RESOURCE-POLICY-001` aplica los límites de
 tamaño, tiempo cooperativo, iteraciones y consumo sin ampliar la detección
-léxica de esta política.
+léxica de esta política. Una señal `output_policy_intervention` solo acredita
+que esta política actuó; no prueba por sí misma un ataque o una fuga.

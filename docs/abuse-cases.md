@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ABUSE-CASES-001` |
-| Versión | `2.1.0` |
+| Versión | `2.2.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
@@ -204,8 +204,12 @@ un proveedor mediante este catálogo.
   el estado de alcance de ningún `AC-*`.
 - `CMP-07` cubre 14 fixtures: tres PI, seis de jailbreak y revelación y cinco
   TOL; las otras cuatro todavía no tienen dispatcher. Tampoco existe modelo
-  real, proveedor, red, autenticación general, telemetría o despliegue. La
-  credencial sintética de `IDN-03` no equivale a una identidad humana real.
+  real, proveedor, red, autenticación general, telemetría externa o
+  despliegue. La credencial sintética de `IDN-03` no equivale a una identidad
+  humana real.
+- `CMP-11` registra señales deterministas saneadas sobre caminos existentes.
+  No añade casos, aumenta alcanzabilidad o convierte una observación en prueba
+  de ataque; su eficacia comparativa continúa reservada al retest.
 - Un `PASS` solo acredita coincidencia con el oráculo de la variante ejecutada;
   no cierra el abuse case frente a otros ataques o targets.
 

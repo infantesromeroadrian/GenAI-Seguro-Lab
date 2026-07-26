@@ -5,18 +5,18 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-PRIORITY-001` |
-| Versión | `2.0.0` |
+| Versión | `2.1.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Crosswalk actual | [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
-| Alcance | sistema local sintético, incluidos `CMP-06` a `CMP-10` |
+| Alcance | sistema local sintético, incluidos `CMP-06` a `CMP-11` |
 
 Esta priorización ordena el backlog de pruebas del laboratorio. No es una
 clasificación CVSS ni estima la frecuencia de incidentes reales. La baseline
 histórica reproduce el residual concreto de `AC-TOL-05`; el checkout actual
-rechaza ese literal y la tabla incorpora los controles hasta PGS-04-M06. Cada caso
+rechaza ese literal y la tabla incorpora los controles hasta PGS-04-M07. Cada caso
 se valora únicamente contra las capacidades presentes en el corte indicado.
 
 ## Método
@@ -276,6 +276,14 @@ modifica ninguna puntuación:
 La distribución permanece en 1 `PR-1`, 1 `PR-2`, 14 `PR-3` y 1 `PR-0`. Este
 estado conserva deliberadamente el backlog hasta obtener evidencia empírica
 con las RoE ampliadas.
+
+## Tratamiento de PGS-04-M07
+
+`CMP-11` hace observables decisiones, rechazos e intervenciones mediante un
+journal saneado y reglas deterministas. No cambia ninguna puntuación: una
+señal no confirma éxito, ataque o compromiso, no añade una ruta alcanzable y
+no sustituye el retest. La distribución permanece en 1 `PR-1`, 1 `PR-2`, 14
+`PR-3` y 1 `PR-0`.
 
 ## Backlog posterior a PGS-03-M07
 

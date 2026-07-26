@@ -243,6 +243,33 @@
       }
     },
     {
+      "id": "security-event-journal",
+      "label": "CMP-11 · Journal de seguridad",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/security_events.py",
+      "meta": {
+        "type": "service",
+        "technology": "pydantic-python-stdlib",
+        "inventoryIds": [
+          "CMP-11"
+        ],
+        "state": "application-control",
+        "policyId": "GSL-SECURITY-EVENTS-001",
+        "policyVersion": "1.0.0",
+        "profiles": [
+          "analyze",
+          "baseline",
+          "draft"
+        ],
+        "storage": "bounded-in-memory",
+        "maxEventBytes": 2048,
+        "canonicalHashChain": "sha256-unsigned",
+        "persistentLogging": false,
+        "externalTelemetry": false,
+        "createsAuthority": false
+      }
+    },
+    {
       "id": "deterministic-model",
       "label": "MOD-01 · Modelo determinista",
       "parentId": "model-output-boundary",
@@ -317,6 +344,81 @@
     }
   ],
   "edges": [
+    {
+      "id": "components-cli-uses-security-journal",
+      "source": "cli-dispatcher",
+      "target": "security-event-journal",
+      "label": "abre operación; informe saneado solo con --security-report",
+      "meta": {
+        "type": "calls",
+        "defaultOutputChanged": false,
+        "automaticPersistence": false
+      }
+    },
+    {
+      "id": "components-baseline-uses-security-journal",
+      "source": "baseline-engine",
+      "target": "security-event-journal",
+      "label": "correlación primaria + 12 hijas opacas; cierre terminal",
+      "meta": {
+        "type": "calls",
+        "globalSequence": true,
+        "caseCorrelations": 12
+      }
+    },
+    {
+      "id": "components-flow-emits-security-events",
+      "source": "benign-flow",
+      "target": "security-event-journal",
+      "label": "modelo, herramienta, política y secuencia sin contenido",
+      "meta": {
+        "type": "calls",
+        "rawContentRetained": false
+      }
+    },
+    {
+      "id": "components-resource-control-emits-security-signals",
+      "source": "resource-control",
+      "target": "security-event-journal",
+      "label": "exceso de recursos y conflicto de lock",
+      "meta": {
+        "type": "calls",
+        "journalBudgetSeparate": true
+      }
+    },
+    {
+      "id": "components-search-emits-security-signals",
+      "source": "knowledge-search",
+      "target": "security-event-journal",
+      "label": "rechazos de herramienta saneados",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-04",
+        "createsAuthority": false
+      }
+    },
+    {
+      "id": "components-writer-emits-security-events",
+      "source": "draft-writer",
+      "target": "security-event-journal",
+      "label": "reserva intento/resultado antes de I/O",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-04",
+        "atomicEventReservation": true
+      }
+    },
+    {
+      "id": "components-approval-emits-security-signals",
+      "source": "draft-approval-authority",
+      "target": "security-event-journal",
+      "label": "tercer fallo, replay o contexto incompatible",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-04",
+        "credentialRetained": false
+      }
+    },
     {
       "id": "components-cli-uses-resource-control",
       "source": "cli-dispatcher",

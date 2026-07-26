@@ -14,6 +14,8 @@ Orquesta un ciclo fijo de modelo, búsqueda autorizada y respuesta final.
   documentos realmente devueltos por la búsqueda.
 - Aplicar `CMP-09` al resumen y sustituir las invocaciones brutas por una
   proyección de métricas antes de devolver el resultado.
+- Emitir en `CMP-11` solo eventos y señales allowlisted bajo la correlación
+  asignada; no conservar petición, respuesta, argumentos o resumen.
 
 ## Restricciones
 
@@ -26,8 +28,10 @@ Orquesta un ciclo fijo de modelo, búsqueda autorizada y respuesta final.
 - Cualquier salida libre, campo adicional, afirmación de efecto o referencia
   fuera de alcance falla cerrada.
 - Un exceso de recursos descarta el resultado y no produce una salida parcial.
+- Un fallo del journal impide devolver la salida y no activa un reintento.
 
 ## Inventario
 
 - `CMP-03`
 - `CMP-10`
+- `CMP-11`

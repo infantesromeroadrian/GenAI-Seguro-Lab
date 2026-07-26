@@ -1,9 +1,9 @@
 # Política de validación y allowlists
 
 - **ID:** `GSL-VALIDATION-POLICY-001`
-- **Versión:** 1.3
+- **Versión:** 1.4
 - **Fecha:** 2026-07-26
-- **Microtareas:** PGS-04-M02 a PGS-04-M05
+- **Microtareas:** PGS-04-M02 a PGS-04-M07
 - **Ámbito:** flujo benigno determinista y herramientas locales
 
 ## Objetivo
@@ -112,6 +112,15 @@ aprobación opaca, todos fuera de los datos del modelo. El
 herramienta, efecto, writer, sesión, instancia y raíz; caduca y se consume una
 sola vez antes de I/O. Este mecanismo no verifica presencia humana real.
 
+## Validación de eventos
+
+`GSL-SECURITY-EVENTS-001` usa un esquema Pydantic separado, estricto e
+inmutable. Solo acepta taxonomías cerradas, identificadores de correlación
+opacos, secuencia, tiempo acotado y hashes. No añade un campo de texto que
+necesite sanitización posterior y no serializa el grant o la identidad
+presentada. Un evento observa una decisión ya tomada; nunca satisface una
+precondición de autoridad.
+
 ## Fallo cerrado
 
 | Condición | Resultado observable |
@@ -123,6 +132,7 @@ sola vez antes de I/O. Este mecanismo no verifica presencia humana real.
 | Salida final sin esquema o inconsistente con la ejecución | `BenignFlowError` |
 | Contenido rechazado por la política de salida | `OutputPolicyRejectedError` genérico, sin reflejar el valor |
 | Sello de política fabricado, cruzado o de otro canal | `PolicyCheckedTextError` |
+| Journal sin capacidad o con ciclo de vida inválido | `SecurityEventError`; no se devuelve salida ni se inicia el efecto |
 
 Los errores no incluyen el contenido adversario ni habilitan una segunda
 herramienta, un reintento o una ruta alternativa.
@@ -140,6 +150,8 @@ herramienta, un reintento o una ruta alternativa.
   binding del sello de salida.
 - `tests/test_instruction_boundary.py`: conservación de las clases de
   confianza.
+- `tests/test_security_events.py`: esquema cerrado, correlación, cadena,
+  canarios y fallo previo al efecto.
 
 La baseline benigna canónica debe permanecer idéntica byte a byte después de
 incorporar esta política. La evidencia adversaria versionada no se reescribe en
@@ -159,4 +171,6 @@ esta microtarea.
   activo.
 - `GSL-RESOURCE-POLICY-001` impone límites preventivos de recursos; su plazo
   es cooperativo y no puede interrumpir una dependencia síncrona bloqueada.
+- `GSL-SECURITY-EVENTS-001` observa metadatos en memoria; no persiste,
+  autentica, responde o prueba un ataque.
 - PGS-05 debe repetir el mismo corpus y medir el control frente a la baseline.

@@ -138,6 +138,8 @@ la aplicación, pero no:
 - protege frente a ejecución arbitraria de Python bajo la cuenta local;
 - sustituye la política de salida M05 o la recuperación M08; las cuotas M06
   limitan consumo, pero no reducen la autoridad de `IDN-01`;
+- convierte eventos o correlaciones de `CMP-11` en identidad, grant,
+  autenticación o autorización;
 - demuestra robustez frente a un modelo GenAI real.
 
 `CTL-07` permanece `PARCIAL`: el contrato ya autentica y vincula un principal

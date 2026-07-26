@@ -16,6 +16,8 @@ from typing import Literal
 
 from pydantic import BaseModel
 
+from .security_events import SecurityCorrelation, SecurityEventJournal
+
 RESOURCE_CONTROL_ID = "GSL-RESOURCE-POLICY-001"
 RESOURCE_CONTROL_VERSION = "1.0.0"
 
@@ -169,23 +171,56 @@ def read_bounded_regular_file(path: Path, maximum: int) -> bytes:
 
 
 @contextmanager
-def exclusive_process_lock(resource: Path) -> Iterator[None]:
+def exclusive_process_lock(
+    resource: Path,
+    *,
+    security_journal: SecurityEventJournal | None = None,
+) -> Iterator[None]:
     """Bloquea sin espera un recurso existente durante una ejecución CLI."""
 
     if not isinstance(resource, Path):
         raise TypeError("resource must be a Path")
     flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    if security_journal is not None and not isinstance(
+        security_journal,
+        SecurityEventJournal,
+    ):
+        raise TypeError("security_journal must be a SecurityEventJournal")
     try:
         descriptor = os.open(resource, flags)
     except OSError as exc:
+        if security_journal is not None and not security_journal.is_finished:
+            security_journal.signal(
+                "lock_conflict",
+                source="cli_lock",
+                outcome="conflict",
+            )
         raise ResourceLockError(_LOCK_MESSAGE) from exc
     try:
         metadata = os.fstat(descriptor)
         if not stat.S_ISREG(metadata.st_mode):
+            if (
+                security_journal is not None
+                and not security_journal.is_finished
+            ):
+                security_journal.signal(
+                    "lock_conflict",
+                    source="cli_lock",
+                    outcome="conflict",
+                )
             raise ResourceLockError(_LOCK_MESSAGE)
         try:
             fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except (BlockingIOError, OSError) as exc:
+            if (
+                security_journal is not None
+                and not security_journal.is_finished
+            ):
+                security_journal.signal(
+                    "lock_conflict",
+                    source="cli_lock",
+                    outcome="conflict",
+                )
             raise ResourceLockError(_LOCK_MESSAGE) from exc
         yield
     finally:
@@ -200,14 +235,25 @@ class ProductResourceControl:
         profile: ResourceProfile,
         *,
         clock: Callable[[], float] = monotonic,
+        security_journal: SecurityEventJournal | None = None,
     ) -> None:
         if profile not in _PROFILE_LIMITS:
             raise ValueError("unknown resource profile")
         if not callable(clock):
             raise TypeError("clock must be callable")
+        if security_journal is None:
+            security_journal = SecurityEventJournal(profile, clock=clock)
+        if (
+            not isinstance(security_journal, SecurityEventJournal)
+            or security_journal.profile != profile
+        ):
+            raise TypeError(
+                "security_journal must match the resource profile"
+            )
         self._profile = profile
         self._limits = _PROFILE_LIMITS[profile]
         self._clock = clock
+        self._security_journal = security_journal
         self._lock = threading.RLock()
         self._started_at = self._read_clock()
         self._last_checkpoint = self._started_at
@@ -238,6 +284,10 @@ class ProductResourceControl:
         return self._limits
 
     @property
+    def security_journal(self) -> SecurityEventJournal:
+        return self._security_journal
+
+    @property
     def usage(self) -> ResourceUsage:
         with self._lock:
             return ResourceUsage(
@@ -253,38 +303,104 @@ class ProductResourceControl:
                 elapsed_seconds=self._last_checkpoint - self._started_at,
             )
 
-    def checkpoint(self) -> None:
+    def checkpoint(
+        self,
+        *,
+        correlation: SecurityCorrelation | None = None,
+    ) -> None:
         with self._lock:
-            self._checkpoint_locked()
+            self._checkpoint_locked(correlation)
 
-    def begin_case(self) -> None:
-        self._consume("_cases", self._limits.cases)
+    def begin_case(
+        self,
+        *,
+        correlation: SecurityCorrelation | None = None,
+    ) -> None:
+        self._consume("_cases", self._limits.cases, correlation)
 
-    def before_model_call(self, request: BaseModel) -> None:
-        require_serialized_size(request, MAX_MODEL_REQUEST_BYTES)
+    def before_model_call(
+        self,
+        request: BaseModel,
+        *,
+        correlation: SecurityCorrelation | None = None,
+    ) -> None:
+        try:
+            require_serialized_size(request, MAX_MODEL_REQUEST_BYTES)
+        except ResourceLimitError:
+            self._signal_resource_limit(correlation)
+            raise
         self._consume(
             "_model_invocations",
             self._limits.model_invocations,
+            correlation,
         )
 
-    def after_model_call(self, response: BaseModel) -> None:
-        self.checkpoint()
-        require_serialized_size(response, MAX_MODEL_RESPONSE_BYTES)
+    def after_model_call(
+        self,
+        response: BaseModel,
+        *,
+        correlation: SecurityCorrelation | None = None,
+    ) -> None:
+        self.checkpoint(correlation=correlation)
+        try:
+            require_serialized_size(response, MAX_MODEL_RESPONSE_BYTES)
+        except ResourceLimitError:
+            self._signal_resource_limit(correlation)
+            raise
 
-    def accept_tool_request(self, arguments_json: str) -> None:
-        require_utf8_size(arguments_json, MAX_TOOL_ARGUMENTS_BYTES)
-        self._consume("_tool_requests", self._limits.tool_requests)
+    def accept_tool_request(
+        self,
+        arguments_json: str,
+        *,
+        correlation: SecurityCorrelation | None = None,
+    ) -> None:
+        try:
+            require_utf8_size(arguments_json, MAX_TOOL_ARGUMENTS_BYTES)
+        except ResourceLimitError:
+            self._signal_resource_limit(correlation)
+            raise
+        self._consume(
+            "_tool_requests",
+            self._limits.tool_requests,
+            correlation,
+        )
 
-    def before_tool_execution(self) -> None:
-        self._consume("_tool_executions", self._limits.tool_executions)
+    def before_tool_execution(
+        self,
+        *,
+        correlation: SecurityCorrelation | None = None,
+    ) -> None:
+        self._consume(
+            "_tool_executions",
+            self._limits.tool_executions,
+            correlation,
+        )
 
-    def after_tool_execution(self, result: BaseModel) -> None:
-        self.checkpoint()
-        require_serialized_size(result, MAX_KNOWLEDGE_RESULT_BYTES)
+    def after_tool_execution(
+        self,
+        result: BaseModel,
+        *,
+        correlation: SecurityCorrelation | None = None,
+    ) -> None:
+        self.checkpoint(correlation=correlation)
+        try:
+            require_serialized_size(result, MAX_KNOWLEDGE_RESULT_BYTES)
+        except ResourceLimitError:
+            self._signal_resource_limit(correlation)
+            raise
 
-    def accept_final_summary(self, summary: str) -> None:
-        self.checkpoint()
-        require_utf8_size(summary, MAX_FINAL_SUMMARY_BYTES)
+    def accept_final_summary(
+        self,
+        summary: str,
+        *,
+        correlation: SecurityCorrelation | None = None,
+    ) -> None:
+        self.checkpoint(correlation=correlation)
+        try:
+            require_utf8_size(summary, MAX_FINAL_SUMMARY_BYTES)
+        except ResourceLimitError:
+            self._signal_resource_limit(correlation)
+            raise
 
     def reserve_draft_proposal(self) -> None:
         self._consume("_draft_proposals", self._limits.draft_proposals)
@@ -304,22 +420,45 @@ class ProductResourceControl:
     def reserve_draft_file(self) -> None:
         self._consume("_draft_files", self._limits.draft_files)
 
-    def _consume(self, attribute: str, maximum: int) -> None:
+    def _consume(
+        self,
+        attribute: str,
+        maximum: int,
+        correlation: SecurityCorrelation | None = None,
+    ) -> None:
         with self._lock:
-            self._checkpoint_locked()
+            self._checkpoint_locked(correlation)
             current = getattr(self, attribute)
             if current >= maximum:
+                self._signal_resource_limit(correlation)
                 raise ResourceLimitError(_LIMIT_MESSAGE)
             setattr(self, attribute, current + 1)
 
-    def _checkpoint_locked(self) -> None:
+    def _checkpoint_locked(
+        self,
+        correlation: SecurityCorrelation | None = None,
+    ) -> None:
         now = self._read_clock()
         if now < self._started_at:
+            self._signal_resource_limit(correlation)
             raise ResourceLimitError(_LIMIT_MESSAGE)
         self._last_checkpoint = now
         maximum = self._limits.elapsed_seconds
         if maximum is not None and now - self._started_at > maximum:
+            self._signal_resource_limit(correlation)
             raise ResourceLimitError(_LIMIT_MESSAGE)
+
+    def _signal_resource_limit(
+        self,
+        correlation: SecurityCorrelation | None = None,
+    ) -> None:
+        if not self._security_journal.is_finished:
+            self._security_journal.signal(
+                "resource_limit_exceeded",
+                source="resource_control",
+                outcome="limited",
+                correlation=correlation,
+            )
 
     def _read_clock(self) -> float:
         value = self._clock()

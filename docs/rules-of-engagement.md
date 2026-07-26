@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `1.9.0` |
+| Versión | `2.0.0` |
 | Fecha de entrada en vigor | 2026-07-26 |
 | Baseline técnica de origen | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
@@ -293,6 +293,7 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-17` | PGS-04-M04 no debe reinterpretar la baseline histórica | El runner acepta solo el commit `93aefa45`; el checkout actual conserva corpus y evidencia byte a byte y prueba por separado que `ADV-TOL-005` rechaza el literal con cero archivos |
 | `ROE-18` | PGS-04-M05 no debe presentarse como retest adversario | `CMP-09` se verifica con fixtures unitarias e integración local; corpus, oráculos y evidencia histórica permanecen inmutables y la eficacia comparativa se reserva a PGS-05 |
 | `ROE-19` | PGS-04-M06 no debe materializar ni ejecutar los casos DOS inertes | `CMP-10` se verifica con bordes sintéticos, reloj inyectado y lock cooperativo; el corpus adversario y la evidencia histórica permanecen inmutables y `AC-DOS-03` sigue requiriendo ampliación de estas RoE |
+| `ROE-20` | PGS-04-M07 no debe convertir el journal de producto en evidencia adversaria canónica | `CMP-11` se verifica con eventos y canarios sintéticos; no reescribe `DAT-10` a `DAT-13`, no entrega oráculos al producto, no ejecuta casos inertes y no persiste o exporta el informe opt-in |
 
 ## Disparadores de revisión
 
