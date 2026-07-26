@@ -100,3 +100,9 @@ crea cero archivos bajo `$TMP`.
 histórico, la ejecución de sus 14 casos, el residual esperado, el fallo cerrado
 ante otro candidato, la escritura solo en un directorio temporal nuevo y la
 integridad y saneado de la evidencia versionada.
+
+`test_control_traceability.py` comprueba exclusivamente el contrato documental
+de la matriz canónica: una fila por `CTL-01` a `CTL-13`, roles conocidos,
+cobertura explícita de los 17 abuse cases, limitaciones no vacías y selectores
+pytest que apuntan a ficheros y funciones existentes. Esta validación no prueba
+la eficacia de los controles.

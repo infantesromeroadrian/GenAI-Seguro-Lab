@@ -28,9 +28,10 @@ real.
   parciales y gaps explícitos entre los 17 casos, OWASP LLM 2025, OWASP
   Agentic 2026 y MITRE ATLAS `v2026.06`.
 - [Mapa de responsabilidades y controles
-  NIST](./control-responsibility-mapping.md): propietarios, estados, evidencia
-  y correspondencias seleccionadas con NIST AI RMF 1.0 y NIST SP 800-218A,
-  sin atribuir conformidad ni eficacia no demostrada.
+  NIST](./control-responsibility-mapping.md): matriz canónica con una fila por
+  control, amenazas explícitas, propietarios, pruebas actuales, limitaciones y
+  correspondencias seleccionadas con NIST AI RMF 1.0 y NIST SP 800-218A, sin
+  atribuir conformidad ni eficacia no demostrada.
 - [Rules of Engagement](./rules-of-engagement.md): autorización por ejecución,
   targets, acciones, datos, presupuestos, evidencias y condiciones de parada
   para los 17 abuse cases del laboratorio propio.

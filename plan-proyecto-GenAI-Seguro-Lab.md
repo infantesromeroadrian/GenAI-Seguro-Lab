@@ -6,8 +6,8 @@
 - **Nombre de carpeta confirmado:** `GenAI-Seguro-Lab`.
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
-- **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M07.
-- **Estado actual:** PGS-00-M01 a PGS-04-M08 completadas; la baseline histórica fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED` sobre 14 fixtures PI/JB/EX/TOL, mientras las otras cuatro permanecen inertes. El checkout actual separa dominios, valida esquemas, aplica mínimo privilegio lógico, exige aprobación sintética para efectos, controla salida y recursos, registra eventos saneados y publica/reconcilia borradores de forma atómica. `CTL-06`, `CTL-07`, `CTL-08`, `CTL-09`, `CTL-10` y `CTL-13` permanecen parciales por sus límites declarados y la ausencia de retest, presencia humana, aislamiento y procedimientos operativos completos.
+- **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
+- **Estado actual:** PGS-00-M01 a PGS-04-M09 completadas; PGS-04 y P01-M08 quedan cerradas. La baseline histórica fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED` sobre 14 fixtures PI/JB/EX/TOL, mientras las otras cuatro permanecen inertes. El checkout actual separa dominios, valida esquemas, aplica mínimo privilegio lógico, exige aprobación sintética para efectos, controla salida y recursos, registra eventos saneados, publica/reconcilia borradores de forma atómica y mantiene una matriz canónica comprobable de controles. `CTL-06`, `CTL-07`, `CTL-08`, `CTL-09`, `CTL-10` y `CTL-13` permanecen parciales por sus límites declarados y la ausencia de retest, presencia humana, aislamiento y procedimientos operativos completos.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** repositorio público ya autorizado y evidencia
@@ -284,7 +284,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-04-M06** Añadir límites de tamaño, tiempo, iteraciones y consumo.
 - [x] **PGS-04-M07** Añadir eventos de seguridad, correlación y señales de comportamiento anómalo.
 - [x] **PGS-04-M08** Implementar parada segura y recuperación del estado del sandbox.
-- [ ] **PGS-04-M09** Asociar cada control a amenaza, responsable, prueba y limitación.
+- [x] **PGS-04-M09** Asociar cada control a amenaza, responsable, prueba y limitación.
 
 **Salida:** versión endurecida con controles independientes y observables.
 
@@ -412,7 +412,7 @@ requiriendo una decisión separada.
 - `docs/abuse-cases.md` fija `GSL-ABUSE-CASES-001` con 17 escenarios: 3 de prompt injection, 2 de jailbreak, 3 de exfiltración, 5 de abuso de herramientas, 3 de denegación de servicio y 1 de supply chain. Los separa como `SIN-RUTA`, `INTERNO`, `MANTENIMIENTO` o `CLI` y conserva los gaps de evidencia.
 - `docs/risk-prioritization.md` fija `GSL-RISK-PRIORITY-001` con impacto `I0`–`I3`, probabilidad condicionada `L1`–`L3`, capacidad real `K0`–`K3` y una puntuación reproducible para los 17 casos. PGS-04-M06 no altera el recálculo: 1 en `PR-1`, 1 en `PR-2`, 14 en `PR-3` y 1 en `PR-0`; el lock es cooperativo, los casos DOS no se han ejecutado y aún faltan el retest y un modelo real.
 - `docs/threat-crosswalk.md` fija `GSL-THREAT-CROSSWALK-001` con una fila por abuse case y relaciones directas, parciales o ausentes frente a OWASP LLM 2025, OWASP Agentic 2026 y MITRE ATLAS `v2026.06`. Conserva los gaps de consentimiento, filesystem y escenarios no agentic sin cambiar la prioridad.
-- `docs/control-responsibility-mapping.md` fija `GSL-NIST-CONTROLS-001` con cuatro roles, trece controles en estado presente o parcial, cobertura de los 17 abuse cases y correspondencias acotadas con NIST AI RMF 1.0 y NIST SP 800-218A. `CTL-08` incorpora la recuperación local de `CMP-12` y `CTL-13` conserva como gaps el runbook, monitorización y respuesta generales. P01-M08 continúa abierta hasta implementar toda PGS-04.
+- `docs/control-responsibility-mapping.md` fija `GSL-NIST-CONTROLS-001` con cuatro roles y una matriz canónica comprobable: una fila por cada uno de los trece controles, cobertura explícita de los 17 abuse cases, selectores pytest existentes, limitaciones y correspondencias acotadas con NIST AI RMF 1.0 y NIST SP 800-218A. `CTL-08` incorpora la recuperación local de `CMP-12` y `CTL-13` conserva como gaps el runbook, monitorización y respuesta generales. PGS-04 y P01-M08 quedan cerradas sin atribuir eficacia a la validación documental.
 - `docs/security-events-policy.md` fija `GSL-SECURITY-EVENTS-001`: eventos cerrados de hasta 2 KiB, perfiles acotados, secuencia global, correlación primaria y una hija opaca por caso de baseline, cadena SHA-256, diez señales deterministas y exposición CLI opt-in. No persiste logs, exporta telemetría, concede autoridad ni prueba ataques; `CMP-12` actúa por su condición real y no por una señal.
 - `docs/sandbox-recovery-policy.md` fija `GSL-SANDBOX-RECOVERY-001`: punto único de publicación, estado duradero mínimo, reconciliación no autoritativa, parada y límites. No añade handlers globales, resume, red, aislamiento de SO ni un procedimiento operativo.
 - `docs/rules-of-engagement.md` fija `GSL-ROE-001` con autorización por ejecución, activos incluidos y excluidos, acciones permitidas y prohibidas, presupuestos cuantitativos, evidencia, parada y un vehículo acotado para cada uno de los 17 abuse cases. `AC-DOS-01` solo admite un piloto limitado y `AC-DOS-03` necesita una ampliación posterior; PGS-03-M04/M05/M06 aplican esos límites a 14 fixtures PI/JB/EX/TOL sin red, proveedor o evidencia canónica.
@@ -447,6 +447,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-04-M09 — asociar cada control a amenaza, responsable, prueba y limitación.**
+**PGS-05-M01 — repetir exactamente el corpus adversario de la baseline.**
 
-**Progreso interno:** 38 de 66 microtareas completadas, 28 abiertas (**57,6 %**).
+**Progreso interno:** 39 de 66 microtareas completadas, 27 abiertas (**59,1 %**).

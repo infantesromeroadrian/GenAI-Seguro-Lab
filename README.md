@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-04-M08, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria histórica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`; su evidencia permanece inmutable. El checkout actual exige aprobación sintética para efectos, aplica una política de salida, limita tamaño, tiempo cooperativo, iteraciones y consumo, registra eventos saneados en memoria y publica/reconcilia borradores de forma atómica. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-04-M09, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`; su evidencia permanece inmutable. El checkout actual exige aprobación sintética para efectos, aplica una política de salida, limita tamaño, tiempo cooperativo, iteraciones y consumo, registra eventos saneados en memoria, publica/reconcilia borradores de forma atómica y mantiene una matriz canónica comprobable de controles. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud. La siguiente microtarea es PGS-05-M01.
 
 ## En una frase
 
@@ -1062,9 +1062,10 @@ nunca para ocultar un resultado ni para reescribir la baseline histórica.
 - [x] Añadir límites de tamaño, tiempo cooperativo, iteraciones y consumo.
 - [x] Añadir eventos, correlación y señales de seguridad saneadas.
 - [x] Implementar parada segura y recuperación del estado del sandbox.
+- [x] Asociar cada control a amenazas, responsable, pruebas y limitación.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
 
-**PGS-00-M01 a PGS-04-M08, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **38 de 66 microtareas (57,6 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
+**PGS-00-M01 a PGS-04-M09, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **39 de 66 microtareas (59,1 %)**, con 27 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -1074,7 +1075,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-04-M09 — asociar cada control a amenaza, responsable, prueba y limitación.**
+**PGS-05-M01 — repetir exactamente el corpus adversario de la baseline.**
 
 ## Uso responsable
 
