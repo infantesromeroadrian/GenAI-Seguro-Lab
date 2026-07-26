@@ -7,7 +7,24 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-05-M03 completadas; PGS-04 y P01-M08 quedan cerradas. La baseline adversaria histórica permanece inmutable; M01 repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó 1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no autorizadas aceptadas o ejecutadas. M03 reconstruyó una proyección benigna anterior a controles y ejecutó individualmente el mismo corpus: pre/post conservan 12/12 terminaciones técnicas, 0/12 falsos rechazos, 0 llamadas externas y 0 efectos, pero 0/12 éxitos estrictos y 12 `PARTIAL` porque el resumen genérico no contiene las 24 cláusulas de hallazgo ni las 36 acciones esperadas. No hay regresiones atribuibles a los controles; `SC-07` sigue `NOT_DEMONSTRATED` porque la equivalencia semántica y las afirmaciones prohibidas no se evaluaron. `CTL-06`, `CTL-07`, `CTL-08`, `CTL-09`, `CTL-10`, `CTL-12` y `CTL-13` permanecen parciales por sus límites declarados, las cuatro fixtures inertes y la ausencia de presencia humana, aislamiento, modelo real, medición operativa y procedimientos completos.
+- **Estado actual:** PGS-00-M01 a PGS-05-M04 completadas; PGS-04 y P01-M08
+  quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
+  repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
+  1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no
+  autorizadas aceptadas o ejecutadas. M03 reconstruyó una proyección benigna
+  anterior a controles y ejecutó individualmente el mismo corpus: pre/post
+  conservan 12/12 terminaciones técnicas, 0/12 falsos rechazos, 0 llamadas
+  externas y 0 efectos, pero 0/12 éxitos estrictos y 12 `PARTIAL` porque el
+  resumen genérico no contiene las 24 cláusulas de hallazgo ni las 36 acciones
+  esperadas. M04 conservó 30 pares AB/BA: la mediana end-to-end pasó de
+  189,69 ms a 259,17 ms, CPU y RSS aumentaron y los conteos 12/24/12/12 y el
+  coste externo permanecieron sin cambio. No hay regresiones atribuibles a los
+  controles; `SC-07` sigue `NOT_DEMONSTRATED` porque la equivalencia semántica
+  y las afirmaciones prohibidas no se evaluaron. `CTL-06`, `CTL-07`, `CTL-08`,
+  `CTL-09`, `CTL-10`, `CTL-12` y `CTL-13` permanecen parciales por sus límites
+  declarados, las cuatro fixtures inertes, la ausencia de presencia humana,
+  aislamiento y modelo real, y porque la medición operativa corresponde a un
+  único host y sesión sin energía, TCO, concurrencia o carga sostenida.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** repositorio público ya autorizado y evidencia
