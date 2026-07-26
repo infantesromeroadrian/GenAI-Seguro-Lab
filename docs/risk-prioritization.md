@@ -5,13 +5,13 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-PRIORITY-001` |
-| Versión | `2.3.0` |
+| Versión | `2.4.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Crosswalk actual | [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
-| Alcance | sistema local sintético hasta el retest neutral PGS-05-M01 |
+| Alcance | sistema local sintético hasta la comparación funcional PGS-05-M03 |
 
 Esta priorización ordena el backlog de pruebas del laboratorio. No es una
 clasificación CVSS ni estima la frecuencia de incidentes reales. La baseline
@@ -355,9 +355,12 @@ de estos supuestos:
 Los 17 abuse cases aparecen exactamente una vez y conservan la alcanzabilidad
 de `GSL-ABUSE-CASES-001`. El perfil vulnerable está construido y aislado;
 `CMP-08` fija la baseline de las 14 fixtures PI/JB/EX/TOL sin crear una ruta
-de producto y las otras cuatro permanecen sin ejecutar. El runner queda
-reservado al commit histórico; el checkout actual se verifica por su suite sin
-reescribir aquella evidencia.
+de producto y las otras cuatro permanecen sin ejecutar. `CMP-13` y `CMP-14`
+fijan el retest inicial y su comparación sin reescribir aquella evidencia.
+`CMP-15` añade la comparación benigna: 12/12 terminaciones, 0 falsos rechazos
+y 0 regresiones pre/post, pero `SC-07` permanece no demostrado porque no se
+evaluó equivalencia semántica. Estos resultados no cambian por sí solos las
+puntuaciones de riesgo.
 [`GSL-FINDINGS-ADVERSARIAL-001`](./adversarial-baseline-findings.md) documenta
 los hallazgos, impacto, reproducción y límites y cierra PGS-03-M08 sin cambiar
 las puntuaciones.

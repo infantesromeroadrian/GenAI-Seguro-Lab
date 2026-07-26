@@ -231,6 +231,28 @@
       }
     },
     {
+      "id": "benign-utility-evaluator",
+      "label": "CMP-15 · Evaluador de utilidad benigna",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/benign_utility.py",
+      "meta": {
+        "type": "service",
+        "technology": "pydantic",
+        "inventoryIds": [
+          "CMP-15"
+        ],
+        "state": "internal-support-only",
+        "cliProductReachable": false,
+        "externalCalls": false,
+        "executesBenignTarget": true,
+        "canonicalCases": 12,
+        "oraclesDeliveredToTarget": false,
+        "semanticEquivalenceEvaluated": false,
+        "evidenceOutput": "evaluations/benign-utility-v1.json",
+        "sourceProjection": "evaluations/benign-pre-controls-functional-v1.json"
+      }
+    },
+    {
       "id": "output-safety-policy",
       "label": "CMP-09 · Política de salida",
       "parentId": "application-control-boundary",
@@ -890,6 +912,30 @@
         "executesRunner": false,
         "sourceEvidenceImmutable": true,
         "sourceFinalRetest": false
+      }
+    },
+    {
+      "id": "components-utility-verifies-benign-data",
+      "source": "benign-utility-evaluator",
+      "target": "dataset-loader",
+      "label": "verifica corpus y oráculos; compara solo después de cada salida",
+      "meta": {
+        "type": "reads",
+        "oraclesDeliveredToTarget": false,
+        "sourceEvidenceImmutable": true
+      }
+    },
+    {
+      "id": "components-utility-runs-benign-flow",
+      "source": "benign-utility-evaluator",
+      "target": "benign-flow",
+      "label": "12 casos uno a uno con perfil analyze → comparación saneada",
+      "meta": {
+        "type": "calls",
+        "canonicalCases": 12,
+        "externalCalls": false,
+        "sideEffects": false,
+        "semanticEquivalenceEvaluated": false
       }
     }
   ]

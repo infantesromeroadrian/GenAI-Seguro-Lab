@@ -51,6 +51,7 @@
           "CMP-12",
           "CMP-13",
           "CMP-14",
+          "CMP-15",
           "MOD-01",
           "TOL-01",
           "TOL-02"
@@ -107,7 +108,8 @@
           "DAT-17",
           "DAT-18",
           "DAT-19",
-          "DAT-20"
+          "DAT-20",
+          "DAT-21"
         ],
         "writeMode": "manual-versioning"
       }
@@ -138,7 +140,7 @@
       "id": "containers-terminal-invokes-process",
       "source": "terminal-session",
       "target": "python-application-process",
-      "label": "argv: analyze | baseline; soporte: baseline | retest | métricas offline",
+      "label": "argv: analyze | baseline; soporte: baseline | retest | métricas | utilidad",
       "meta": {
         "type": "calls",
         "crossesBoundary": "TB-02"
@@ -170,7 +172,7 @@
       "id": "containers-process-reads-evaluation-evidence",
       "source": "python-application-process",
       "target": "evaluation-evidence-store",
-      "label": "CMP-14 verifica baseline/retest versionados sin ejecutar targets",
+      "label": "CMP-14 verifica evidencia adversaria; CMP-15 verifica fuentes benignas",
       "meta": {
         "type": "reads",
         "directWrite": false,
@@ -181,7 +183,7 @@
       "id": "containers-process-projects-evidence",
       "source": "python-application-process",
       "target": "evaluation-evidence-store",
-      "label": "stdout o proyección saneada baseline/retest/métricas → versionado manual",
+      "label": "stdout o proyección saneada baseline/retest/métricas/utilidad → versionado manual",
       "meta": {
         "type": "data-flow",
         "directWrite": false

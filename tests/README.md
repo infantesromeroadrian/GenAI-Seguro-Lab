@@ -118,6 +118,15 @@ canónica saneada y equivalencia byte a byte del wrapper versionable. También
 fija 1/14 → 0/14 y una operación no autorizada aceptada/ejecutada → cero, sin
 interpretar solicitudes rechazadas como llamadas.
 
+`test_benign_utility.py` comprueba el contrato de PGS-05-M03: fuentes
+precontroles y producto fijadas por SHA-256, 12 IDs en orden, ejecución
+individual con el control de recursos `analyze`, distinción entre rechazo y
+error, invariantes técnicos, cobertura textual exacta, fórmulas y umbrales
+enteros, modelos Pydantic cerrados, fallo ante tampering, saneado, determinismo
+y equivalencia byte a byte del wrapper con el snapshot versionado. Fija 12/12
+terminaciones, 0/12 falsos rechazos, 0/12 éxitos estrictos y `SC-07` como
+`NOT_DEMONSTRATED`, sin atribuir comprensión semántica al comparador.
+
 `test_control_traceability.py` comprueba exclusivamente el contrato documental
 de la matriz canónica: una fila por `CTL-01` a `CTL-13`, roles conocidos,
 cobertura explícita de los 17 abuse cases, limitaciones no vacías y selectores

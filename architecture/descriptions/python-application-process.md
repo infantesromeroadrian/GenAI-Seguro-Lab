@@ -29,6 +29,9 @@ local.
   `$TMP` antes del versionado manual.
 - Derivar mediante `CMP-14` métricas offline de los dos namespaces versionados,
   sin ejecutar targets, runners o herramientas.
+- Ejecutar mediante `CMP-15` los 12 casos benignos canónicos uno a uno y emitir
+  su comparación pre/post saneada, sin entregar oráculos al target ni afirmar
+  equivalencia semántica.
 
 ## Trust boundary
 

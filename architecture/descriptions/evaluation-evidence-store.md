@@ -18,6 +18,9 @@ adversarias de forma reproducible.
   `final_retest: false`.
 - `DAT-20`: snapshot comparativo de 14 pares con reglas cerradas, tasas,
   operaciones aceptadas/ejecutadas, cobertura y límites.
+- `DAT-21`: proyección precontroles y snapshot comparativo de 12 casos
+  benignos; conserva terminación, invariantes, falsos rechazos, cobertura
+  textual exacta, hashes y límites sin salida bruta.
 
 ## Flujo de escritura
 
@@ -25,10 +28,14 @@ La CLI ordinaria emite el resultado benigno por `stdout`. `CMP-08` y `CMP-13`
 escriben primero la evidencia adversaria bajo `$TMP`; el mantenedor incorpora
 la proyección saneada al repositorio después de revisarla. `CMP-14` lee ambos
 namespaces, emite `DAT-20` por `stdout` y tampoco escribe directamente. No existe una
-escritura directa desde la CLI de producto hacia `evaluations/`.
+escritura directa desde la CLI de producto hacia `evaluations/`. `CMP-15`
+verifica su fuente histórica, ejecuta los 12 casos benignos y emite `DAT-21`
+por `stdout`; el versionado sigue siendo una acción manual del mantenedor.
 
 ## Límite
 
 La evidencia adversaria solo demuestra las observaciones y métricas de las
 variantes y los commits fijados. No acredita seguridad general, resistencia a
-ataques desconocidos ni utilidad semántica.
+ataques desconocidos ni utilidad semántica. `DAT-21` acredita 12/12
+terminaciones y 0 falsos rechazos en ambos candidatos, pero su cobertura
+textual exacta no equivale a una evaluación semántica.

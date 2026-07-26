@@ -31,6 +31,9 @@ mediante un flujo determinista y herramientas con autoridad acotada.
   exacto y conservar un retest inicial neutral con `final_retest: false`.
 - Derivar mediante `CMP-14` las métricas adversarias iniciales sin reejecutar el
   target ni modificar la evidencia fuente.
+- Comparar mediante `CMP-15` los 12 casos benignos pre/post controles, con
+  oráculos posteriores a la salida y evidencia saneada sin equivalencia
+  semántica.
 
 ## Límites de confianza
 
@@ -67,7 +70,7 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 - El corpus adversario conserva fixtures y oráculos separados; `CMP-07` cubre
   14 PI/JB/EX/TOL, `CMP-08` fija su baseline canónica, `CMP-13` conserva el
   retest neutral inicial, `CMP-14` deriva su comparación y las otras cuatro
-  entradas siguen inertes.
+  entradas siguen inertes. `CMP-15` solo ejecuta el corpus benigno canónico.
 - El perfil vulnerable existe como API interna `C0`; solo `CMP-07` conduce sus
   peticiones hacia el doble determinista y `TOL-01`; M06 invoca `TOL-02`
   únicamente desde pytest y bajo `$TMP`, nunca desde la CLI o el flujo benigno.
@@ -83,5 +86,7 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 - `evaluations/adversarial-baseline-v1/`
 - `evaluations/adversarial-retest-v1/`
 - `evaluations/adversarial-metrics-v1.json`
+- `evaluations/benign-pre-controls-functional-v1.json`
+- `evaluations/benign-utility-v1.json`
 - `docs/resource-limits-policy.md`
 - `docs/sandbox-recovery-policy.md`

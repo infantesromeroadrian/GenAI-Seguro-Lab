@@ -49,6 +49,9 @@ real.
 - [Métricas adversarias v1](../evaluations/adversarial-metrics-v1.json):
   14 pares verificados, clasificación cerrada, 1/14 → 0/14 de éxito y una
   operación no autorizada aceptada/ejecutada → cero.
+- [Utilidad benigna v1](../evaluations/benign-utility-v1.json): comparación
+  saneada de 12 casos antes/después, con terminación técnica, cumplimiento
+  textual estricto, falsos rechazos, deltas y límites de interpretación.
 - [Hallazgos de la baseline adversaria](./adversarial-baseline-findings.md):
   uso actual del laboratorio, impacto de las variantes observadas,
   reproducción, residual conocido y límites de la evidencia.

@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-FINDINGS-ADVERSARIAL-001` |
-| Versión | `1.1.0` |
+| Versión | `1.2.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline | `GSL-BASELINE-ADVERSARIAL-001` |
 | Run | `GSL-ADV-BL-20260725-001` |
@@ -165,6 +165,8 @@ PGS-03 queda cerrada con un fallo residual reproducible, evidencia saneada,
 impacto acotado y procedimiento de revisión. Esto completa también P01-M07.
 
 PGS-04 ya aplicó los controles y PGS-05-M01/M02 fijaron el retest inicial y su
-comparación sin reescribir esta baseline. La siguiente microtarea del proyecto
-es **PGS-05-M03 — repetir el corpus benigno y medir éxito de tarea y falsos
-rechazos**.
+comparación sin reescribir esta baseline. PGS-05-M03 añadió la comparación
+benigna: 12/12 casos completados y 0 falsos rechazos pre/post, pero 0/12 éxitos
+textuales estrictos y `SC-07` no demostrado; la brecha ya existía antes de los
+controles y no constituye una regresión. La siguiente microtarea del proyecto
+es **PGS-05-M04 — medir coste y latencia y compararlos con el presupuesto**.

@@ -105,9 +105,12 @@ universal de secretos, PII, desinformación o contenido dañino. En particular,
 no cubre secretos codificados u ofuscados, homoglifos, paráfrasis, todos los
 formatos de credencial ni todas las formas de contenido activo.
 
-La evidencia actual usa un adaptador determinista. PGS-05-M02 ya fijó la
-comparación adversaria inicial; la utilidad se mide en M03. Cualquier modelo o
-proveedor real exige revisar estas reglas. `GSL-RESOURCE-POLICY-001` aplica los límites de
+La evidencia actual usa un adaptador determinista. PGS-05-M02 fijó la
+comparación adversaria inicial y PGS-05-M03 ejecutó los 12 casos benignos sin
+observar falsos rechazos de esta política. Eso no valida su cobertura
+semántica: el comparador literal dejó los 12 resultados `PARTIAL` y `SC-07`
+`NOT_DEMONSTRATED`. Cualquier modelo o proveedor real exige revisar estas
+reglas. `GSL-RESOURCE-POLICY-001` aplica los límites de
 tamaño, tiempo cooperativo, iteraciones y consumo sin ampliar la detección
 léxica de esta política. Una señal `output_policy_intervention` solo acredita
 que esta política actuó; no prueba por sí misma un ataque o una fuga.

@@ -5,10 +5,10 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-AUTH-MATRIX-001` |
-| Versión | `2.4.0` |
+| Versión | `2.5.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-05-M02, derivado de la baseline histórica y del retest PGS-05-M01 |
+| Control vigente | PGS-05-M03, comparación funcional benigna pre/post controles |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
 | Arquitectura de origen | [`architecture/manifest.json`](../architecture/manifest.json) |
 | Alcance | autoridad implementada en el checkout local actual |
@@ -46,6 +46,9 @@ En el sistema actual:
     expresada por el modelo.
 12. `CMP-14` solo interpreta evidencia ya versionada; no puede ejecutar el
     target, conceder autoridad ni convertir una solicitud rechazada en llamada.
+13. `CMP-15` puede repetir el flujo benigno canónico bajo los mismos controles
+    de producto, pero no puede entregar el oráculo al target, escribir la
+    evidencia ni convertir coincidencia textual en equivalencia semántica.
 
 `IDN-04` es, por tanto, una ausencia deliberada de autoridad: el modelo no
 posee una identidad de aplicación, credenciales, permisos de filesystem ni
@@ -87,6 +90,7 @@ residual.
 | `AUTH-18` | `TOL-02` inicia `CMP-12` durante construcción, creación o parada; API interna, no CLI | Ninguno participa ni configura la recuperación | `IDN-01` ejecuta; `CMP-12` no posee identidad, credenciales o grant | Examina solo `DAT-15`, el descriptor de `sandbox/drafts/` y, si existe, el `DAT-06` final nombrado por un marker válido | `CMP-12` (`SandboxTransactionController`) | Adquirir `flock` sin espera; publicar una vez el staging autorizado; en el siguiente arranque preservar un final coherente o retirar solo artefactos internos válidos; devolver conteos saneados | Publicar durante recuperación, restaurar cuota o autoridad, borrar/modificar el final, recorrer subdirectorios, esperar/reintentar, usar una señal como permiso o exponer contenido y contexto | `C0` si reconcilia sin efecto; conserva como máximo el `C2` ya publicado por `AUTH-07` |
 | `AUTH-19` | `ACT-02` ejecuta `CMP-13` con la petición vigente de PGS-05-M01; soporte interno, no CLI de producto | Conduce el único `MOD-01` determinista mediante la ejecución existente de `CMP-07`; no añade proveedor ni modelo | `IDN-01`; exige commit, tree, rama `main` y checkout endurecido exactos y limpios antes y después | Lee `DAT-01/02/03/07/08/09` y verifica `DAT-10/11/12/13`; escribe primero solo bajo `$TMP` y permite versionar `DAT-16/17/18/19` tras revisión | `CMP-13` reutiliza `CMP-07`, fija hashes y topes y aplica saneado y writer create-only | Ejecutar una vez los mismos 14 IDs y orden, dejar cuatro inertes, comparar el oráculo después del target y conservar solo estado, triple observado, relación e integridad | Entregar el oráculo al target, ampliar casos, usar red o datos reales, mutar el checkout durante el run, reintentar, interpretar tasas de PGS-05-M02 o declarar el retest final | `C2` solo para setups temporales confinados del harness; `C3` pertenece al versionado manual revisado por `ACT-02` |
 | `AUTH-20` | `ACT-02` ejecuta `CMP-14` con la petición vigente de PGS-05-M02; soporte offline, no CLI de producto | Ningún modelo participa | `IDN-01` lee; `CMP-14` no posee identidad, credenciales o autoridad de efecto | Verifica y lee `DAT-10/11/12/13` y `DAT-16/17/18/19`; emite `DAT-20` por `stdout` para versionado manual | `CMP-14` y el wrapper `evaluations/run_adversarial_metrics.py` | Emparejar 14 casos, aplicar reglas cerradas al triple observado y calcular tasas y operaciones aceptadas/ejecutadas sin mutar las fuentes | Ejecutar `CMP-07/08/13`, llamar modelos o herramientas, contar rechazos como llamadas, inferir intentos no conservados, ampliar casos o declarar un retest final | `C1`: lectura y JSON efímero; `C3` pertenece solo al versionado deliberado de `DAT-20` por `ACT-02` |
+| `AUTH-21` | `ACT-02` ejecuta `CMP-15` con la petición vigente de PGS-05-M03; soporte interno, no CLI de producto | `MOD-01` determinista mediante el flujo benigno canónico | `IDN-01` ejecuta; `CMP-15` no posee credenciales ni autoridad propia; cada caso usa `IDN-05` y un `CMP-10` de perfil `analyze` | Verifica `DAT-01/02/03/04` y la proyección precontroles de `DAT-21`; lee los oráculos solo después de cada salida; emite el snapshot comparativo `DAT-21` por `stdout` | `CMP-15`, `CMP-03`, `CMP-09`, `CMP-10`, `CMP-11`, `MOD-01`, `TOL-01` y el wrapper `evaluations/run_benign_utility.py` | Ejecutar exactamente 12 casos, uno por contexto acotado; medir terminación, invariantes, falsos rechazos y cobertura textual exacta; comprobar cero red y efectos y emitir evidencia saneada | Entregar oráculos al modelo o a la herramienta, escribir o modificar fuentes/evidencia, usar red, ejecutar `TOL-02`, ampliar casos, interpretar semántica o afirmar que `SC-07` está demostrado | `C1`: lectura sintética y JSON efímero; `C3` pertenece solo al versionado deliberado de `DAT-21` por `ACT-02` |
 
 ## Cadenas de autoridad resumidas
 
@@ -166,13 +170,31 @@ ACT-02 (runner canónico explícito)
   → versionado manual por autoridad C3 del mantenedor
 ```
 
+```text
+ACT-02 (soporte adversario M01/M02)
+  → CMP-13 repite 14 fixtures contra el candidato endurecido exacto
+  → DAT-16/DAT-17/DAT-18/DAT-19 revisados
+  → CMP-14 verifica ambos namespaces sin ejecutar targets
+  → DAT-20 por stdout y versionado manual
+```
+
+```text
+ACT-02 (soporte benigno M03)
+  → CMP-15 verifica candidatos, fuentes y corpus
+  → CMP-03 + MOD-01 + IDN-05 + TOL-01 por cada uno de 12 casos
+  → oráculo comparado después de la salida
+  → DAT-21 saneado por stdout y versionado manual
+```
+
 La primera cadena es la única alcanzable mediante `main.py`. La segunda existe
 como capacidad interna probada, pero no está conectada a la CLI ni al flujo
 benigno. La tercera es una autoridad de mantenimiento externa a los controles
 de la aplicación. La cuarta prepara una entrada de evaluación `C0`. La quinta
 valida el corpus y conserva la separación del oráculo. La sexta cubre nueve
 fixtures PI/JB/EX, la séptima cinco TOL con datos sintéticos y la octava fija
-la baseline canónica sin crear una ruta de producto.
+la baseline canónica sin crear una ruta de producto. La novena conserva y
+compara evidencia adversaria. La décima ejecuta únicamente el corpus benigno
+canónico con su autoridad de producto ya existente.
 
 ## Rutas de autoridad que no existen
 
@@ -187,6 +209,7 @@ la baseline canónica sin crear una ruta de producto.
 | `CMP-01` | Invocar `TOL-02` | Sin ruta: la CLI solo expone `analyze` y `baseline` |
 | Runtime ordinario de aplicación | Escribir `DAT-04` o `DAT-10` a `DAT-13` | Sin ruta directa: la CLI solo emite por `stdout`; `CMP-08` es una operación explícita de soporte y el mantenedor versiona su proyección revisada |
 | `CMP-14` | Ejecutar el target, el harness, runners o herramientas | Sin ruta: solo importa esquemas, verifica evidencia versionada y emite una proyección canónica por `stdout` |
+| `CMP-15` | Escribir evidencia, entregar oráculos al target o afirmar equivalencia semántica | Sin ruta: ejecuta el flujo benigno canónico con autoridad de producto acotada, compara el oráculo después de la salida y solo emite una proyección saneada por `stdout` |
 | Runtime de aplicación | Shell, red, proveedor, cloud, base de datos o secretos | Sin capacidad implementada ni credenciales |
 | Usuario remoto | Entrar en el sistema | Sin interfaz: no hay API, UI remota, cuenta de aplicación o listener |
 | `IDN-03` | Demostrar presencia o identidad de una persona real | Sin mecanismo: la autoridad acredita solo la identidad sintética configurada; no existe UI ni autenticador del sistema operativo |
@@ -261,4 +284,6 @@ reconcilia el único efecto local sin convertir estado duradero o señales en
 autoridad. PGS-05-M01 añade `AUTH-19` únicamente como ejecución de soporte
 acotada y ya autorizada: no crea autoridad de producto. PGS-05-M02 añade
 `AUTH-20` como lectura e interpretación offline: tampoco ejecuta el target ni
-convierte evidencia en autoridad.
+convierte evidencia en autoridad. PGS-05-M03 añade `AUTH-21` como evaluación
+benigna de soporte: reutiliza la cadena de producto existente sin ampliar
+herramientas, efectos, identidades o autoridad.

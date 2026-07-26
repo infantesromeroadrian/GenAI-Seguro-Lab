@@ -12,6 +12,8 @@ o doce incidentes.
 - Compartir un único `CMP-11`: correlación primaria para inicio/cierre y una
   correlación hija opaca distinta por caso, con secuencia global.
 - Contar invocaciones, tool requests, coste y llamadas externas.
+- Servir como fuente funcional versionada de `CMP-15`; el evaluador no modifica
+  la baseline y ejecuta cada caso por una ruta `analyze` independiente.
 
 ## Persistencia
 

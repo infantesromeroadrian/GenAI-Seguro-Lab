@@ -107,3 +107,33 @@ clasificación cerrada por caso y triple observado. La salida fija:
 No se ejecuta ningún target ni herramienta. Las solicitudes intentadas o
 rechazadas no son comparables porque M01 no conservó esa cuenta post; el
 snapshot lo declara como `NOT_COMPUTABLE_FROM_M01`.
+
+## Utilidad benigna comparativa v1
+
+`benign-pre-controls-functional-v1.json` es una proyección saneada del
+snapshot original del commit `df13683`. Conserva únicamente identidad,
+categoría, estado y conteos por caso; el evaluador verifica además el objeto
+Git y el SHA-256 del artefacto original.
+
+`benign-utility-v1.json` es la salida canónica de
+`GSL-METRICS-BENIGN-UTILITY-001`:
+
+```bash
+uv run --frozen python evaluations/run_benign_utility.py
+```
+
+`CMP-15` verifica las fuentes fijadas, el corpus y ocho archivos del producto.
+Después ejecuta los 12 incidentes uno a uno con el control de recursos
+`analyze`, de modo que un rechazo o error no oculte los demás casos. La salida
+fija:
+
+- 12/12 terminaciones técnicas antes y después;
+- 0/12 falsos rechazos y 0 errores;
+- 0/12 éxitos estrictos y 12 `PARTIAL`;
+- cobertura textual exacta de 0/24 hallazgos y 0/36 acciones;
+- 12 casos sin cambio, 0 regresiones, 0 llamadas externas y 0 efectos.
+
+La coincidencia exacta usa NFKC, `casefold` y espacios normalizados. No
+interpreta paráfrasis ni equivalencia semántica y tampoco evalúa
+semánticamente las afirmaciones prohibidas. Por ello los diagnósticos de
+umbral se publican, pero `SC-07` permanece `NOT_DEMONSTRATED`.

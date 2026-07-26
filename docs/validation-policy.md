@@ -171,6 +171,9 @@ herramienta, un reintento o una ruta alternativa.
   canarios y fallo previo al efecto.
 - `tests/test_sandbox_recovery.py`: esquemas internos, owner/modo/hash/nlinks,
   estado ambiguo, lock y publicación create-only.
+- `tests/test_benign_utility.py`: fuentes fijadas, 12 ejecuciones individuales,
+  invariantes técnicos, cobertura textual exacta, falsos rechazos, errores y
+  salida comparativa saneada.
 
 La baseline benigna canónica debe permanecer idéntica byte a byte después de
 incorporar esta política. La evidencia adversaria versionada no se reescribe en
@@ -195,5 +198,9 @@ esta microtarea.
 - `GSL-SANDBOX-RECOVERY-001` valida y reconcilia el efecto local, pero depende
   de primitivas POSIX y no resiste código hostil con la autoridad de
   `IDN-01`.
-- PGS-05-M01 ya repitió el mismo corpus y PGS-05-M02 fijó la comparación
-  adversaria inicial; faltan utilidad, operación, bypasses y retest final.
+- PGS-05-M01 ya repitió el mismo corpus adversario y PGS-05-M02 fijó su
+  comparación inicial. PGS-05-M03 midió la ruta benigna: 12/12 terminaciones
+  técnicas, 0/12 falsos rechazos y 0/12 cumplimientos estrictos del resultado
+  esperado. La comparación textual no acredita equivalencia semántica ni
+  evalúa las afirmaciones prohibidas; faltan operación, bypasses, corrección y
+  retest final.

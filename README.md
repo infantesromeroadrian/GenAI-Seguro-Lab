@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-05-M02, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica evaluó 14 fixtures sintéticas y su evidencia permanece inmutable. PGS-05-M01 repitió esos 14 IDs contra el commit endurecido exacto: los 14 completaron, con 13 relaciones `MATCH` y una `DIFF`. PGS-05-M02 deriva sin reejecutar el target una tasa de éxito de ataque de 1/14 (7,14 %) a 0/14 (0 %) y una reducción de operaciones no autorizadas aceptadas o ejecutadas de 1 a 0. El checkout actual exige aprobación sintética para efectos, aplica una política de salida, limita tamaño, tiempo cooperativo, iteraciones y consumo, registra eventos saneados en memoria, publica/reconcilia borradores de forma atómica y mantiene una matriz canónica comprobable de controles. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud. La siguiente microtarea es PGS-05-M03.
+> **Estado:** PGS-00-M01 a PGS-05-M03, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica evaluó 14 fixtures sintéticas y su evidencia permanece inmutable. PGS-05-M01 repitió esos 14 IDs contra el commit endurecido exacto y PGS-05-M02 derivó una tasa de éxito de ataque de 1/14 (7,14 %) a 0/14 (0 %), con operaciones no autorizadas aceptadas o ejecutadas de 1 a 0. PGS-05-M03 repitió individualmente los 12 casos benignos: pre y post conservan 12/12 terminaciones técnicas, 0/12 falsos rechazos y cero efectos externos, pero solo 0/12 cumplen de forma estricta todas las cláusulas del resultado esperado. Los 12 quedan `PARTIAL`, sin regresiones atribuibles a los controles, y `SC-07` permanece `NOT_DEMONSTRATED` porque la equivalencia semántica y las prohibiciones no se han evaluado. Cuatro fixtures adversarias permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud. La siguiente microtarea es PGS-05-M04.
 
 La proyección revisada de `GSL-RETEST-ADVERSARIAL-001` está versionada en
 [`evaluations/adversarial-retest-v1/`](./evaluations/adversarial-retest-v1/)
@@ -44,6 +44,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │       ├── __init__.py
 │       ├── baseline.py
 │       ├── benign_flow.py
+│       ├── benign_utility.py
 │       ├── cli.py
 │       ├── data_contract.py
 │       ├── adversarial_baseline.py
@@ -60,6 +61,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 ├── tests/
 │   ├── README.md
 │   ├── test_benign_flow.py
+│   ├── test_benign_utility.py
 │   ├── test_cli_smoke.py
 │   ├── test_data_contract.py
 │   ├── test_evaluation_profile.py
@@ -82,7 +84,10 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── run_adversarial_baseline.py
 │   ├── run_adversarial_metrics.py
 │   ├── run_adversarial_retest.py
+│   ├── run_benign_utility.py
 │   ├── adversarial-metrics-v1.json
+│   ├── benign-pre-controls-functional-v1.json
+│   ├── benign-utility-v1.json
 │   ├── adversarial-baseline-v1/
 │   │   ├── README.md
 │   │   ├── config.json
@@ -631,6 +636,36 @@ el snapshot marca esas solicitudes como `NOT_COMPUTABLE_FROM_M01`. Es evidencia
 sintética sobre un doble determinista, no una probabilidad de ataque ni una
 prueba con un LLM real.
 
+## Utilidad benigna comparativa v1
+
+`CMP-15` ejecuta individualmente los mismos 12 incidentes benignos contra la
+ruta endurecida y compara el resultado con una proyección saneada de la
+baseline anterior a controles. La ejecución por caso permite distinguir un
+rechazo de control de un error sin perder el resto del lote.
+
+```bash
+uv run --frozen python evaluations/run_benign_utility.py
+```
+
+La salida canónica está fijada en
+[`evaluations/benign-utility-v1.json`](./evaluations/benign-utility-v1.json):
+
+- terminación técnica: 12/12 (100 %) antes y después;
+- falsos rechazos: 0/12 (0 %) antes y después;
+- éxito estricto de tarea: 0/12 antes y después;
+- cobertura textual exacta: 0/24 hallazgos requeridos y 0/36 acciones
+  recomendadas;
+- 12 casos `PARTIAL`, 12 sin cambio, 0 regresiones, 0 llamadas externas y
+  0 efectos.
+
+El éxito estricto requiere, además de los invariantes técnicos, que todas las
+cláusulas requeridas aparezcan tras normalización NFKC, `casefold` y espacios.
+Esa comparación literal no entiende paráfrasis ni equivalencia semántica y no
+evalúa las afirmaciones prohibidas. Por ello `SC-07` queda
+`NOT_DEMONSTRATED`: el laboratorio demuestra que los controles no introdujeron
+rechazos ni regresiones técnicas, pero todavía no demuestra la calidad del
+resultado esperado.
+
 ## Crosswalk de amenazas
 
 [docs/threat-crosswalk.md](./docs/threat-crosswalk.md) fija
@@ -1142,8 +1177,9 @@ nunca para ocultar un resultado ni para reescribir la baseline histórica.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
 - [x] Repetir exactamente el corpus adversario de la baseline.
 - [x] Medir la tasa de éxito adversaria y las operaciones no autorizadas antes y después.
+- [x] Repetir el corpus benigno y medir éxito de tarea y falsos rechazos.
 
-**PGS-00-M01 a PGS-05-M02, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **41 de 66 microtareas (62,1 %)**, con 25 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-05-M03, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **42 de 66 microtareas (63,6 %)**, con 24 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -1153,7 +1189,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-05-M03 — repetir el corpus benigno y medir éxito de tarea y falsos rechazos.**
+**PGS-05-M04 — comparar latencia, consumo y complejidad operativa.**
 
 ## Uso responsable
 
