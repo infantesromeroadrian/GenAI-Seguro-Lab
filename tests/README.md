@@ -101,6 +101,14 @@ histórico, la ejecución de sus 14 casos, el residual esperado, el fallo cerrad
 ante otro candidato, la escritura solo en un directorio temporal nuevo y la
 integridad y saneado de la evidencia versionada.
 
+`test_adversarial_retest.py` comprueba el contrato separado de PGS-05-M01:
+14 IDs una vez y en orden, cuatro inertes, perfil fuente distinto de la postura
+del candidato, comparación byte a byte de cinco archivos y deriva declarada
+del manifiesto, estados y relaciones neutrales, hashes antes/después,
+verificación de la evidencia histórica, saneado cerrado y escritura
+create-only. También fija por hash que el runner y la evidencia históricos no
+cambian.
+
 `test_control_traceability.py` comprueba exclusivamente el contrato documental
 de la matriz canónica: una fila por `CTL-01` a `CTL-13`, roles conocidos,
 cobertura explícita de los 17 abuse cases, limitaciones no vacías y selectores

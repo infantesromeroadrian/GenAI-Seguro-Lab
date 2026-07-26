@@ -115,6 +115,14 @@ descriptor no materializado que conserva
 | `CMP-11` | `SecurityEventJournal` | Control de aplicación | Política `GSL-SECURITY-EVENTS-001`: eventos cerrados de hasta 2 KiB, perfiles en memoria de 32/32 KiB, 256/256 KiB y 32/32 KiB, secuencia global, correlación primaria e hija por caso de baseline, cadena SHA-256 y diez señales deterministas. No persiste, exporta, firma ni responde | `src/genai_seguro_lab/security_events.py`, `tests/test_security_events.py`, `docs/security-events-policy.md` |
 | `CMP-12` | `SandboxTransactionController` | Control de aplicación interno | Política `GSL-SANDBOX-RECOVERY-001`: marker/staging `0600`, hard link atómico create-only, `fsync`, lock no bloqueante, una reconciliación antes de registrar autoridad y reporte saneado. Preserva un final publicado, nunca republica staging y falla cerrado ante estado ambiguo | `src/genai_seguro_lab/sandbox_recovery.py`, `tests/test_sandbox_recovery.py`, `docs/sandbox-recovery-policy.md` |
 
+El soporte de evaluación incorpora además
+`src/genai_seguro_lab/adversarial_retest.py` y
+`evaluations/run_adversarial_retest.py`. No abre una interfaz de producto ni
+duplica el harness: reutiliza la ejecución de `CMP-07`, mantiene separado el
+contrato histórico de `CMP-08` y proyecta bajo `$TMP` únicamente identidad,
+cardinalidad, ejecución, integridad y observaciones neutrales. La evidencia
+canónica de este retest sigue pendiente de la ejecución de PGS-05-M01.
+
 `MOD-01` es el único modelo activo, pero no es un modelo GenAI real. Tampoco
 hay un agente autónomo: `CMP-03` es un flujo acotado y determinista con una sola
 herramienta disponible por incidente. `CMP-06` anuncia dos herramientas en el
@@ -124,9 +132,10 @@ principal y un scope lógicos, y cada instancia autoriza como máximo una
 `knowledge_search`. `ADV-TOL-003/004` usan la credencial sintética solo para
 alcanzar los controles de replay y filesystem. `ADV-TOL-005` intenta fabricar
 la confirmación literal histórica, se rechaza antes de I/O y crea cero
-archivos; no conecta `TOL-02` a la CLI ni al flujo benigno. `CMP-08` no añade
-una ruta de producto: solo reproduce el commit histórico fijado y escribe en
-un directorio temporal nuevo.
+archivos; no conecta `TOL-02` a la CLI ni al flujo benigno. `CMP-08` y el
+runner separado de retest no añaden una ruta de producto: el primero solo
+reproduce el commit histórico fijado y el segundo exige un candidato
+endurecido exacto; ambos escriben primero en un directorio temporal nuevo.
 
 ## Identidades, credenciales y autoridad
 

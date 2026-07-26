@@ -47,6 +47,26 @@ La configuración, resultados, eventos y manifiesto de integridad están
 documentados dentro del propio directorio. Los logs brutos y el sandbox
 temporal no se versionan.
 
+## Retest adversario v1 pendiente de ejecución
+
+`run_adversarial_retest.py` prepara `GSL-RETEST-ADVERSARIAL-001` sin modificar
+ni reinterpretar la baseline histórica. Exige el commit, tree y rama `main`
+exactos de un checkout endurecido limpio, ejecuta una vez los mismos 14 casos
+en el mismo orden y deja las cuatro fixtures DOS/SC inertes.
+
+El runner verifica el manifiesto y los hashes de
+`adversarial-baseline-v1/`, la identidad byte a byte de cinco archivos de
+contenido y la deriva de metadatos del manifiesto adversario `1.3.0` →
+`1.4.0`. La evidencia usa estados de ejecución y relaciones con el oráculo,
+sin `PASS`/`FAIL`, valoración de eficacia ni cuentas históricas presentadas
+como medición actual.
+
+La primera salida se escribe create-only bajo
+`$TMP/adversarial-retest-v1/reviewed`. El directorio
+`adversarial-retest-v1/` no se crea hasta que exista una única ejecución
+canónica revisada sobre el commit fijado; esa proyección conservará
+`final_retest: false`.
+
 ## Perfil vulnerable de evaluación
 
 `GSL-PROFILE-VULNERABLE-001` ya existe como configuración aislada, no
@@ -55,6 +75,7 @@ marcadas, pero no llama al modelo, no ejecuta herramientas y no genera aquí
 ningún resultado.
 
 El corpus adversario está fijado fuera de este directorio, con entradas y
-oráculos separados. `CMP-07` implementa las pruebas de desarrollo y `CMP-08`
-las orquesta para producir primero evidencia bruta bajo `$TMP` y después una
-proyección saneada. La aplicación ordinaria no escribe estos resultados.
+oráculos separados. `CMP-07` implementa las pruebas de desarrollo y los
+runners separados de baseline y retest las orquestan para producir primero
+evidencia bajo `$TMP` y después una proyección saneada y revisada. La
+aplicación ordinaria no escribe estos resultados.

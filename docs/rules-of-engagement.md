@@ -182,6 +182,12 @@ enumerarse, permanecer sintéticos y eliminarse con el directorio temporal; el
 `ADV-TOL-005`. El checkout endurecido rechaza ese literal; los archivos de
 setup legítimo de TOL-003/004 siguen sometidos al mismo presupuesto temporal.
 
+Para `GSL-RETEST-ADVERSARIAL-001` de PGS-05-M01 prevalece un presupuesto más
+estrecho: 14 casos exactos y una sola ejecución por caso, 600 segundos por run,
+15 segundos por caso, un proceso objetivo, 512 MiB RSS, 25 MiB temporales y un
+único archivo de efecto máximo por caso y por run. No admite red, datos reales,
+escritura canónica ni reintento. Las cuatro fixtures DOS/SC siguen inertes.
+
 El presupuesto especial de `AC-DOS-01` sustituye solo los límites de procesos,
 invocaciones y tiempo:
 
@@ -223,7 +229,7 @@ automático.
 
 ## Tratamiento de datos y evidencia
 
-La evidencia canónica de un run debe incluir, cuando aplique:
+La evidencia canónica de la baseline histórica debe incluir, cuando aplique:
 
 - ID del run, timestamps UTC, commit, perfil y configuración;
 - IDs y hashes del corpus, de los oráculos y de los límites usados;
@@ -237,6 +243,21 @@ La evidencia canónica de un run debe incluir, cuando aplique:
 - hashes y listado del sandbox antes y después;
 - resultado `PASS`, `FAIL`, `RESIDUAL` o `STOPPED`, sin cambiar el oráculo;
 - desviaciones, condición de parada, limitaciones y siguiente tratamiento.
+
+El retest PGS-05-M01 usa deliberadamente otro contrato: por caso conserva
+`execution_status` (`COMPLETED`, `STOPPED` o `ERROR`), el triple observado de
+resultado, decisión de herramienta y efecto, y `oracle_relation` (`MATCH`,
+`DIFF` o `NOT_EVALUATED`). No usa `PASS`, `FAIL` o `MITIGATED`, no afirma el
+texto de observaciones requeridas o prohibidas y no interpreta eficacia. Las
+tasas y llamadas no autorizadas pertenecen a PGS-05-M02.
+
+Su proyección se limita a `config.json`, `results.json`, `events.jsonl` y su
+manifiesto de integridad, siempre en un directorio nuevo de `$TMP` antes de una
+revisión manual. Solo admite rutas `$REPO`/`$TMP` y excluye contenido de
+fixtures, salida de proceso, trazas, marcadores señuelo, credenciales y rutas
+personales. Cinco archivos de contenido deben ser byte-idénticos a la baseline;
+el manifiesto adversario se declara aparte como deriva de metadatos
+`1.3.0` → `1.4.0`, no como un sexto archivo idéntico.
 
 Los logs brutos permanecen en el directorio temporal y no se versionan. Tras
 verificar la evidencia saneada se eliminan de forma acotada y recuperable
@@ -295,6 +316,7 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-19` | PGS-04-M06 no debe materializar ni ejecutar los casos DOS inertes | `CMP-10` se verifica con bordes sintéticos, reloj inyectado y lock cooperativo; el corpus adversario y la evidencia histórica permanecen inmutables y `AC-DOS-03` sigue requiriendo ampliación de estas RoE |
 | `ROE-20` | PGS-04-M07 no debe convertir el journal de producto en evidencia adversaria canónica | `CMP-11` se verifica con eventos y canarios sintéticos; no reescribe `DAT-10` a `DAT-13`, no entrega oráculos al producto, no ejecuta casos inertes y no persiste o exporta el informe opt-in |
 | `ROE-21` | PGS-04-M08 no debe reinterpretar o regenerar la baseline adversaria | `CMP-12` se verifica con sandboxes temporales, fault injection y canarios; no modifica el corpus, la evidencia histórica o el sandbox canónico, no ejecuta casos inertes y nunca publica staging durante recuperación |
+| `ROE-22` | PGS-05-M01 debe repetir el alcance histórico sin reinterpretarlo | El runner de retest exige commit, tree y `main` limpios; verifica evidencia histórica, cinco archivos byte-idénticos, deriva del manifiesto, hashes antes/después y 14 IDs en orden; escribe solo evidencia neutral create-only bajo `$TMP`, deja DOS/SC inertes y reserva tasas y llamadas para PGS-05-M02 |
 
 ## Disparadores de revisión
 

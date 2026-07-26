@@ -4,6 +4,10 @@ Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ata
 
 > **Estado:** PGS-00-M01 a PGS-04-M09, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`; su evidencia permanece inmutable. El checkout actual exige aprobación sintética para efectos, aplica una política de salida, limita tamaño, tiempo cooperativo, iteraciones y consumo, registra eventos saneados en memoria, publica/reconcilia borradores de forma atómica y mantiene una matriz canónica comprobable de controles. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud. La siguiente microtarea es PGS-05-M01.
 
+PGS-05-M01 dispone ya de un runner de retest separado y de su contrato de
+evidencia neutral; la ejecución canónica contra el commit endurecido limpio y
+el versionado de su proyección siguen pendientes.
+
 ## En una frase
 
 GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad ficticios y permite comparar, con las mismas pruebas, una baseline vulnerable y una versión protegida.
@@ -43,6 +47,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │       ├── cli.py
 │       ├── data_contract.py
 │       ├── adversarial_baseline.py
+│       ├── adversarial_retest.py
 │       ├── evaluation_harness.py
 │       ├── evaluation_profile.py
 │       ├── local_tools.py
@@ -59,6 +64,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── test_evaluation_profile.py
 │   ├── test_adversarial_corpus.py
 │   ├── test_adversarial_baseline.py
+│   ├── test_adversarial_retest.py
 │   ├── test_local_tools.py
 │   ├── test_model_adapter.py
 │   ├── test_output_policy.py
@@ -72,6 +78,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 ├── evaluations/
 │   ├── README.md
 │   ├── run_adversarial_baseline.py
+│   ├── run_adversarial_retest.py
 │   ├── adversarial-baseline-v1/
 │   │   ├── README.md
 │   │   ├── config.json
@@ -554,6 +561,33 @@ variante y ese candidato; no demuestra seguridad general ni robustez de un
 modelo GenAI real. El impacto, la reproducción y los límites consolidados se
 documentan en
 [GSL-FINDINGS-ADVERSARIAL-001](./docs/adversarial-baseline-findings.md).
+
+## Retest adversario preparado
+
+`GSL-RETEST-ADVERSARIAL-001` mantiene separado el runner histórico y reutiliza
+la única ejecución de casos de `CMP-07`. Su contrato exige un commit, tree y
+rama `main` exactos con checkout limpio; registra Python, `uv`, Pydantic y el
+hash de `uv.lock`; y ejecuta una vez los mismos 14 IDs en el mismo orden. Las
+cuatro fixtures DOS/SC permanecen inertes y los oráculos se comparan solo
+después de observar el target.
+
+La comparabilidad se limita de forma explícita a cinco archivos byte a byte:
+los dos JSONL benignos, `data/manifest.json` y los JSONL adversarios de
+entradas y oráculos. `data/adversarial/manifest.json` se declara por separado
+como deriva de metadatos `1.3.0` → `1.4.0`; no se presenta como un sexto
+archivo idéntico.
+
+Cada caso conserva solo `execution_status` (`COMPLETED`, `STOPPED` o `ERROR`),
+el triple observado resultado/decisión/efecto y `oracle_relation` (`MATCH`,
+`DIFF` o `NOT_EVALUATED`). PGS-05-M01 no interpreta eficacia ni serializa como
+medición actual cuentas históricas de modelo, herramienta o efectos. Esa
+comparación corresponde a PGS-05-M02.
+
+El wrapper `evaluations/run_adversarial_retest.py` solo escribe una proyección
+cerrada bajo un directorio nuevo de `$TMP`, sin sobrescribir destinos. La
+evidencia canónica aún no existe: se incorporará a
+`evaluations/adversarial-retest-v1/` únicamente después de ejecutar y revisar
+el candidato fijado.
 
 ## Crosswalk de amenazas
 
