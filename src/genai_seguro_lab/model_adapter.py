@@ -10,6 +10,8 @@ from typing import Annotated, Literal, Protocol, Self, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from .resource_control import MAX_TOOL_ARGUMENTS_BYTES, require_utf8_size
+
 Text = Annotated[str, Field(min_length=1)]
 RequestId = Annotated[
     str,
@@ -106,6 +108,7 @@ class ModelToolRequest(AdapterSchema):
     @field_validator("arguments_json")
     @classmethod
     def require_json_object(cls, value: str) -> str:
+        require_utf8_size(value, MAX_TOOL_ARGUMENTS_BYTES)
         try:
             arguments = json.loads(value)
         except json.JSONDecodeError as exc:

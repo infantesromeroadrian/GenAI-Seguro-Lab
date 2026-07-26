@@ -5,10 +5,10 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-NIST-CONTROLS-001` |
-| Versión | `1.2.0` |
+| Versión | `1.3.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-04-M05 en esta revisión; el commit exacto se obtiene del historial Git |
+| Control vigente | PGS-04-M06 en esta revisión; el commit exacto se obtiene del historial Git |
 | Threat model de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md), [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) y [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Baseline normativa | [NIST AI RMF 1.0 y NIST SP 800-218A](./framework-versions.md) |
@@ -89,14 +89,14 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 |---|---|---|---|---|---|---|
 | `CTL-01` | Requisitos de seguridad, tolerancia y tratamiento de riesgo | `PARCIAL` | `A/R ACT-02` | Los 17 casos de `GSL-ABUSE-CASES-001` | README, criterios de éxito, catálogo y priorización fijan límites; falta un registro formal de riesgos, aceptación residual y revisión periódica | PGS-06-M02 a M04 y PGS-05-M08 |
 | `CTL-02` | Inventario, límites, autoridad, threat model y disparadores de cambio | `PRESENTE` | `A/R ACT-02`; `C REV-01` planificado | Los 17 casos de `GSL-ABUSE-CASES-001` | Inventario, C4, autoridad, catálogo y priorización incorporan `CMP-06` y el alcance PI/JB/EX/TOL de `CMP-07`; deberán revisarse cuando el harness conecte nuevos casos o cambie de target | Revisión en cada disparador y matriz final PGS-07-M06 |
-| `CTL-03` | Procedencia, esquema e integridad del corpus y artefactos | `PRESENTE` para los corpus sintéticos actuales | `A/R ACT-02` | `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | Los corpus benigno y adversario aplican esquemas estrictos, procedencia, conteos y SHA-256; entradas y oráculos adversarios están separados. No hay firma, control de acceso propio ni límite global para un futuro dataset dimensionado | Límites PGS-04-M06 y supply chain PGS-06-M08 |
+| `CTL-03` | Procedencia, esquema e integridad del corpus y artefactos | `PRESENTE` para los corpus sintéticos actuales | `A/R ACT-02` | `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | Los corpus aplican esquemas estrictos, procedencia, conteos y SHA-256; entradas y oráculos adversarios están separados. `CMP-10` limita el corpus benigno antes de parsear o hashear a 64 KiB, 8 KiB por registro y 32+32 registros. No hay firma ni control de acceso propio, y el límite no sustituye una política para futuros corpus o datos reales | Supply chain PGS-06-M08 y retest PGS-05-M04 |
 | `CTL-04` | Separación de instrucciones y contenido no confiable, resistencia a inyección y jailbreak | `PARCIAL` | `A/R ACT-02` | `AC-PI-01`, `AC-PI-02`, `AC-PI-03`, `AC-JB-01` | `ModelMessage` clasifica instrucciones confiables, datos de usuario, contenido no confiable y salidas del modelo; `ModelRequest` exige los tres dominios de entrada y una única instrucción confiable inicial. El flujo ordinario declara `separated`, las salidas de herramienta vuelven como no confiables y el perfil aislado conserva `deliberately_merged`. La evidencia es estructural y determinista: todavía falta el retest y un modelo GenAI real | Retest PGS-05-M01 a M03 |
 | `CTL-05` | Validación de entradas, salidas y argumentos; allowlist de herramientas | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-EX-01`, `AC-EX-02`, `AC-TOL-01`, `AC-TOL-02` | Los sobres Pydantic cierran entradas y salida; `ToolExecutionGrant` limita una herramienta; `CMP-09` añade reglas semánticas explícitas antes de entrega o aprobación. La evidencia sigue limitada al doble determinista y a los casos programados | Retest y modelo real en PGS-05 |
 | `CTL-06` | Mínimo privilegio y separación modelo–identidad–datos–herramientas | `PARCIAL` | `A/R ACT-02` | `AC-TOL-01`, `AC-TOL-02`, `AC-TOL-05`, `AC-SC-01` | `IDN-05` liga grants opacos a principal, scope, herramienta e instancia; `TOL-01` retiene la vista exacta del incidente; `TOL-02` separa preparación y efecto, autentica `IDN-03` de forma sintética y crea por descriptor no-follow `0600`; EX-003 recibe un entorno allowlisted. `IDN-01` conserva permisos amplios y no existe identidad de servicio | Retest PGS-05 y revisión de aislamiento cuando cambie el runtime |
 | `CTL-07` | Confirmación humana autenticada, ligada al contenido y no reutilizable | `PARCIAL` | `A ACT-02`; `R ACT-03` | `AC-TOL-03`, `AC-TOL-05` | `DraftApprovalAuthority` autentica una identidad sintética mediante credencial local, liga challenge, aprobación y grant a todo el contexto, aplica TTL y consumo único y rechaza el literal histórico antes de I/O. No verifica presencia humana real ni muestra el contenido en una interfaz | Interfaz/autenticador con presencia humana y retest PGS-05 |
 | `CTL-08` | Efectos de filesystem confinados, creación exclusiva, parada y recuperación segura | `PARCIAL` | `A/R ACT-02`; `R ACT-01` para parada | `AC-TOL-03`, `AC-TOL-04`, `AC-TOL-05` | `CMP-07` verifica en `$TMP` el rechazo de traversal, symlink y overwrite. La creación se ancla al descriptor de la raíz con `O_EXCL`, `O_NOFOLLOW` y `0600`; no existe aún un flujo operativo de parada, rollback o recuperación | PGS-04-M08, PGS-06-M07 y PGS-05 |
 | `CTL-09` | Política de salida, redacción, errores saneados y detección de fugas | `PARCIAL` | `A/R ACT-02` | `AC-JB-01`, `AC-EX-03` | `CMP-09` es obligatorio en resumen y borradores, aplica `reject > redact > allow`, sustituye correo y rutas por marcadores fijos, rechaza categorías de alta señal y evita conservar texto bruto en la proyección de invocaciones. La cobertura es léxica, no universal, y aún no existe retest ni modelo real | Retest, bypasses y modelo real en PGS-05 |
-| `CTL-10` | Límites de tamaño, tiempo, iteraciones, concurrencia y consumo | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-TOL-02`, `AC-DOS-01`, `AC-DOS-03` | `GSL-ROE-001` fija topes operativos y `CMP-08` registra tiempo, procesos, turnos, solicitudes, bytes, archivos y RSS del run canónico. Todavía no hay rate limit del producto ni tope global preventivo para un corpus dimensionado | PGS-04-M06 y PGS-05-M04 |
+| `CTL-10` | Límites de tamaño, tiempo, iteraciones, concurrencia y consumo | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-TOL-02`, `AC-DOS-01`, `AC-DOS-03` | `CMP-10` implementa `GSL-RESOURCE-POLICY-001`: preflight benigno, límites UTF-8, presupuestos `analyze`/`baseline`/`draft`, consumo previo, checkpoints y lock advisory no bloqueante. Sigue parcial porque el plazo no cancela llamadas síncronas, la API puede omitir el lock y no hay rate limit persistente, cuota distribuida, RSS o aislamiento de SO. `GSL-ROE-001` continúa siendo autoridad separada de evaluación | Medición y retest PGS-05-M04 |
 | `CTL-11` | Integridad de código, dependencias, cambios y releases | `PARCIAL` | `A/R ACT-02`; `C REV-01` planificado | `AC-DOS-02`, `AC-SC-01` | Git, remoto público, `uv.lock`, hashes del corpus y commits granulares permiten detectar diferencias; faltan firma, CI, SBOM, revisión independiente y política de release | PGS-06-M08 y PGS-07-M01/M03/M04 |
 | `CTL-12` | Harness adversario, métricas, regresión y revisión independiente | `PARCIAL` | `A/R ACT-02`; `R REV-01` solo para revisión independiente | Los 17 casos de `GSL-ABUSE-CASES-001` | `CMP-07` cubre 14 fixtures PI/JB/EX/TOL con oráculos separados; `CMP-08` fija una baseline reproducible con 13 `PASS`, 1 `RESIDUAL`, métricas y evidencia saneada, y `GSL-FINDINGS-ADVERSARIAL-001` documenta impacto, reproducción y límites. Faltan 4 casos, retest y revisor independiente | PGS-05 y PGS-07-M01 a M06 |
 | `CTL-13` | Eventos, monitorización, respuesta, rollback, comunicación y retirada | `PLANIFICADO` | `A/R ACT-02`; `R ACT-01` para avisos y parada | `AC-EX-03`, `AC-DOS-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | No hay logging persistente, telemetría, correlación, runbook, rollback ni procedimiento de retirada | PGS-04-M07/M08, PGS-06-M05 a M07 y PGS-07 |
@@ -140,8 +140,11 @@ definirse entonces el modelo de responsabilidad compartida; hoy no existe.
 - `AC-TOL-05` permanece como residual de la baseline histórica. El checkout
   actual rechaza su literal, aunque `CTL-07` sigue parcial por no verificar
   presencia humana real.
-- `AC-DOS-01` y `AC-DOS-03` no están mitigados por el simple acotamiento de una
-  ejecución; faltan límites entre procesos y de tamaño global.
+- `AC-DOS-01` queda mitigado solo entre procesos que cooperan mediante la CLI;
+  faltan cuota persistente y control sobre llamadas directas a la API.
+- `AC-DOS-03` ya encuentra límites globales preventivos en el corpus benigno,
+  pero sigue sin ejecutarse por las RoE y no acredita consumo real ni un límite
+  frente a quien puede cambiar código y política.
 - `AC-SC-01` no puede cerrarse solo con Git local y un lockfile.
 - PGS-02-M08 no implementa controles de PGS-04 ni cierra P01-M08. El hito padre
   exige tanto este diseño como la implementación y verificación posterior.
@@ -170,5 +173,6 @@ PGS-04-M03 liga los grants, datos y efectos descritos en
 [`GSL-VALIDATION-POLICY-001`](./validation-policy.md) y
 [`GSL-LEAST-PRIVILEGE-001`](./least-privilege-policy.md). PGS-04-M04 añade la
 aprobación sintética ligada y de un solo uso. PGS-04-M05 añade
-[`GSL-OUTPUT-POLICY-001`](./output-safety-policy.md). El siguiente tratamiento
-son los límites de recursos de PGS-04-M06.
+[`GSL-OUTPUT-POLICY-001`](./output-safety-policy.md). PGS-04-M06 añade
+[`GSL-RESOURCE-POLICY-001`](./resource-limits-policy.md) mediante `CMP-10`;
+el siguiente tratamiento son los eventos y señales de PGS-04-M07.

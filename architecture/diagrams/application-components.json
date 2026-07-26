@@ -216,6 +216,33 @@
       }
     },
     {
+      "id": "resource-control",
+      "label": "CMP-10 · Límites de recursos",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/resource_control.py",
+      "meta": {
+        "type": "service",
+        "technology": "python-stdlib",
+        "inventoryIds": [
+          "CMP-10"
+        ],
+        "state": "application-control",
+        "policyId": "GSL-RESOURCE-POLICY-001",
+        "policyVersion": "1.0.0",
+        "profiles": [
+          "analyze",
+          "baseline",
+          "draft"
+        ],
+        "failClosed": true,
+        "cooperativeDeadline": true,
+        "nativeCancellation": false,
+        "cliLock": "advisory-nonblocking",
+        "persistentRateLimit": false,
+        "osIsolation": false
+      }
+    },
+    {
       "id": "deterministic-model",
       "label": "MOD-01 · Modelo determinista",
       "parentId": "model-output-boundary",
@@ -290,6 +317,71 @@
     }
   ],
   "edges": [
+    {
+      "id": "components-cli-uses-resource-control",
+      "source": "cli-dispatcher",
+      "target": "resource-control",
+      "label": "lock advisory no bloqueante + perfil de operación",
+      "meta": {
+        "type": "calls",
+        "lockResource": "data/manifest.json",
+        "waitOrRetry": false
+      }
+    },
+    {
+      "id": "components-loader-uses-resource-control",
+      "source": "dataset-loader",
+      "target": "resource-control",
+      "label": "snapshot benigno acotado antes de parseo y hash",
+      "meta": {
+        "type": "calls",
+        "maxCorpusBytes": 65536,
+        "maxRecordBytes": 8192
+      }
+    },
+    {
+      "id": "components-flow-uses-resource-control",
+      "source": "benign-flow",
+      "target": "resource-control",
+      "label": "caso, modelo, herramienta, bytes y plazo cooperativo",
+      "meta": {
+        "type": "calls",
+        "consumeBeforeOperation": true,
+        "checkAfterSynchronousBoundary": true
+      }
+    },
+    {
+      "id": "components-baseline-uses-resource-control",
+      "source": "baseline-engine",
+      "target": "resource-control",
+      "label": "presupuesto agregado: 12 casos, 24 turnos, 5 s",
+      "meta": {
+        "type": "calls",
+        "sharedOperationBudget": true
+      }
+    },
+    {
+      "id": "components-writer-uses-resource-control",
+      "source": "draft-writer",
+      "target": "resource-control",
+      "label": "sesión: propuesta, grant, archivo y Markdown ≤ 16 KiB",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-04",
+        "consumeBeforeIo": true
+      }
+    },
+    {
+      "id": "components-approval-uses-resource-control",
+      "source": "draft-approval-authority",
+      "target": "resource-control",
+      "label": "un challenge y tres autenticaciones, incluidas fallidas",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-04",
+        "failedAttemptsConsumeBudget": true
+      }
+    },
     {
       "id": "components-cli-loads-data",
       "source": "cli-dispatcher",

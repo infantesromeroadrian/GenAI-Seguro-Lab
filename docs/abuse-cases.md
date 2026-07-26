@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ABUSE-CASES-001` |
-| Versión | `2.0.0` |
+| Versión | `2.1.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
@@ -149,9 +149,9 @@ proceso o del Mac local, y no debe presentarse como una caída multiusuario.
 
 | ID | Escenario y objetivo adversario | Precondición y camino | Activos y límites | Resultado esperado en el estado actual | Evidencia pendiente |
 |---|---|---|---|---|---|
-| `AC-DOS-01` | Lanzar muchas ejecuciones de `baseline` o `analyze` para consumir CPU y memoria locales | `CLI`: `ACT-01` o procesos del mismo usuario repiten `AUTH-01/02` | Disponibilidad de `IDN-01` e `INF-01`; cada ejecución conserva techo funcional `C1` | Cada proceso está acotado al corpus actual, pero no existe rate limit, cuota o control de concurrencia entre procesos | Prueba local limitada con tiempo, memoria, concurrencia máxima y condición de parada |
+| `AC-DOS-01` | Lanzar muchas ejecuciones de `baseline` o `analyze` para consumir CPU y memoria locales | `CLI`: `ACT-01` o procesos del mismo usuario repiten `AUTH-01/02` | Disponibilidad de `IDN-01` e `INF-01`; cada ejecución conserva techo funcional `C1` | `CMP-10` rechaza sin espera un segundo proceso que coopere mediante la CLI y acota cada operación. La API Python puede omitir ese lock y no existe cuota persistente o rate limit entre ejecuciones | Prueba local limitada con tiempo, memoria, concurrencia máxima y condición de parada |
 | `AC-DOS-02` | Corromper, eliminar o desincronizar corpus y manifiesto para impedir cualquier análisis | `MANTENIMIENTO`: escritura sobre `DAT-01/02/03` mediante `AUTH-09` | `TB-06`, disponibilidad de `CMP-02`, integridad del dataset; techo `C1` | Esquema, referencias, conteos o SHA-256 deben hacer fallar cerrado; la CLI queda indisponible y emite error saneado | Copias temporales con cada corrupción y aserción de fallo sin salida parcial |
-| `AC-DOS-03` | Versionar un corpus muy grande pero válido para agotar recursos al cargarlo o ejecutar todos sus casos | `MANTENIMIENTO`: ampliar registros y actualizar `DAT-03`; `CMP-02` carga archivos completos en memoria | Tamaño de `DAT-01/02`, `CMP-02`, `CMP-05`, host local; techo `C1` | No existe hoy un límite global de registros o de todos los campos `Text`; el corpus fijado es pequeño, pero el control preventivo está pendiente | Dataset sintético dimensionado, medición de tiempo/memoria y umbral antes de implementarlo |
+| `AC-DOS-03` | Versionar un corpus muy grande pero válido para agotar recursos al cargarlo o ejecutar todos sus casos | `MANTENIMIENTO`: ampliar registros y actualizar `DAT-03`; un mantenedor también puede cambiar la política | Tamaño de `DAT-01/02`, `CMP-02`, `CMP-05`, host local; techo `C1` | `CMP-10` rechaza antes de parsear o hashear más de 64 KiB, 8 KiB por registro o 32+32 registros y limita `baseline` a 12 casos. El caso permanece inerte y su ejecución exige ampliar las RoE | Dataset sintético dimensionado, medición de tiempo/memoria y confirmación de rechazo tras ampliar las RoE |
 
 ## Supply chain y mantenimiento
 
@@ -192,8 +192,9 @@ un proveedor mediante este catálogo.
 - `CMP-09` trata variantes explícitas de `AC-JB-01` y `AC-EX-03` antes de
   entrega o aprobación. El estado sigue abierto frente a paráfrasis,
   ofuscación y cualquier modelo real.
-- `AC-DOS-01` es el único caso ordinariamente alcanzable desde la CLI; sigue
-  limitado al host local.
+- `AC-DOS-01` es el único caso ordinariamente alcanzable desde la CLI; el lock
+  advisory mitiga la concurrencia cooperativa, pero no llamadas directas a la
+  API ni repetición secuencial, y el impacto sigue limitado al host local.
 - `AC-PI-01` no tiene ruta de producto; PGS-03-M04 prueba precisamente ese
   rechazo.
 - Los casos de inyección indirecta y supply chain exigen autoridad de

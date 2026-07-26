@@ -10,6 +10,8 @@ mediante un flujo determinista y herramientas con autoridad acotada.
 - Separar la salida del modelo de la autorización de herramientas.
 - Controlar mediante `CMP-09` el resumen y los borradores antes de entrega,
   huella o aprobación.
+- Acotar mediante `CMP-10` el corpus, las fronteras, las operaciones y los
+  efectos antes de ejecutarlos.
 - Emitir resultados JSON reproducibles y mantener los efectos locales fuera de
   la ruta ordinaria de la CLI.
 - Preparar una petición vulnerable marcada para evaluación sin ejecutarla.
@@ -27,7 +29,7 @@ mediante un flujo determinista y herramientas con autoridad acotada.
 | ID | Límite | Garantía actual |
 |---|---|---|
 | `TB-01` | Host local e identidad del SO | El proceso hereda la cuenta local; no hay identidad propia de aplicación |
-| `TB-02` | Control de aplicación | Esquemas, orquestación y política de salida dentro de un único proceso Python |
+| `TB-02` | Control de aplicación | Esquemas, orquestación, política de salida y límites preventivos dentro de un único proceso Python |
 | `TB-03` | Salida del modelo | Toda respuesta se valida y su resumen atraviesa `CMP-09` antes de entregarse |
 | `TB-04` | Autoridad de herramientas | El adaptador no autoriza ni ejecuta herramientas |
 | `TB-05` | Efecto en filesystem | Solo creación aprobada mediante identidad sintética dentro de `sandbox/drafts/` |
@@ -46,6 +48,8 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
   distribución; no es alcanzable desde el runtime.
 - `CMP-09` no usa un clasificador o proveedor y no ofrece detección universal;
   solo aplica las reglas explícitas documentadas.
+- `CMP-10` usa plazos y un lock cooperativos; no cancela llamadas bloqueadas,
+  limita llamadas directas a la API o aísla el proceso.
 - El corpus adversario conserva fixtures y oráculos separados; `CMP-07` cubre
   14 PI/JB/EX/TOL, `CMP-08` fija su baseline canónica y las otras cuatro
   entradas siguen inertes.
@@ -62,3 +66,4 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 - `data/adversarial/manifest.json`
 - `evaluations/benign-baseline-v1.json`
 - `evaluations/adversarial-baseline-v1/`
+- `docs/resource-limits-policy.md`

@@ -32,6 +32,11 @@ estricto, rechaza campos adicionales y exige:
 - referencias a documentos de conocimiento existentes;
 - identificadores únicos, conteos y hashes coincidentes con el manifiesto.
 
+Antes de parsear o calcular hashes, `GSL-RESOURCE-POLICY-001` lee un único
+snapshot por descriptor y rechaza más de 64 KiB acumulados, 8 KiB por registro,
+32 incidentes o 32 documentos. El hash se calcula sobre los mismos bytes
+acotados que después se validan.
+
 El manifiesto benigno continúa declarando cero registros adversarios. Las
 fixtures controladas de PGS-03 viven separadas en
 [`adversarial/`](./adversarial/README.md), tienen su propio manifiesto y no
@@ -42,7 +47,7 @@ forman parte del bundle que consume la CLI.
 Desde la raíz del repositorio:
 
 ```bash
-uv run --frozen pytest tests/test_data_contract.py
+uv run --frozen pytest tests/test_data_contract.py tests/test_resource_control.py
 ```
 
 La verificación detecta cambios no reflejados en los hashes, referencias

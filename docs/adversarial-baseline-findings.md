@@ -18,6 +18,8 @@ revisarlo sin cambiar los oráculos ni reinterpretar los resultados.
 
 > **Addendum de tratamiento (2026-07-26):** PGS-04-M04 hace que el checkout
 > actual rechace el literal de `ADV-TOL-005` antes de I/O y cree cero archivos.
+> PGS-04-M06 añade además límites preventivos de iteraciones y consumo al flujo
+> ordinario descrito por `F-03`; los casos DOS siguen sin ejecutarse.
 > Este informe y la evidencia enlazada siguen describiendo exclusivamente el
 > candidato histórico indicado en la ficha; no se han reescrito sus resultados.
 

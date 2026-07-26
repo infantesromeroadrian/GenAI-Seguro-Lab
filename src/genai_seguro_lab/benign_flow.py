@@ -26,6 +26,7 @@ from .model_adapter import (
     ModelToolRequest,
 )
 from .output_policy import OutputPolicy, PolicyDecisionMetadata
+from .resource_control import ProductResourceControl
 
 Text = Annotated[str, Field(min_length=1)]
 
@@ -285,80 +286,117 @@ class BenignAnalysisFlow:
             ),
         )
 
-    def analyze(self, incident: IncidentRecord) -> BenignAnalysisResult:
-        initial = self.build_initial_request(incident)
-        first = self._adapter.generate(initial)
-        tool_requests = first.response.tool_requests
-        if first.response.finish_reason != "tool_request" or len(tool_requests) != 1:
-            raise BenignFlowError(
-                "the first model response must request exactly one tool"
+    def analyze(
+        self,
+        incident: IncidentRecord,
+        *,
+        resource_control: ProductResourceControl | None = None,
+    ) -> BenignAnalysisResult:
+        control = resource_control or ProductResourceControl("analyze")
+        if not isinstance(control, ProductResourceControl):
+            raise TypeError(
+                "resource_control must be a ProductResourceControl"
             )
+        if control.profile not in {"analyze", "baseline"}:
+            raise ValueError("resource control profile cannot run analysis")
 
-        tool_request = tool_requests[0]
-        knowledge_tool = self._knowledge_catalog.for_incident(
-            incident,
-            principal="benign-flow",
-            scope=f"incident:{incident.id}",
-        )
-        knowledge = knowledge_tool.search(
-            tool_request,
-            grant=knowledge_tool.execution_grant,
-        )
-        if not knowledge.hits:
-            raise BenignFlowError(
-                "knowledge search returned no authorized hits"
-            )
-        followup = self.build_followup_request(
-            initial,
-            tool_request,
-            knowledge,
-        )
-        second = self._adapter.generate(followup)
-        if second.response.finish_reason != "stop":
-            raise BenignFlowError("the second model response must be final")
-        if second.response.output_text is None:
-            raise BenignFlowError("the final response must contain text")
+        control.begin_case()
         try:
-            output = BenignFinalOutput.model_validate_json(
-                second.response.output_text
-            )
-        except ValidationError as exc:
-            raise BenignFlowError(
-                "the final model output failed schema validation"
-            ) from exc
-        if output.incident_id != incident.id:
-            raise BenignFlowError(
-                "the final model output references another incident"
-            )
-        authorized_knowledge_ids = tuple(hit.id for hit in knowledge.hits)
-        if output.knowledge_ids != authorized_knowledge_ids:
-            raise BenignFlowError(
-                "the final model output exceeds authorized knowledge"
-            )
-        checked_summary = self._output_policy.check(
-            output.summary,
-            channel="final_summary",
-        )
-        safe_output = BenignFinalOutput(
-            incident_id=output.incident_id,
-            summary=self._output_policy.unwrap(
-                checked_summary,
-                channel="final_summary",
-            ),
-            knowledge_ids=output.knowledge_ids,
-            actions_executed=output.actions_executed,
-            compromise_confirmed=output.compromise_confirmed,
-        )
+            initial = self.build_initial_request(incident)
+            control.before_model_call(initial)
+            try:
+                first = self._adapter.generate(initial)
+            finally:
+                control.checkpoint()
+            control.after_model_call(first.response)
+            tool_requests = first.response.tool_requests
+            if (
+                first.response.finish_reason != "tool_request"
+                or len(tool_requests) != 1
+            ):
+                raise BenignFlowError(
+                    "the first model response must request exactly one tool"
+                )
 
-        return BenignAnalysisResult(
-            incident_id=incident.id,
-            output=safe_output,
-            knowledge=knowledge,
-            invocations=(
-                SafeModelInvocation.from_result(first),
-                SafeModelInvocation.from_result(second),
-            ),
-            output_policy=OutputPolicyEvidence.from_metadata(
-                checked_summary.metadata
-            ),
-        )
+            tool_request = tool_requests[0]
+            control.accept_tool_request(tool_request.arguments_json)
+            knowledge_tool = self._knowledge_catalog.for_incident(
+                incident,
+                principal="benign-flow",
+                scope=f"incident:{incident.id}",
+            )
+            control.before_tool_execution()
+            try:
+                knowledge = knowledge_tool.search(
+                    tool_request,
+                    grant=knowledge_tool.execution_grant,
+                )
+            finally:
+                control.checkpoint()
+            control.after_tool_execution(knowledge)
+            if not knowledge.hits:
+                raise BenignFlowError(
+                    "knowledge search returned no authorized hits"
+                )
+            followup = self.build_followup_request(
+                initial,
+                tool_request,
+                knowledge,
+            )
+            control.before_model_call(followup)
+            try:
+                second = self._adapter.generate(followup)
+            finally:
+                control.checkpoint()
+            control.after_model_call(second.response)
+            if second.response.finish_reason != "stop":
+                raise BenignFlowError("the second model response must be final")
+            if second.response.output_text is None:
+                raise BenignFlowError("the final response must contain text")
+            try:
+                output = BenignFinalOutput.model_validate_json(
+                    second.response.output_text
+                )
+            except ValidationError as exc:
+                raise BenignFlowError(
+                    "the final model output failed schema validation"
+                ) from exc
+            control.accept_final_summary(output.summary)
+            if output.incident_id != incident.id:
+                raise BenignFlowError(
+                    "the final model output references another incident"
+                )
+            authorized_knowledge_ids = tuple(hit.id for hit in knowledge.hits)
+            if output.knowledge_ids != authorized_knowledge_ids:
+                raise BenignFlowError(
+                    "the final model output exceeds authorized knowledge"
+                )
+            checked_summary = self._output_policy.check(
+                output.summary,
+                channel="final_summary",
+            )
+            safe_output = BenignFinalOutput(
+                incident_id=output.incident_id,
+                summary=self._output_policy.unwrap(
+                    checked_summary,
+                    channel="final_summary",
+                ),
+                knowledge_ids=output.knowledge_ids,
+                actions_executed=output.actions_executed,
+                compromise_confirmed=output.compromise_confirmed,
+            )
+
+            return BenignAnalysisResult(
+                incident_id=incident.id,
+                output=safe_output,
+                knowledge=knowledge,
+                invocations=(
+                    SafeModelInvocation.from_result(first),
+                    SafeModelInvocation.from_result(second),
+                ),
+                output_policy=OutputPolicyEvidence.from_metadata(
+                    checked_summary.metadata
+                ),
+            )
+        finally:
+            control.checkpoint()

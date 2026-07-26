@@ -9,6 +9,15 @@ from typing import Annotated, Literal, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
+from .resource_control import (
+    MAX_BENIGN_CORPUS_BYTES,
+    MAX_INCIDENT_RECORDS,
+    MAX_JSONL_RECORD_BYTES,
+    MAX_KNOWLEDGE_RECORDS,
+    ResourceLimitError,
+    read_bounded_regular_file,
+)
+
 Text = Annotated[str, Field(min_length=1)]
 Sha256 = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
 IncidentId = Annotated[str, Field(pattern=r"^INC-BEN-[0-9]{3}$")]
@@ -405,6 +414,7 @@ class DatasetBundle:
     manifest: DatasetManifest
     incidents: tuple[IncidentRecord, ...]
     knowledge: tuple[KnowledgeRecord, ...]
+    manifest_sha256: str
 
 
 @dataclass(frozen=True)
@@ -433,6 +443,51 @@ def _load_jsonl(path: Path, model: type[RecordT]) -> tuple[RecordT, ...]:
     return tuple(records)
 
 
+def _load_jsonl_snapshot(
+    filename: str,
+    lines: tuple[bytes, ...],
+    model: type[RecordT],
+) -> tuple[RecordT, ...]:
+    records: list[RecordT] = []
+    for line_number, line in enumerate(lines, start=1):
+        try:
+            records.append(model.model_validate_json(line))
+        except ValidationError as exc:
+            raise ValueError(
+                f"{filename}:{line_number} violates the data contract"
+            ) from exc
+    return tuple(records)
+
+
+def _preflight_benign_corpus(
+    data_dir: Path,
+) -> tuple[dict[str, bytes], dict[str, tuple[bytes, ...]]]:
+    filenames = ("manifest.json", "incidents.jsonl", "knowledge.jsonl")
+    snapshots: dict[str, bytes] = {}
+    remaining = MAX_BENIGN_CORPUS_BYTES
+    for filename in filenames:
+        content = read_bounded_regular_file(data_dir / filename, remaining)
+        snapshots[filename] = content
+        remaining -= len(content)
+
+    jsonl_lines: dict[str, tuple[bytes, ...]] = {}
+    record_limits = {
+        "incidents.jsonl": MAX_INCIDENT_RECORDS,
+        "knowledge.jsonl": MAX_KNOWLEDGE_RECORDS,
+    }
+    for filename, record_limit in record_limits.items():
+        lines = tuple(snapshots[filename].splitlines())
+        if (
+            not lines
+            or len(lines) > record_limit
+            or any(not line.strip() for line in lines)
+            or any(len(line) > MAX_JSONL_RECORD_BYTES for line in lines)
+        ):
+            raise ResourceLimitError("product resource limit exceeded")
+        jsonl_lines[filename] = lines
+    return snapshots, jsonl_lines
+
+
 def _digest(path: Path) -> str:
     return sha256(path.read_bytes()).hexdigest()
 
@@ -440,11 +495,20 @@ def _digest(path: Path) -> str:
 def load_dataset(data_dir: Path) -> DatasetBundle:
     """Carga el corpus y comprueba esquema, hashes, conteos y referencias."""
 
-    manifest = DatasetManifest.model_validate_json(
-        (data_dir / "manifest.json").read_text(encoding="utf-8")
+    if not isinstance(data_dir, Path):
+        raise TypeError("data_dir must be a Path")
+    snapshots, jsonl_lines = _preflight_benign_corpus(data_dir)
+    manifest = DatasetManifest.model_validate_json(snapshots["manifest.json"])
+    incidents = _load_jsonl_snapshot(
+        "incidents.jsonl",
+        jsonl_lines["incidents.jsonl"],
+        IncidentRecord,
     )
-    incidents = _load_jsonl(data_dir / "incidents.jsonl", IncidentRecord)
-    knowledge = _load_jsonl(data_dir / "knowledge.jsonl", KnowledgeRecord)
+    knowledge = _load_jsonl_snapshot(
+        "knowledge.jsonl",
+        jsonl_lines["knowledge.jsonl"],
+        KnowledgeRecord,
+    )
 
     incident_ids = [record.id for record in incidents]
     knowledge_ids = [record.id for record in knowledge]
@@ -477,12 +541,11 @@ def load_dataset(data_dir: Path) -> DatasetBundle:
         "knowledge.jsonl": len(knowledge),
     }
     for relative_path, entry in entries.items():
-        path = data_dir / relative_path
         if entry.kind != expected_kinds[relative_path]:
             raise ValueError(f"unexpected kind for {relative_path}")
         if entry.records != record_counts[relative_path]:
             raise ValueError(f"record count mismatch for {relative_path}")
-        if entry.sha256 != _digest(path):
+        if entry.sha256 != sha256(snapshots[relative_path]).hexdigest():
             raise ValueError(f"hash mismatch for {relative_path}")
 
     expected = manifest.expected_result
@@ -499,6 +562,7 @@ def load_dataset(data_dir: Path) -> DatasetBundle:
         manifest=manifest,
         incidents=incidents,
         knowledge=knowledge,
+        manifest_sha256=sha256(snapshots["manifest.json"]).hexdigest(),
     )
 
 

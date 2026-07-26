@@ -5,6 +5,8 @@ local.
 
 - Resolver la CLI desde el checkout.
 - Validar el dataset benigno antes de utilizarlo.
+- Aplicar `CMP-10` a corpus, fronteras, operaciones, sesiones de borrador y
+  concurrencia cooperativa de la CLI.
 - Validar por API interna las entradas y oráculos adversarios.
 - Ejecutar el flujo benigno acotado y el adaptador determinista.
 - Autorizar la búsqueda de conocimiento fuera del modelo.
@@ -25,6 +27,7 @@ local.
 - Aislamiento real: memoria del proceso.
 - Límite: salvo el subproceso acotado de `ADV-EX-003`, no existe aislamiento
   interno por proceso, contenedor o identidad.
+- El lock y los plazos de `CMP-10` son cooperativos y no cambian ese límite.
 - `ADV-EX-003` recibe solo tres variables ambientales permitidas; no hereda
   `os.environ`.
 

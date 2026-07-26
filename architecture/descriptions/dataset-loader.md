@@ -4,6 +4,8 @@ por separado el corpus adversario mediante una API interna.
 ## Responsabilidades
 
 - Validar registros Pydantic sin campos adicionales.
+- Obtener un único snapshot por descriptor y aplicar antes de parsear o
+  hashear el límite benigno de 64 KiB, 8 KiB por registro y 32+32 registros.
 - Exigir IDs únicos y referencias existentes.
 - Comprobar tipos, conteos y hashes del manifiesto.
 - Rechazar datos no sintéticos o registros adversarios dentro del bundle
@@ -24,4 +26,5 @@ por separado el corpus adversario mediante una API interna.
 ## Inventario
 
 - `CMP-02`
+- `CMP-10`
 - `DAT-01`, `DAT-02`, `DAT-03`, `DAT-07`, `DAT-08` y `DAT-09`

@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import json
-from hashlib import sha256
+from collections.abc import Callable
 from pathlib import Path
+from time import monotonic
 from typing import Annotated, Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -22,9 +23,10 @@ from .data_contract import (
     IncidentId,
     IncidentRecord,
     KnowledgeId,
+    KnowledgeRecord,
     load_dataset,
 )
-from .local_tools import KnowledgeCatalog
+from .local_tools import KnowledgeCatalog, KnowledgeHit, KnowledgeSearchResult
 from .model_adapter import (
     DeterministicModelAdapter,
     ModelResponse,
@@ -32,6 +34,7 @@ from .model_adapter import (
     ScriptedExchange,
 )
 from .output_policy import OutputPolicy
+from .resource_control import ProductResourceControl
 
 Text = Annotated[str, Field(min_length=1)]
 Sha256 = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
@@ -166,9 +169,38 @@ def _output_text(
     )
 
 
+def _scripted_knowledge_fixture(
+    incident: IncidentRecord,
+    documents: tuple[KnowledgeRecord, ...],
+) -> KnowledgeSearchResult:
+    indexed = {document.id: document for document in documents}
+    try:
+        selected = tuple(
+            indexed[knowledge_id] for knowledge_id in incident.knowledge_refs
+        )
+    except KeyError as exc:
+        raise ValueError(
+            "baseline configuration references unavailable knowledge"
+        ) from exc
+    return KnowledgeSearchResult(
+        query=incident.category,
+        hits=tuple(
+            KnowledgeHit(
+                id=document.id,
+                topic=document.topic,
+                title=document.title,
+                content=document.content,
+                procedures=document.procedures,
+            )
+            for document in selected
+        ),
+    )
+
+
 def _build_flow(
     incidents: tuple[IncidentRecord, ...],
     knowledge_catalog: KnowledgeCatalog,
+    knowledge_records: tuple[KnowledgeRecord, ...],
 ) -> BenignAnalysisFlow:
     scripts: list[ScriptedExchange] = []
     for incident in incidents:
@@ -178,14 +210,9 @@ def _build_flow(
             finish_reason="tool_request",
             tool_requests=(tool_request,),
         )
-        knowledge_tool = knowledge_catalog.for_incident(
+        knowledge = _scripted_knowledge_fixture(
             incident,
-            principal="benign-flow",
-            scope=f"incident:{incident.id}",
-        )
-        knowledge = knowledge_tool.search(
-            tool_request,
-            grant=knowledge_tool.execution_grant,
+            knowledge_records,
         )
         if not knowledge.hits:
             raise ValueError("baseline configuration produced no knowledge hits")
@@ -260,6 +287,8 @@ def _case_result(
 def run_incident(
     bundle: DatasetBundle,
     incident_id: str,
+    *,
+    clock: Callable[[], float] = monotonic,
 ) -> FunctionalCaseResult:
     """Ejecuta un único caso benigno por su identificador exacto."""
 
@@ -267,6 +296,7 @@ def run_incident(
         raise TypeError("bundle must be a DatasetBundle")
     if not isinstance(incident_id, str):
         raise TypeError("incident_id must be a string")
+    control = ProductResourceControl("analyze", clock=clock)
 
     incident = next(
         (
@@ -280,20 +310,39 @@ def run_incident(
         raise UnknownIncidentError("unknown benign incident identifier")
 
     knowledge_catalog = KnowledgeCatalog(bundle.knowledge)
-    result = _build_flow((incident,), knowledge_catalog).analyze(incident)
+    result = _build_flow(
+        (incident,),
+        knowledge_catalog,
+        bundle.knowledge,
+    ).analyze(
+        incident,
+        resource_control=control,
+    )
     return _case_result(incident, result)
 
 
-def run_functional_baseline(data_dir: Path) -> FunctionalBaseline:
+def run_functional_baseline(
+    data_dir: Path,
+    *,
+    clock: Callable[[], float] = monotonic,
+) -> FunctionalBaseline:
     """Ejecuta todo el corpus benigno y devuelve evidencia determinista."""
 
     if not isinstance(data_dir, Path):
         raise TypeError("data_dir must be a Path")
+    control = ProductResourceControl("baseline", clock=clock)
     bundle = load_dataset(data_dir)
     knowledge_catalog = KnowledgeCatalog(bundle.knowledge)
-    flow = _build_flow(bundle.incidents, knowledge_catalog)
+    flow = _build_flow(
+        bundle.incidents,
+        knowledge_catalog,
+        bundle.knowledge,
+    )
     cases = tuple(
-        _case_result(incident, flow.analyze(incident))
+        _case_result(
+            incident,
+            flow.analyze(incident, resource_control=control),
+        )
         for incident in bundle.incidents
     )
     return FunctionalBaseline(
@@ -304,9 +353,7 @@ def run_functional_baseline(data_dir: Path) -> FunctionalBaseline:
         dataset=BaselineDataset(
             id=bundle.manifest.id,
             version=bundle.manifest.version,
-            manifest_sha256=sha256(
-                (data_dir / "manifest.json").read_bytes()
-            ).hexdigest(),
+            manifest_sha256=bundle.manifest_sha256,
         ),
         summary=FunctionalBaselineSummary(
             cases_total=len(cases),

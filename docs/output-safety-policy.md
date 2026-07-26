@@ -102,5 +102,6 @@ formatos de credencial ni todas las formas de contenido activo.
 
 La evidencia actual usa un adaptador determinista. PGS-05 debe repetir el
 corpus fijado y medir seguridad y utilidad; cualquier modelo o proveedor real
-exige revisar estas reglas. Los límites de tamaño, tiempo, iteraciones y
-consumo pertenecen a PGS-04-M06.
+exige revisar estas reglas. `GSL-RESOURCE-POLICY-001` aplica los límites de
+tamaño, tiempo cooperativo, iteraciones y consumo sin ampliar la detección
+léxica de esta política.

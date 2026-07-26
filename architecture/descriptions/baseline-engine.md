@@ -7,6 +7,8 @@ o doce incidentes.
 - Instanciar el modelo determinista, el catálogo y una vista/grant de
   conocimiento independiente por incidente.
 - Ejecutar `run_incident()` o `run_functional_baseline()`.
+- Compartir un único perfil `baseline` de `CMP-10`: 12 casos, 24 invocaciones,
+  12 solicitudes y ejecuciones dentro de cinco segundos cooperativos.
 - Contar invocaciones, tool requests, coste y llamadas externas.
 
 ## Persistencia
@@ -18,3 +20,4 @@ Devuelve modelos Pydantic que la CLI serializa. No escribe directamente
 
 - `CMP-04`
 - `CMP-05`
+- `CMP-10`

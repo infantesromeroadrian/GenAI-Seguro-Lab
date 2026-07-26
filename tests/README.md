@@ -3,7 +3,7 @@
 Este directorio contiene las pruebas automatizadas del contrato de datos, el
 adaptador determinista, las herramientas locales, el flujo benigno, el perfil
 vulnerable aislado, el harness adversario acotado, el runner canónico y la
-interfaz de proceso completo.
+interfaz de proceso completo, incluidos los límites preventivos de recursos.
 
 Ejecución completa:
 
@@ -32,6 +32,13 @@ estructural precede a la política semántica.
 redacción determinista e idempotente, rechazo genérico, canales cerrados y
 sellos opacos ligados a una instancia. Las fixtures representan reglas
 explícitas; no acreditan detección universal.
+
+`test_resource_control.py` comprueba los bordes exactos y el exceso de corpus,
+registros, peticiones, respuestas, herramientas, resumen y Markdown; el
+presupuesto acumulado, el plazo con reloj inyectado, la cuota de borrador y el
+lock no bloqueante de CLI. También verifica rechazo previo al adaptador o I/O
+y `stdout` vacío; no acredita cancelación de una llamada síncrona bloqueada ni
+rate limiting persistente.
 
 `test_local_tools.py` comprueba que cada grant pertenece a una sola
 herramienta, principal, scope e instancia; que `TOL-01` retiene solo la vista

@@ -1727,19 +1727,24 @@ def run_filesystem_escape_case(
             == "draft target already exists; overwrite is forbidden"
         )
 
-    symlink_proposal = writer.prepare(
+    symlink_writer = _draft_writer(
+        drafts_dir,
+        scope=record.id,
+        approval_authority=authority,
+    )
+    symlink_proposal = symlink_writer.prepare(
         _draft_tool_request(
             request_suffix="TOL4-SYMLINK",
             filename=symlink_name,
         ),
-        grant=writer.prepare_grant,
+        grant=symlink_writer.prepare_grant,
     )
     symlink_rejected = False
     try:
-        writer.create(
+        symlink_writer.create(
             symlink_proposal,
             _authorize_synthetic_effect(
-                writer=writer,
+                writer=symlink_writer,
                 authority=authority,
                 proposal=symlink_proposal,
             ),
@@ -1766,6 +1771,7 @@ def run_filesystem_escape_case(
         )
     _assert_m06_dataset_unchanged(source_data_dir, source_hashes)
     writer.close()
+    symlink_writer.close()
     authority.close()
 
     return FilesystemEscapeObservation(

@@ -2,11 +2,11 @@
 
 Destino reservado para borradores ficticios generados durante el laboratorio.
 
-La política `create-only` y la confirmación declarada por el llamador y
-vinculada a la huella exacta de cada propuesta están implementadas y probadas
-desde PGS-01-M06. El modelo solo puede preparar una propuesta; el llamador debe
-aportar después la confirmación exacta. La identidad humana todavía no se
-autentica en esta capa.
+La política `create-only`, la aprobación opaca ligada a la huella exacta y la
+cuota de una sesión están implementadas y probadas. El modelo solo puede
+preparar una propuesta; un llamador interno debe autenticar después el
+principal sintético configurado. El mecanismo no verifica presencia ni
+identidad humana real.
 
 Este directorio permanece vacío en el repositorio. Los borradores generados se
 ignoran por defecto y las pruebas utilizan directorios temporales para no dejar

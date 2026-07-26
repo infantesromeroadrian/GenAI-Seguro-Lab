@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-04-M05, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria histórica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`; su evidencia permanece inmutable. El checkout actual exige aprobación sintética para efectos y aplica una política de salida obligatoria antes de devolver un resumen o aprobar un borrador. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-04-M06, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria histórica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`; su evidencia permanece inmutable. El checkout actual exige aprobación sintética para efectos, aplica una política de salida y limita por defecto tamaño, tiempo cooperativo, iteraciones y consumo. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
 
 ## En una frase
 
@@ -47,7 +47,8 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │       ├── evaluation_profile.py
 │       ├── local_tools.py
 │       ├── model_adapter.py
-│       └── output_policy.py
+│       ├── output_policy.py
+│       └── resource_control.py
 ├── tests/
 │   ├── README.md
 │   ├── test_benign_flow.py
@@ -59,6 +60,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── test_local_tools.py
 │   ├── test_model_adapter.py
 │   ├── test_output_policy.py
+│   ├── test_resource_control.py
 │   ├── test_validation_policy.py
 │   ├── test_jailbreak_disclosure_evaluation.py
 │   ├── test_prompt_injection_evaluation.py
@@ -92,6 +94,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── framework-versions.md
 │   ├── least-privilege-policy.md
 │   ├── output-safety-policy.md
+│   ├── resource-limits-policy.md
 │   ├── risk-prioritization.md
 │   ├── rules-of-engagement.md
 │   ├── system-inventory.md
@@ -103,7 +106,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
         └── README.md
 ```
 
-PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado, PGS-03-M03 prepara el corpus adversario, PGS-03-M04/M05/M06 conectan 14 fixtures PI/JB/EX/TOL a pruebas internas, PGS-03-M07 fija su primera ejecución canónica y PGS-04-M01 a M05 separan dominios de confianza, validan esquemas, aplican mínimo privilegio, exigen aprobación de efectos y controlan la salida. Todavía no existe un modelo GenAI real.
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado, PGS-03-M03 prepara el corpus adversario, PGS-03-M04/M05/M06 conectan 14 fixtures PI/JB/EX/TOL a pruebas internas, PGS-03-M07 fija su primera ejecución canónica y PGS-04-M01 a M06 separan dominios de confianza, validan esquemas, aplican mínimo privilegio, exigen aprobación de efectos, controlan la salida y acotan los recursos. Todavía no existe un modelo GenAI real.
 
 ## Entorno reproducible
 
@@ -336,7 +339,8 @@ C4 compatible con Tecture, derivado de `GSL-SYS-INV-001`:
   evidencia funcional y sandbox de borradores dentro del mismo Mac;
 - **L3 — componentes:** CLI, contrato de datos, motor de baseline, flujo
   benigno, modelo determinista, búsqueda autorizada, autoridad de aprobación
-  sintética y escritor de borradores.
+  sintética, escritor de borradores, política de salida y control preventivo
+  de recursos.
 
 El mapa hace visibles seis límites:
 
@@ -352,7 +356,8 @@ El mapa hace visibles seis límites:
 `TB-02`, `TB-03` y `TB-04` son límites lógicos en un único proceso, no
 aislamiento por contenedor o identidad. En el diagrama L3,
 `DraftWriterTool` permanece sin arista de ejecución: está implementada, pero
-no conectada a la CLI ni al flujo benigno.
+no conectada a la CLI ni al flujo benigno. `CMP-10` limita los componentes
+cooperantes, pero no añade aislamiento de sistema operativo.
 
 ## Matriz de autoridad y consecuencias
 
@@ -368,6 +373,8 @@ cadenas de autoridad observables:
 - `TOL-01` retiene únicamente la vista exacta del incidente;
 - `TOL-02` separa preparación, aprobación y efecto; autentica un principal
   sintético y solo crea por descriptor mediante su API interna;
+- `CMP-10` consume límites antes de las operaciones y descarta respuestas
+  tardías o sobredimensionadas antes de entregarlas;
 - `ACT-02`, mediante su cuenta macOS y Git fuera del runtime, posee la mayor
   autoridad actual porque puede modificar código, datos, dependencias y
   evidencia.
@@ -412,16 +419,17 @@ No representa frecuencia de incidentes ni severidad universal.
 
 | Prioridad | Casos | Tratamiento |
 |---|---:|---|
-| `PR-1` | 1 | `AC-DOS-01`, pendiente de límites preventivos |
+| `PR-1` | 1 | `AC-DOS-01`, mitigado solo para procesos cooperantes de la CLI |
 | `PR-2` | 1 | `AC-SC-01`, requiere autoridad de mantenimiento |
 | `PR-3` | 14 | controles ya observados o casos que necesitan un perfil específico |
 | `PR-0` | 1 | `AC-PI-01`, en espera porque no existe prompt libre |
 
 El residual de confirmación pertenece a la baseline histórica; el checkout
-actual reduce `AC-TOL-05` a `PR-3` para la variante literal probada. La única
-superficie adversaria ordinaria sigue siendo la repetición de procesos por
-CLI. Los escenarios de prompt injection y jailbreak se recalcularán cuando
-exista un modelo real o cambie la alcanzabilidad del perfil.
+actual reduce `AC-TOL-05` a `PR-3` para la variante literal probada. La
+superficie adversaria ordinaria sigue incluyendo procesos que omitan el lock
+advisory invocando directamente la API Python. Los escenarios de prompt
+injection y jailbreak se recalcularán cuando exista un modelo real o cambie la
+alcanzabilidad del perfil.
 
 ## Rules of Engagement
 
@@ -656,7 +664,10 @@ Esta aprobación no fijó por sí sola las capacidades. Estas quedaron aprobadas
 - Modificación o eliminación de incidentes, documentos o borradores.
 - Activación del perfil vulnerable desde la interfaz normal o por decisión del modelo.
 
-Los límites numéricos de tamaño, tiempo, iteraciones y consumo se fijarán antes de ejecutar la baseline, dentro de PGS-04-M06.
+La baseline histórica precede al control preventivo del producto. PGS-04-M06
+fija los límites de la versión endurecida antes de su retest en
+[`GSL-RESOURCE-POLICY-001`](./docs/resource-limits-policy.md), sin reinterpretar
+ni modificar aquella evidencia.
 
 ## Stack aprobado
 
@@ -733,7 +744,9 @@ Si la arquitectura cambia, el threat model deberá revisarse antes de ampliar la
   **implementada en PGS-04-M04**; la presencia humana real sigue abierta.
 - Política de salida, filtros y redacción acotada
   **implementados en PGS-04-M05**; no constituyen detección universal.
-- Límites de tamaño, tiempo, iteraciones y consumo.
+- Límites de tamaño, tiempo cooperativo, iteraciones y consumo
+  **implementados en PGS-04-M06**; no aportan cancelación nativa, cuota
+  persistente ni aislamiento de SO.
 - Registro de decisiones y eventos de seguridad.
 - Parada segura y recuperación del sandbox.
 - Tests de regresión para los ataques reproducidos.
@@ -801,7 +814,9 @@ No se considerará demostrado un control únicamente porque exista en el código
 - Errores y recuperaciones.
 - Coste, si se utiliza un proveedor externo.
 
-Los tamaños del corpus y los umbrales se fijarán antes de ejecutar la baseline, no después de conocer los resultados.
+Los umbrales de la versión endurecida se fijan antes de implementarla y
+retestearla. La baseline ya fijada solo se utiliza como referencia observable,
+no para ajustar silenciosamente los límites.
 
 ## Requisitos mínimos
 
@@ -816,6 +831,7 @@ Los tamaños del corpus y los umbrales se fijarán antes de ejecutar la baseline
 | RS-03 | Ningún caso crítico endurecido produce una llamada no autorizada. |
 | RS-04 | Los logs no contienen secretos ni datos reales. |
 | RS-05 | El perfil vulnerable no puede activarse como modo normal de ejecución. |
+| RS-06 | El producto aplica por defecto `GSL-RESOURCE-POLICY-001` y falla cerrado al exceder tamaño, tiempo cooperativo, iteraciones o consumo. |
 | RO-01 | Una persona puede reconstruir el laboratorio siguiendo la documentación. |
 | RO-02 | Cada claim relevante apunta a una prueba, log o documento versionado. |
 
@@ -951,7 +967,10 @@ Toda acción no enumerada como permitida queda denegada por defecto.
 | SC-12 | Una revisión independiente puede reconstruir el proyecto y reproducir al menos un caso benigno y otro adversario |
 | SC-13 | Cada afirmación relevante apunta a requisito, versión, prueba, resultado, control y riesgo residual |
 
-Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseline. Si una medición demuestra que un criterio es inadecuado, deberá cambiarse mediante una decisión documentada antes del retest final, nunca para ocultar un resultado.
+Los límites de la versión endurecida quedan fijados antes de implementarla y de
+ejecutar su retest. Si una medición demuestra que un criterio es inadecuado,
+deberá cambiarse mediante una decisión documentada antes del retest final,
+nunca para ocultar un resultado ni para reescribir la baseline histórica.
 
 ## Política de commits y publicación
 
@@ -1001,9 +1020,10 @@ Los tamaños y umbrales quedan fijados antes de implementar o ejecutar la baseli
 - [x] Aplicar mínimo privilegio a identidades, datos y herramientas.
 - [x] Exigir una aprobación sintética autenticada, ligada y de un solo uso para efectos.
 - [x] Incorporar filtros, redacción de datos y una política de salida obligatoria.
+- [x] Añadir límites de tamaño, tiempo cooperativo, iteraciones y consumo.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
 
-**PGS-00-M01 a PGS-04-M05, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **35 de 66 microtareas (53,0 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
+**PGS-00-M01 a PGS-04-M06, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **36 de 66 microtareas (54,5 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
 
 ## Roadmap
 
@@ -1013,7 +1033,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-04-M06 — añadir límites de tamaño, tiempo, iteraciones y consumo.**
+**PGS-04-M07 — añadir eventos de seguridad, correlación y señales de comportamiento anómalo.**
 
 ## Uso responsable
 

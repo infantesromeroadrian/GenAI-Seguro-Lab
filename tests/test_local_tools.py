@@ -38,6 +38,7 @@ from genai_seguro_lab.local_tools import (
 from genai_seguro_lab.model_adapter import ModelToolRequest
 from genai_seguro_lab.output_policy import OutputPolicy
 from genai_seguro_lab.output_policy import OutputPolicyRejectedError
+from genai_seguro_lab.resource_control import ResourceLimitError
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 SYNTHETIC_IDENTITY = "synthetic-operator"
@@ -436,12 +437,16 @@ def test_explicit_effect_grant_creates_once_with_owner_only_mode(
     assert effect_grant.identity_assurance == "synthetic_local_credential"
     assert effect_grant.approval_control == "PGS-04-M04"
 
+    replay_writer = _writer(
+        drafts_dir,
+        authority=writer._approval_authority,
+    )
     replay_target = _prepare(
-        writer,
+        replay_writer,
         _draft_request(filename="approval-replay.md"),
     )
     with pytest.raises(DraftApprovalError, match="approval was already consumed"):
-        writer.authorize_effect(replay_target, approval)
+        replay_writer.authorize_effect(replay_target, approval)
 
     result = writer.create(proposal, effect_grant)
     target = drafts_dir / proposal.filename
@@ -454,12 +459,19 @@ def test_explicit_effect_grant_creates_once_with_owner_only_mode(
     with pytest.raises(DraftApprovalError, match="already consumed"):
         writer.create(proposal, effect_grant)
 
+    changed_writer = _writer(
+        drafts_dir,
+        authority=writer._approval_authority,
+    )
     changed = _prepare(
-        writer,
+        changed_writer,
         _draft_request(body="Contenido distinto para el mismo destino."),
     )
     with pytest.raises(DraftAlreadyExistsError, match="overwrite is forbidden"):
-        writer.create(changed, _effect_grant(writer, changed))
+        changed_writer.create(
+            changed,
+            _effect_grant(changed_writer, changed),
+        )
     assert tuple(path.name for path in drafts_dir.iterdir()) == (
         "resumen-incidente.md",
     )
@@ -542,22 +554,20 @@ def test_approval_is_bound_to_proposal_writer_root_scope_and_sessions(
         authority=authority,
     )
     proposal = _prepare(writer, _draft_request())
-    other_proposal = _prepare(
-        writer,
-        _draft_request(
-            filename="other-proposal.md",
-            body="Una propuesta sintética diferente.",
-        ),
-    )
+    with pytest.raises(ResourceLimitError):
+        _prepare(
+            writer,
+            _draft_request(
+                filename="other-proposal.md",
+                body="Una propuesta sintética diferente.",
+            ),
+        )
     challenge = writer.issue_approval_challenge(proposal)
     approval = authority.approve(
         challenge,
         identity=SYNTHETIC_IDENTITY,
         credential=SYNTHETIC_CREDENTIAL,
     )
-
-    with pytest.raises(DraftApprovalError, match="exact effect context"):
-        writer.authorize_effect(other_proposal, approval)
 
     same_context_writer = _writer(
         drafts_dir,
@@ -660,11 +670,12 @@ def test_challenge_approval_and_grant_expiry_fail_before_io(
             credential=SYNTHETIC_CREDENTIAL,
         )
 
+    approval_writer = _writer(drafts_dir, authority=authority)
     expired_approval_proposal = _prepare(
-        writer,
+        approval_writer,
         _draft_request(filename="expired-approval.md"),
     )
-    approval_challenge = writer.issue_approval_challenge(
+    approval_challenge = approval_writer.issue_approval_challenge(
         expired_approval_proposal
     )
     approval = authority.approve(
@@ -674,21 +685,22 @@ def test_challenge_approval_and_grant_expiry_fail_before_io(
     )
     now[0] = 2.0
     with pytest.raises(DraftApprovalError, match="approval expired"):
-        writer.authorize_effect(expired_approval_proposal, approval)
+        approval_writer.authorize_effect(expired_approval_proposal, approval)
 
+    grant_writer = _writer(drafts_dir, authority=authority)
     expired_grant_proposal = _prepare(
-        writer,
+        grant_writer,
         _draft_request(filename="expired-grant.md"),
     )
-    effect_grant = _effect_grant(writer, expired_grant_proposal)
+    effect_grant = _effect_grant(grant_writer, expired_grant_proposal)
     now[0] = 3.0
 
     def unexpected_io() -> None:
         raise AssertionError("expiry rejection must precede I/O")
 
-    monkeypatch.setattr(writer, "_assert_root_unchanged", unexpected_io)
+    monkeypatch.setattr(grant_writer, "_assert_root_unchanged", unexpected_io)
     with pytest.raises(DraftApprovalError, match="effect grant expired"):
-        writer.create(expired_grant_proposal, effect_grant)
+        grant_writer.create(expired_grant_proposal, effect_grant)
     assert list(drafts_dir.iterdir()) == []
 
 
@@ -744,17 +756,23 @@ def test_close_and_restart_invalidate_pending_authority_objects(
     writer = _writer(drafts_dir, authority=authority)
     proposal = _prepare(writer, _draft_request())
     grant = _effect_grant(writer, proposal)
+    pending_writer = _writer(drafts_dir, authority=authority)
     pending_proposal = _prepare(
-        writer,
+        pending_writer,
         _draft_request(filename="pending.md"),
     )
-    pending_challenge = writer.issue_approval_challenge(pending_proposal)
+    pending_challenge = pending_writer.issue_approval_challenge(
+        pending_proposal
+    )
+    pending_approval_writer = _writer(drafts_dir, authority=authority)
     pending_approval_proposal = _prepare(
-        writer,
+        pending_approval_writer,
         _draft_request(filename="pending-approval.md"),
     )
-    pending_approval_challenge = writer.issue_approval_challenge(
-        pending_approval_proposal
+    pending_approval_challenge = (
+        pending_approval_writer.issue_approval_challenge(
+            pending_approval_proposal
+        )
     )
     pending_approval = authority.approve(
         pending_approval_challenge,
@@ -762,6 +780,8 @@ def test_close_and_restart_invalidate_pending_authority_objects(
         credential=SYNTHETIC_CREDENTIAL,
     )
     writer.close()
+    pending_writer.close()
+    pending_approval_writer.close()
 
     def unexpected_io() -> None:
         raise AssertionError("closed sessions must fail before I/O")

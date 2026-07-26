@@ -6,6 +6,7 @@ muy restringida.
 - Validar `draft_create` mediante un esquema cerrado.
 - Exigir un grant de preparación ligado a principal, scope e instancia.
 - Aplicar `CMP-09` a título y cuerpo antes de construir la propuesta.
+- Consumir en `CMP-10` una propuesta y limitar el Markdown UTF-8 a 16 KiB.
 - Calcular una huella SHA-256 del contenido ya permitido o redactado.
 - Registrar la identidad de la propuesta en la instancia.
 - Solicitar a `DraftApprovalAuthority` challenge, aprobación y grant de efecto
@@ -25,6 +26,8 @@ muy restringida.
   confirmación literal o serializable.
 - La escritura no transforma el contenido después de su huella y aprobación.
 - Acredita un principal sintético, no presencia o identidad humana real.
+- Cada sesión admite una propuesta, un challenge, tres autenticaciones, un
+  grant y un archivo; los intentos fallidos también consumen presupuesto.
 - `CMP-07` lo invoca solo desde pytest, bajo `$TMP`, para las fixtures
   `ADV-TOL-003/004/005`; no crea una ruta de producto.
 
@@ -33,4 +36,5 @@ muy restringida.
 - `src/genai_seguro_lab/local_tools.py`
 - `tests/test_local_tools.py`
 - `tests/test_tool_abuse_evaluation.py`
+- `tests/test_resource_control.py`
 - Inventario `TOL-02`

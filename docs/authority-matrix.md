@@ -5,10 +5,10 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-AUTH-MATRIX-001` |
-| Versión | `1.9.0` |
+| Versión | `2.0.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-04-M05 en esta revisión; el commit exacto se obtiene del historial Git |
+| Control vigente | PGS-04-M06 en esta revisión; el commit exacto se obtiene del historial Git |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
 | Arquitectura de origen | [`architecture/manifest.json`](../architecture/manifest.json) |
 | Alcance | autoridad implementada en el checkout local actual |
@@ -35,8 +35,10 @@ En el sistema actual:
    una autoridad local efímera; no acredita presencia humana real.
 6. `CMP-09` controla el resumen final y el contenido de borrador antes de que
    puedan entregarse o ligarse a una aprobación.
-7. La herramienta vuelve a validar sus argumentos y aplica su propio límite.
-8. El efecto máximo depende de la herramienta alcanzable, no de la intención
+7. `CMP-10` consume el presupuesto de tamaño, tiempo, iteraciones o efecto
+   antes de cada operación protegida; el control no concede autoridad.
+8. La herramienta vuelve a validar sus argumentos y aplica su propio límite.
+9. El efecto máximo depende de la herramienta alcanzable, no de la intención
    expresada por el modelo.
 
 `IDN-04` es, por tanto, una ausencia deliberada de autoridad: el modelo no
@@ -59,13 +61,13 @@ residual.
 
 | ID | Actor, entrada y alcance | Modelo | Identidad efectiva | Datos alcanzados | Herramienta o capacidad | Acción autorizada y controles | Acciones explícitamente no autorizadas | Consecuencia máxima actual |
 |---|---|---|---|---|---|---|---|---|
-| `AUTH-01` | `ACT-01` ejecuta `main.py analyze --incident <ID>`; ruta expuesta por CLI | `MOD-01`, dos respuestas deterministas guionizadas | `IDN-01` ejecuta; `IDN-05` acota la operación como `benign-flow` y `incident:<ID>` | `CMP-02` valida `DAT-01/02/03`; la instancia de `TOL-01` retiene solo las referencias del incidente; emite `DAT-05` tras `CMP-09` | `CMP-01` a `CMP-04`, `CMP-09` y `TOL-01` | Seleccionar un ID exacto, emitir un grant de una herramienta independiente del catálogo del modelo, consultar la vista exacta, controlar el resumen y emitir JSON | Escribir archivos, consultar red, usar otra herramienta, buscar IDs fuera del incidente, omitir la política o ejecutar una acción recomendada | `C1`: lectura sintética y resultado efímero de un caso |
-| `AUTH-02` | `ACT-01` ejecuta `main.py baseline`; ruta expuesta por CLI | `MOD-01`, 24 respuestas deterministas guionizadas para 12 casos | `IDN-01` ejecuta; `IDN-05` emite un scope independiente por incidente | `CMP-02` valida el corpus completo; cada instancia de `TOL-01` retiene solo el subconjunto del caso; emite `DAT-05` | `CMP-01` a `CMP-05` y `TOL-01` | Repetir 12 operaciones acotadas, cada una con su vista y grant, y serializar la baseline funcional | Escribir o reemplazar `DAT-04`, reutilizar un grant entre casos, iniciar reintentos abiertos o hacer llamadas externas | `C1`: lectura completa por el proceso, pero divulgación por vistas separadas; JSON efímero |
+| `AUTH-01` | `ACT-01` ejecuta `main.py analyze --incident <ID>`; ruta expuesta por CLI | `MOD-01`, dos respuestas deterministas guionizadas | `IDN-01` ejecuta; `IDN-05` acota la operación como `benign-flow` y `incident:<ID>` | `CMP-10` limita el snapshot antes de `CMP-02`; la instancia de `TOL-01` retiene solo las referencias del incidente; emite `DAT-05` tras `CMP-09` | `CMP-01` a `CMP-04`, `CMP-09`, `CMP-10` y `TOL-01` | Adquirir el lock cooperativo, seleccionar un ID exacto, consumir el perfil `analyze`, consultar la vista exacta, controlar el resumen y emitir JSON | Escribir archivos, consultar red, usar otra herramienta, exceder el presupuesto, buscar IDs fuera del incidente, omitir políticas o ejecutar una recomendación | `C1`: lectura sintética y resultado efímero de un caso |
+| `AUTH-02` | `ACT-01` ejecuta `main.py baseline`; ruta expuesta por CLI | `MOD-01`, 24 respuestas deterministas guionizadas para 12 casos | `IDN-01` ejecuta; `IDN-05` emite un scope independiente por incidente | `CMP-10` limita el snapshot antes de `CMP-02`; cada instancia de `TOL-01` retiene solo el subconjunto del caso; emite `DAT-05` | `CMP-01` a `CMP-05`, `CMP-10` y `TOL-01` | Adquirir el lock cooperativo y repetir 12 operaciones dentro de un único presupuesto agregado, cada una con su vista y grant, antes de serializar la baseline funcional | Escribir o reemplazar `DAT-04`, reutilizar grants, exceder el presupuesto, iniciar reintentos abiertos o hacer llamadas externas | `C1`: lectura completa por el proceso, pero divulgación por vistas separadas; JSON efímero |
 | `AUTH-03` | `CMP-03` solicita la primera respuesta y recibe una propuesta de herramienta | `MOD-01` origina un único `ModelToolRequest` guionizado | Ninguna identidad de ejecución; aplica `IDN-04` | Lee una representación de `DAT-01`; produce nombre y argumentos tipados en memoria | Ninguna herramienta se ejecuta en este paso | Proponer exactamente una solicitud `knowledge_search` como datos | Autorizarla, ejecutarla, acceder por sí mismo a `DAT-02`, usar filesystem, shell, red o credenciales | `C0`: una propuesta en memoria sin efecto directo |
 | `AUTH-04` | `CMP-03` evalúa la propuesta de `AUTH-03`; ruta interna del flujo expuesto | La salida de `MOD-01` se trata como entrada no confiable y no puede emitir grants | `IDN-01` ejecuta; `IDN-05` liga principal, incidente, `knowledge_search` e instancia | `TOL-01` contiene únicamente las referencias del incidente | `TOL-01` | Exigir grant opaco exacto, nombre y JSON estrictos, limitar 1–8 IDs, rechazar otro scope o instancia y devolver como máximo 5 resultados | Convertir `available_tools` en autoridad, consultar documentos no retenidos, usar filesystem, red o encadenar otra herramienta | `C1`: divulgación al mismo proceso de conocimiento sintético autorizado |
 | `AUTH-05` | `CMP-03` entrega el resultado de `TOL-01` al modelo y exige la respuesta final | `MOD-01` produce texto final guionizado y no confiable | Ninguna identidad de ejecución; aplica `IDN-04` | Lee contexto de `DAT-01` y resultados autorizados de `DAT-02`; produce texto en memoria | `CMP-09` antes de la entrega | Emitir una respuesta final tipada; la aplicación comprueba consistencia, controla el resumen y proyecta métricas sin texto bruto | Solicitar otra herramienta, omitir la política, ejecutar recomendaciones o persistir la respuesta bruta | `C0` dentro de la frontera del modelo; `AUTH-01` o `AUTH-02` eleva solo la proyección permitida a `C1` |
-| `AUTH-06` | `ACT-03` o cualquier llamador Python local invoca `TOL-02.prepare`; API interna, no CLI | Ninguno conectado; acepta estructuralmente un `ModelToolRequest`, pero `MOD-01` no tiene ruta hasta aquí | `IDN-01` ejecuta; `IDN-05` liga principal, scope e instancia. Preparar no concede autoridad de efecto | Recibe contenido, aplica `CMP-09` y devuelve una propuesta saneada con huella SHA-256 | `TOL-02.prepare` y `CMP-09` | Aceptar solo el grant propio, validar nombre y referencias, controlar título y cuerpo antes de registrar la propuesta | Crear el archivo, omitir la política, aprobar contenido bruto o aceptar una propuesta directa o de otra instancia | `C0`: propuesta saneada, verificable y registrada en memoria |
-| `AUTH-07` | `ACT-03` solicita un challenge y presenta por API interna la identidad y credencial sintéticas configuradas | Ninguno participa en la autorización | `IDN-01` ejecuta; `IDN-03` queda autenticado por `DraftApprovalAuthority`; `IDN-05` conserva principal y scope | Puede crear `DAT-06` con nombre de hasta 64 caracteres, título de 120 y cuerpo de 10 000 | `TOL-02.issue_approval_challenge/authorize_effect/create` | Emitir challenge, aprobación y grant opacos con TTL; ligarlos a identidad, propuesta, principal, scope, herramienta, efecto, writer, sesión y raíz; consumir antes de I/O; crear por descriptor con `O_EXCL`, `O_NOFOLLOW` y `0600` | Fabricar o reutilizar tokens, usar otra identidad, credencial, sesión, writer, scope, propuesta o raíz; sobrescribir, borrar, escapar, usar shell o red | `C2`: un Markdown sintético nuevo y confinado. Acredita un principal sintético, no presencia humana; la CLI no puede provocarlo |
+| `AUTH-06` | `ACT-03` o cualquier llamador Python local invoca `TOL-02.prepare`; API interna, no CLI | Ninguno conectado; acepta estructuralmente un `ModelToolRequest`, pero `MOD-01` no tiene ruta hasta aquí | `IDN-01` ejecuta; `IDN-05` liga principal, scope e instancia. Preparar no concede autoridad de efecto | Recibe contenido, aplica `CMP-09`, consume una propuesta de `CMP-10` y devuelve una propuesta saneada con huella SHA-256 | `TOL-02.prepare`, `CMP-09` y `CMP-10` | Aceptar solo el grant propio, validar nombre y referencias, controlar título y cuerpo y reservar una única propuesta antes de registrarla | Crear el archivo, omitir políticas, exceder la sesión o aceptar una propuesta directa o de otra instancia | `C0`: propuesta saneada, verificable y registrada en memoria |
+| `AUTH-07` | `ACT-03` solicita un challenge y presenta por API interna la identidad y credencial sintéticas configuradas | Ninguno participa en la autorización | `IDN-01` ejecuta; `IDN-03` queda autenticado por `DraftApprovalAuthority`; `IDN-05` conserva principal y scope | Puede crear un `DAT-06` de hasta 16 KiB de Markdown dentro de la sesión `draft` de `CMP-10` | `TOL-02.issue_approval_challenge/authorize_effect/create` y `CMP-10` | Emitir un challenge, admitir hasta tres intentos de autenticación, un grant y un archivo; ligar tokens al contexto, consumir antes de I/O y crear por descriptor con `O_EXCL`, `O_NOFOLLOW` y `0600` | Fabricar o reutilizar tokens, exceder la sesión, usar otra identidad o contexto, sobrescribir, borrar, escapar, usar shell o red | `C2`: un Markdown sintético nuevo y confinado. Acredita un principal sintético, no presencia humana; la CLI no puede provocarlo |
 | `AUTH-08` | `ACT-02` regenera y versiona manualmente la baseline; operación de soporte | `MOD-01` genera material de origen, pero no autoriza la versión | Cuenta macOS y autoridad Git de `ACT-02`, fuera de la aplicación | Transforma `DAT-05` en `DAT-04` | CLI, redirección/editor y Git; no son herramientas del producto | Revisar, guardar y versionar la evidencia funcional | Atribuir a la aplicación una escritura automática o considerar el snapshot una evaluación de seguridad | `C3`: modificar la evidencia versionada y su interpretación |
 | `AUTH-09` | `ACT-02` mantiene el checkout local; operación de desarrollo y soporte | Ninguno limita esta autoridad | Cuenta macOS y autoridad Git de `ACT-02`, fuera de la aplicación | Puede modificar código, `DAT-01` a `DAT-04`, `DAT-06` a `DAT-09`, configuración y resolución de dependencias | Editor, Git, `uv` y herramientas de desarrollo | Cambiar y versionar el laboratorio de forma deliberada | Ningún control de runtime restringe esta cuenta; su uso queda sujeto al sistema operativo, revisión y disciplina de repositorio | `C3`: mayor autoridad actual; puede alterar controles, comportamiento, datos y evidencia |
 | `AUTH-10` | `ACT-02` llama a la factory de `CMP-06`; API Python interna, no CLI | Ninguno se ejecuta; solo se construye una `ModelRequest` deliberadamente débil | `IDN-01`; declaración exacta de `GSL-ROE-001`, sin identidad de servicio | Lee en memoria un incidente de `DAT-01` y metadatos de `DAT-03`; omite el oráculo y liga un `$TMP/sandbox/drafts` | `CMP-06`; valida autorización, datos sintéticos y aislamiento temporal | Preparar una petición marcada que anuncia `TOL-01` y `TOL-02` para un futuro harness | Usar el sandbox canónico, elegir el perfil desde CLI, llamar a `MOD-01`, ejecutar herramientas, crear archivos, usar red o iniciar un ataque | `C0`: petición tipada en memoria, sin efecto o ejecución |
@@ -74,27 +76,30 @@ residual.
 | `AUTH-13` | `ACT-02` ejecuta mediante pytest las cinco fixtures TOL aprobadas; API interna de test | Un doble manipula cardinalidad y recursión; los demás casos llaman directamente a las fronteras internas | `IDN-01`; `IDN-05` liga cada grant; `IDN-03` se autentica solo en los setups legítimos | Lee `DAT-07/08/09` y el corpus benigno; crea únicamente sandboxes sintéticos bajo `$TMP` | `CMP-07`, `CMP-03`, `TOL-01` y `TOL-02` | Rechazar nombre, duplicados, cardinalidad, recursión, propuesta/grant fabricados, huella, replay, traversal, symlink y overwrite; `AC-TOL-05` rechaza la confirmación literal y crea cero archivos; máximo 15 s y 0 subprocesos | Entregar `DAT-08` al target, usar shell, mutar el checkout, escribir fuera del descriptor `$TMP`, abrir red, usar datos reales o atribuir presencia humana | `C2` solo en los setups legítimos de TOL-003/004; el intento `AC-TOL-05` queda en `C0` |
 | `AUTH-14` | `ACT-02` ejecuta `CMP-08` con el `GO` vigente de PGS-03-M07; operación explícita de soporte, no CLI de producto | Conduce el único `MOD-01` determinista a través de `CMP-07`; no añade proveedor | `IDN-01`; exige exclusivamente el commit histórico `93aefa45`, la rama y checkout limpio | Lee `DAT-01/02/03/07/08/09`, escribe evidencia bruta solo bajo `$TMP` y permite versionar la proyección `DAT-10/11/12/13` tras revisión | `CMP-08` orquesta la implementación histórica de `CMP-07` y verifica límites, hashes, deriva y saneado | Reproducir exactamente las 14 fixtures y los oráculos de la baseline histórica, registrar métricas y conservar evidencia saneada revisada | Ejecutar esos oráculos contra otro candidato, ampliar casos, entregar oráculos al target, modificar el checkout, abrir red, versionar logs brutos o reintentar automáticamente | `C2` para el residual histórico; `C3` pertenece solo al versionado deliberado posterior por `ACT-02` |
 | `AUTH-15` | `CMP-03` o `TOL-02.prepare` solicitan una decisión de salida; ruta obligatoria de aplicación | El modelo solo aporta texto no confiable y no configura la política | `IDN-01` ejecuta; `CMP-09` no posee identidad, credenciales ni autoridad de efecto | Resumen final o título/cuerpo de borrador en memoria; la evidencia conserva categorías y conteos, no valores | `CMP-09` | Rechazar categorías explícitas, redactar correo y rutas locales o permitir texto byte a byte; ligar el sello a instancia y canal | Omitir el control, desenvolver un sello fabricado o cruzado, persistir texto previo a la política, usar red, modelo o filesystem | `C0`: texto permitido o redactado en memoria; la entrega `C1` o persistencia `C2` requieren además sus cadenas propias |
+| `AUTH-16` | `CMP-01/02/03/05` o `TOL-02` solicitan consumir un recurso antes de una operación protegida | Ningún modelo configura límites ni concede excepciones | `IDN-01` ejecuta; `CMP-10` no posee identidad, credenciales o autoridad de efecto | Inspecciona tamaños y contadores; no conserva contenido ni amplía vistas | `CMP-10` (`ProductResourceControl`) y lock advisory sobre `DAT-03` | Aplicar `GSL-RESOURCE-POLICY-001`, consumir antes de operar, comprobar tiempo antes y después y fallar cerrado sin salida parcial | Elevar límites dinámicamente, esperar o reintentar el lock, cancelar una llamada bloqueada, crear autoridad o persistir contenido | `C0`: precondición satisfecha o rechazo; la operación posterior conserva su propia cadena y consecuencia |
 
 ## Cadenas de autoridad resumidas
 
 ```text
 ACT-01
   → IDN-01
-  → CMP-01/CMP-02/CMP-04/CMP-03
+  → CMP-01 adquiere el lock advisory de CMP-10
+  → CMP-10 limita snapshots y abre el perfil analyze o baseline
+  → CMP-02/CMP-04/CMP-03
   → MOD-01 propone datos
-  → CMP-03 solicita IDN-05 por incidente
-  → TOL-01 acepta un grant ligado y lee su vista exacta de DAT-02
+  → CMP-03 solicita IDN-05 y consume CMP-10 por incidente
+  → TOL-01 acepta un grant ligado y una ejecución acotada
   → DAT-05 por stdout
 ```
 
 ```text
 ACT-03 (API interna)
   → IDN-01
-  → IDN-05 + TOL-02.prepare registran la propuesta
-  → TOL-02 emite un challenge ligado al contexto exacto
+  → IDN-05 + CMP-10 + TOL-02.prepare registran una propuesta
+  → TOL-02 emite un único challenge ligado al contexto exacto
   → IDN-03 se autentica como principal sintético local
-  → la autoridad emite aprobación y grant opacos, efímeros y de un solo uso
-  → TOL-02.create por descriptor
+  → CMP-10 limita intentos; la autoridad emite un único grant opaco
+  → CMP-10 reserva un archivo y TOL-02.create usa descriptor
   → DAT-06 create-only, no-follow y 0600
 ```
 
@@ -198,6 +203,9 @@ supply chain.
 - Todo resumen o borrador debe obtener una decisión de `CMP-09` en su canal
   antes de entrega, huella o aprobación; el texto bruto no se persiste en la
   proyección ordinaria.
+- Toda operación ordinaria consume `CMP-10` antes del adaptador, herramienta o
+  efecto aplicable. Un exceso descarta el resultado y no concede una vía
+  alternativa ni una autoridad mayor.
 - La autoridad `C3` del mantenedor debe permanecer distinguida del
   comportamiento que se atribuye al producto.
 
@@ -223,4 +231,6 @@ PGS-04-M04 añade la autoridad de aprobación sintética sin convertirla en una
 identidad humana real ni en una ruta de producto.
 PGS-04-M05 añade `AUTH-15` y
 [`GSL-OUTPUT-POLICY-001`](./output-safety-policy.md) sin conceder autoridad al
-modelo ni afirmar cobertura universal.
+modelo ni afirmar cobertura universal. PGS-04-M06 añade `AUTH-16` y
+[`GSL-RESOURCE-POLICY-001`](./resource-limits-policy.md): limita operaciones
+sin crear autoridad, rate limiting persistente o aislamiento de procesos.

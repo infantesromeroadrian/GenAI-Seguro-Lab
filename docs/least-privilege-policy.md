@@ -1,7 +1,7 @@
 # Política de mínimo privilegio
 
 - **ID:** `GSL-LEAST-PRIVILEGE-001`
-- **Versión:** 1.1
+- **Versión:** 1.2
 - **Fecha:** 2026-07-26
 - **Microtareas:** PGS-04-M03 y PGS-04-M04
 - **Ámbito:** identidades lógicas, datos y herramientas del runtime local
@@ -9,7 +9,7 @@
 ## Resultado
 
 El laboratorio aplica mínimo privilegio **dentro de la aplicación** mediante
-cuatro límites independientes:
+cinco límites independientes:
 
 1. cada operación recibe un principal y un scope lógicos;
 2. cada grant autoriza exactamente una herramienta;
@@ -136,7 +136,8 @@ la aplicación, pero no:
 - autentica a una persona real o verifica su presencia; PGS-04-M04 solo
   acredita un principal sintético local;
 - protege frente a ejecución arbitraria de Python bajo la cuenta local;
-- sustituye la política de salida M05, añade cuotas M06 o recuperación M08;
+- sustituye la política de salida M05 o la recuperación M08; las cuotas M06
+  limitan consumo, pero no reducen la autoridad de `IDN-01`;
 - demuestra robustez frente a un modelo GenAI real.
 
 `CTL-07` permanece `PARCIAL`: el contrato ya autentica y vincula un principal

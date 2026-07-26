@@ -35,6 +35,14 @@ from .data_contract import (
 )
 from .model_adapter import KnownToolName, ModelToolRequest
 from .output_policy import OutputPolicy
+from .resource_control import (
+    MAX_DRAFT_MARKDOWN_BYTES,
+    MAX_KNOWLEDGE_RESULT_BYTES,
+    MAX_TOOL_ARGUMENTS_BYTES,
+    ProductResourceControl,
+    require_serialized_size,
+    require_utf8_size,
+)
 
 Text = Annotated[str, Field(min_length=1)]
 Query = Annotated[
@@ -339,6 +347,7 @@ class KnowledgeSearchTool:
         if request.name != "knowledge_search":
             raise ToolDeniedError("requested tool is not allowed in this flow")
 
+        require_utf8_size(request.arguments_json, MAX_TOOL_ARGUMENTS_BYTES)
         try:
             arguments = KnowledgeSearchArguments.model_validate_json(
                 request.arguments_json
@@ -385,7 +394,9 @@ class KnowledgeSearchTool:
             )
             for _, document in scored[: arguments.limit]
         )
-        return KnowledgeSearchResult(query=arguments.query, hits=hits)
+        result = KnowledgeSearchResult(query=arguments.query, hits=hits)
+        require_serialized_size(result, MAX_KNOWLEDGE_RESULT_BYTES)
+        return result
 
     def _require_grant(self, grant: ToolExecutionGrant) -> None:
         if not isinstance(grant, ToolExecutionGrant):
@@ -625,6 +636,7 @@ class _WriterAuthorityContext:
     root_identity: tuple[int, int]
     principal: str
     scope: str
+    resource_control: ProductResourceControl
 
 
 @dataclass(frozen=True, slots=True)
@@ -640,6 +652,7 @@ class _DraftAuthorizationContext:
     writer_session: object
     root_identity: tuple[int, int]
     authority_session: object
+    resource_control: ProductResourceControl
 
 
 @dataclass(frozen=True, slots=True)
@@ -664,6 +677,7 @@ def _same_authorization_context(
         and left.writer_session is right.writer_session
         and left.root_identity == right.root_identity
         and left.authority_session is right.authority_session
+        and left.resource_control is right.resource_control
     )
 
 
@@ -764,6 +778,9 @@ class DraftApprovalAuthority:
             self._challenges.clear()
             self._approvals.clear()
             self._effect_grants.clear()
+            self._consumed_challenges.clear()
+            self._consumed_approvals.clear()
+            self._consumed_effect_grants.clear()
             self._credential_salt = b""
             self._credential_digest = b""
 
@@ -786,17 +803,6 @@ class DraftApprovalAuthority:
             raise DraftApprovalError(
                 "approval challenge must be an opaque authority object"
             )
-        if not isinstance(identity, str) or not isinstance(credential, str):
-            raise DraftApprovalError("approval credentials were rejected")
-        identity_bytes = identity.encode("utf-8")
-        credential_bytes = credential.encode("utf-8")
-        if (
-            not identity_bytes
-            or len(identity_bytes) > 64
-            or not credential_bytes
-            or len(credential_bytes) > 1024
-        ):
-            raise DraftApprovalError("approval credentials were rejected")
         with self._lock:
             self._require_open()
             record = self._challenges.get(challenge)
@@ -808,6 +814,18 @@ class DraftApprovalAuthority:
                 raise DraftApprovalError(
                     "approval challenge was not issued by this authority session"
                 )
+            record.context.resource_control.reserve_authentication_attempt()
+            if not isinstance(identity, str) or not isinstance(credential, str):
+                raise DraftApprovalError("approval credentials were rejected")
+            identity_bytes = identity.encode("utf-8")
+            credential_bytes = credential.encode("utf-8")
+            if (
+                not identity_bytes
+                or len(identity_bytes) > 64
+                or not credential_bytes
+                or len(credential_bytes) > 1024
+            ):
+                raise DraftApprovalError("approval credentials were rejected")
             now = self._clock()
             if now >= record.expires_at:
                 self._challenges.pop(challenge, None)
@@ -852,9 +870,17 @@ class DraftApprovalAuthority:
         root_identity: tuple[int, int],
         principal: str,
         scope: str,
+        resource_control: ProductResourceControl,
         _channel_token: object | None,
     ) -> object:
         self._require_channel(_channel_token)
+        if (
+            not isinstance(resource_control, ProductResourceControl)
+            or resource_control.profile != "draft"
+        ):
+            raise ToolPolicyError(
+                "writer resource control must use the draft profile"
+            )
         with self._lock:
             self._require_open()
             writer_session = object()
@@ -864,6 +890,7 @@ class DraftApprovalAuthority:
                 root_identity=root_identity,
                 principal=principal,
                 scope=scope,
+                resource_control=resource_control,
             )
             return writer_session
 
@@ -960,6 +987,7 @@ class DraftApprovalAuthority:
                 writer_session=writer_session,
                 root_identity=root_identity,
                 authority_session=self._session,
+                resource_control=writer.resource_control,
             )
             challenge = DraftApprovalChallenge(
                 _issuer_token=_DRAFT_APPROVAL_ISSUER_TOKEN
@@ -1013,6 +1041,7 @@ class DraftApprovalAuthority:
                 writer_session=writer_session,
                 root_identity=root_identity,
                 authority_session=self._session,
+                resource_control=record.context.resource_control,
             )
             if not _same_authorization_context(record.context, expected):
                 raise DraftApprovalError(
@@ -1081,6 +1110,7 @@ class DraftApprovalAuthority:
                 writer_session=writer_session,
                 root_identity=root_identity,
                 authority_session=self._session,
+                resource_control=record.context.resource_control,
             )
             if not _same_authorization_context(record.context, expected):
                 raise DraftApprovalError(
@@ -1103,6 +1133,7 @@ class DraftApprovalAuthority:
             or writer.scope != context.scope
             or context.authority_session is not self._session
             or context.configured_identity != self._configured_identity
+            or writer.resource_control is not context.resource_control
         ):
             raise DraftApprovalError(
                 "approval context is no longer active"
@@ -1171,6 +1202,7 @@ class DraftWriterTool:
         approval_authority: DraftApprovalAuthority,
         output_policy: OutputPolicy,
         allowed_knowledge_ids: tuple[str, ...] = (),
+        resource_control: ProductResourceControl | None = None,
     ) -> None:
         if not isinstance(drafts_dir, Path):
             raise TypeError("drafts_dir must be a Path")
@@ -1180,6 +1212,15 @@ class DraftWriterTool:
             )
         if not isinstance(output_policy, OutputPolicy):
             raise TypeError("output_policy must be an OutputPolicy")
+        if resource_control is None:
+            resource_control = ProductResourceControl("draft")
+        if (
+            not isinstance(resource_control, ProductResourceControl)
+            or resource_control.profile != "draft"
+        ):
+            raise TypeError(
+                "resource_control must use the draft resource profile"
+            )
         if not drafts_dir.is_absolute():
             raise ValueError("drafts_dir must be absolute")
         if drafts_dir.name != "drafts" or drafts_dir.parent.name != "sandbox":
@@ -1224,6 +1265,7 @@ class DraftWriterTool:
         self._binding = object()
         self._approval_authority = approval_authority
         self._output_policy = output_policy
+        self._resource_control = resource_control
         try:
             self._prepare_grant = _issue_tool_grant(
                 principal=principal,
@@ -1237,6 +1279,7 @@ class DraftWriterTool:
                 root_identity=self._root_identity,
                 principal=principal,
                 scope=scope,
+                resource_control=resource_control,
                 _channel_token=_DRAFT_AUTHORITY_CHANNEL_TOKEN,
             )
         except Exception:
@@ -1261,12 +1304,20 @@ class DraftWriterTool:
     def prepare_grant(self) -> ToolExecutionGrant:
         return self._prepare_grant
 
+    @property
+    def resource_control(self) -> ProductResourceControl:
+        return self._resource_control
+
     def close(self) -> None:
         with self._lifecycle_lock:
             if self._closed:
                 return
             self._closed = True
             self._finalizer()
+            self._prepared.clear()
+            self._challenge_issued.clear()
+            self._effect_grants.clear()
+            self._consumed_proposals.clear()
 
     def __enter__(self) -> Self:
         return self
@@ -1290,6 +1341,10 @@ class DraftWriterTool:
                     "requested tool is not allowed in this flow"
                 )
 
+            require_utf8_size(
+                request.arguments_json,
+                MAX_TOOL_ARGUMENTS_BYTES,
+            )
             try:
                 arguments = DraftCreateArguments.model_validate_json(
                     request.arguments_json
@@ -1329,6 +1384,11 @@ class DraftWriterTool:
                 raise ToolArgumentsError(
                     "draft_create arguments were rejected"
                 ) from None
+            require_utf8_size(
+                self._render(safe_arguments),
+                MAX_DRAFT_MARKDOWN_BYTES,
+            )
+            self._resource_control.reserve_draft_proposal()
             proposal = DraftProposal.from_arguments(safe_arguments)
             self._prepared[id(proposal)] = proposal
             return proposal
@@ -1345,6 +1405,7 @@ class DraftWriterTool:
                 raise DraftApprovalError(
                     "an approval challenge was already issued for this proposal"
                 )
+            self._resource_control.reserve_draft_challenge()
             challenge = self._approval_authority._issue_challenge(
                 proposal=proposal,
                 writer_binding=self._binding,
@@ -1370,6 +1431,11 @@ class DraftWriterTool:
                 raise DraftApprovalError(
                     "an effect grant was already issued for this proposal"
                 )
+            if not isinstance(approval, DraftApproval):
+                raise DraftApprovalError(
+                    "approval must be an opaque authority object"
+                )
+            self._resource_control.reserve_draft_grant()
             effect_grant = self._approval_authority._authorize_effect(
                 proposal=proposal,
                 approval=approval,
@@ -1404,6 +1470,9 @@ class DraftWriterTool:
         if proposal_identity in self._consumed_proposals:
             raise DraftApprovalError("effect grant was already consumed")
 
+        content = self._render(proposal)
+        require_utf8_size(content, MAX_DRAFT_MARKDOWN_BYTES)
+        self._resource_control.reserve_draft_file()
         self._approval_authority._consume_effect_grant(
             proposal=proposal,
             effect_grant=effect_grant,
@@ -1417,7 +1486,6 @@ class DraftWriterTool:
         self._consumed_proposals.add(proposal_identity)
 
         self._assert_root_unchanged()
-        content = self._render(proposal)
         flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW
         try:
             file_fd = os.open(
@@ -1550,7 +1618,7 @@ class DraftWriterTool:
             raise SandboxViolationError("draft sandbox location changed")
 
     @staticmethod
-    def _render(proposal: DraftProposal) -> str:
+    def _render(proposal: DraftContent) -> str:
         content = f"# {proposal.title}\n\n{proposal.body}"
         if proposal.references:
             references = "\n".join(

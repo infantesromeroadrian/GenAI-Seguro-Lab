@@ -5,18 +5,18 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-PRIORITY-001` |
-| Versión | `1.9.0` |
+| Versión | `2.0.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Crosswalk actual | [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
-| Alcance | sistema local sintético, incluidos `CMP-06`, `CMP-07` y el runner canónico `CMP-08` |
+| Alcance | sistema local sintético, incluidos `CMP-06` a `CMP-10` |
 
 Esta priorización ordena el backlog de pruebas del laboratorio. No es una
 clasificación CVSS ni estima la frecuencia de incidentes reales. La baseline
 histórica reproduce el residual concreto de `AC-TOL-05`; el checkout actual
-rechaza ese literal y la tabla incorpora los controles hasta PGS-04-M05. Cada caso
+rechaza ese literal y la tabla incorpora los controles hasta PGS-04-M06. Cada caso
 se valora únicamente contra las capacidades presentes en el corte indicado.
 
 ## Método
@@ -93,13 +93,13 @@ severidad.
 
 | Orden | Caso | `I` | `L` | `K` | `S` | Prioridad | Fundamento actual |
 |---:|---|---:|---:|---:|---:|---|---|
-| 1 | `AC-DOS-01` | 1 | 3 | 3 | 18 | `PR-1` | La repetición de procesos está expuesta por CLI y no existe cuota, rate limit ni control de concurrencia |
+| 1 | `AC-DOS-01` | 1 | 3 | 3 | 18 | `PR-1` | `CMP-10` rechaza concurrencia entre procesos que cooperan mediante la CLI, pero una llamada Python puede omitir el lock y no existe cuota persistente o rate limit entre ejecuciones |
 | 2 | `AC-SC-01` | 3 | 2 | 1 | 8 | `PR-2` | Posee el mayor impacto, aunque exige autoridad de mantenimiento; no hay firma, CI ni revisión independiente |
 | 3 | `AC-TOL-03` | 2 | 1 | 2 | 6 | `PR-3` | Huella, campos extra, binding y replay tienen cobertura; el efecto potencial queda confinado a un borrador |
 | 4 | `AC-TOL-04` | 2 | 1 | 2 | 6 | `PR-3` | Traversal, symlinks y overwrite se rechazan mediante validación de ruta y creación exclusiva |
 | 5 | `AC-TOL-05` | 2 | 1 | 2 | 6 | `PR-3` | La confirmación literal histórica se rechaza; una aprobación exige identidad sintética, credencial, contexto exacto, TTL y consumo único |
 | 6 | `AC-DOS-02` | 1 | 3 | 1 | 6 | `PR-3` | Un mantenedor puede inutilizar la carga al corromper los datos, pero los controles deben fallar cerrado |
-| 7 | `AC-DOS-03` | 1 | 3 | 1 | 6 | `PR-3` | No hay límite global de tamaño, pero solo mantenimiento puede versionar un corpus grande válido |
+| 7 | `AC-DOS-03` | 1 | 3 | 1 | 6 | `PR-3` | `CMP-10` limita el corpus benigno antes de parsear o hashear, pero el caso no se ha ejecutado y solo mantenimiento puede versionar el corpus o cambiar la política |
 | 8 | `AC-EX-03` | 1 | 1 | 2 | 4 | `PR-3` | `CMP-09` redacta correo y rutas, rechaza el canario configurado y elimina texto bruto de la proyección; faltan un modelo real y otras variantes |
 | 9 | `AC-EX-02` | 1 | 1 | 2 | 4 | `PR-3` | El caso explícito `KB-999` se rechaza con cero IDs o contenido divulgados |
 | 10 | `AC-EX-01` | 1 | 1 | 2 | 4 | `PR-3` | La allowlist por incidente rechaza `KB-008` fuera del ámbito y no devuelve contenido |
@@ -257,6 +257,26 @@ ninguna puntuación:
 
 La distribución permanece en 1 `PR-1`, 1 `PR-2`, 14 `PR-3` y 1 `PR-0`.
 
+## Tratamiento de PGS-04-M06
+
+`CMP-10` añade límites preventivos de producto sobre tamaño, cardinalidad,
+iteraciones, efectos, tiempo cooperativo y concurrencia de la CLI. No se
+modifica ninguna puntuación:
+
+- `AC-DOS-01` queda mitigado para procesos concurrentes que usan la CLI, pero
+  la API Python puede omitir el lock y no existe cuota persistente o rate limit
+  entre ejecuciones;
+- `AC-DOS-03` encuentra ahora un rechazo preventivo antes de parsear o hashear,
+  pero sigue siendo una fixture inerte y un mantenedor con `K1` puede cambiar
+  corpus, código y política;
+- los plazos detectan un retorno tardío, pero no cancelan una llamada síncrona
+  bloqueada;
+- no se ha ejecutado el retest PGS-05 ni se ha medido RSS bajo los casos DOS.
+
+La distribución permanece en 1 `PR-1`, 1 `PR-2`, 14 `PR-3` y 1 `PR-0`. Este
+estado conserva deliberadamente el backlog hasta obtener evidencia empírica
+con las RoE ampliadas.
+
 ## Backlog posterior a PGS-03-M07
 
 Las cuatro fixtures todavía inertes delimitan el backlog ejecutable posterior:
@@ -267,8 +287,8 @@ Las cuatro fixtures todavía inertes delimitan el backlog ejecutable posterior:
    copias temporales, sin alterar la baseline autoritativa.
 3. comprobar `AC-DOS-02` mediante corrupciones independientes de una copia
    temporal y fallo cerrado;
-4. mantener `AC-DOS-03` sin materializar hasta ampliar las RoE y aplicar
-   límites preventivos.
+4. mantener `AC-DOS-03` sin materializar hasta ampliar las RoE; los límites
+   preventivos ya existen, pero falta medir su rechazo y consumo.
 
 La prioridad no autoriza su ejecución. `GSL-ROE-001` ya fija el marco y el
 corpus adversario está preparado, pero el harness y una petición vigente siguen
@@ -279,8 +299,9 @@ topes conservadores y una parada segura.
 
 - `AC-TOL-05` es el primer residual funcional porque ya existe una ruta interna
   aceptada y un efecto `C2`, aunque no esté expuesta por CLI.
-- `AC-DOS-01` comparte la puntuación más alta por ser la única superficie
-  adversaria ordinaria, pero su impacto se limita al host y proceso locales.
+- `AC-DOS-01` conserva la puntuación más alta por ser la única superficie
+  adversaria ordinaria y carecer de cuota persistente, aunque el lock advisory
+  mitiga la concurrencia cooperativa y el impacto se limita al host local.
 - `AC-SC-01` no se confunde con comportamiento del modelo: su impacto `C3`
   pertenece a la cuenta de mantenimiento.
 - Los casos de prompt injection y jailbreak no encabezan el backlog porque el

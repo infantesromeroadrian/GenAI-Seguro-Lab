@@ -157,5 +157,6 @@ esta microtarea.
 - PGS-04-M05 filtra y redacta categorías explícitas, pero no detecta de forma
   universal secretos codificados, PII, homoglifos, paráfrasis o contenido
   activo.
-- PGS-04-M06 debe imponer límites preventivos de recursos.
+- `GSL-RESOURCE-POLICY-001` impone límites preventivos de recursos; su plazo
+  es cooperativo y no puede interrumpir una dependencia síncrona bloqueada.
 - PGS-05 debe repetir el mismo corpus y medir el control frente a la baseline.

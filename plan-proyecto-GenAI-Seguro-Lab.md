@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M07.
-- **Estado actual:** PGS-00-M01 a PGS-04-M05 completadas; la baseline histórica fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED` sobre 14 fixtures PI/JB/EX/TOL, mientras las otras cuatro permanecen inertes. El checkout actual separa dominios, valida esquemas, aplica mínimo privilegio lógico, exige aprobación sintética para efectos y aplica una política de salida obligatoria a resúmenes y borradores. `CTL-06`, `CTL-07` y `CTL-09` permanecen parciales por sus límites de aislamiento, presencia humana, cobertura léxica y ausencia de retest con un modelo real.
+- **Estado actual:** PGS-00-M01 a PGS-04-M06 completadas; la baseline histórica fija 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED` sobre 14 fixtures PI/JB/EX/TOL, mientras las otras cuatro permanecen inertes. El checkout actual separa dominios, valida esquemas, aplica mínimo privilegio lógico, exige aprobación sintética para efectos, controla la salida y limita tamaño, tiempo cooperativo, iteraciones y consumo. `CTL-06`, `CTL-07`, `CTL-09` y `CTL-10` permanecen parciales por sus límites de aislamiento, presencia humana, cobertura léxica, coordinación cooperativa y ausencia de retest con un modelo real.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** repositorio público ya autorizado y evidencia
@@ -56,7 +56,11 @@ de modelo y el presupuesto en PGS-00-M04.
 - **Denegación por defecto:** no se permiten otras herramientas, red, shell, secretos, datos reales, modificación, sobrescritura o borrado.
 - **Perfil vulnerable:** accesible solo desde el harness aislado de evaluación.
 
-El contrato completo está documentado en [README.md](./README.md#capacidades-y-autoridad-aprobadas). Los límites numéricos de recursos se fijarán antes de la baseline en PGS-04-M06.
+El contrato completo está documentado en
+[README.md](./README.md#capacidades-y-autoridad-aprobadas). La baseline
+histórica precede al control del producto; los límites de la versión endurecida
+han quedado fijados en PGS-04-M06 antes de su retest, sin modificar aquella
+evidencia.
 
 ## Alcance
 
@@ -277,7 +281,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
   principal sintético local implementado; presencia humana real pendiente de
   una futura interfaz/autenticador.
 - [x] **PGS-04-M05** Incorporar filtros, redacción de datos y política de salida.
-- [ ] **PGS-04-M06** Añadir límites de tamaño, tiempo, iteraciones y consumo.
+- [x] **PGS-04-M06** Añadir límites de tamaño, tiempo, iteraciones y consumo.
 - [ ] **PGS-04-M07** Añadir eventos de seguridad, correlación y señales de comportamiento anómalo.
 - [ ] **PGS-04-M08** Implementar parada segura y recuperación del estado del sandbox.
 - [ ] **PGS-04-M09** Asociar cada control a amenaza, responsable, prueba y limitación.
@@ -384,7 +388,11 @@ requiriendo una decisión separada.
   tokens opacos, TTL, binding completo y consumo antes de I/O. PGS-04-M05
   incorpora `GSL-OUTPUT-POLICY-001`: una política obligatoria con canales
   cerrados, rechazo prioritario, redacción determinista y proyección de
-  invocaciones sin texto bruto. El retest continúa pendiente.
+  invocaciones sin texto bruto. PGS-04-M06 incorpora
+  `GSL-RESOURCE-POLICY-001`: lectura acotada del corpus, límites de frontera,
+  presupuestos por operación y sesión de borrador y un lock advisory de CLI.
+  El plazo no puede interrumpir una llamada síncrona bloqueada y el retest
+  continúa pendiente.
 - El proyecto permanece deliberadamente sin empaquetar mediante `[tool.uv] package = false`. `main.py` ofrece el punto de entrada local estable desde el propio checkout, sin instalación editable ni `PYTHONPATH`.
 - La baseline `GSL-BASELINE-BENIGN-001` fija 12/12 ejecuciones funcionales, 24 invocaciones deterministas, 12 consultas autorizadas, 0 llamadas externas y 0 €. Sus campos declaran que no es una baseline de seguridad ni una evaluación de utilidad semántica.
 - `docs/framework-versions.md` fija OWASP LLM 2025, OWASP Agentic 2026, MITRE ATLAS release `v2026.06` con `ATLAS.yaml` 5.6.0, NIST AI RMF 1.0 y NIST SP 800-218A final; NIST AI 600-1 queda como perfil GenAI complementario. La revalidación para PGS-02-M07 conserva el snapshot ATLAS anterior y documenta la actualización de `AML.T0054`.
@@ -395,12 +403,12 @@ requiriendo una decisión separada.
   remoto público de desarrollo del runtime local, que continúa sin modelo
   GenAI real, red, autenticación general, Docker, cloud, bases de datos o
   telemetría.
-- `architecture/manifest.json` y sus diagramas Tecture fijan contexto, contenedores y componentes con seis trust boundaries. El mapa incorpora `CMP-06` como perfil interno, `CMP-07` como harness adversario acotado para 14 fixtures PI/JB/EX/TOL y `CMP-09` como política de salida propiedad de la aplicación; `DraftWriterTool` permanece desconectada de la CLI y del flujo benigno. TB-02 a TB-04 siguen siendo límites lógicos dentro del mismo proceso. PGS-02-M03 cierra P01-M06.
-- `docs/authority-matrix.md` fija `GSL-AUTH-MATRIX-001` con quince cadenas actuales y cuatro niveles de consecuencia. Añade `AUTH-15`, que obliga a pasar resúmenes y borradores por `CMP-09` antes de entrega o aprobación, y mantiene separadas la propuesta sin autoridad de `MOD-01`, la ejecución con `IDN-01`, los grants lógicos `IDN-05`, la aprobación sintética `IDN-03`, el efecto interno create-only de `TOL-02` y la autoridad externa de mantenimiento de `ACT-02`.
+- `architecture/manifest.json` y sus diagramas Tecture fijan contexto, contenedores y componentes con seis trust boundaries. El mapa incorpora `CMP-06` como perfil interno, `CMP-07` como harness adversario acotado para 14 fixtures PI/JB/EX/TOL, `CMP-09` como política de salida y `CMP-10` como control preventivo de recursos; `DraftWriterTool` permanece desconectada de la CLI y del flujo benigno. TB-02 a TB-04 siguen siendo límites lógicos dentro del mismo proceso. PGS-02-M03 cierra P01-M06.
+- `docs/authority-matrix.md` fija `GSL-AUTH-MATRIX-001` con dieciséis cadenas actuales y cuatro niveles de consecuencia. `AUTH-15` obliga a pasar resúmenes y borradores por `CMP-09`; `AUTH-16` consume los límites de `CMP-10` antes de operaciones. Mantiene separadas la propuesta sin autoridad de `MOD-01`, la ejecución con `IDN-01`, los grants lógicos `IDN-05`, la aprobación sintética `IDN-03`, el efecto interno create-only de `TOL-02` y la autoridad externa de mantenimiento de `ACT-02`.
 - `docs/abuse-cases.md` fija `GSL-ABUSE-CASES-001` con 17 escenarios: 3 de prompt injection, 2 de jailbreak, 3 de exfiltración, 5 de abuso de herramientas, 3 de denegación de servicio y 1 de supply chain. Los separa como `SIN-RUTA`, `INTERNO`, `MANTENIMIENTO` o `CLI` y conserva los gaps de evidencia.
-- `docs/risk-prioritization.md` fija `GSL-RISK-PRIORITY-001` con impacto `I0`–`I3`, probabilidad condicionada `L1`–`L3`, capacidad real `K0`–`K3` y una puntuación reproducible para los 17 casos. PGS-04-M05 no altera el recálculo de M04: 1 en `PR-1`, 1 en `PR-2`, 14 en `PR-3` y 1 en `PR-0`, porque aún faltan el retest y un modelo real.
+- `docs/risk-prioritization.md` fija `GSL-RISK-PRIORITY-001` con impacto `I0`–`I3`, probabilidad condicionada `L1`–`L3`, capacidad real `K0`–`K3` y una puntuación reproducible para los 17 casos. PGS-04-M06 no altera el recálculo: 1 en `PR-1`, 1 en `PR-2`, 14 en `PR-3` y 1 en `PR-0`; el lock es cooperativo, los casos DOS no se han ejecutado y aún faltan el retest y un modelo real.
 - `docs/threat-crosswalk.md` fija `GSL-THREAT-CROSSWALK-001` con una fila por abuse case y relaciones directas, parciales o ausentes frente a OWASP LLM 2025, OWASP Agentic 2026 y MITRE ATLAS `v2026.06`. Conserva los gaps de consentimiento, filesystem y escenarios no agentic sin cambiar la prioridad.
-- `docs/control-responsibility-mapping.md` fija `GSL-NIST-CONTROLS-001` con cuatro roles, trece controles en estado presente, parcial o planificado, cobertura de los 17 abuse cases y correspondencias acotadas con NIST AI RMF 1.0 y NIST SP 800-218A. Declara la concentración de responsabilidad en `ACT-02`, la autenticación solo sintética de `ACT-03`, el futuro `REV-01` sin asignar y los límites del perfil; PGS-02-M08 avanza P01-M08, que permanece abierta hasta implementar PGS-04.
+- `docs/control-responsibility-mapping.md` fija `GSL-NIST-CONTROLS-001` con cuatro roles, trece controles en estado presente, parcial o planificado, cobertura de los 17 abuse cases y correspondencias acotadas con NIST AI RMF 1.0 y NIST SP 800-218A. `CTL-10` incorpora `CMP-10`, pero permanece parcial por sus límites cooperativos y la ausencia de cuota persistente; P01-M08 continúa abierta hasta implementar toda PGS-04.
 - `docs/rules-of-engagement.md` fija `GSL-ROE-001` con autorización por ejecución, activos incluidos y excluidos, acciones permitidas y prohibidas, presupuestos cuantitativos, evidencia, parada y un vehículo acotado para cada uno de los 17 abuse cases. `AC-DOS-01` solo admite un piloto limitado y `AC-DOS-03` necesita una ampliación posterior; PGS-03-M04/M05/M06 aplican esos límites a 14 fixtures PI/JB/EX/TOL sin red, proveedor o evidencia canónica.
 - `src/genai_seguro_lab/evaluation_profile.py` implementa `GSL-PROFILE-VULNERABLE-001`: requiere autorización estricta de `GSL-ROE-001`, datos sintéticos y un sandbox temporal, construye peticiones débiles claramente marcadas y carece de llamadas al modelo, ejecución de herramientas, red, escritura o ruta CLI. Su aislamiento queda probado en `tests/test_evaluation_profile.py`.
 - `data/adversarial/` y `load_adversarial_corpus()` fijan las entradas y los
@@ -433,6 +441,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-04-M06 — añadir límites de tamaño, tiempo, iteraciones y consumo.**
+**PGS-04-M07 — añadir eventos de seguridad, correlación y señales de comportamiento anómalo.**
 
-**Progreso interno:** 35 de 66 microtareas completadas, 31 abiertas (**53,0 %**).
+**Progreso interno:** 36 de 66 microtareas completadas, 30 abiertas (**54,5 %**).

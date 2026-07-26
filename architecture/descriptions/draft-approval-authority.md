@@ -9,6 +9,8 @@ Autentica un principal sintético local antes de permitir un efecto de
 - Ligar cada token a identidad, propuesta, principal, scope, herramienta,
   efecto, writer, sesión y raíz.
 - Aplicar TTL y consumo único de forma sincronizada antes de I/O.
+- Consumir en `CMP-10` un challenge, hasta tres intentos de autenticación y un
+  grant; los intentos fallidos cuentan.
 - Invalidar el estado pendiente al cerrar la autoridad o el writer.
 
 ## Restricciones
@@ -27,3 +29,4 @@ Autentica un principal sintético local antes de permitir un efecto de
 - `src/genai_seguro_lab/local_tools.py`
 - `tests/test_local_tools.py`
 - `tests/test_tool_abuse_evaluation.py`
+- `tests/test_resource_control.py`

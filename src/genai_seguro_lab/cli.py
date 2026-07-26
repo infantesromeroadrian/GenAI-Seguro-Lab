@@ -14,6 +14,7 @@ from .baseline import (
     run_incident,
 )
 from .data_contract import load_dataset
+from .resource_control import ResourceLimitError, exclusive_process_lock
 
 
 def repository_data_dir() -> Path:
@@ -59,15 +60,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     data_dir = repository_data_dir()
 
     try:
-        if arguments.command == "analyze":
-            bundle = load_dataset(data_dir)
-            result = run_incident(bundle, arguments.incident)
-        else:
-            result = run_functional_baseline(data_dir)
+        with exclusive_process_lock(data_dir / "manifest.json"):
+            if arguments.command == "analyze":
+                bundle = load_dataset(data_dir)
+                result = run_incident(bundle, arguments.incident)
+            else:
+                result = run_functional_baseline(data_dir)
     except UnknownIncidentError:
         print("error: unknown benign incident identifier", file=sys.stderr)
         return 2
-    except (OSError, TypeError, ValueError):
+    except (OSError, ResourceLimitError, TypeError, ValueError):
         print("error: functional baseline is unavailable", file=sys.stderr)
         return 1
 

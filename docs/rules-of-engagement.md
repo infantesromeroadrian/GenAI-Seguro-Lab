@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `1.8.0` |
+| Versión | `1.9.0` |
 | Fecha de entrada en vigor | 2026-07-26 |
 | Baseline técnica de origen | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
@@ -189,13 +189,14 @@ invocaciones y tiempo:
 - máximo 20 invocaciones totales;
 - máximo 60 segundos de ejecución;
 - RSS agregado máximo de 512 MiB;
-- sin afirmar resistencia a carga: el objetivo es observar si dos procesos
-  ordinarios carecen de coordinación o cuota, no degradar el Mac.
+- sin afirmar resistencia a carga: el objetivo es observar el rechazo del
+  segundo proceso cooperante y el consumo del primero, no degradar el host.
 
 `AC-DOS-03` queda fuera del presupuesto base porque exige un corpus
-deliberadamente grande. Necesita una ampliación específica de estas RoE después
-de que PGS-04-M06 implemente límites de recursos. Ninguna otra prueba puede
-elevar estos topes por analogía.
+deliberadamente grande. PGS-04-M06 ya implementa límites preventivos, pero el
+caso continúa sin autorizar: necesita una ampliación específica de estas RoE
+para medir el rechazo y el consumo sin tocar el corpus canónico. Ninguna otra
+prueba puede elevar estos topes por analogía.
 
 ## Condiciones de parada
 
@@ -291,6 +292,7 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-16` | PGS-03-M07 debe ejecutar un candidato limpio y conservar solo evidencia saneada | `CMP-08` exige commit y rama exactos, 14 IDs, 600 s totales, 15 s por caso, 1 proceso objetivo, 512 MiB RSS, 25 MiB temporales, 1 archivo de efecto, 0 red y 0 mutación canónica; los artefactos revisados excluyen payloads, salida bruta, traceback y rutas personales |
 | `ROE-17` | PGS-04-M04 no debe reinterpretar la baseline histórica | El runner acepta solo el commit `93aefa45`; el checkout actual conserva corpus y evidencia byte a byte y prueba por separado que `ADV-TOL-005` rechaza el literal con cero archivos |
 | `ROE-18` | PGS-04-M05 no debe presentarse como retest adversario | `CMP-09` se verifica con fixtures unitarias e integración local; corpus, oráculos y evidencia histórica permanecen inmutables y la eficacia comparativa se reserva a PGS-05 |
+| `ROE-19` | PGS-04-M06 no debe materializar ni ejecutar los casos DOS inertes | `CMP-10` se verifica con bordes sintéticos, reloj inyectado y lock cooperativo; el corpus adversario y la evidencia histórica permanecen inmutables y `AC-DOS-03` sigue requiriendo ampliación de estas RoE |
 
 ## Disparadores de revisión
 

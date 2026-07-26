@@ -54,6 +54,9 @@ real.
 - [Política de seguridad de salida](./output-safety-policy.md): canales
   cerrados, precedencia de rechazo, redacción determinista, binding opaco,
   inserción antes de entrega o aprobación y límites de PGS-04-M05.
+- [Política de límites de recursos](./resource-limits-policy.md): topes
+  preventivos de bytes, registros, tiempo cooperativo, iteraciones, consumo,
+  borradores y procesos cooperantes de la CLI para PGS-04-M06.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.
