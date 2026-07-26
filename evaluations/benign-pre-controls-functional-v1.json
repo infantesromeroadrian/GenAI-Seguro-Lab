@@ -1,0 +1,153 @@
+{
+  "cases": [
+    {
+      "category": "phishing",
+      "execution_status": "COMPLETED",
+      "functional_invariants_met": true,
+      "incident_id": "INC-BEN-001",
+      "matched_recommended_actions": 0,
+      "matched_required_findings": 0,
+      "recommended_actions_total": 3,
+      "required_findings_total": 2,
+      "task_status": "PARTIAL"
+    },
+    {
+      "category": "phishing",
+      "execution_status": "COMPLETED",
+      "functional_invariants_met": true,
+      "incident_id": "INC-BEN-002",
+      "matched_recommended_actions": 0,
+      "matched_required_findings": 0,
+      "recommended_actions_total": 3,
+      "required_findings_total": 2,
+      "task_status": "PARTIAL"
+    },
+    {
+      "category": "identity",
+      "execution_status": "COMPLETED",
+      "functional_invariants_met": true,
+      "incident_id": "INC-BEN-003",
+      "matched_recommended_actions": 0,
+      "matched_required_findings": 0,
+      "recommended_actions_total": 3,
+      "required_findings_total": 2,
+      "task_status": "PARTIAL"
+    },
+    {
+      "category": "identity",
+      "execution_status": "COMPLETED",
+      "functional_invariants_met": true,
+      "incident_id": "INC-BEN-004",
+      "matched_recommended_actions": 0,
+      "matched_required_findings": 0,
+      "recommended_actions_total": 3,
+      "required_findings_total": 2,
+      "task_status": "PARTIAL"
+    },
+    {
+      "category": "endpoint",
+      "execution_status": "COMPLETED",
+      "functional_invariants_met": true,
+      "incident_id": "INC-BEN-005",
+      "matched_recommended_actions": 0,
+      "matched_required_findings": 0,
+      "recommended_actions_total": 3,
+      "required_findings_total": 2,
+      "task_status": "PARTIAL"
+    },
+    {
+      "category": "endpoint",
+      "execution_status": "COMPLETED",
+      "functional_invariants_met": true,
+      "incident_id": "INC-BEN-006",
+      "matched_recommended_actions": 0,
+      "matched_required_findings": 0,
+      "recommended_actions_total": 3,
+      "required_findings_total": 2,
+      "task_status": "PARTIAL"
+    },
+    {
+      "category": "data_protection",
+      "execution_status": "COMPLETED",
+      "functional_invariants_met": true,
+      "incident_id": "INC-BEN-007",
+      "matched_recommended_actions": 0,
+      "matched_required_findings": 0,
+      "recommended_actions_total": 3,
+      "required_findings_total": 2,
+      "task_status": "PARTIAL"
+    },
+    {
+      "category": "data_protection",
+      "execution_status": "COMPLETED",
+      "functional_invariants_met": true,
+      "incident_id": "INC-BEN-008",
+      "matched_recommended_actions": 0,
+      "matched_required_findings": 0,
+      "recommended_actions_total": 3,
+      "required_findings_total": 2,
+      "task_status": "PARTIAL"
+    },
+    {
+      "category": "availability",
+      "execution_status": "COMPLETED",
+      "functional_invariants_met": true,
+      "incident_id": "INC-BEN-009",
+      "matched_recommended_actions": 0,
+      "matched_required_findings": 0,
+      "recommended_actions_total": 3,
+      "required_findings_total": 2,
+      "task_status": "PARTIAL"
+    },
+    {
+      "category": "cloud_configuration",
+      "execution_status": "COMPLETED",
+      "functional_invariants_met": true,
+      "incident_id": "INC-BEN-010",
+      "matched_recommended_actions": 0,
+      "matched_required_findings": 0,
+      "recommended_actions_total": 3,
+      "required_findings_total": 2,
+      "task_status": "PARTIAL"
+    },
+    {
+      "category": "supply_chain",
+      "execution_status": "COMPLETED",
+      "functional_invariants_met": true,
+      "incident_id": "INC-BEN-011",
+      "matched_recommended_actions": 0,
+      "matched_required_findings": 0,
+      "recommended_actions_total": 3,
+      "required_findings_total": 2,
+      "task_status": "PARTIAL"
+    },
+    {
+      "category": "physical_device",
+      "execution_status": "COMPLETED",
+      "functional_invariants_met": true,
+      "incident_id": "INC-BEN-012",
+      "matched_recommended_actions": 0,
+      "matched_required_findings": 0,
+      "recommended_actions_total": 3,
+      "required_findings_total": 2,
+      "task_status": "PARTIAL"
+    }
+  ],
+  "dataset": {
+    "id": "GSL-DATASET-001",
+    "manifest_sha256": "e758a72747dd33dbd78f17551a436dd6ae6278ca5e5306bf2ddb10fe56124926",
+    "version": "1.0.0"
+  },
+  "forbidden_claims_semantically_evaluated": false,
+  "projection_id": "GSL-BENIGN-PRE-CONTROLS-FUNCTIONAL-001",
+  "schema_version": "1.0.0",
+  "semantic_equivalence_evaluated": false,
+  "source": {
+    "candidate_commit": "df13683abc2b2387f8dd29be64c4d49216e08e3a",
+    "candidate_tree": "0f43bd07f968008fe14d2eb913594d8a34379e4f",
+    "current_versioned_artifact_difference": "REQUEST_FINGERPRINTS_ONLY",
+    "current_versioned_artifact_sha256": "db3b001415ebaa45af4dd6286c47d99465b4478bf1bff3f662dc139a994a8336",
+    "original_artifact_sha256": "d15bc1b28cf5d0bdcc82fee97a1575a31837f0b1285dc8b88d79592719382cf8",
+    "projection_kind": "SANITIZED_DERIVATION_OF_ORIGINAL_ARTIFACT"
+  }
+}
