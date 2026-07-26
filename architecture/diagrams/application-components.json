@@ -270,6 +270,29 @@
       }
     },
     {
+      "id": "sandbox-transaction-controller",
+      "label": "CMP-12 · Transacción y recuperación del sandbox",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/sandbox_recovery.py",
+      "meta": {
+        "type": "service",
+        "technology": "pydantic-python-posix",
+        "inventoryIds": [
+          "CMP-12"
+        ],
+        "state": "application-control-internal",
+        "policyId": "GSL-SANDBOX-RECOVERY-001",
+        "policyVersion": "1.0.0",
+        "publication": "hard-link-create-only",
+        "lock": "flock-exclusive-nonblocking",
+        "recoveryBeforeAuthority": true,
+        "recoveryPublishesStaging": false,
+        "restoresAuthority": false,
+        "externalCalls": false,
+        "osIsolation": false
+      }
+    },
+    {
       "id": "deterministic-model",
       "label": "MOD-01 · Modelo determinista",
       "parentId": "model-output-boundary",
@@ -317,6 +340,9 @@
         "directoryDescriptorAnchored": true,
         "noFollow": true,
         "fileMode": "0600",
+        "atomicCreateOnly": true,
+        "safeStop": true,
+        "recoveryController": "CMP-12",
         "approvalIdentityAuthenticated": true,
         "humanInteractionVerified": false,
         "identityAssurance": "synthetic-local-credential"
@@ -406,6 +432,19 @@
         "type": "calls",
         "crossesBoundary": "TB-04",
         "atomicEventReservation": true
+      }
+    },
+    {
+      "id": "components-writer-uses-sandbox-transaction-controller",
+      "source": "draft-writer",
+      "target": "sandbox-transaction-controller",
+      "label": "publica una vez; stop revoca; recuperación antes de autoridad",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-04",
+        "singleLinearizationPoint": true,
+        "automaticRetry": false,
+        "restoresAuthority": false
       }
     },
     {

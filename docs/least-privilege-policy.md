@@ -1,15 +1,15 @@
 # Política de mínimo privilegio
 
 - **ID:** `GSL-LEAST-PRIVILEGE-001`
-- **Versión:** 1.2
+- **Versión:** 1.3
 - **Fecha:** 2026-07-26
-- **Microtareas:** PGS-04-M03 y PGS-04-M04
+- **Microtareas:** PGS-04-M03, PGS-04-M04 y PGS-04-M08
 - **Ámbito:** identidades lógicas, datos y herramientas del runtime local
 
 ## Resultado
 
 El laboratorio aplica mínimo privilegio **dentro de la aplicación** mediante
-cinco límites independientes:
+seis límites independientes:
 
 1. cada operación recibe un principal y un scope lógicos;
 2. cada grant autoriza exactamente una herramienta;
@@ -17,7 +17,9 @@ cinco límites independientes:
    incidente validado;
 4. preparar un borrador y crear el archivo son autoridades distintas;
 5. el efecto exige una aprobación opaca emitida tras autenticar un principal
-   sintético local.
+   sintético local;
+6. detener o recuperar una transacción nunca restaura una autoridad consumida
+   ni publica un staging pendiente.
 
 Estos controles reducen la autoridad que puede alcanzar una salida del modelo
 o un llamador ordinario. No crean una identidad de servicio, no reducen los
@@ -87,14 +89,21 @@ contenido. Antes de cualquier I/O se rechazan:
 - huellas distintas y replays.
 
 La raíz `sandbox/drafts/` se abre y conserva mediante un descriptor de
-directorio. El destino se crea respecto a ese descriptor con
-`O_EXCL | O_NOFOLLOW` y modo `0600`. No se admiten rutas, sobrescritura,
-borrado ni seguimiento de symlinks.
+directorio. `CMP-12` crea marker y staging internos con `O_EXCL`,
+`O_NOFOLLOW` y modo `0600`, sincroniza el contenido y publica el nombre final
+mediante un hard link create-only. No se admiten rutas, sobrescritura, borrado
+del final ni seguimiento de symlinks.
 
 La credencial se verifica con PBKDF2-HMAC-SHA256 y no forma parte del
 `ModelToolRequest`, del `repr` de los objetos opacos ni de la evidencia del
 harness. El consumo del grant se realiza antes de I/O: un fallo posterior
 exige una nueva aprobación y nunca reintenta implícitamente.
+
+`stop()` revoca la autoridad efímera de la sesión y cierra el descriptor. La
+reconciliación de la siguiente instancia solo retira artefactos del namespace
+interno validado: nunca recrea propuestas, challenges, aprobaciones, grants o
+cuotas, y nunca publica el staging. El contrato completo está en
+[`GSL-SANDBOX-RECOVERY-001`](./sandbox-recovery-policy.md).
 
 `ADV-TOL-005` conserva su entrada literal para poder comparar el control con
 la baseline histórica, pero el checkout actual la rechaza antes de I/O y crea
@@ -124,6 +133,8 @@ No hereda por esa ruta tokens, credenciales, configuración de proveedor,
   grant.
 - `tests/test_jailbreak_disclosure_evaluation.py`: entorno ambiental cerrado
   del subproceso.
+- `tests/test_sandbox_recovery.py`: publicación atómica, revocación,
+  reconciliación no autoritativa y fallo cerrado.
 - Suite completa y baseline benigna canónica: regresión funcional.
 
 ## Estado del control y límites
@@ -136,8 +147,8 @@ la aplicación, pero no:
 - autentica a una persona real o verifica su presencia; PGS-04-M04 solo
   acredita un principal sintético local;
 - protege frente a ejecución arbitraria de Python bajo la cuenta local;
-- sustituye la política de salida M05 o la recuperación M08; las cuotas M06
-  limitan consumo, pero no reducen la autoridad de `IDN-01`;
+- sustituye la política de salida M05; la recuperación M08 y las cuotas M06
+  acotan estado y consumo, pero no reducen la autoridad de `IDN-01`;
 - convierte eventos o correlaciones de `CMP-11` en identidad, grant,
   autenticación o autorización;
 - demuestra robustez frente a un modelo GenAI real.

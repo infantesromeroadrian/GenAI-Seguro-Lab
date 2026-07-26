@@ -14,6 +14,8 @@ mediante un flujo determinista y herramientas con autoridad acotada.
   efectos antes de ejecutarlos.
 - Observar mediante `CMP-11` decisiones y señales con correlación opaca,
   secuencia global y un esquema sin contenido bruto.
+- Publicar y reconciliar mediante `CMP-12` el único efecto local ya autorizado
+  sin restaurar autoridad.
 - Emitir resultados JSON reproducibles y mantener los efectos locales fuera de
   la ruta ordinaria de la CLI.
 - Preparar una petición vulnerable marcada para evaluación sin ejecutarla.
@@ -31,10 +33,10 @@ mediante un flujo determinista y herramientas con autoridad acotada.
 | ID | Límite | Garantía actual |
 |---|---|---|
 | `TB-01` | Host local e identidad del SO | El proceso hereda la cuenta local; no hay identidad propia de aplicación |
-| `TB-02` | Control de aplicación | Esquemas, orquestación, política de salida, límites preventivos y journal saneado dentro de un único proceso Python |
+| `TB-02` | Control de aplicación | Esquemas, orquestación, política de salida, límites preventivos, journal saneado y recuperación local dentro de un único proceso Python |
 | `TB-03` | Salida del modelo | Toda respuesta se valida y su resumen atraviesa `CMP-09` antes de entregarse |
 | `TB-04` | Autoridad de herramientas | El adaptador no autoriza ni ejecuta herramientas |
-| `TB-05` | Efecto en filesystem | Solo creación aprobada mediante identidad sintética dentro de `sandbox/drafts/` |
+| `TB-05` | Efecto en filesystem | Solo publicación atómica aprobada y reconciliación interna dentro de `sandbox/drafts/` |
 | `TB-06` | Integridad de datos versionados | Esquema estricto, referencias, conteos y hashes SHA-256 |
 
 `TB-02`, `TB-03` y `TB-04` son límites lógicos dentro del mismo proceso; no
@@ -55,6 +57,9 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
   limita llamadas directas a la API o aísla el proceso.
 - `CMP-11` vive en memoria y su cadena no firmada no autentica al emisor,
   correlaciona sesiones o activa respuesta y recuperación.
+- `CMP-12` depende de primitivas POSIX y de un lock cooperativo; no resiste
+  código hostil con la autoridad de `IDN-01`, instala handlers globales o
+  implementa recuperación operativa general.
 - El corpus adversario conserva fixtures y oráculos separados; `CMP-07` cubre
   14 PI/JB/EX/TOL, `CMP-08` fija su baseline canónica y las otras cuatro
   entradas siguen inertes.
@@ -72,3 +77,4 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 - `evaluations/benign-baseline-v1.json`
 - `evaluations/adversarial-baseline-v1/`
 - `docs/resource-limits-policy.md`
+- `docs/sandbox-recovery-policy.md`

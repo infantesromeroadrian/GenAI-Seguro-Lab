@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-04-M07, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria histórica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`; su evidencia permanece inmutable. El checkout actual exige aprobación sintética para efectos, aplica una política de salida, limita por defecto tamaño, tiempo cooperativo, iteraciones y consumo, y registra eventos saneados y correlacionados en memoria. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-04-M08, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 completadas. La baseline adversaria histórica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`; su evidencia permanece inmutable. El checkout actual exige aprobación sintética para efectos, aplica una política de salida, limita tamaño, tiempo cooperativo, iteraciones y consumo, registra eventos saneados en memoria y publica/reconcilia borradores de forma atómica. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
 
 ## En una frase
 
@@ -49,6 +49,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │       ├── model_adapter.py
 │       ├── output_policy.py
 │       ├── resource_control.py
+│       ├── sandbox_recovery.py
 │       └── security_events.py
 ├── tests/
 │   ├── README.md
@@ -62,6 +63,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── test_model_adapter.py
 │   ├── test_output_policy.py
 │   ├── test_resource_control.py
+│   ├── test_sandbox_recovery.py
 │   ├── test_security_events.py
 │   ├── test_validation_policy.py
 │   ├── test_jailbreak_disclosure_evaluation.py
@@ -97,6 +99,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── least-privilege-policy.md
 │   ├── output-safety-policy.md
 │   ├── resource-limits-policy.md
+│   ├── sandbox-recovery-policy.md
 │   ├── security-events-policy.md
 │   ├── risk-prioritization.md
 │   ├── rules-of-engagement.md
@@ -109,7 +112,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
         └── README.md
 ```
 
-PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado, PGS-03-M03 prepara el corpus adversario, PGS-03-M04/M05/M06 conectan 14 fixtures PI/JB/EX/TOL a pruebas internas, PGS-03-M07 fija su primera ejecución canónica y PGS-04-M01 a M07 separan dominios de confianza, validan esquemas, aplican mínimo privilegio, exigen aprobación de efectos, controlan la salida y los recursos y añaden observabilidad saneada. Todavía no existe un modelo GenAI real.
+PGS-01-M02 reserva límites explícitos para código, pruebas, evaluaciones, datos, documentación y borradores. PGS-01-M03 fija el entorno, PGS-01-M04 incorpora el primer corpus verificable, PGS-01-M05 añade la frontera determinista de modelo, PGS-01-M06 implementa el primer flujo benigno con herramientas locales confinadas, PGS-01-M07 fija su interfaz y primera baseline funcional, PGS-03-M02 añade el perfil vulnerable aislado, PGS-03-M03 prepara el corpus adversario, PGS-03-M04/M05/M06 conectan 14 fixtures PI/JB/EX/TOL a pruebas internas, PGS-03-M07 fija su primera ejecución canónica y PGS-04-M01 a M08 separan dominios de confianza, validan esquemas, aplican mínimo privilegio, exigen aprobación de efectos, controlan salida y recursos, añaden observabilidad y hacen recuperable el sandbox. Todavía no existe un modelo GenAI real.
 
 ## Entorno reproducible
 
@@ -219,13 +222,19 @@ incidente sintético
   otro grant de efecto, ligados a identidad configurada, propuesta, principal,
   scope, herramienta, efecto, writer, sesión y raíz; una propuesta directa o
   cruzada falla antes de I/O.
-- El nombre del borrador no admite rutas. La escritura queda anclada al
-  descriptor de `sandbox/drafts/`, usa `O_EXCL`, `O_NOFOLLOW` y modo `0600`:
-  nunca modifica, sobrescribe o borra.
+- El nombre del borrador no admite rutas. `CMP-12` ancla la transacción al
+  descriptor de `sandbox/drafts/`, crea marker y staging `0600` sin seguir
+  symlinks y publica el nombre final mediante un hard link create-only:
+  nunca modifica, sobrescribe o borra el final.
+- Antes de publicar no existe efecto final. Después de publicar, el resultado
+  sigue siendo creado aunque la limpieza quede pendiente; la siguiente
+  instancia conserva el final y retira solo artefactos internos validados.
 - Challenge, aprobación y grant caducan y se consumen una sola vez durante el
   proceso. La política
   `create-only` del destino mantiene el bloqueo de sobrescritura entre
   ejecuciones.
+- `stop()` es idempotente, revoca la autoridad efímera y cierra el descriptor.
+  La recuperación nunca republica staging, restaura grants o reintenta.
 - Esta capa autentica un principal sintético local mediante una credencial
   verificada fuera del modelo. No demuestra presencia o identidad de una
   persona real: esa frontera pertenecerá a una futura interfaz/autenticador.
@@ -241,10 +250,13 @@ reglas, canales y límites. El contrato de autoridad está en
 [Política de mínimo privilegio](./docs/least-privilege-policy.md). El journal
 en memoria y sus límites se documentan en
 [Política de eventos y señales de seguridad](./docs/security-events-policy.md).
+[Política de parada y recuperación del
+sandbox](./docs/sandbox-recovery-policy.md) define la transacción, el punto de
+publicación y la reconciliación.
 Comprobación específica:
 
 ```bash
-uv run --frozen pytest tests/test_instruction_boundary.py tests/test_benign_flow.py tests/test_local_tools.py tests/test_output_policy.py tests/test_validation_policy.py
+uv run --frozen pytest tests/test_instruction_boundary.py tests/test_benign_flow.py tests/test_local_tools.py tests/test_output_policy.py tests/test_sandbox_recovery.py tests/test_validation_policy.py
 ```
 
 ## Interfaz local y baseline funcional
@@ -358,7 +370,7 @@ C4 compatible con Tecture, derivado de `GSL-SYS-INV-001`:
 - **L3 — componentes:** CLI, contrato de datos, motor de baseline, flujo
   benigno, modelo determinista, búsqueda autorizada, autoridad de aprobación
   sintética, escritor de borradores, política de salida, control preventivo
-  de recursos y journal de seguridad.
+  de recursos, journal de seguridad y controlador transaccional del sandbox.
 
 El mapa hace visibles seis límites:
 
@@ -368,15 +380,16 @@ El mapa hace visibles seis límites:
 | `TB-02` | Control de aplicación dentro del proceso Python |
 | `TB-03` | Salida del modelo tratada como datos tipados |
 | `TB-04` | Autoridad de herramientas separada del adaptador |
-| `TB-05` | Efecto `create-only` en `sandbox/drafts/` |
+| `TB-05` | Efecto atómico `create-only` y estado interno de recuperación en `sandbox/drafts/` |
 | `TB-06` | Integridad del corpus mediante esquema y SHA-256 |
 
 `TB-02`, `TB-03` y `TB-04` son límites lógicos en un único proceso, no
 aislamiento por contenedor o identidad. En el diagrama L3,
-`DraftWriterTool` permanece sin arista de ejecución: está implementada, pero
-no conectada a la CLI ni al flujo benigno. `CMP-10` limita los componentes
-cooperantes y `CMP-11` registra decisiones saneadas en memoria; ninguno añade
-aislamiento de sistema operativo.
+`DraftWriterTool` permanece sin arista de ejecución desde la CLI o el flujo
+benigno. Su única nueva dependencia es `CMP-12`, que publica y reconcilia el
+efecto local ya autorizado. `CMP-10` limita los componentes cooperantes y
+`CMP-11` registra decisiones saneadas en memoria; ninguno añade aislamiento de
+sistema operativo.
 
 ## Matriz de autoridad y consecuencias
 
@@ -396,6 +409,8 @@ cadenas de autoridad observables:
   tardías o sobredimensionadas antes de entregarlas;
 - `CMP-11` observa decisiones mediante un esquema cerrado y una cadena
   correlacionada, sin convertir eventos en autoridad;
+- `CMP-12` materializa o reconcilia solo el efecto exacto ya autorizado,
+  preserva finales publicados y nunca restaura autoridad;
 - `ACT-02`, mediante su cuenta macOS y Git fuera del runtime, posee la mayor
   autoridad actual porque puede modificar código, datos, dependencias y
   evidencia.
@@ -771,7 +786,8 @@ Si la arquitectura cambia, el threat model deberá revisarse antes de ampliar la
 - Eventos, correlación y señales deterministas saneadas
   **implementados en PGS-04-M07**; son un journal en memoria, no un SIEM,
   monitor externo ni detección universal.
-- Parada segura y recuperación del sandbox.
+- Parada segura y recuperación atómica del sandbox
+  **implementadas en PGS-04-M08**; el runbook operativo sigue en PGS-06-M07.
 - Tests de regresión para los ataques reproducidos.
 - Defensa en profundidad: ningún control se tratará como protección completa.
 
@@ -1045,9 +1061,10 @@ nunca para ocultar un resultado ni para reescribir la baseline histórica.
 - [x] Incorporar filtros, redacción de datos y una política de salida obligatoria.
 - [x] Añadir límites de tamaño, tiempo cooperativo, iteraciones y consumo.
 - [x] Añadir eventos, correlación y señales de seguridad saneadas.
+- [x] Implementar parada segura y recuperación del estado del sandbox.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
 
-**PGS-00-M01 a PGS-04-M07, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **37 de 66 microtareas (56,1 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
+**PGS-00-M01 a PGS-04-M08, PGS-07-M08, P01-M01 y P01-M04 a P01-M07 están completadas.** El avance interno es **38 de 66 microtareas (57,6 %)**; SEC-1 permanece abierto hasta producir la evidencia técnica posterior. P01-M08 sigue abierta hasta implementar y verificar toda PGS-04.
 
 ## Roadmap
 
@@ -1057,7 +1074,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-04-M08 — implementar parada segura y recuperación del estado del sandbox.**
+**PGS-04-M09 — asociar cada control a amenaza, responsable, prueba y limitación.**
 
 ## Uso responsable
 

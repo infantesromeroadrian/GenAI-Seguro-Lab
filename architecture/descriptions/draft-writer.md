@@ -14,8 +14,10 @@ muy restringida.
 - Consumir el grant antes de I/O; un fallo posterior exige otra aprobación.
 - Reservar en `CMP-11` intento y resultado antes de consumir el grant o
   iniciar I/O.
-- Crear un único Markdown nuevo respecto al descriptor de
-  `sandbox/drafts/`, con `O_EXCL`, `O_NOFOLLOW` y modo `0600`.
+- Delegar en `CMP-12` la publicación atómica y la reconciliación del único
+  Markdown nuevo.
+- Detener la sesión de forma idempotente, revocar toda autoridad efímera y
+  cerrar el descriptor.
 
 ## Restricciones
 
@@ -30,8 +32,9 @@ muy restringida.
 - Acredita un principal sintético, no presencia o identidad humana real.
 - Cada sesión admite una propuesta, un challenge, tres autenticaciones, un
   grant y un archivo; los intentos fallidos también consumen presupuesto.
-- El evento final de sesión exige `close()` explícito; un crash tras I/O y
-  antes del resultado sigue siendo residual de PGS-04-M08.
+- Antes de publicar no existe efecto final; después de publicar, el final se
+  conserva aunque la limpieza interna quede pendiente.
+- Una recuperación no restaura grants o cuotas y no publica staging.
 - `CMP-07` lo invoca solo desde pytest, bajo `$TMP`, para las fixtures
   `ADV-TOL-003/004/005`; no crea una ruta de producto.
 
@@ -42,4 +45,5 @@ muy restringida.
 - `tests/test_tool_abuse_evaluation.py`
 - `tests/test_resource_control.py`
 - `tests/test_security_events.py`
+- `tests/test_sandbox_recovery.py`
 - Inventario `TOL-02`

@@ -1,9 +1,9 @@
 # Política de validación y allowlists
 
 - **ID:** `GSL-VALIDATION-POLICY-001`
-- **Versión:** 1.4
+- **Versión:** 1.5
 - **Fecha:** 2026-07-26
-- **Microtareas:** PGS-04-M02 a PGS-04-M07
+- **Microtareas:** PGS-04-M02 a PGS-04-M08
 - **Ámbito:** flujo benigno determinista y herramientas locales
 
 ## Objetivo
@@ -112,6 +112,20 @@ aprobación opaca, todos fuera de los datos del modelo. El
 herramienta, efecto, writer, sesión, instancia y raíz; caduca y se consume una
 sola vez antes de I/O. Este mecanismo no verifica presencia humana real.
 
+### Publicación y recuperación de `draft_create`
+
+Después de consumir el grant, `CMP-12` vuelve a validar el nombre final,
+descriptor de raíz, ausencia de destino, límites y namespace interno. Marker,
+staging e informe de recuperación usan esquemas estrictos y cerrados. La
+reconciliación valida tipo, owner, modo, tamaño, hash, inode y nlinks antes de
+retirar únicamente artefactos internos. Un estado ambiguo no se corrige de
+forma heurística: impide registrar la autoridad del writer y deja intacto el
+sandbox.
+
+La recuperación no acepta contenido o autoridad serializados, no publica el
+staging y no expone una ruta CLI. Véase
+[`GSL-SANDBOX-RECOVERY-001`](./sandbox-recovery-policy.md).
+
 ## Validación de eventos
 
 `GSL-SECURITY-EVENTS-001` usa un esquema Pydantic separado, estricto e
@@ -133,6 +147,9 @@ precondición de autoridad.
 | Contenido rechazado por la política de salida | `OutputPolicyRejectedError` genérico, sin reflejar el valor |
 | Sello de política fabricado, cruzado o de otro canal | `PolicyCheckedTextError` |
 | Journal sin capacidad o con ciclo de vida inválido | `SecurityEventError`; no se devuelve salida ni se inicia el efecto |
+| Destino final existente | `DraftAlreadyExistsError`; nunca sobrescribe |
+| Lock de transacción ocupado | `SandboxRecoveryLockError`; no espera ni reintenta |
+| Marker, staging o final incoherentes durante recuperación | `SandboxRecoveryError`; cero mutaciones y writer no disponible |
 
 Los errores no incluyen el contenido adversario ni habilitan una segunda
 herramienta, un reintento o una ruta alternativa.
@@ -152,6 +169,8 @@ herramienta, un reintento o una ruta alternativa.
   confianza.
 - `tests/test_security_events.py`: esquema cerrado, correlación, cadena,
   canarios y fallo previo al efecto.
+- `tests/test_sandbox_recovery.py`: esquemas internos, owner/modo/hash/nlinks,
+  estado ambiguo, lock y publicación create-only.
 
 La baseline benigna canónica debe permanecer idéntica byte a byte después de
 incorporar esta política. La evidencia adversaria versionada no se reescribe en
@@ -173,4 +192,7 @@ esta microtarea.
   es cooperativo y no puede interrumpir una dependencia síncrona bloqueada.
 - `GSL-SECURITY-EVENTS-001` observa metadatos en memoria; no persiste,
   autentica, responde o prueba un ataque.
+- `GSL-SANDBOX-RECOVERY-001` valida y reconcilia el efecto local, pero depende
+  de primitivas POSIX y no resiste código hostil con la autoridad de
+  `IDN-01`.
 - PGS-05 debe repetir el mismo corpus y medir el control frente a la baseline.

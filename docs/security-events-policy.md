@@ -45,7 +45,8 @@ mensajes de excepción y tracebacks. Cada evento ocupa como máximo 2 KiB.
 4. Todos los eventos comparten una única secuencia global contigua y una
    cadena SHA-256 canónica.
 5. El journal termina una sola vez con `operation_completed` o
-   `operation_failed`.
+   `operation_failed`. En la sesión de borrador, `TOL-02.stop()` deriva el
+   terminal del estado conocido y lo emite una sola vez.
 
 Las correlaciones ordenan evidencia dentro de una operación. No enlazan
 sesiones distintas, no derivan de datos y no son credenciales, grants ni
@@ -86,6 +87,8 @@ contadores de `GSL-RESOURCE-POLICY-001`.
 Son reglas deterministas sobre decisiones ya tomadas por la aplicación. Una
 señal no demuestra un ataque, compromiso, autoría o anomalía universal, y no
 activa por sí misma respuesta, bloqueo adicional, rollback o comunicación.
+PGS-04-M08 conserva este límite: `CMP-12` actúa por la condición real de su
+transacción y no por releer una señal de `CMP-11`.
 
 ## Exposición por CLI
 
@@ -121,11 +124,16 @@ Quedan fuera de esta microtarea:
 - logging persistente, retención, búsqueda o correlación entre sesiones;
 - SIEM, métricas remotas, alertas, telemetría o exportación automática;
 - detección de anomalías mediante ML o cobertura universal de secretos y PII;
-- respuesta a incidentes, rollback, recuperación o retirada;
-- eliminar la ventana de crash entre un I/O completado y su evento final;
-- finalizar el journal de borrador si el llamador abandona el objeto sin
-  `close()` explícito;
+- respuesta operativa general, comunicación, rollback de un final publicado o
+  retirada;
+- usar el journal como estado duradero o autoridad de recuperación;
 - acreditar un modelo GenAI real, proveedor, MCP o aislamiento de SO.
+
+La ventana de borrador entre I/O parcial y resultado queda cerrada por
+[`GSL-SANDBOX-RECOVERY-001`](./sandbox-recovery-policy.md): `CMP-12` publica
+atómicamente, conserva un efecto ya publicado y reconcilia metadatos internos
+en el siguiente arranque. Esa capacidad es independiente y no convierte este
+journal en persistente.
 
 ## Evidencia ejecutable
 
@@ -133,6 +141,8 @@ Quedan fuera de esta microtarea:
   límites, correlaciones por caso, señales, reserva antes de I/O, canarios y
   sobre CLI.
 - `tests/test_cli_smoke.py`: interfaz predeterminada y errores saneados.
+- `tests/test_sandbox_recovery.py`: terminal coherente, conflictos de lock,
+  recuperación independiente de señales y ausencia de canarios.
 - `evaluations/benign-baseline-v1.json`: permanece idéntica byte a byte.
 - `evaluations/adversarial-baseline-v1/`: evidencia histórica inmutable y
   separada del journal de producto.

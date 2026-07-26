@@ -16,8 +16,8 @@ local.
 - `DraftApprovalAuthority` autentica una identidad sintética, emite tokens
   opacos con TTL y liga identidad, propuesta, principal, scope, herramienta,
   efecto, writer, sesión y raíz.
-- La creación se ancla a un descriptor de `sandbox/drafts/` con `O_EXCL`,
-  `O_NOFOLLOW` y modo `0600`.
+- La creación delega en `CMP-12`: marker/staging `0600`, descriptor anclado y
+  hard link create-only; la recuperación nunca restaura autoridad.
 - `MOD-01` no contiene código de autorización o ejecución.
 - `CMP-06` solo llama al constructor de `TOL-02` para validar un sandbox
   temporal; no prepara ni crea borradores.

@@ -294,6 +294,7 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-18` | PGS-04-M05 no debe presentarse como retest adversario | `CMP-09` se verifica con fixtures unitarias e integración local; corpus, oráculos y evidencia histórica permanecen inmutables y la eficacia comparativa se reserva a PGS-05 |
 | `ROE-19` | PGS-04-M06 no debe materializar ni ejecutar los casos DOS inertes | `CMP-10` se verifica con bordes sintéticos, reloj inyectado y lock cooperativo; el corpus adversario y la evidencia histórica permanecen inmutables y `AC-DOS-03` sigue requiriendo ampliación de estas RoE |
 | `ROE-20` | PGS-04-M07 no debe convertir el journal de producto en evidencia adversaria canónica | `CMP-11` se verifica con eventos y canarios sintéticos; no reescribe `DAT-10` a `DAT-13`, no entrega oráculos al producto, no ejecuta casos inertes y no persiste o exporta el informe opt-in |
+| `ROE-21` | PGS-04-M08 no debe reinterpretar o regenerar la baseline adversaria | `CMP-12` se verifica con sandboxes temporales, fault injection y canarios; no modifica el corpus, la evidencia histórica o el sandbox canónico, no ejecuta casos inertes y nunca publica staging durante recuperación |
 
 ## Disparadores de revisión
 

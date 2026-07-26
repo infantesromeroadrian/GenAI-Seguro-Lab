@@ -4,7 +4,8 @@ Este directorio contiene las pruebas automatizadas del contrato de datos, el
 adaptador determinista, las herramientas locales, el flujo benigno, el perfil
 vulnerable aislado, el harness adversario acotado, el runner canónico y la
 interfaz de proceso completo, incluidos los límites preventivos de recursos y
-el journal saneado de seguridad.
+el journal saneado de seguridad, la publicación atómica y la recuperación del
+sandbox.
 
 Ejecución completa:
 
@@ -54,6 +55,13 @@ del incidente; y que `TOL-02` rechaza propuestas o grants fabricados antes de
 I/O. También verifica que título y cuerpo se saneen antes de huella y
 aprobación, que se persista exactamente ese contenido y que la creación use
 descriptor, no-follow, carrera de ruta, create-only y modo `0600`.
+
+`test_sandbox_recovery.py` comprueba el único punto de publicación, modo
+`0600`, concurrencia, fallos antes y después de publicar, reinicio sin
+republicar, preservación del final, limpieza del namespace interno y fallo
+cerrado ante symlinks, FIFO, owner, modo, hash, inode, nlinks o lock
+incompatibles. También verifica la revocación de autoridad, el terminal del
+contexto y la ausencia de canarios en estado y errores saneados.
 
 `test_evaluation_profile.py` comprueba que
 `GSL-PROFILE-VULNERABLE-001` exige las RoE y los límites exactos, usa solo un

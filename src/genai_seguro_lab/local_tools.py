@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import errno
 import hmac
 import json
 import os
@@ -43,6 +42,13 @@ from .resource_control import (
     ResourceLimitError,
     require_serialized_size,
     require_utf8_size,
+)
+from .sandbox_recovery import (
+    SandboxPublicationConflict,
+    SandboxRecoveryError,
+    SandboxRecoveryLockError,
+    SandboxRecoveryReport,
+    SandboxTransactionController,
 )
 from .security_events import SecurityCorrelation, SecurityEventJournal
 
@@ -1290,6 +1296,7 @@ class DraftCreationResult(ToolSchema):
     content_sha256: Sha256
     bytes_written: Annotated[int, Field(ge=1)]
     created: Literal[True] = True
+    recovery_pending: bool = False
 
 
 def _finalize_draft_writer(
@@ -1412,6 +1419,31 @@ class DraftWriterTool:
         self._resource_control = resource_control
         self._security_journal = security_journal
         try:
+            self._transaction_controller = SandboxTransactionController(
+                root_fd,
+                self._root_identity,
+                maximum_payload_bytes=MAX_DRAFT_MARKDOWN_BYTES,
+                token_hex=secrets.token_hex,
+            )
+        except SandboxRecoveryLockError:
+            security_journal.signal(
+                "lock_conflict",
+                source="draft_writer",
+                outcome="conflict",
+            )
+            security_journal.finish(succeeded=False)
+            os.close(root_fd)
+            raise
+        except SandboxRecoveryError:
+            security_journal.signal(
+                "data_integrity_violation",
+                source="draft_writer",
+                outcome="denied",
+            )
+            security_journal.finish(succeeded=False)
+            os.close(root_fd)
+            raise
+        try:
             self._prepare_grant = _issue_tool_grant(
                 principal=principal,
                 scope=scope,
@@ -1440,6 +1472,7 @@ class DraftWriterTool:
         )
         self._lifecycle_lock = threading.RLock()
         self._closed = False
+        self._effect_published = False
         self._prepared: dict[int, DraftProposal] = {}
         self._challenge_issued: set[int] = set()
         self._effect_grants: dict[int, DraftEffectGrant] = {}
@@ -1453,7 +1486,16 @@ class DraftWriterTool:
     def resource_control(self) -> ProductResourceControl:
         return self._resource_control
 
+    @property
+    def recovery_report(self) -> SandboxRecoveryReport:
+        return self._transaction_controller.recovery_report
+
     def close(self) -> None:
+        self.stop()
+
+    def stop(self, *, succeeded: bool = True) -> None:
+        if not isinstance(succeeded, bool):
+            raise TypeError("succeeded must be a bool")
         with self._lifecycle_lock:
             if self._closed:
                 return
@@ -1464,13 +1506,20 @@ class DraftWriterTool:
             self._effect_grants.clear()
             self._consumed_proposals.clear()
             if not self._security_journal.is_finished:
-                self._security_journal.finish(succeeded=True)
+                self._security_journal.finish(succeeded=succeeded)
 
     def __enter__(self) -> Self:
         return self
 
-    def __exit__(self, *_: object) -> None:
-        self.close()
+    def __exit__(
+        self,
+        exception_type: type[BaseException] | None,
+        _: BaseException | None,
+        __: object,
+    ) -> None:
+        self.stop(
+            succeeded=exception_type is None or self._effect_published
+        )
 
     def prepare(
         self,
@@ -1642,22 +1691,33 @@ class DraftWriterTool:
     ) -> DraftCreationResult:
         with self._lifecycle_lock:
             with self._approval_authority._lock:
-                return self._create_locked(proposal, effect_grant)
+                try:
+                    result = self._create_locked(proposal, effect_grant)
+                except Exception:
+                    self.stop(succeeded=False)
+                    raise
+                self._effect_published = True
+                if result.recovery_pending:
+                    self.stop(succeeded=True)
+                return result
 
     def _create_locked(
         self,
         proposal: DraftProposal,
         effect_grant: DraftEffectGrant,
     ) -> DraftCreationResult:
-        self._require_active()
-        self._require_prepared_proposal(proposal)
-        self._require_effect_grant(proposal, effect_grant)
+        if not isinstance(proposal, DraftProposal):
+            raise TypeError("proposal must be a DraftProposal")
         proposal_identity = id(proposal)
         if proposal_identity in self._consumed_proposals:
             self._signal_authorization()
             raise DraftApprovalError("effect grant was already consumed")
+        self._require_active()
+        self._require_prepared_proposal(proposal)
+        self._require_effect_grant(proposal, effect_grant)
 
         content = self._render(proposal)
+        encoded = content.encode("utf-8")
         try:
             require_utf8_size(content, MAX_DRAFT_MARKDOWN_BYTES)
         except ResourceLimitError:
@@ -1684,40 +1744,28 @@ class DraftWriterTool:
             raise
 
         self._security_journal.begin_draft_effect(event_reservation)
-        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW
-        file_fd = -1
         try:
             try:
-                file_fd = os.open(
+                publication = self._transaction_controller.publish(
                     proposal.filename,
-                    flags,
-                    0o600,
-                    dir_fd=self._root_fd,
+                    encoded,
                 )
-            except OSError as exc:
-                if exc.errno in {errno.EEXIST, errno.ELOOP}:
-                    self._signal_sandbox_violation()
-                    raise DraftAlreadyExistsError(
-                        "draft target already exists; overwrite is forbidden"
-                    ) from None
+            except SandboxPublicationConflict:
                 self._signal_sandbox_violation()
-                raise SandboxViolationError(
-                    "draft target could not be created safely"
-                ) from exc
-
-            try:
-                os.fchmod(file_fd, 0o600)
-                with os.fdopen(
-                    file_fd,
-                    "w",
-                    encoding="utf-8",
-                    newline="\n",
-                ) as handle:
-                    file_fd = -1
-                    handle.write(content)
-            finally:
-                if file_fd >= 0:
-                    os.close(file_fd)
+                raise DraftAlreadyExistsError(
+                    "draft target already exists; overwrite is forbidden"
+                ) from None
+            except SandboxRecoveryLockError:
+                if not self._security_journal.is_finished:
+                    self._security_journal.signal(
+                        "lock_conflict",
+                        source="draft_writer",
+                        outcome="conflict",
+                    )
+                raise
+            except SandboxRecoveryError:
+                self._signal_sandbox_violation()
+                raise
         except Exception:
             self._security_journal.complete_draft_effect(
                 event_reservation,
@@ -1729,12 +1777,12 @@ class DraftWriterTool:
             succeeded=True,
         )
 
-        encoded = content.encode("utf-8")
         return DraftCreationResult(
             filename=proposal.filename,
             relative_path=f"sandbox/drafts/{proposal.filename}",
-            content_sha256=sha256(encoded).hexdigest(),
-            bytes_written=len(encoded),
+            content_sha256=publication.content_sha256,
+            bytes_written=publication.bytes_written,
+            recovery_pending=publication.recovery_pending,
         )
 
     def _require_prepare_grant(self, grant: ToolExecutionGrant) -> None:
@@ -1801,7 +1849,9 @@ class DraftWriterTool:
     def _require_active(self) -> None:
         if self._closed or not self._finalizer.alive:
             self._signal_authorization()
-            raise DraftApprovalError("draft writer is closed")
+            raise DraftApprovalError(
+                "draft writer is closed; authority is already consumed or revoked"
+            )
         self._approval_authority._assert_writer_active(
             writer_binding=self._binding,
             writer_session=self._writer_session,

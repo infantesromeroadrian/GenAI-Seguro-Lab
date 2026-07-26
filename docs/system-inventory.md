@@ -5,12 +5,12 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYS-INV-001` |
-| Versión | `2.2.0` |
+| Versión | `2.3.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-04-M07 en esta revisión; el commit exacto se obtiene del historial Git |
+| Control vigente | PGS-04-M08 en esta revisión; el commit exacto se obtiene del historial Git |
 | Entorno | checkout local de desarrollo |
-| Alcance | estado implementado hasta PGS-04-M07, con baseline histórica PGS-03-M07 y publicación PGS-07-M08 |
+| Alcance | estado implementado hasta PGS-04-M08, con baseline histórica PGS-03-M07 y publicación PGS-07-M08 |
 
 Este documento inventaría el sistema que existe en el repositorio, no la
 solución futura descrita en el roadmap. PGS-03-M04/M05/M06 conectan 14 fixtures
@@ -35,6 +35,10 @@ correlaciones opacas y señales deterministas, con una cadena SHA-256 y
 presupuestos propios. El informe solo se expone por `stdout` mediante
 `--security-report`; no crea logging persistente, telemetría externa,
 respuesta automática ni una autoridad nueva.
+PGS-04-M08 añade `CMP-12`: publica el borrador mediante una transacción local
+create-only, detiene y revoca la sesión y ejecuta una única reconciliación
+preautoridad. Nunca republica staging, restaura grants o elimina un final
+publicado.
 
 ## Convenciones de estado
 
@@ -68,7 +72,7 @@ ni procesos desatendidos.
 | `DAT-03` | Manifiesto del dataset | Sintético; JSON versionado con conteos, procedencia y SHA-256 | Descriptor existente usado por el lock advisory de `CMP-10`; lectura y validación por `CMP-02` | `data/manifest.json` |
 | `DAT-04` | Baseline funcional benigna | Evidencia JSON versionada; no es baseline de seguridad ni evaluación semántica | Se regenera por `CMP-05` y se compara de forma reproducible | `evaluations/benign-baseline-v1.json` |
 | `DAT-05` | Resultado de proceso | JSON efímero por `stdout` y error saneado por `stderr` | `CMP-09` permite o redacta el resumen antes de la emisión por `CMP-01`; no hay almacenamiento o logging persistente automático | `src/genai_seguro_lab/cli.py`, `src/genai_seguro_lab/output_policy.py` |
-| `DAT-06` | Borradores ficticios | Markdown sintético local; ignorado por Git | Creación exclusiva y no-follow por `TOL-02`, anclada al descriptor de `sandbox/drafts/` y con modo `0600`; actualmente no hay borradores generados en el checkout | `sandbox/drafts/` |
+| `DAT-06` | Borradores ficticios | Markdown sintético local; ignorado por Git | Publicación atómica create-only por `TOL-02` y `CMP-12`, anclada al descriptor de `sandbox/drafts/` y con modo `0600`; un final publicado nunca se elimina durante la recuperación | `sandbox/drafts/` |
 | `DAT-07` | 18 entradas adversarias | `synthetic_internal`; JSONL versionado | `CMP-07` selecciona las 14 PI/JB/EX/TOL; las otras 4 permanecen `inert_not_wired`; la CLI ordinaria no expone el corpus | `data/adversarial/inputs.jsonl` |
 | `DAT-08` | 18 oráculos adversarios | `synthetic_internal`; JSONL versionado y fijado antes de ejecutar | Pytest los compara después de observar el target; nunca entran en la petición, el modelo o la herramienta | `data/adversarial/oracles.jsonl` |
 | `DAT-09` | Manifiesto adversario | Sintético; JSON versionado con RoE, perfil objetivo, conteos y SHA-256 | Lectura y validación interna por `CMP-02`; declara 14 fixtures conectadas y evaluadas canónicamente, más 4 inertes | `data/adversarial/manifest.json` |
@@ -77,6 +81,7 @@ ni procesos desatendidos.
 | `DAT-12` | Eventos de baseline adversaria | JSONL saneado y versionado | Registra inicio, 14 casos y cierre; no contiene payloads, salida bruta ni rutas personales | `evaluations/adversarial-baseline-v1/events.jsonl` |
 | `DAT-13` | Manifiesto de evidencia adversaria | JSON versionado y revisado | Fija tamaños y SHA-256 de `DAT-10` a `DAT-12` | `evaluations/adversarial-baseline-v1/manifest.json` |
 | `DAT-14` | Informe de eventos de seguridad | JSON efímero, cerrado y saneado | Snapshot opt-in de `CMP-11` por `stdout`; no se almacena o exporta automáticamente y no reutiliza `DAT-12` | `src/genai_seguro_lab/security_events.py`, `docs/security-events-policy.md` |
+| `DAT-15` | Estado transaccional del sandbox | Marker JSON y staging locales, reservados y efímeros; informe de recuperación solo en memoria | `CMP-12` valida y retira únicamente `.gsl-txn-<32 hex>.(json|stage)`; el marker excluye contenido y autoridad y nunca permite publicar durante recuperación | `src/genai_seguro_lab/sandbox_recovery.py`, `docs/sandbox-recovery-policy.md` |
 
 El dataset `GSL-DATASET-001` declara 12 registros benignos, 8 documentos de
 conocimiento y 0 registros adversarios. No contiene datos personales,
@@ -99,7 +104,7 @@ descriptor no materializado que conserva
 | `CMP-03` | Flujo benigno | Expuesto | Coordina exactamente dos invocaciones de modelo, una petición y una ejecución de herramienta y una respuesta final; consume el perfil `analyze` o el presupuesto agregado recibido de `baseline`, y aplica `CMP-09` antes de devolver una proyección segura | `src/genai_seguro_lab/benign_flow.py`, `tests/test_resource_control.py` |
 | `MOD-01` | `DeterministicModelAdapter` | Expuesto | Doble `deterministic/scripted-v1` en el mismo proceso; responde solo a peticiones guionizadas, falla cerrado, hace 0 llamadas externas y registra 0 € | `src/genai_seguro_lab/model_adapter.py` |
 | `TOL-01` | `KnowledgeSearchTool` | Expuesto | Se crea desde `KnowledgeCatalog` con la vista física exacta del incidente y un grant opaco de una sola herramienta ligado a principal, scope e instancia; no usa red ni filesystem | `src/genai_seguro_lab/local_tools.py` |
-| `TOL-02` | `DraftWriterTool` y `DraftApprovalAuthority` | Interno | Aplica `CMP-09` antes de propuesta y huella; `CMP-10` limita cada sesión a una propuesta, un challenge, tres autenticaciones, un grant, un archivo y 16 KiB de Markdown. Challenge, aprobación y grant son efímeros, de un solo uso y ligados al contexto exacto; la creación usa descriptor, `O_EXCL`, `O_NOFOLLOW` y `0600` | `src/genai_seguro_lab/local_tools.py`, `tests/test_local_tools.py`, `tests/test_resource_control.py` |
+| `TOL-02` | `DraftWriterTool` y `DraftApprovalAuthority` | Interno | Aplica `CMP-09` antes de propuesta y huella; `CMP-10` limita cada sesión a una propuesta, un challenge, tres autenticaciones, un grant, un archivo y 16 KiB de Markdown. Challenge, aprobación y grant son efímeros, de un solo uso y ligados al contexto exacto; delega publicación y reconciliación create-only en `CMP-12` | `src/genai_seguro_lab/local_tools.py`, `tests/test_local_tools.py`, `tests/test_resource_control.py`, `tests/test_sandbox_recovery.py` |
 | `CMP-04` | Constructor de escenarios deterministas | Expuesto | Construye los intercambios guionizados para los incidentes benignos; no es un proveedor GenAI | `src/genai_seguro_lab/baseline.py` |
 | `CMP-05` | Ejecutor de baseline funcional | Expuesto | Ejecuta los 12 incidentes dentro de un único presupuesto agregado de `CMP-10` y serializa evidencia canónica por `stdout`; no escribe el snapshot por sí mismo | `src/genai_seguro_lab/baseline.py`, `tests/test_resource_control.py` |
 | `CMP-06` | Perfil vulnerable de evaluación | Interno | Requiere una declaración exacta de `GSL-ROE-001`, el bundle sintético y un `$TMP/sandbox/drafts`; construye una `ModelRequest` débil marcada, pero no llama al modelo, ejecuta herramientas ni escribe | `src/genai_seguro_lab/evaluation_profile.py`, `tests/test_evaluation_profile.py` |
@@ -108,6 +113,7 @@ descriptor no materializado que conserva
 | `CMP-09` | `OutputPolicy` | Control de aplicación | Dependencia obligatoria y sin autoridad de modelo, red o filesystem. Rechaza categorías explícitas, redacta correo y rutas locales, emite sellos ligados a instancia/canal y no conserva valores en su evidencia | `src/genai_seguro_lab/output_policy.py`, `tests/test_output_policy.py` |
 | `CMP-10` | `ProductResourceControl` | Control de aplicación | Política obligatoria y fail-closed `GSL-RESOURCE-POLICY-001`: preflight acotado del corpus; límites UTF-8 de modelo, herramienta, resumen y borrador; perfiles `analyze`, `baseline` y `draft`; checkpoints cooperativos y lock advisory de CLI. No cancela llamadas síncronas bloqueadas ni limita invocaciones directas de la API entre procesos | `src/genai_seguro_lab/resource_control.py`, `tests/test_resource_control.py`, `docs/resource-limits-policy.md` |
 | `CMP-11` | `SecurityEventJournal` | Control de aplicación | Política `GSL-SECURITY-EVENTS-001`: eventos cerrados de hasta 2 KiB, perfiles en memoria de 32/32 KiB, 256/256 KiB y 32/32 KiB, secuencia global, correlación primaria e hija por caso de baseline, cadena SHA-256 y diez señales deterministas. No persiste, exporta, firma ni responde | `src/genai_seguro_lab/security_events.py`, `tests/test_security_events.py`, `docs/security-events-policy.md` |
+| `CMP-12` | `SandboxTransactionController` | Control de aplicación interno | Política `GSL-SANDBOX-RECOVERY-001`: marker/staging `0600`, hard link atómico create-only, `fsync`, lock no bloqueante, una reconciliación antes de registrar autoridad y reporte saneado. Preserva un final publicado, nunca republica staging y falla cerrado ante estado ambiguo | `src/genai_seguro_lab/sandbox_recovery.py`, `tests/test_sandbox_recovery.py`, `docs/sandbox-recovery-policy.md` |
 
 `MOD-01` es el único modelo activo, pero no es un modelo GenAI real. Tampoco
 hay un agente autónomo: `CMP-03` es un flujo acotado y determinista con una sola
@@ -160,7 +166,7 @@ versionada para la resolución exacta.
 | `INF-01` | Host local | Único host de ejecución observado |
 | `INF-02` | Checkout Git en `main` | Repositorio local que sigue `origin/main` del remoto público `infantesromeroadrian/GenAI-Seguro-Lab` |
 | `INF-03` | Entorno `.venv` | Runtime local ignorado por Git y reconstruible con `uv sync --frozen` |
-| `INF-04` | Filesystem del checkout | Conserva corpus, snapshot y sandbox; solo `TOL-02` implementa escritura de producto, confinada a borradores |
+| `INF-04` | Filesystem del checkout | Conserva corpus, snapshot y sandbox; solo `TOL-02` implementa escritura de producto, confinada a borradores y publicada/reconciliada por `CMP-12` |
 | `INT-01` | Entrada de proceso | Argumentos de la CLI local; no existe endpoint HTTP, UI o cola |
 | `INT-02` | Salida de proceso | `stdout`/`stderr`; `--security-report` puede incluir `DAT-14` en el mismo `stdout`, pero no existe exportación automática, callback, correo, webhook o telemetría |
 | `INT-03` | Integraciones externas de runtime | Ninguna activa; la baseline registra 0 llamadas externas |
@@ -205,7 +211,12 @@ opaco y exige que
 `DraftApprovalAuthority` autentique el principal sintético configurado. La
 aprobación y el grant quedan ligados a contenido, principal, scope,
 herramienta, efecto, writer, sesión y raíz, caducan y se consumen una sola vez
-antes de I/O. No existe una ruta desde `CMP-01` hasta esa herramienta.
+antes de I/O. `CMP-12` escribe y sincroniza marker y staging internos, publica
+el nombre final mediante un hard link create-only y retira los metadatos. Una
+nueva instancia reconcilia una sola vez los artefactos válidos antes de
+registrar autoridad; preserva un final publicado y nunca publica staging.
+`TOL-02.stop()` revoca el estado efímero y cierra el descriptor. No existe una
+ruta desde `CMP-01` hasta esa herramienta.
 
 El perfil de evaluación también es independiente: `ACT-02` puede construir
 `CMP-06` mediante su factory Python con autorización y sandbox temporal
@@ -251,7 +262,8 @@ reclasifica aquí como un requisito pendiente.
 - `ACT-01` no se autentica. `IDN-03` autentica un principal sintético local,
   pero no demuestra presencia ni identidad humana real.
 - `TOL-02` tiene efecto local, pero actualmente solo es alcanzable mediante su
-  API Python interna y las pruebas.
+  API Python interna y las pruebas. `CMP-12` hace atómica y recuperable esa
+  creación para procesos cooperantes, pero no añade una ruta expuesta.
 - `CMP-06` es alcanzable únicamente por factory Python, queda ligado a un
   sandbox temporal y termina en `C0`: preparar una petición no equivale a
   ejecutarla.
@@ -272,6 +284,10 @@ reclasifica aquí como un requisito pendiente.
 - `CMP-11` detecta alteraciones de su snapshot mediante una cadena no firmada,
   pero no autentica el emisor, resiste código hostil en el mismo proceso,
   correlaciona sesiones o confirma que una señal sea un ataque.
+- `CMP-12` depende de primitivas POSIX y de un filesystem local compatible. Su
+  `flock` es cooperativo y sus validaciones no protegen frente a código Python
+  hostil con los mismos permisos de `IDN-01`; no instala handlers de señales
+  ni implementa el procedimiento operativo de `PGS-06-M07`.
 - La ausencia de red y proveedor elimina esas superficies del sistema actual,
   pero deberán inventariarse de nuevo si se incorporan.
 - La baseline adversaria solo acredita las observaciones de las 14 variantes
@@ -281,8 +297,8 @@ reclasifica aquí como un requisito pendiente.
 El [mapa C4 versionado](../architecture/manifest.json) materializa estos IDs
 con componentes, flujos y límites de confianza sin añadir infraestructura
 hipotética; PGS-03-M07 añade `CMP-08` y evidencia saneada sin crear una ruta de
-producto, PGS-04-M06 añade `CMP-10` y PGS-04-M07 añade `CMP-11`, ambos sin
-crear una nueva autoridad. La
+producto, PGS-04-M06 añade `CMP-10`, PGS-04-M07 añade `CMP-11` y PGS-04-M08
+añade `CMP-12`, sin crear una nueva autoridad. La
 [matriz de autoridad y consecuencias](./authority-matrix.md) distingue
 propuestas del modelo, construcción del perfil, ejecución por el proceso,
 efectos internos y autoridad externa de mantenimiento.

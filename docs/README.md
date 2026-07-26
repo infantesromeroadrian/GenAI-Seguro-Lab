@@ -61,6 +61,10 @@ real.
   journal cerrado y acotado en memoria, correlación por operación y caso,
   cadena SHA-256, señales deterministas, salida CLI opt-in y límites de
   PGS-04-M07.
+- [Política de parada y recuperación del
+  sandbox](./sandbox-recovery-policy.md): publicación atómica create-only,
+  revocación de autoridad, reconciliación preautoridad y límites de
+  PGS-04-M08.
 
 La documentación se añade junto al hito técnico correspondiente y debe
 distinguir el estado implementado de las decisiones o trabajos futuros.

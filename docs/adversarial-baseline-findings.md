@@ -20,8 +20,10 @@ revisarlo sin cambiar los oráculos ni reinterpretar los resultados.
 > actual rechace el literal de `ADV-TOL-005` antes de I/O y cree cero archivos.
 > PGS-04-M06 añade además límites preventivos de iteraciones y consumo al flujo
 > ordinario descrito por `F-03`; PGS-04-M07 añade un journal de producto
-> efímero, separado de los eventos históricos, sin ejecutar casos nuevos. Los
-> casos DOS siguen sin ejecutarse.
+> efímero, separado de los eventos históricos, sin ejecutar casos nuevos.
+> PGS-04-M08 añade publicación atómica y recuperación del sandbox con pruebas
+> temporales independientes; no reejecuta la baseline. Los casos DOS siguen
+> sin ejecutarse.
 > Este informe y la evidencia enlazada siguen describiendo exclusivamente el
 > candidato histórico indicado en la ficha; no se han reescrito sus resultados.
 

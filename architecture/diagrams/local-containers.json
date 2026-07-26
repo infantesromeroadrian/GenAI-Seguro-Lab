@@ -46,12 +46,16 @@
           "CMP-07",
           "CMP-08",
           "CMP-09",
+          "CMP-10",
+          "CMP-11",
+          "CMP-12",
           "MOD-01",
           "TOL-01",
           "TOL-02"
         ],
         "logicalLeastPrivilege": true,
         "mandatoryOutputPolicy": true,
+        "transactionalSandboxRecovery": true,
         "osIdentityIsolation": false,
         "syntheticApprovalIdentity": true,
         "humanInteractionVerified": false
@@ -112,10 +116,13 @@
         "trustBoundary": true,
         "boundaryId": "TB-05",
         "inventoryIds": [
-          "DAT-06"
+          "DAT-06",
+          "DAT-15"
         ],
-        "writeMode": "create-only",
-        "cliReachable": false
+        "writeMode": "atomic-create-only",
+        "cliReachable": false,
+        "recoveryPublishesStaging": false,
+        "publishedFinalDeletedOnRecovery": false
       }
     }
   ],
@@ -166,12 +173,14 @@
       "id": "containers-process-writes-draft",
       "source": "python-application-process",
       "target": "draft-sandbox-store",
-      "label": "API interna: política de salida + aprobación + descriptor + 0600",
+      "label": "API interna: aprobación + marker/staging 0600 + publicación atómica",
       "meta": {
         "type": "writes",
         "crossesBoundary": "TB-05",
         "cliReachable": false,
-        "directoryDescriptorAnchored": true
+        "directoryDescriptorAnchored": true,
+        "recoveryBeforeAuthority": true,
+        "restoresAuthority": false
       }
     }
   ]

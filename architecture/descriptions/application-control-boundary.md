@@ -18,6 +18,8 @@ del modelo.
   efecto y mantiene un lock no bloqueante durante cada operación de CLI.
 - Usa `CMP-11` para observar decisiones mediante metadatos cerrados; el
   journal no concede autoridad ni persiste o exporta automáticamente.
+- Usa `CMP-12` para publicar y reconciliar únicamente el efecto de borrador ya
+  autorizado, sin convertir markers o señales en autoridad.
 - El harness selecciona solo 14 fixtures PI/JB/EX/TOL y nunca entrega el
   oráculo al target.
 - `CMP-08` exige exclusivamente el commit histórico limpio, aplica los
@@ -38,3 +40,5 @@ cuenta, sandbox o proceso aislado. Los grants no reducen los permisos de
 `IDN-01` ni protegen frente a ejecución arbitraria de Python. El plazo y el
 lock de `CMP-10` son cooperativos.
 La cadena SHA-256 de `CMP-11` no está firmada o anclada fuera del proceso.
+El lock y las validaciones de `CMP-12` tampoco aíslan código hostil bajo
+`IDN-01`.

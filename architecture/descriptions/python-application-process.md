@@ -9,6 +9,8 @@ local.
   concurrencia cooperativa de la CLI.
 - Aplicar `CMP-11` a decisiones y efectos mediante un journal acotado en
   memoria, sin contenido bruto o exportación automática.
+- Aplicar `CMP-12` al efecto interno de borrador mediante publicación atómica,
+  parada y una reconciliación preautoridad.
 - Validar por API interna las entradas y oráculos adversarios.
 - Ejecutar el flujo benigno acotado y el adaptador determinista.
 - Autorizar la búsqueda de conocimiento fuera del modelo.
@@ -32,6 +34,8 @@ local.
 - El lock y los plazos de `CMP-10` son cooperativos y no cambian ese límite.
 - La cadena de `CMP-11` no autentica al emisor ni resiste código hostil dentro
   de este mismo proceso.
+- El `flock` de `CMP-12` es cooperativo y su recuperación no sustituye
+  aislamiento de sistema operativo ni un runbook.
 - `ADV-EX-003` recibe solo tres variables ambientales permitidas; no hereda
   `os.environ`.
 

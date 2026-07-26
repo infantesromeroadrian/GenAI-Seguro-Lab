@@ -5,18 +5,18 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-PRIORITY-001` |
-| Versión | `2.1.0` |
+| Versión | `2.2.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Crosswalk actual | [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
-| Alcance | sistema local sintético, incluidos `CMP-06` a `CMP-11` |
+| Alcance | sistema local sintético, incluidos `CMP-06` a `CMP-12` |
 
 Esta priorización ordena el backlog de pruebas del laboratorio. No es una
 clasificación CVSS ni estima la frecuencia de incidentes reales. La baseline
 histórica reproduce el residual concreto de `AC-TOL-05`; el checkout actual
-rechaza ese literal y la tabla incorpora los controles hasta PGS-04-M07. Cada caso
+rechaza ese literal y la tabla incorpora los controles hasta PGS-04-M08. Cada caso
 se valora únicamente contra las capacidades presentes en el corte indicado.
 
 ## Método
@@ -284,6 +284,22 @@ journal saneado y reglas deterministas. No cambia ninguna puntuación: una
 señal no confirma éxito, ataque o compromiso, no añade una ruta alcanzable y
 no sustituye el retest. La distribución permanece en 1 `PR-1`, 1 `PR-2`, 14
 `PR-3` y 1 `PR-0`.
+
+## Tratamiento de PGS-04-M08
+
+`CMP-12` elimina la exposición de un Markdown final parcial durante la
+creación de `TOL-02`, preserva un final ya publicado y recupera solo
+artefactos internos validados. No cambia ninguna puntuación:
+
+- no crea una nueva ruta desde modelo, CLI o perfil vulnerable;
+- no modifica el techo `C2` ni la probabilidad condicionada de los abuse cases
+  ya puntuados;
+- no reevalúa el residual histórico `AC-TOL-05`;
+- depende de procesos cooperantes y no reduce la autoridad de mantenimiento
+  de `IDN-01`.
+
+La distribución permanece en 1 `PR-1`, 1 `PR-2`, 14 `PR-3` y 1 `PR-0` hasta
+el retest de PGS-05.
 
 ## Backlog posterior a PGS-03-M07
 

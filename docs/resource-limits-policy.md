@@ -19,6 +19,11 @@ PGS-04-M07 conecta sus rechazos con `GSL-SECURITY-EVENTS-001`. El journal
 posee límites separados de eventos y bytes: no incorpora contenido observado
 ni altera los contadores de esta política.
 
+PGS-04-M08 añade límites independientes a `CMP-12`: como máximo examina 256
+entradas de la raíz, 16 artefactos internos y 8 transacciones, con markers de
+1 KiB y staging de 16 KiB. Esos límites protegen la reconciliación y no
+restauran el archivo ya consumido por `CMP-10`.
+
 ## Requisitos
 
 | ID | Requisito verificable |
@@ -89,6 +94,8 @@ contención del lock cooperativo y ausencia de efectos tras un rechazo.
   proceso; no puede heredar esta garantía por analogía.
 - El lock de CLI es advisory: coordina procesos que usan la entrada oficial,
   pero el mismo usuario puede omitirlo al invocar directamente la API Python.
+- El lock de `CMP-12` es también advisory y no bloqueante, pero sí cubre la
+  publicación y reconciliación de `TOL-02` entre procesos cooperantes.
 - No existe rate limiting persistente por usuario, cuota distribuida, cgroup,
   límite de RSS o aislamiento de sistema operativo.
 - El journal de `CMP-11` hace observable un exceso mediante un código cerrado,

@@ -5,10 +5,10 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-AUTH-MATRIX-001` |
-| Versión | `2.1.0` |
+| Versión | `2.2.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-04-M07 en esta revisión; el commit exacto se obtiene del historial Git |
+| Control vigente | PGS-04-M08 en esta revisión; el commit exacto se obtiene del historial Git |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
 | Arquitectura de origen | [`architecture/manifest.json`](../architecture/manifest.json) |
 | Alcance | autoridad implementada en el checkout local actual |
@@ -39,8 +39,10 @@ En el sistema actual:
    antes de cada operación protegida; el control no concede autoridad.
 8. `CMP-11` observa decisiones con metadatos cerrados; un evento o una
    correlación no conceden, validan o prolongan autoridad.
-9. La herramienta vuelve a validar sus argumentos y aplica su propio límite.
-10. El efecto máximo depende de la herramienta alcanzable, no de la intención
+9. `CMP-12` publica o reconcilia solo el efecto exacto ya autorizado; su marker
+   no contiene ni reconstituye autoridad.
+10. La herramienta vuelve a validar sus argumentos y aplica su propio límite.
+11. El efecto máximo depende de la herramienta alcanzable, no de la intención
    expresada por el modelo.
 
 `IDN-04` es, por tanto, una ausencia deliberada de autoridad: el modelo no
@@ -69,7 +71,7 @@ residual.
 | `AUTH-04` | `CMP-03` evalúa la propuesta de `AUTH-03`; ruta interna del flujo expuesto | La salida de `MOD-01` se trata como entrada no confiable y no puede emitir grants | `IDN-01` ejecuta; `IDN-05` liga principal, incidente, `knowledge_search` e instancia | `TOL-01` contiene únicamente las referencias del incidente | `TOL-01` | Exigir grant opaco exacto, nombre y JSON estrictos, limitar 1–8 IDs, rechazar otro scope o instancia y devolver como máximo 5 resultados | Convertir `available_tools` en autoridad, consultar documentos no retenidos, usar filesystem, red o encadenar otra herramienta | `C1`: divulgación al mismo proceso de conocimiento sintético autorizado |
 | `AUTH-05` | `CMP-03` entrega el resultado de `TOL-01` al modelo y exige la respuesta final | `MOD-01` produce texto final guionizado y no confiable | Ninguna identidad de ejecución; aplica `IDN-04` | Lee contexto de `DAT-01` y resultados autorizados de `DAT-02`; produce texto en memoria | `CMP-09` antes de la entrega | Emitir una respuesta final tipada; la aplicación comprueba consistencia, controla el resumen y proyecta métricas sin texto bruto | Solicitar otra herramienta, omitir la política, ejecutar recomendaciones o persistir la respuesta bruta | `C0` dentro de la frontera del modelo; `AUTH-01` o `AUTH-02` eleva solo la proyección permitida a `C1` |
 | `AUTH-06` | `ACT-03` o cualquier llamador Python local invoca `TOL-02.prepare`; API interna, no CLI | Ninguno conectado; acepta estructuralmente un `ModelToolRequest`, pero `MOD-01` no tiene ruta hasta aquí | `IDN-01` ejecuta; `IDN-05` liga principal, scope e instancia. Preparar no concede autoridad de efecto | Recibe contenido, aplica `CMP-09`, consume una propuesta de `CMP-10` y devuelve una propuesta saneada con huella SHA-256 | `TOL-02.prepare`, `CMP-09` y `CMP-10` | Aceptar solo el grant propio, validar nombre y referencias, controlar título y cuerpo y reservar una única propuesta antes de registrarla | Crear el archivo, omitir políticas, exceder la sesión o aceptar una propuesta directa o de otra instancia | `C0`: propuesta saneada, verificable y registrada en memoria |
-| `AUTH-07` | `ACT-03` solicita un challenge y presenta por API interna la identidad y credencial sintéticas configuradas | Ninguno participa en la autorización | `IDN-01` ejecuta; `IDN-03` queda autenticado por `DraftApprovalAuthority`; `IDN-05` conserva principal y scope | Puede crear un `DAT-06` de hasta 16 KiB de Markdown dentro de la sesión `draft` de `CMP-10` | `TOL-02.issue_approval_challenge/authorize_effect/create` y `CMP-10` | Emitir un challenge, admitir hasta tres intentos de autenticación, un grant y un archivo; ligar tokens al contexto, consumir antes de I/O y crear por descriptor con `O_EXCL`, `O_NOFOLLOW` y `0600` | Fabricar o reutilizar tokens, exceder la sesión, usar otra identidad o contexto, sobrescribir, borrar, escapar, usar shell o red | `C2`: un Markdown sintético nuevo y confinado. Acredita un principal sintético, no presencia humana; la CLI no puede provocarlo |
+| `AUTH-07` | `ACT-03` solicita un challenge y presenta por API interna la identidad y credencial sintéticas configuradas | Ninguno participa en la autorización | `IDN-01` ejecuta; `IDN-03` queda autenticado por `DraftApprovalAuthority`; `IDN-05` conserva principal y scope | Puede crear un `DAT-06` de hasta 16 KiB de Markdown dentro de la sesión `draft` de `CMP-10` | `TOL-02.issue_approval_challenge/authorize_effect/create`, `CMP-10` y `CMP-12` | Emitir un challenge, admitir hasta tres intentos de autenticación, un grant y un archivo; ligar tokens al contexto, consumir antes de I/O y publicar mediante marker/staging `0600` y hard link create-only | Fabricar o reutilizar tokens, exceder la sesión, usar otra identidad o contexto, sobrescribir, borrar el final, escapar, usar shell o red | `C2`: un Markdown sintético nuevo, atómico y confinado. Acredita un principal sintético, no presencia humana; la CLI no puede provocarlo |
 | `AUTH-08` | `ACT-02` regenera y versiona manualmente la baseline; operación de soporte | `MOD-01` genera material de origen, pero no autoriza la versión | Cuenta macOS y autoridad Git de `ACT-02`, fuera de la aplicación | Transforma `DAT-05` en `DAT-04` | CLI, redirección/editor y Git; no son herramientas del producto | Revisar, guardar y versionar la evidencia funcional | Atribuir a la aplicación una escritura automática o considerar el snapshot una evaluación de seguridad | `C3`: modificar la evidencia versionada y su interpretación |
 | `AUTH-09` | `ACT-02` mantiene el checkout local; operación de desarrollo y soporte | Ninguno limita esta autoridad | Cuenta macOS y autoridad Git de `ACT-02`, fuera de la aplicación | Puede modificar código, `DAT-01` a `DAT-04`, `DAT-06` a `DAT-09`, configuración y resolución de dependencias | Editor, Git, `uv` y herramientas de desarrollo | Cambiar y versionar el laboratorio de forma deliberada | Ningún control de runtime restringe esta cuenta; su uso queda sujeto al sistema operativo, revisión y disciplina de repositorio | `C3`: mayor autoridad actual; puede alterar controles, comportamiento, datos y evidencia |
 | `AUTH-10` | `ACT-02` llama a la factory de `CMP-06`; API Python interna, no CLI | Ninguno se ejecuta; solo se construye una `ModelRequest` deliberadamente débil | `IDN-01`; declaración exacta de `GSL-ROE-001`, sin identidad de servicio | Lee en memoria un incidente de `DAT-01` y metadatos de `DAT-03`; omite el oráculo y liga un `$TMP/sandbox/drafts` | `CMP-06`; valida autorización, datos sintéticos y aislamiento temporal | Preparar una petición marcada que anuncia `TOL-01` y `TOL-02` para un futuro harness | Usar el sandbox canónico, elegir el perfil desde CLI, llamar a `MOD-01`, ejecutar herramientas, crear archivos, usar red o iniciar un ataque | `C0`: petición tipada en memoria, sin efecto o ejecución |
@@ -80,6 +82,7 @@ residual.
 | `AUTH-15` | `CMP-03` o `TOL-02.prepare` solicitan una decisión de salida; ruta obligatoria de aplicación | El modelo solo aporta texto no confiable y no configura la política | `IDN-01` ejecuta; `CMP-09` no posee identidad, credenciales ni autoridad de efecto | Resumen final o título/cuerpo de borrador en memoria; la evidencia conserva categorías y conteos, no valores | `CMP-09` | Rechazar categorías explícitas, redactar correo y rutas locales o permitir texto byte a byte; ligar el sello a instancia y canal | Omitir el control, desenvolver un sello fabricado o cruzado, persistir texto previo a la política, usar red, modelo o filesystem | `C0`: texto permitido o redactado en memoria; la entrega `C1` o persistencia `C2` requieren además sus cadenas propias |
 | `AUTH-16` | `CMP-01/02/03/05` o `TOL-02` solicitan consumir un recurso antes de una operación protegida | Ningún modelo configura límites ni concede excepciones | `IDN-01` ejecuta; `CMP-10` no posee identidad, credenciales o autoridad de efecto | Inspecciona tamaños y contadores; no conserva contenido ni amplía vistas | `CMP-10` (`ProductResourceControl`) y lock advisory sobre `DAT-03` | Aplicar `GSL-RESOURCE-POLICY-001`, consumir antes de operar, comprobar tiempo antes y después y fallar cerrado sin salida parcial | Elevar límites dinámicamente, esperar o reintentar el lock, cancelar una llamada bloqueada, crear autoridad o persistir contenido | `C0`: precondición satisfecha o rechazo; la operación posterior conserva su propia cadena y consecuencia |
 | `AUTH-17` | `CMP-01/03/05/10`, `TOL-01` o `TOL-02` observan una decisión durante una operación | Ningún modelo define el esquema, la señal o la correlación | `IDN-01` ejecuta; `CMP-11` no posee identidad, credenciales o autoridad de efecto | Solo metadatos enumerados de `DAT-14`; no conserva prompts, respuestas, argumentos, contenido, rutas, credenciales, identidad presentada o tokens | `CMP-11` (`SecurityEventJournal`) | Aplicar `GSL-SECURITY-EVENTS-001`, reservar capacidad, correlacionar, encadenar y exponer un snapshot saneado solo por opt-in | Crear o validar grants, ampliar scope, persistir o exportar automáticamente, confirmar un ataque, responder, reintentar o hacer rollback | `C0` en memoria; `C1` solo cuando `ACT-01` pide expresamente el informe por `stdout` |
+| `AUTH-18` | `TOL-02` inicia `CMP-12` durante construcción, creación o parada; API interna, no CLI | Ninguno participa ni configura la recuperación | `IDN-01` ejecuta; `CMP-12` no posee identidad, credenciales o grant | Examina solo `DAT-15`, el descriptor de `sandbox/drafts/` y, si existe, el `DAT-06` final nombrado por un marker válido | `CMP-12` (`SandboxTransactionController`) | Adquirir `flock` sin espera; publicar una vez el staging autorizado; en el siguiente arranque preservar un final coherente o retirar solo artefactos internos válidos; devolver conteos saneados | Publicar durante recuperación, restaurar cuota o autoridad, borrar/modificar el final, recorrer subdirectorios, esperar/reintentar, usar una señal como permiso o exponer contenido y contexto | `C0` si reconcilia sin efecto; conserva como máximo el `C2` ya publicado por `AUTH-07` |
 
 ## Cadenas de autoridad resumidas
 
@@ -103,8 +106,9 @@ ACT-03 (API interna)
   → TOL-02 emite un único challenge ligado al contexto exacto
   → IDN-03 se autentica como principal sintético local
   → CMP-10 limita intentos; la autoridad emite un único grant opaco
-  → CMP-10 reserva un archivo y TOL-02.create usa descriptor
-  → DAT-06 create-only, no-follow y 0600
+  → CMP-10 reserva un archivo; TOL-02 consume el grant
+  → CMP-12 publica DAT-06 atómicamente o deja recuperación pendiente
+  → stop revoca la sesión; otra instancia reconcilia sin restaurar autoridad
 ```
 
 ```text
@@ -212,6 +216,9 @@ supply chain.
   alternativa ni una autoridad mayor.
 - `CMP-11` solo observa metadatos enumerados. Sus eventos, correlaciones,
   señales y hashes no crean identidad, autorización, efecto o prueba de ataque.
+- `CMP-12` solo puede materializar el efecto exacto que `AUTH-07` ya autorizó
+  o retirar metadatos internos validados. La recuperación nunca amplía,
+  reconstruye o reutiliza autoridad.
 - La autoridad `C3` del mantenedor debe permanecer distinguida del
   comportamiento que se atribuye al producto.
 
@@ -243,3 +250,7 @@ sin crear autoridad, rate limiting persistente o aislamiento de procesos.
 PGS-04-M07 añade `AUTH-17` y
 [`GSL-SECURITY-EVENTS-001`](./security-events-policy.md): observa decisiones
 sin convertir el journal en autoridad, telemetría persistente o respuesta.
+PGS-04-M08 añade `AUTH-18` y
+[`GSL-SANDBOX-RECOVERY-001`](./sandbox-recovery-policy.md): publica y
+reconcilia el único efecto local sin convertir estado duradero o señales en
+autoridad.

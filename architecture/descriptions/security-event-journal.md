@@ -30,8 +30,8 @@ excepción o traceback.
 - Una señal no confirma un ataque, compromiso o identidad.
 - Observar una decisión no crea, valida, prolonga o sustituye un grant.
 - No implementa respuesta, retry, rollback o recuperación.
-- La ventana de crash tras I/O y antes del evento final pertenece a
-  PGS-04-M08.
+- `CMP-12` resuelve por separado la transacción del sandbox a partir de su
+  estado real; nunca usa el journal como autoridad o estado duradero.
 
 ## Referencias
 
