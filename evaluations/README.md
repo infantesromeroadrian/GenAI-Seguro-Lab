@@ -137,3 +137,40 @@ La coincidencia exacta usa NFKC, `casefold` y espacios normalizados. No
 interpreta paráfrasis ni equivalencia semántica y tampoco evalúa
 semánticamente las afirmaciones prohibidas. Por ello los diagnósticos de
 umbral se publican, pero `SC-07` permanece `NOT_DEMONSTRATED`.
+
+## Métricas operativas comparativas v1
+
+`operational-metrics-v1.json` es la evidencia canónica de
+`GSL-METRICS-OPERATIONAL-001`:
+
+```bash
+uv run --frozen python evaluations/run_operational_metrics.py
+```
+
+`CMP-16` verifica los commits y árboles `df13683` y `ba600ca`, además de los
+SHA-256 byte a byte idénticos de `data/manifest.json`, `main.py`,
+`pyproject.toml` y `uv.lock`. Los materializa con `git archive` bajo un
+directorio temporal y ejecuta el mismo baseline con el mismo intérprete, sin
+instalar dependencias ni cambiar el checkout.
+
+El protocolo descarta tres pares de calentamiento y conserva 30 pares
+medidos, 15 en cada orden AB/BA, con un proceso nuevo por muestra y sin
+reintentos ni eliminación de outliers. La evidencia fija:
+
+- latencia mediana pre/post de 189.693.584 ns y 259.169.250 ns; delta
+  emparejado mediano de +67.387.688 ns;
+- CPU mediana de 167.383.000 ns y 223.382.500 ns; delta emparejado mediano de
+  +60.542.500 ns;
+- RSS mediana de 36.315.136 B y 41.172.992 B; delta emparejado mediano de
+  +4.907.008 B;
+- 12 casos, 24 invocaciones, 12 solicitudes y 12 ejecuciones derivadas por
+  candidato, con 0 llamadas externas y 0 céntimos de proveedor/cloud;
+- carga del operador `UNCHANGED`, superficie interna `INCREASED` y ningún
+  score compuesto.
+
+Cada muestra conserva tiempos, CPU, RSS, código de salida, tamaño y SHA-256
+de `stdout`, `stderr` vacío e identidades parseadas; no conserva la salida
+bruta. No hay umbral universal ni afirmación de significación. Energía,
+amortización y trabajo humano quedan sin medir; el resultado corresponde a
+un único host y sesión con un modelo determinista sin aislamiento de red a
+nivel kernel.

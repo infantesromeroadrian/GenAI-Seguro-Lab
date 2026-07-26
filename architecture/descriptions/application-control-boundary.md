@@ -7,7 +7,7 @@ del modelo.
 - Incluye CLI, contrato de datos, flujo benigno, motor de baseline, política
   de salida, control de recursos, journal de seguridad, perfil vulnerable,
   harness adversario, runner histórico, runner neutral de retest y analizador
-  offline de métricas.
+  offline de métricas, evaluador de utilidad y evaluador operativo.
 - Decide qué datos se cargan, qué herramienta se autoriza y cuándo termina el
   flujo.
 - Emite un principal y scope lógicos por operación y no deriva la autoridad
@@ -31,6 +31,11 @@ del modelo.
   bajo `$TMP`; no forma parte de la CLI.
 - `CMP-14` verifica los dos namespaces versionados y deriva métricas cerradas
   por `stdout`; no ejecuta el target, runners, harness o herramientas.
+- `CMP-15` repite el corpus benigno por caso y compara los oráculos después de
+  cada salida; no los entrega al target ni afirma equivalencia semántica.
+- `CMP-16` materializa dos commits fijados bajo `$TMP` y mide sus baselines en
+  procesos nuevos; no cambia el checkout, instala dependencias o fija un
+  umbral universal.
 - Los casos indirectos conectan una copia temporal al perfil, al doble
   determinista y a una búsqueda autorizada; los JB/EX añaden guardas,
   rechazos de búsqueda y una comprobación CLI saneada. TOL añade llamadas

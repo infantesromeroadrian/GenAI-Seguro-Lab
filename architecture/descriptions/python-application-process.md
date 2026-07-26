@@ -32,6 +32,9 @@ local.
 - Ejecutar mediante `CMP-15` los 12 casos benignos canónicos uno a uno y emitir
   su comparación pre/post saneada, sin entregar oráculos al target ni afirmar
   equivalencia semántica.
+- Ejecutar mediante `CMP-16` los candidatos benignos pre/post fijados en
+  procesos temporales, conservar 30 pares de métricas operativas saneadas y
+  emitir `DAT-22` sin cambiar el checkout ni fijar un umbral universal.
 
 ## Trust boundary
 
@@ -46,6 +49,9 @@ local.
   aislamiento de sistema operativo ni un runbook.
 - `ADV-EX-003` recibe solo tres variables ambientales permitidas; no hereda
   `os.environ`.
+- Los hijos de `CMP-16` reciben cuatro variables allowlisted; esto evita
+  heredar el entorno arbitrario, pero no instala aislamiento de red a nivel
+  kernel.
 
 ## Tecnología
 

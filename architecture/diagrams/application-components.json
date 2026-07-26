@@ -253,6 +253,28 @@
       }
     },
     {
+      "id": "operational-metrics-evaluator",
+      "label": "CMP-16 · Métricas operativas pre/post",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/operational_metrics.py",
+      "meta": {
+        "type": "service",
+        "technology": "pydantic-python-stdlib",
+        "inventoryIds": [
+          "CMP-16"
+        ],
+        "state": "internal-support-only",
+        "cliProductReachable": false,
+        "externalCalls": false,
+        "canonicalCases": 12,
+        "warmupPairs": 3,
+        "measuredPairs": 30,
+        "candidateIsolation": "git-archive-temporary-process",
+        "evidenceOutput": "evaluations/operational-metrics-v1.json",
+        "universalPerformanceThreshold": false
+      }
+    },
+    {
       "id": "output-safety-policy",
       "label": "CMP-09 · Política de salida",
       "parentId": "application-control-boundary",
@@ -936,6 +958,20 @@
         "externalCalls": false,
         "sideEffects": false,
         "semanticEquivalenceEvaluated": false
+      }
+    },
+    {
+      "id": "components-operational-metrics-runs-baselines",
+      "source": "operational-metrics-evaluator",
+      "target": "baseline-engine",
+      "label": "commits pre/post fijados → 3 warmup + 30 pares AB/BA",
+      "meta": {
+        "type": "calls",
+        "processPerCandidateSample": 1,
+        "directCheckoutWrite": false,
+        "externalCalls": false,
+        "outliersRemoved": false,
+        "retries": 0
       }
     }
   ]

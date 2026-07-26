@@ -52,6 +52,7 @@
           "CMP-13",
           "CMP-14",
           "CMP-15",
+          "CMP-16",
           "MOD-01",
           "TOL-01",
           "TOL-02"
@@ -109,7 +110,8 @@
           "DAT-18",
           "DAT-19",
           "DAT-20",
-          "DAT-21"
+          "DAT-21",
+          "DAT-22"
         ],
         "writeMode": "manual-versioning"
       }
@@ -172,7 +174,7 @@
       "id": "containers-process-reads-evaluation-evidence",
       "source": "python-application-process",
       "target": "evaluation-evidence-store",
-      "label": "CMP-14 verifica evidencia adversaria; CMP-15 verifica fuentes benignas",
+      "label": "CMP-14/15 verifican fuentes; CMP-16 fija Git e inputs comunes",
       "meta": {
         "type": "reads",
         "directWrite": false,
@@ -183,7 +185,7 @@
       "id": "containers-process-projects-evidence",
       "source": "python-application-process",
       "target": "evaluation-evidence-store",
-      "label": "stdout o proyección saneada baseline/retest/métricas/utilidad → versionado manual",
+      "label": "stdout o proyección saneada baseline/retest/métricas/utilidad/operación → versionado manual",
       "meta": {
         "type": "data-flow",
         "directWrite": false

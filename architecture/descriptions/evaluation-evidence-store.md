@@ -21,6 +21,9 @@ adversarias de forma reproducible.
 - `DAT-21`: proyección precontroles y snapshot comparativo de 12 casos
   benignos; conserva terminación, invariantes, falsos rechazos, cobertura
   textual exacta, hashes y límites sin salida bruta.
+- `DAT-22`: 30 pares pre/post de tiempo de pared, CPU y RSS, contadores,
+  costes externos y complejidad descriptiva; conserva hash y tamaño de salida,
+  no su contenido.
 
 ## Flujo de escritura
 
@@ -31,6 +34,8 @@ namespaces, emite `DAT-20` por `stdout` y tampoco escribe directamente. No exist
 escritura directa desde la CLI de producto hacia `evaluations/`. `CMP-15`
 verifica su fuente histórica, ejecuta los 12 casos benignos y emite `DAT-21`
 por `stdout`; el versionado sigue siendo una acción manual del mantenedor.
+`CMP-16` materializa los candidatos fijados bajo `$TMP`, ejecuta sus baselines
+y emite `DAT-22` por `stdout` con la misma separación de escritura.
 
 ## Límite
 
@@ -39,3 +44,5 @@ variantes y los commits fijados. No acredita seguridad general, resistencia a
 ataques desconocidos ni utilidad semántica. `DAT-21` acredita 12/12
 terminaciones y 0 falsos rechazos en ambos candidatos, pero su cobertura
 textual exacta no equivale a una evaluación semántica.
+`DAT-22` representa una sesión y un host; no constituye un SLO, benchmark
+universal ni medición de energía o coste total.

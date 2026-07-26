@@ -85,6 +85,34 @@ Las pruebas cubren el valor permitido y el inmediatamente superior cuando el
 tipo de límite lo permite, consumo acumulado, tiempo con reloj inyectado,
 contención del lock cooperativo y ausencia de efectos tras un rechazo.
 
+## Medición operativa PGS-05-M04
+
+`CMP-16` ejecutó `GSL-METRICS-OPERATIONAL-001` sobre los candidatos exactos
+`df13683` y `ba600ca`. Verificó corpus, `main.py`, `pyproject.toml` y
+`uv.lock` byte a byte, descartó tres pares de calentamiento y conservó 30
+pares AB/BA con procesos nuevos.
+
+| Métrica | Precontroles | Postcontroles | Delta emparejado mediano |
+|---|---:|---:|---:|
+| Latencia end-to-end mediana | 189.693.584 ns | 259.169.250 ns | +67.387.688 ns |
+| CPU total mediana | 167.383.000 ns | 223.382.500 ns | +60.542.500 ns |
+| RSS high-water mediana | 36.315.136 B | 41.172.992 B | +4.907.008 B |
+| Casos / modelo / solicitudes / ejecuciones | 12 / 24 / 12 / 12 | 12 / 24 / 12 / 12 | Sin cambio |
+| Proveedor / cloud | 0 / 0 céntimos | 0 / 0 céntimos | 0 |
+
+Las 12 ejecuciones de herramienta se derivan de una búsqueda satisfactoria
+por cada caso, no de un contador histórico precontroles. El candidato
+endurecido completó las 30 muestras sin activar el rechazo del presupuesto
+agregado. La carga del operador sigue siendo un comando, un proceso y cero
+servicios, secretos o logs persistentes; la superficie interna aumenta por
+el lock, el presupuesto, la política de salida, el journal y el grant acotado.
+
+No existe un umbral universal de rendimiento. La medición incluye el arranque
+del proceso y está sujeta a scheduler, cachés, temperatura y al carácter
+high-water de RSS. No mide energía, amortización, trabajo humano,
+concurrencia o carga sostenida y no se generaliza a otro host o a un modelo
+GenAI real.
+
 ## Límites y riesgo residual
 
 - El plazo es cooperativo. `ModelAdapter.generate()` es síncrono y no ofrece
@@ -101,4 +129,5 @@ contención del lock cooperativo y ausencia de efectos tras un rechazo.
 - El journal de `CMP-11` hace observable un exceso mediante un código cerrado,
   pero no añade cuota persistente, cancelación o respuesta automática.
 - La política no materializa los casos DOS inertes ni modifica la evidencia
-  histórica. PGS-05 medirá latencia y consumo con el mismo corpus de retest.
+  histórica. PGS-05-M04 ya midió el baseline benigno común; no ensayó los
+  casos DOS, concurrencia o carga sostenida.

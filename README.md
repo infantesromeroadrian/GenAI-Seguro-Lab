@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-05-M03, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica evaluó 14 fixtures sintéticas y su evidencia permanece inmutable. PGS-05-M01 repitió esos 14 IDs contra el commit endurecido exacto y PGS-05-M02 derivó una tasa de éxito de ataque de 1/14 (7,14 %) a 0/14 (0 %), con operaciones no autorizadas aceptadas o ejecutadas de 1 a 0. PGS-05-M03 repitió individualmente los 12 casos benignos: pre y post conservan 12/12 terminaciones técnicas, 0/12 falsos rechazos y cero efectos externos, pero solo 0/12 cumplen de forma estricta todas las cláusulas del resultado esperado. Los 12 quedan `PARTIAL`, sin regresiones atribuibles a los controles, y `SC-07` permanece `NOT_DEMONSTRATED` porque la equivalencia semántica y las prohibiciones no se han evaluado. Cuatro fixtures adversarias permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud. La siguiente microtarea es PGS-05-M04.
+> **Estado:** PGS-00-M01 a PGS-05-M04, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica evaluó 14 fixtures sintéticas y su evidencia permanece inmutable. PGS-05-M01 repitió esos 14 IDs contra el commit endurecido exacto y PGS-05-M02 derivó una tasa de éxito de ataque de 1/14 (7,14 %) a 0/14 (0 %), con operaciones no autorizadas aceptadas o ejecutadas de 1 a 0. PGS-05-M03 repitió individualmente los 12 casos benignos: pre y post conservan 12/12 terminaciones técnicas, 0/12 falsos rechazos y cero efectos externos, pero solo 0/12 cumplen de forma estricta todas las cláusulas del resultado esperado. Los 12 quedan `PARTIAL`, sin regresiones atribuibles a los controles, y `SC-07` permanece `NOT_DEMONSTRATED` porque la equivalencia semántica y las prohibiciones no se han evaluado. PGS-05-M04 midió 30 pares pre/post: la mediana end-to-end pasó de 189,69 ms a 259,17 ms, con un delta emparejado mediano de 67,39 ms; CPU y RSS también aumentaron, mientras los conteos 12/24/12/12, las llamadas externas y el coste de proveedor/cloud permanecieron sin cambio. No se aplica un umbral universal ni se generaliza esta observación de un único host. Cuatro fixtures adversarias permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud. La siguiente microtarea es PGS-05-M05.
 
 La proyección revisada de `GSL-RETEST-ADVERSARIAL-001` está versionada en
 [`evaluations/adversarial-retest-v1/`](./evaluations/adversarial-retest-v1/)
@@ -54,6 +54,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │       ├── evaluation_profile.py
 │       ├── local_tools.py
 │       ├── model_adapter.py
+│       ├── operational_metrics.py
 │       ├── output_policy.py
 │       ├── resource_control.py
 │       ├── sandbox_recovery.py
@@ -71,6 +72,7 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── test_adversarial_retest.py
 │   ├── test_local_tools.py
 │   ├── test_model_adapter.py
+│   ├── test_operational_metrics.py
 │   ├── test_output_policy.py
 │   ├── test_resource_control.py
 │   ├── test_sandbox_recovery.py
@@ -85,9 +87,11 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── run_adversarial_metrics.py
 │   ├── run_adversarial_retest.py
 │   ├── run_benign_utility.py
+│   ├── run_operational_metrics.py
 │   ├── adversarial-metrics-v1.json
 │   ├── benign-pre-controls-functional-v1.json
 │   ├── benign-utility-v1.json
+│   ├── operational-metrics-v1.json
 │   ├── adversarial-baseline-v1/
 │   │   ├── README.md
 │   │   ├── config.json
@@ -666,6 +670,36 @@ evalúa las afirmaciones prohibidas. Por ello `SC-07` queda
 rechazos ni regresiones técnicas, pero todavía no demuestra la calidad del
 resultado esperado.
 
+## Métricas operativas comparativas v1
+
+`CMP-16` reconstruye mediante `git archive` los candidatos exactos
+`df13683` y `ba600ca`, verifica que corpus, entrada y lock sean byte a byte
+idénticos y ejecuta el mismo `main.py baseline` en procesos nuevos. El runner
+no modifica el checkout ni instala dependencias:
+
+```bash
+uv run --frozen python evaluations/run_operational_metrics.py
+```
+
+La evidencia canónica
+[`evaluations/operational-metrics-v1.json`](./evaluations/operational-metrics-v1.json)
+conserva 30 pares AB/BA y todos sus outliers:
+
+- latencia mediana: 189,69 ms precontroles y 259,17 ms postcontroles; delta
+  emparejado mediano de +67,39 ms;
+- CPU mediana: 167,38 ms y 223,38 ms; delta emparejado mediano de +60,54 ms;
+- RSS mediana: 36.315.136 B y 41.172.992 B; delta emparejado mediano de
+  +4.907.008 B;
+- 12 casos, 24 invocaciones, 12 solicitudes y 12 ejecuciones derivadas por
+  candidato, con 0 llamadas externas y 0 céntimos de proveedor o cloud;
+- carga del operador sin cambio y superficie interna aumentada por el lock,
+  presupuesto, política de salida, journal y grant acotado.
+
+No se fija un umbral universal ni se afirma significación estadística. El
+arranque del proceso forma parte de la frontera medida; scheduler, cachés,
+temperatura y el carácter high-water de RSS añaden ruido. Energía,
+amortización y trabajo humano no se midieron y no se presentan como cero.
+
 ## Crosswalk de amenazas
 
 [docs/threat-crosswalk.md](./docs/threat-crosswalk.md) fija
@@ -1178,8 +1212,9 @@ nunca para ocultar un resultado ni para reescribir la baseline histórica.
 - [x] Repetir exactamente el corpus adversario de la baseline.
 - [x] Medir la tasa de éxito adversaria y las operaciones no autorizadas antes y después.
 - [x] Repetir el corpus benigno y medir éxito de tarea y falsos rechazos.
+- [x] Comparar latencia, consumo, coste y complejidad operativa.
 
-**PGS-00-M01 a PGS-05-M03, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **42 de 66 microtareas (63,6 %)**, con 24 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-05-M04, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **43 de 66 microtareas (65,2 %)**, con 23 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -1189,7 +1224,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-05-M04 — comparar latencia, consumo y complejidad operativa.**
+**PGS-05-M05 — registrar controles fallidos, bypasses y resultados negativos.**
 
 ## Uso responsable
 

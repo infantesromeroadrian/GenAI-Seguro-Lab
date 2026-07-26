@@ -5,8 +5,8 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-FINDINGS-ADVERSARIAL-001` |
-| Versión | `1.2.0` |
-| Fecha de corte | 2026-07-26 |
+| Versión | `1.3.0` |
+| Fecha de corte | 2026-07-27 |
 | Baseline | `GSL-BASELINE-ADVERSARIAL-001` |
 | Run | `GSL-ADV-BL-20260725-001` |
 | Candidato evaluado | `93aefa45eac687d219bfed32f03be4e60e4a13ed` |
@@ -16,7 +16,7 @@
 Este informe cierra PGS-03-M08. Describe lo observado, su impacto y cómo
 revisarlo sin cambiar los oráculos ni reinterpretar los resultados.
 
-> **Addendum de tratamiento (2026-07-26):** PGS-04-M04 hace que el checkout
+> **Addendum de tratamiento (2026-07-27):** PGS-04-M04 hace que el checkout
 > actual rechace el literal de `ADV-TOL-005` antes de I/O y cree cero archivos.
 > PGS-04-M06 añade además límites preventivos de iteraciones y consumo al flujo
 > ordinario descrito por `F-03`; PGS-04-M07 añade un journal de producto
@@ -27,6 +27,8 @@ revisarlo sin cambiar los oráculos ni reinterpretar los resultados.
 > PGS-05-M01 repite los mismos 14 IDs sobre el candidato endurecido y
 > PGS-05-M02 deriva, sin otra ejecución, 1/14 (7,14 %) → 0/14 (0 %) de éxito de
 > ataque y 1 → 0 operaciones no autorizadas aceptadas o ejecutadas.
+> PGS-05-M03 descarta regresiones técnicas en los 12 casos benignos y
+> PGS-05-M04 conserva 30 pares de latencia, CPU y RSS, sin umbral universal.
 > Este informe y la evidencia enlazada siguen describiendo exclusivamente el
 > candidato histórico indicado en la ficha; no se han reescrito sus resultados.
 
@@ -168,5 +170,7 @@ PGS-04 ya aplicó los controles y PGS-05-M01/M02 fijaron el retest inicial y su
 comparación sin reescribir esta baseline. PGS-05-M03 añadió la comparación
 benigna: 12/12 casos completados y 0 falsos rechazos pre/post, pero 0/12 éxitos
 textuales estrictos y `SC-07` no demostrado; la brecha ya existía antes de los
-controles y no constituye una regresión. La siguiente microtarea del proyecto
-es **PGS-05-M04 — medir coste y latencia y compararlos con el presupuesto**.
+controles y no constituye una regresión. PGS-05-M04 añadió la comparación
+operativa de un único host y sesión sin reinterpretar estos hallazgos. La
+siguiente microtarea del proyecto es **PGS-05-M05 — registrar controles
+fallidos, bypasses y resultados negativos**.

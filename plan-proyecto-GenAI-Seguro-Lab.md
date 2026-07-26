@@ -295,7 +295,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-05-M01** Repetir exactamente el corpus adversario de la baseline.
 - [x] **PGS-05-M02** Medir tasa de éxito del ataque y llamadas no autorizadas antes y después.
 - [x] **PGS-05-M03** Repetir el corpus benigno y medir éxito de tarea y falsos rechazos.
-- [ ] **PGS-05-M04** Comparar latencia, consumo y complejidad operativa.
+- [x] **PGS-05-M04** Comparar latencia, consumo y complejidad operativa.
 - [ ] **PGS-05-M05** Registrar controles fallidos, bypasses y resultados negativos.
 - [ ] **PGS-05-M06** Corregir únicamente defectos demostrados dentro del alcance.
 - [ ] **PGS-05-M07** Ejecutar el retest final y fijar los resultados.
@@ -406,6 +406,14 @@ requiriendo una decisión separada.
   0 llamadas externas y 0 efectos. La cobertura exacta es 0/24 hallazgos y
   0/36 acciones; no se presenta como equivalencia semántica y `SC-07`
   permanece `NOT_DEMONSTRATED`.
+- `GSL-METRICS-OPERATIONAL-001` reconstruye los commits precontroles
+  `df13683` y postcontroles `ba600ca` desde objetos Git, verifica cuatro
+  entradas comunes byte a byte y conserva 30 pares AB/BA de procesos nuevos.
+  La mediana end-to-end es 189,69 ms pre y 259,17 ms post, con delta
+  emparejado mediano de +67,39 ms; CPU y RSS también aumentan. Los conteos
+  12/24/12/12, las llamadas externas y el coste de proveedor/cloud permanecen
+  sin cambio. La carga del operador es igual y la superficie interna aumenta;
+  no hay score, umbral universal ni generalización fuera del host observado.
 - `docs/framework-versions.md` fija OWASP LLM 2025, OWASP Agentic 2026, MITRE ATLAS release `v2026.06` con `ATLAS.yaml` 5.6.0, NIST AI RMF 1.0 y NIST SP 800-218A final; NIST AI 600-1 queda como perfil GenAI complementario. La revalidación para PGS-02-M07 conserva el snapshot ATLAS anterior y documenta la actualización de `AML.T0054`.
 - `docs/system-inventory.md` fija `GSL-SYS-INV-001` con actores, datos,
   componentes, modelo, herramientas, identidades, dependencias,
@@ -414,8 +422,8 @@ requiriendo una decisión separada.
   remoto público de desarrollo del runtime local, que continúa sin modelo
   GenAI real, red, autenticación general, Docker, cloud, bases de datos o
   telemetría externa.
-- `architecture/manifest.json` y sus diagramas Tecture fijan contexto, contenedores y componentes con seis trust boundaries. El mapa incorpora `CMP-06` como perfil interno, `CMP-07` como harness adversario acotado para 14 fixtures PI/JB/EX/TOL, `CMP-09` como política de salida, `CMP-10` como control preventivo de recursos, `CMP-11` como journal saneado, `CMP-12` como controlador transaccional del sandbox, `CMP-14` como analizador adversario offline y `CMP-15` como evaluador benigno por caso; `DAT-21` conserva la proyección precontroles y el snapshot comparativo. `DraftWriterTool` permanece desconectada de la CLI y del flujo benigno. TB-02 a TB-04 siguen siendo límites lógicos dentro del mismo proceso. PGS-02-M03 cierra P01-M06.
-- `docs/authority-matrix.md` fija `GSL-AUTH-MATRIX-001` con veintiuna cadenas actuales y cuatro niveles de consecuencia. `AUTH-15` obliga a pasar resúmenes y borradores por `CMP-09`; `AUTH-16` consume los límites de `CMP-10`; `AUTH-17` observa mediante `CMP-11`; `AUTH-18` publica o reconcilia mediante `CMP-12` sin crear autoridad; `AUTH-19` acota el retest de soporte de PGS-05-M01, `AUTH-20` limita M02 a lectura e interpretación offline y `AUTH-21` limita M03 a la evaluación benigna sin oráculos en el target ni escritura directa. Mantiene separadas la propuesta sin autoridad de `MOD-01`, la ejecución con `IDN-01`, los grants lógicos `IDN-05`, la aprobación sintética `IDN-03`, el efecto interno create-only de `TOL-02` y la autoridad externa de mantenimiento de `ACT-02`.
+- `architecture/manifest.json` y sus diagramas Tecture fijan contexto, contenedores y componentes con seis trust boundaries. El mapa incorpora `CMP-06` como perfil interno, `CMP-07` como harness adversario acotado para 14 fixtures PI/JB/EX/TOL, `CMP-09` como política de salida, `CMP-10` como control preventivo de recursos, `CMP-11` como journal saneado, `CMP-12` como controlador transaccional del sandbox, `CMP-14` como analizador adversario offline, `CMP-15` como evaluador benigno por caso y `CMP-16` como medidor operativo pre/post; `DAT-22` conserva sus 30 pares y estadísticas. `DraftWriterTool` permanece desconectada de la CLI y del flujo benigno. TB-02 a TB-04 siguen siendo límites lógicos dentro del mismo proceso. PGS-02-M03 cierra P01-M06.
+- `docs/authority-matrix.md` fija `GSL-AUTH-MATRIX-001` con veintidós cadenas actuales y cuatro niveles de consecuencia. `AUTH-15` obliga a pasar resúmenes y borradores por `CMP-09`; `AUTH-16` consume los límites de `CMP-10`; `AUTH-17` observa mediante `CMP-11`; `AUTH-18` publica o reconcilia mediante `CMP-12` sin crear autoridad; `AUTH-19` acota el retest de soporte de PGS-05-M01, `AUTH-20` limita M02 a lectura e interpretación offline, `AUTH-21` limita M03 a la evaluación benigna y `AUTH-22` limita M04 a commits fijados, temporales y subprocesos sin escritura directa de evidencia. Mantiene separadas la propuesta sin autoridad de `MOD-01`, la ejecución con `IDN-01`, los grants lógicos `IDN-05`, la aprobación sintética `IDN-03`, el efecto interno create-only de `TOL-02` y la autoridad externa de mantenimiento de `ACT-02`.
 - `docs/abuse-cases.md` fija `GSL-ABUSE-CASES-001` con 17 escenarios: 3 de prompt injection, 2 de jailbreak, 3 de exfiltración, 5 de abuso de herramientas, 3 de denegación de servicio y 1 de supply chain. Los separa como `SIN-RUTA`, `INTERNO`, `MANTENIMIENTO` o `CLI` y conserva los gaps de evidencia.
 - `docs/risk-prioritization.md` fija `GSL-RISK-PRIORITY-001` con impacto `I0`–`I3`, probabilidad condicionada `L1`–`L3`, capacidad real `K0`–`K3` y una puntuación reproducible para los 17 casos. PGS-05-M02 aporta la comparación adversaria y PGS-05-M03 descarta una regresión técnica benigna, pero ninguna altera todavía el recálculo: 1 en `PR-1`, 1 en `PR-2`, 14 en `PR-3` y 1 en `PR-0`; los casos DOS siguen inertes y no existe un modelo real.
 - `docs/threat-crosswalk.md` fija `GSL-THREAT-CROSSWALK-001` con una fila por abuse case y relaciones directas, parciales o ausentes frente a OWASP LLM 2025, OWASP Agentic 2026 y MITRE ATLAS `v2026.06`. Conserva los gaps de consentimiento, filesystem y escenarios no agentic sin cambiar la prioridad.
@@ -456,6 +464,12 @@ requiriendo una decisión separada.
   0/14 (0 %), una operación no autorizada aceptada/ejecutada → cero, un caso
   mejorado y ninguna regresión. No reejecuta el target y conserva
   `source_final_retest: false`.
+- `CMP-16`, implementado en `src/genai_seguro_lab/operational_metrics.py` y
+  `evaluations/run_operational_metrics.py`, fija commits, árboles, corpus,
+  entrada y lock; extrae ambos candidatos bajo `$TMP` y mide 30 pares
+  end-to-end con procesos nuevos. `evaluations/operational-metrics-v1.json`
+  conserva muestras, mediana, MAD y p95, contadores y complejidad descriptiva
+  sin salida bruta, score ni umbral universal.
 - `docs/adversarial-baseline-findings.md` fija
   `GSL-FINDINGS-ADVERSARIAL-001`: explica cómo usar hoy la CLI, consolida seis
   hallazgos, acota el impacto del residual `ADV-TOL-005`, documenta la
@@ -469,6 +483,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-05-M04 — comparar latencia, consumo y complejidad operativa.**
+**PGS-05-M05 — registrar controles fallidos, bypasses y resultados negativos.**
 
-**Progreso interno:** 42 de 66 microtareas completadas, 24 abiertas (**63,6 %**).
+**Progreso interno:** 43 de 66 microtareas completadas, 23 abiertas (**65,2 %**).

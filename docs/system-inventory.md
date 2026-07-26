@@ -5,12 +5,12 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYS-INV-001` |
-| Versión | `2.6.0` |
-| Fecha de corte | 2026-07-26 |
+| Versión | `2.7.0` |
+| Fecha de corte | 2026-07-27 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-05-M03, comparación funcional benigna pre/post controles |
+| Control vigente | PGS-05-M04, comparación operativa pre/post controles |
 | Entorno | checkout local de desarrollo |
-| Alcance | estado implementado hasta PGS-05-M03, con baseline histórica PGS-03-M07 y publicación PGS-07-M08 |
+| Alcance | estado implementado hasta PGS-05-M04, con baseline histórica PGS-03-M07 y publicación PGS-07-M08 |
 
 Este documento inventaría el sistema que existe en el repositorio, no la
 solución futura descrita en el roadmap. PGS-03-M04/M05/M06 conectan 14 fixtures
@@ -49,6 +49,11 @@ precontroles, repite los 12 casos benignos uno a uno contra el flujo actual y
 publica una comparación saneada. Ambos lados completan 12/12 casos con 0
 falsos rechazos, pero 0/12 cumplen la cobertura textual estricta; por eso
 `SC-07` queda `NOT_DEMONSTRATED` y no se afirma equivalencia semántica.
+PGS-05-M04 añade `CMP-16` y `DAT-22`: reconstruye dos candidatos fijados con
+`git archive`, verifica cuatro entradas byte a byte y conserva 30 pares AB/BA
+de latencia, CPU y RSS. Mantiene 12/24/12/12 operaciones, cero llamadas
+externas y cero céntimos de proveedor/cloud. La carga del operador no cambia y
+la superficie interna aumenta; no se aplica score ni umbral universal.
 
 ## Convenciones de estado
 
@@ -98,6 +103,7 @@ ni procesos desatendidos.
 | `DAT-19` | Manifiesto de evidencia del retest M01 | JSON versionado y revisado | Fija lista cerrada, tamaños y SHA-256 de `DAT-16` a `DAT-18`; declara `reviewed_for_versioning: true` y `final_retest: false` | `evaluations/adversarial-retest-v1/manifest.json` |
 | `DAT-20` | Métricas adversarias comparativas M02 | JSON canónico, saneado y versionado | `CMP-14` lo deriva de `DAT-10` a `DAT-13` y `DAT-16` a `DAT-19`; conserva hashes, reglas, 14 pares, tasas, deltas, cobertura y límites, con `source_final_retest: false` | `evaluations/adversarial-metrics-v1.json` |
 | `DAT-21` | Comparación de utilidad benigna M03 | Dos JSON canónicos, saneados y versionados: proyección precontroles y snapshot comparativo | `CMP-15` fija commits y árboles, verifica el corpus y ocho fuentes de producto, ejecuta 12 casos postcontroles y compara oráculos solo después de cada salida; conserva métricas enteras, hashes, límites y `semantic_equivalence_evaluated: false` | `evaluations/benign-pre-controls-functional-v1.json`, `evaluations/benign-utility-v1.json` |
+| `DAT-22` | Métricas operativas benignas M04 | JSON canónico y saneado con 30 pares pre/post, muestras crudas, estadísticas, consumo y complejidad descriptiva | `CMP-16` fija commits, árboles y hashes comunes; usa procesos nuevos, conserva todos los outliers y valida cada salida sin guardar su contenido bruto. No fija umbral, score o significación y declara energía/TCO sin medir | `evaluations/operational-metrics-v1.json` |
 
 El dataset `GSL-DATASET-001` declara 12 registros benignos, 8 documentos de
 conocimiento y 0 registros adversarios. No contiene datos personales,
@@ -133,6 +139,7 @@ descriptor no materializado que conserva
 | `CMP-13` | Runner neutral de retest adversario | Soporte interno | Reutiliza la ejecución de `CMP-07` sin duplicar el harness; exige candidato endurecido exacto y limpio, verifica la baseline histórica y la comparabilidad del corpus, y proyecta bajo `$TMP` solo identidad, cardinalidad, ejecución, integridad y observaciones neutrales. No calcula eficacia ni métricas de PGS-05-M02 | `src/genai_seguro_lab/adversarial_retest.py`, `evaluations/run_adversarial_retest.py`, `tests/test_adversarial_retest.py` |
 | `CMP-14` | Analizador offline de métricas adversarias | Soporte interno | Verifica por SHA-256 los dos manifiestos y todos sus ficheros, exige 14 pares evaluables, aplica una política cerrada al triple observado y emite JSON canónico por `stdout`. No ejecuta runners, target, harness o herramientas y falla cerrado ante deriva o estados desconocidos | `src/genai_seguro_lab/adversarial_metrics.py`, `evaluations/run_adversarial_metrics.py`, `tests/test_adversarial_metrics.py` |
 | `CMP-15` | Evaluador comparativo de utilidad benigna | Soporte interno | Verifica la proyección precontroles y el checkout, ejecuta los 12 incidentes canónicos uno a uno mediante `CMP-03` con `CMP-10`, y compara tras cada salida invariantes funcionales y cobertura textual exacta. Emite JSON saneado por `stdout`; no entrega oráculos al target, no escribe evidencia, no usa red y no interpreta equivalencia semántica | `src/genai_seguro_lab/benign_utility.py`, `evaluations/run_benign_utility.py`, `tests/test_benign_utility.py` |
+| `CMP-16` | Evaluador offline de métricas operativas | Soporte interno | Materializa bajo `$TMP` los commits benignos pre/post fijados, verifica corpus, entrada y lock byte a byte y ejecuta 3 pares de calentamiento y 30 pares AB/BA con procesos nuevos. Mide pared, CPU y RSS, valida y hashea la salida y emite JSON por `stdout`; no cambia el checkout, instala dependencias, conserva salida bruta o aplica un umbral universal | `src/genai_seguro_lab/operational_metrics.py`, `evaluations/run_operational_metrics.py`, `tests/test_operational_metrics.py` |
 
 `CMP-13` no abre una interfaz de producto y mantiene separado el contrato
 histórico de `CMP-08`. El run `GSL-ADV-RT-20260726-001` produjo `DAT-16` a
@@ -142,6 +149,8 @@ baseline histórica ya versionada para producir `DAT-20`; no modifica ninguna
 de ellas. `CMP-15` fija la proyección derivada del commit precontroles
 `df13683abc2b2387f8dd29be64c4d49216e08e3a`, verifica el candidato
 postcontroles `ba600ca8ca25074a7806b6502ad59c0847212650` y produce `DAT-21`.
+`CMP-16` reutiliza esa pareja, verifica además `main.py`, `pyproject.toml` y
+`uv.lock` byte a byte y produce `DAT-22` desde copias temporales.
 La dependencia del objeto Git histórico es deliberadamente fail-closed: un
 archivo o clon sin ese objeto no puede regenerar la comparación.
 
@@ -155,11 +164,12 @@ principal y un scope lógicos, y cada instancia autoriza como máximo una
 alcanzar los controles de replay y filesystem. `ADV-TOL-005` intenta fabricar
 la confirmación literal histórica, se rechaza antes de I/O y crea cero
 archivos; no conecta `TOL-02` a la CLI ni al flujo benigno. `CMP-08`, `CMP-13`,
-`CMP-14` y `CMP-15` no añaden una ruta de producto: el primero solo reproduce
+`CMP-14`, `CMP-15` y `CMP-16` no añaden una ruta de producto: el primero solo reproduce
 el commit histórico fijado y el segundo exige un candidato endurecido exacto;
 ambos escriben primero en un directorio temporal nuevo. El tercero solo lee
 evidencia adversaria versionada. El cuarto ejecuta únicamente el flujo benigno
-canónico y emite una comparación saneada por `stdout`.
+canónico y emite una comparación saneada por `stdout`. El quinto ejecuta ambos
+candidatos benignos fijados en procesos temporales y emite métricas operativas.
 
 ## Identidades, credenciales y autoridad
 
@@ -311,7 +321,7 @@ reclasifica aquí como un requisito pendiente.
   instantánea funcional y `DAT-10` a `DAT-13` evidencia adversaria versionada
   manualmente; `DAT-16` a `DAT-19` conservan la proyección neutral de
   PGS-05-M01, `DAT-20` su comparación cerrada de M02 y `DAT-21` la comparación
-  funcional benigna de M03.
+  funcional benigna de M03. `DAT-22` conserva la comparación operativa M04.
 - `CMP-09` solo cubre reglas explícitas. M02 mide las fixtures observadas, pero
   no sustituye detección contextual, moderación completa ni evaluación con un
   modelo real.
@@ -339,13 +349,18 @@ reclasifica aquí como un requisito pendiente.
   textual exacta es 0/24 hallazgos y 0/36 acciones en ambos lados: diagnostica
   una brecha funcional preexistente, pero no evalúa equivalencia semántica ni
   afirmaciones prohibidas y no demuestra `SC-07`.
+- M04 observa en un único host medianas de 189,69 ms pre y 259,17 ms post,
+  con +67,39 ms de delta emparejado, además de mayor CPU y RSS. Mantiene los
+  conteos y el coste externo, pero no mide energía, amortización, trabajo
+  humano, concurrencia o carga sostenida y no demuestra un umbral universal.
 
 El [mapa C4 versionado](../architecture/manifest.json) materializa estos IDs
 con componentes, flujos y límites de confianza sin añadir infraestructura
 hipotética; PGS-03-M07 añade `CMP-08` y evidencia saneada sin crear una ruta de
 producto, PGS-04-M06 añade `CMP-10`, PGS-04-M07 añade `CMP-11`, PGS-04-M08
 añade `CMP-12`, PGS-05-M02 añade `CMP-14` y PGS-05-M03 añade `CMP-15`, sin
-crear una nueva autoridad. La
+crear una nueva autoridad. PGS-05-M04 añade `CMP-16` como soporte temporal y
+`DAT-22`, también sin crear una ruta de producto. La
 [matriz de autoridad y consecuencias](./authority-matrix.md) distingue
 propuestas del modelo, construcción del perfil, ejecución por el proceso,
 efectos internos y autoridad externa de mantenimiento.
