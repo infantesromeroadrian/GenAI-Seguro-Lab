@@ -35,6 +35,9 @@ local.
 - Ejecutar mediante `CMP-16` los candidatos benignos pre/post fijados en
   procesos temporales, conservar 30 pares de métricas operativas saneadas y
   emitir `DAT-22` sin cambiar el checkout ni fijar un umbral universal.
+- Verificar mediante `CMP-17` el registro estático `DAT-23`, los hashes y
+  contratos de `DAT-20/21/22`, sus 44 referencias escalares y su resumen, sin
+  ejecutar fuentes o escribir evidencia.
 
 ## Trust boundary
 
@@ -52,6 +55,8 @@ local.
 - Los hijos de `CMP-16` reciben cuatro variables allowlisted; esto evita
   heredar el entorno arbitrario, pero no instala aislamiento de red a nivel
   kernel.
+- `CMP-17` es de solo lectura respecto al repositorio y no genera la
+  clasificación que valida.
 
 ## Tecnología
 

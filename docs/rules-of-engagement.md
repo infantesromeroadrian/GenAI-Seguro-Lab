@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `2.3.0` |
+| Versión | `2.4.0` |
 | Fecha de entrada en vigor | 2026-07-27 |
 | Baseline técnica de origen | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
@@ -306,6 +306,14 @@ coste externo y complejidad descriptiva. No fija SLO, umbral universal,
 significación, score compuesto o coste total; energía, amortización y trabajo
 humano quedan sin medir.
 
+PGS-05-M05 autoriza `CMP-17` únicamente para verificar offline el registro
+estático y revisado `DAT-23` contra `DAT-20`, `DAT-21` y `DAT-22`. Puede leer,
+validar esquemas y hashes, resolver las 44 referencias escalares y emitir un
+informe efímero por `stdout`. No puede ejecutar targets, evaluadores, runners,
+harness, modelos o herramientas; tampoco generar o modificar hallazgos,
+escribir evidencia, decidir una corrección de M06, aceptar riesgo ni declarar
+el retest final. La clasificación y el versionado corresponden al mantenedor.
+
 Los logs brutos permanecen en el directorio temporal y no se versionan. Tras
 verificar la evidencia saneada se eliminan de forma acotada y recuperable
 cuando sea posible. `evaluations/` solo recibe artefactos sintéticos,
@@ -367,6 +375,7 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-23` | PGS-05-M02 debe medir sin reejecutar ni ampliar el alcance | `CMP-14` verifica `DAT-10` a `DAT-13` y `DAT-16` a `DAT-19`, exige 14 pares y reglas cerradas, deja DOS/SC fuera del denominador y emite `DAT-20`; no ejecuta target, harness, runners o herramientas ni presenta intentos no conservados como llamadas |
 | `ROE-24` | PGS-05-M03 debe medir utilidad benigna sin entregar oráculos ni atribuir semántica | `CMP-15` verifica candidatos, fuentes y corpus; repite exactamente 12 casos con `CMP-03` y `CMP-10`, compara el oráculo después de cada salida y emite `DAT-21` saneado; no escribe, usa red, ejecuta `TOL-02`, amplía casos ni presenta cobertura textual exacta como equivalencia semántica |
 | `ROE-25` | PGS-05-M04 debe medir dos candidatos fijados sin alterar el repositorio ni presentar un benchmark universal | `CMP-16` verifica commits, árboles y hashes comunes; usa copias `$TMP`, tres pares de calentamiento y 30 pares AB/BA con procesos nuevos y entorno allowlisted; conserva todas las muestras y emite `DAT-22` saneado sin salida bruta, retry, red deliberada, instalación, score, umbral o versionado automático |
+| `ROE-26` | PGS-05-M05 debe consolidar evidencia existente sin ejecutar ni reinterpretar expansivamente | `CMP-17` verifica `DAT-20/21/22/23`, sus hashes, esquemas, 44 referencias escalares y el resumen; no genera clasificaciones, ejecuta componentes, escribe evidencia, decide M06, acepta riesgo o cambia `final_retest` |
 
 ## Disparadores de revisión
 

@@ -127,6 +127,19 @@ y equivalencia byte a byte del wrapper con el snapshot versionado. Fija 12/12
 terminaciones, 0/12 falsos rechazos, 0/12 éxitos estrictos y `SC-07` como
 `NOT_DEMONSTRATED`, sin atribuir comprensión semántica al comparador.
 
+`test_operational_metrics.py` comprueba el contrato de PGS-05-M04: commits,
+árboles y cuatro entradas comunes fijados, ejecución temporal AB/BA,
+estadísticas enteras reproducibles, todos los outliers, consumo y complejidad
+descriptiva. Verifica que no se cambie el checkout, no se conserve salida
+bruta y no se inventen umbrales, significación, energía o TCO.
+
+`test_control_findings.py` comprueba el contrato de PGS-05-M05: seis hallazgos
+disjuntos, resumen derivado, hashes de `DAT-20/21/22`, 44 referencias
+escalares, byte-identidad del JSON canónico, saneado y fallo cerrado ante
+tampering o referencias divergentes. También impide cierre prematuro del
+bypass histórico y confirma que `CMP-17` no dependa de ejecución de targets,
+red o generación automática del registro.
+
 `test_control_traceability.py` comprueba exclusivamente el contrato documental
 de la matriz canónica: una fila por `CTL-01` a `CTL-13`, roles conocidos,
 cobertura explícita de los 17 abuse cases, limitaciones no vacías y selectores

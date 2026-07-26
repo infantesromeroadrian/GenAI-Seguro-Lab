@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-FINDINGS-ADVERSARIAL-001` |
-| Versión | `1.3.0` |
+| Versión | `1.4.0` |
 | Fecha de corte | 2026-07-27 |
 | Baseline | `GSL-BASELINE-ADVERSARIAL-001` |
 | Run | `GSL-ADV-BL-20260725-001` |
@@ -29,6 +29,9 @@ revisarlo sin cambiar los oráculos ni reinterpretar los resultados.
 > ataque y 1 → 0 operaciones no autorizadas aceptadas o ejecutadas.
 > PGS-05-M03 descarta regresiones técnicas en los 12 casos benignos y
 > PGS-05-M04 conserva 30 pares de latencia, CPU y RSS, sin umbral universal.
+> PGS-05-M05 registra el bypass histórico, los resultados negativos y los
+> gaps en `GSL-CONTROL-FINDINGS-001`, sin alterar esta baseline ni convertir
+> controles parciales en fallos.
 > Este informe y la evidencia enlazada siguen describiendo exclusivamente el
 > candidato histórico indicado en la ficha; no se han reescrito sus resultados.
 
@@ -171,6 +174,8 @@ comparación sin reescribir esta baseline. PGS-05-M03 añadió la comparación
 benigna: 12/12 casos completados y 0 falsos rechazos pre/post, pero 0/12 éxitos
 textuales estrictos y `SC-07` no demostrado; la brecha ya existía antes de los
 controles y no constituye una regresión. PGS-05-M04 añadió la comparación
-operativa de un único host y sesión sin reinterpretar estos hallazgos. La
-siguiente microtarea del proyecto es **PGS-05-M05 — registrar controles
-fallidos, bypasses y resultados negativos**.
+operativa de un único host y sesión sin reinterpretar estos hallazgos.
+PGS-05-M05 los referencia desde `DAT-23`: conserva `F-06` como bypass
+histórico pendiente del retest final y no observa otro bypass actual dentro de
+las 14 fixtures medidas. La siguiente microtarea del proyecto es
+**PGS-05-M06 — corregir únicamente defectos demostrados dentro del alcance**.

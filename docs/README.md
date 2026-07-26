@@ -52,6 +52,13 @@ real.
 - [Utilidad benigna v1](../evaluations/benign-utility-v1.json): comparación
   saneada de 12 casos antes/después, con terminación técnica, cumplimiento
   textual estricto, falsos rechazos, deltas y límites de interpretación.
+- [Métricas operativas v1](../evaluations/operational-metrics-v1.json): 30
+  pares pre/post con pared, CPU, RSS, consumo, complejidad y límites sin
+  umbral universal.
+- [Registro canónico de hallazgos M05](../evaluations/control-findings-v1.json):
+  seis observaciones revisadas sobre `DAT-20/21/22`, con 0 fallos actuales
+  observados, 1 bypass histórico, 2 resultados negativos y 3 gaps; no
+  sustituye la matriz canónica de controles ni el riesgo residual de M08.
 - [Hallazgos de la baseline adversaria](./adversarial-baseline-findings.md):
   uso actual del laboratorio, impacto de las variantes observadas,
   reproducción, residual conocido y límites de la evidencia.

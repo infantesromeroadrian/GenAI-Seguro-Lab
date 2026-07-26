@@ -36,6 +36,9 @@ mediante un flujo determinista y herramientas con autoridad acotada.
   semántica.
 - Medir mediante `CMP-16` 30 pares pre/post de latencia, CPU y RSS, con
   contadores y complejidad descriptiva sin score o umbral universal.
+- Consolidar manualmente seis hallazgos en `DAT-23` y verificar mediante
+  `CMP-17` sus fuentes, referencias y resumen sin reejecutar evaluadores o
+  generar clasificaciones.
 
 ## Límites de confianza
 
@@ -73,7 +76,8 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
   14 PI/JB/EX/TOL, `CMP-08` fija su baseline canónica, `CMP-13` conserva el
   retest neutral inicial, `CMP-14` deriva su comparación y las otras cuatro
   entradas siguen inertes. `CMP-15` solo ejecuta el corpus benigno canónico y
-  `CMP-16` solo mide dos candidatos benignos fijados bajo `$TMP`.
+  `CMP-16` solo mide dos candidatos benignos fijados bajo `$TMP`; `CMP-17`
+  solo verifica `DAT-20/21/22/23` y emite un informe efímero.
 - El perfil vulnerable existe como API interna `C0`; solo `CMP-07` conduce sus
   peticiones hacia el doble determinista y `TOL-01`; M06 invoca `TOL-02`
   únicamente desde pytest y bajo `$TMP`, nunca desde la CLI o el flujo benigno.
@@ -92,5 +96,6 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 - `evaluations/benign-pre-controls-functional-v1.json`
 - `evaluations/benign-utility-v1.json`
 - `evaluations/operational-metrics-v1.json`
+- `evaluations/control-findings-v1.json`
 - `docs/resource-limits-policy.md`
 - `docs/sandbox-recovery-policy.md`

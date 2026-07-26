@@ -5,10 +5,10 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-AUTH-MATRIX-001` |
-| Versión | `2.6.0` |
+| Versión | `2.7.0` |
 | Fecha de corte | 2026-07-27 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-05-M04, comparación operativa pre/post controles |
+| Control vigente | PGS-05-M05, verificación del registro canónico de hallazgos |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
 | Arquitectura de origen | [`architecture/manifest.json`](../architecture/manifest.json) |
 | Alcance | autoridad implementada en el checkout local actual |
@@ -52,6 +52,9 @@ En el sistema actual:
 14. `CMP-16` puede materializar dos commits fijados bajo `$TMP` y ejecutar sus
     baselines en subprocesos, pero no cambia el checkout, hereda variables
     arbitrarias, conserva salida bruta ni versiona por sí mismo `DAT-22`.
+15. `CMP-17` puede verificar `DAT-20/21/22/23`, pero no genera hallazgos,
+    ejecuta evaluadores, selecciona correcciones, acepta riesgo ni declara
+    final el retest.
 
 `IDN-04` es, por tanto, una ausencia deliberada de autoridad: el modelo no
 posee una identidad de aplicación, credenciales, permisos de filesystem ni
@@ -95,6 +98,7 @@ residual.
 | `AUTH-20` | `ACT-02` ejecuta `CMP-14` con la petición vigente de PGS-05-M02; soporte offline, no CLI de producto | Ningún modelo participa | `IDN-01` lee; `CMP-14` no posee identidad, credenciales o autoridad de efecto | Verifica y lee `DAT-10/11/12/13` y `DAT-16/17/18/19`; emite `DAT-20` por `stdout` para versionado manual | `CMP-14` y el wrapper `evaluations/run_adversarial_metrics.py` | Emparejar 14 casos, aplicar reglas cerradas al triple observado y calcular tasas y operaciones aceptadas/ejecutadas sin mutar las fuentes | Ejecutar `CMP-07/08/13`, llamar modelos o herramientas, contar rechazos como llamadas, inferir intentos no conservados, ampliar casos o declarar un retest final | `C1`: lectura y JSON efímero; `C3` pertenece solo al versionado deliberado de `DAT-20` por `ACT-02` |
 | `AUTH-21` | `ACT-02` ejecuta `CMP-15` con la petición vigente de PGS-05-M03; soporte interno, no CLI de producto | `MOD-01` determinista mediante el flujo benigno canónico | `IDN-01` ejecuta; `CMP-15` no posee credenciales ni autoridad propia; cada caso usa `IDN-05` y un `CMP-10` de perfil `analyze` | Verifica `DAT-01/02/03/04` y la proyección precontroles de `DAT-21`; lee los oráculos solo después de cada salida; emite el snapshot comparativo `DAT-21` por `stdout` | `CMP-15`, `CMP-03`, `CMP-09`, `CMP-10`, `CMP-11`, `MOD-01`, `TOL-01` y el wrapper `evaluations/run_benign_utility.py` | Ejecutar exactamente 12 casos, uno por contexto acotado; medir terminación, invariantes, falsos rechazos y cobertura textual exacta; comprobar cero red y efectos y emitir evidencia saneada | Entregar oráculos al modelo o a la herramienta, escribir o modificar fuentes/evidencia, usar red, ejecutar `TOL-02`, ampliar casos, interpretar semántica o afirmar que `SC-07` está demostrado | `C1`: lectura sintética y JSON efímero; `C3` pertenece solo al versionado deliberado de `DAT-21` por `ACT-02` |
 | `AUTH-22` | `ACT-02` ejecuta `CMP-16` con la petición vigente de PGS-05-M04; soporte interno, no CLI de producto | Cada candidato usa su `MOD-01` determinista mediante el mismo baseline benigno | `IDN-01` ejecuta; `CMP-16` no posee credenciales ni autoridad propia y crea un proceso hijo con cuatro variables allowlisted | Lee objetos Git fijados, verifica `DAT-01/02/03/04`, materializa copias bajo `$TMP` y emite `DAT-22` por `stdout`; solo conserva tamaño/hash e identidades de la salida | `CMP-16`, Git local, librería estándar, los dos `main.py baseline` fijados y `evaluations/run_operational_metrics.py` | Verificar commits, árboles y cuatro hashes comunes; descartar tres pares de calentamiento, medir 30 pares AB/BA sin retry, validar las salidas y calcular estadísticas y consumo sin umbral universal | Cambiar checkout o worktree, instalar dependencias, heredar secretos, usar red deliberadamente, almacenar salida bruta, eliminar outliers, inventar costes, aplicar score o versionar evidencia automáticamente | `C1`: copias temporales, procesos y JSON efímero; `C3` pertenece solo al versionado deliberado de `DAT-22` por `ACT-02` |
+| `AUTH-23` | `ACT-02` ejecuta `CMP-17` con la petición vigente de PGS-05-M05; soporte offline, no CLI de producto | Ningún modelo participa | `IDN-01` solo lee; `CMP-17` no posee credenciales, grants o autoridad de efecto | Lee `DAT-20`, `DAT-21`, `DAT-22` y el registro revisado `DAT-23`; emite un informe efímero por `stdout` | `CMP-17` y `evaluations/verify_control_findings.py` | Verificar hashes, esquemas, 44 referencias escalares, taxonomía y resumen sin mutar fuentes | Ejecutar evaluadores o targets, llamar modelos o herramientas, escribir o generar `DAT-23`, inferir valores ausentes, corregir, aceptar riesgo o declarar el retest final | `C1`: lectura y validación efímera; `C3` pertenece solo al versionado deliberado de `DAT-23` por `ACT-02` |
 
 ## Cadenas de autoridad resumidas
 
@@ -198,6 +202,13 @@ ACT-02 (soporte operativo M04)
   → DAT-22 saneado por stdout y versionado manual
 ```
 
+```text
+ACT-02 (soporte de registro M05)
+  → DAT-23 estático y revisado por autoridad C3 del mantenedor
+  → CMP-17 verifica DAT-20/21/22/23 sin ejecutar evaluaciones
+  → informe de validación saneado por stdout
+```
+
 La primera cadena es la única alcanzable mediante `main.py`. La segunda existe
 como capacidad interna probada, pero no está conectada a la CLI ni al flujo
 benigno. La tercera es una autoridad de mantenimiento externa a los controles
@@ -208,6 +219,8 @@ la baseline canónica sin crear una ruta de producto. La novena conserva y
 compara evidencia adversaria. La décima ejecuta únicamente el corpus benigno
 canónico con su autoridad de producto ya existente. La undécima ejecuta dos
 candidatos fijados bajo `$TMP` para medirlos, sin crear una ruta de producto.
+La duodécima valida el registro ya revisado sin generarlo ni decidir su
+tratamiento.
 
 ## Rutas de autoridad que no existen
 
@@ -224,6 +237,7 @@ candidatos fijados bajo `$TMP` para medirlos, sin crear una ruta de producto.
 | `CMP-14` | Ejecutar el target, el harness, runners o herramientas | Sin ruta: solo importa esquemas, verifica evidencia versionada y emite una proyección canónica por `stdout` |
 | `CMP-15` | Escribir evidencia, entregar oráculos al target o afirmar equivalencia semántica | Sin ruta: ejecuta el flujo benigno canónico con autoridad de producto acotada, compara el oráculo después de la salida y solo emite una proyección saneada por `stdout` |
 | `CMP-16` | Cambiar el checkout, instalar dependencias o versionar `DAT-22` | Sin ruta directa: solo lee objetos Git fijados, escribe copias temporales, ejecuta procesos con entorno allowlisted y emite JSON por `stdout` |
+| `CMP-17` | Ejecutar evaluadores, generar o modificar `DAT-23`, corregir o aceptar riesgo | Sin ruta: solo verifica fuentes, referencias y resumen y emite un informe efímero |
 | Runtime de aplicación | Shell, red, proveedor, cloud, base de datos o secretos | Sin capacidad implementada ni credenciales |
 | Usuario remoto | Entrar en el sistema | Sin interfaz: no hay API, UI remota, cuenta de aplicación o listener |
 | `IDN-03` | Demostrar presencia o identidad de una persona real | Sin mecanismo: la autoridad acredita solo la identidad sintética configurada; no existe UI ni autenticador del sistema operativo |
@@ -303,3 +317,5 @@ benigna de soporte: reutiliza la cadena de producto existente sin ampliar
 herramientas, efectos, identidades o autoridad. PGS-05-M04 añade `AUTH-22`
 como medición de soporte sobre objetos Git y temporales fijados; no publica
 evidencia, instala dependencias o amplía la autoridad del runtime.
+PGS-05-M05 añade `AUTH-23` como validación offline del registro estático; no
+genera observaciones, ejecuta targets, decide M06 o amplía autoridad.

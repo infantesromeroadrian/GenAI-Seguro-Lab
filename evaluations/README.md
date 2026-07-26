@@ -174,3 +174,32 @@ bruta. No hay umbral universal ni afirmación de significación. Energía,
 amortización y trabajo humano quedan sin medir; el resultado corresponde a
 un único host y sesión con un modelo determinista sin aislamiento de red a
 nivel kernel.
+
+## Registro canónico de hallazgos M05
+
+`control-findings-v1.json` es el registro estático y revisado
+`GSL-CONTROL-FINDINGS-001` (`DAT-23`). No es la salida de otro evaluador:
+clasifica con juicio explícito la evidencia ya fijada en `DAT-20`, `DAT-21` y
+`DAT-22`.
+
+```bash
+uv run --frozen python evaluations/verify_control_findings.py
+```
+
+`CMP-17` verifica los tres hashes, sus esquemas cerrados, 44 JSON Pointers
+escalares, los seis IDs y el resumen derivado. La salida solo confirma la
+validación; no escribe ni regenera `DAT-23`, ejecuta targets o benchmarks,
+acepta riesgo, selecciona reparaciones o declara el retest final.
+
+El registro separa:
+
+- `CF-001`: bypass histórico mitigado en el retest inicial, pendiente de M07;
+- `CF-002`, `CF-003` y `CF-005`: dato no computable, cobertura 14/18 y
+  aseguramiento semántico no evaluado;
+- `CF-004`: brecha funcional textual preexistente, único candidato de revisión
+  en M06;
+- `CF-006`: sobrecoste local observado sin umbral de aceptación.
+
+La cuenta de cero fallos y cero bypasses actuales está limitada a las 14
+fixtures medidas. Un control `PARCIAL`, un caso inerte, `NOT_DEMONSTRATED` o
+`NOT_COMPUTABLE` no se presenta como fallo.

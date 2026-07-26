@@ -24,6 +24,9 @@ adversarias de forma reproducible.
 - `DAT-22`: 30 pares pre/post de tiempo de pared, CPU y RSS, contadores,
   costes externos y complejidad descriptiva; conserva hash y tamaño de salida,
   no su contenido.
+- `DAT-23`: registro estático y revisado de seis hallazgos con 44 referencias
+  escalares a `DAT-20/21/22`, taxonomía cerrada, tratamiento y resumen
+  derivable.
 
 ## Flujo de escritura
 
@@ -35,7 +38,9 @@ escritura directa desde la CLI de producto hacia `evaluations/`. `CMP-15`
 verifica su fuente histórica, ejecuta los 12 casos benignos y emite `DAT-21`
 por `stdout`; el versionado sigue siendo una acción manual del mantenedor.
 `CMP-16` materializa los candidatos fijados bajo `$TMP`, ejecuta sus baselines
-y emite `DAT-22` por `stdout` con la misma separación de escritura.
+y emite `DAT-22` por `stdout` con la misma separación de escritura. El
+mantenedor redacta y versiona `DAT-23`; `CMP-17` solo lo verifica junto con
+sus fuentes y emite un informe efímero por `stdout`.
 
 ## Límite
 
@@ -46,3 +51,6 @@ terminaciones y 0 falsos rechazos en ambos candidatos, pero su cobertura
 textual exacta no equivale a una evaluación semántica.
 `DAT-22` representa una sesión y un host; no constituye un SLO, benchmark
 universal ni medición de energía o coste total.
+`DAT-23` no convierte controles parciales, casos inertes, datos no computables,
+criterios no demostrados u overhead sin umbral en fallos; tampoco sustituye el
+retest final ni la aceptación de riesgo.

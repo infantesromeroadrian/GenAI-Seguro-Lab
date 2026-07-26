@@ -7,7 +7,8 @@ del modelo.
 - Incluye CLI, contrato de datos, flujo benigno, motor de baseline, política
   de salida, control de recursos, journal de seguridad, perfil vulnerable,
   harness adversario, runner histórico, runner neutral de retest y analizador
-  offline de métricas, evaluador de utilidad y evaluador operativo.
+  offline de métricas, evaluador de utilidad, evaluador operativo y verificador
+  del registro de hallazgos.
 - Decide qué datos se cargan, qué herramienta se autoriza y cuándo termina el
   flujo.
 - Emite un principal y scope lógicos por operación y no deriva la autoridad
@@ -36,6 +37,9 @@ del modelo.
 - `CMP-16` materializa dos commits fijados bajo `$TMP` y mide sus baselines en
   procesos nuevos; no cambia el checkout, instala dependencias o fija un
   umbral universal.
+- `CMP-17` verifica el registro estático `DAT-23` contra `DAT-20/21/22` y
+  emite un informe efímero; no genera clasificaciones, ejecuta componentes,
+  escribe evidencia, decide M06 o acepta riesgo.
 - Los casos indirectos conectan una copia temporal al perfil, al doble
   determinista y a una búsqueda autorizada; los JB/EX añaden guardas,
   rechazos de búsqueda y una comprobación CLI saneada. TOL añade llamadas

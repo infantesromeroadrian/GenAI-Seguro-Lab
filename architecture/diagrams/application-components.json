@@ -275,6 +275,32 @@
       }
     },
     {
+      "id": "control-findings-verifier",
+      "label": "CMP-17 · Verificador del registro de hallazgos",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/control_findings.py",
+      "meta": {
+        "type": "service",
+        "technology": "pydantic-python-stdlib",
+        "inventoryIds": [
+          "CMP-17"
+        ],
+        "state": "internal-support-only",
+        "cliProductReachable": false,
+        "externalCalls": false,
+        "executesTarget": false,
+        "generatesFindings": false,
+        "writesEvidence": false,
+        "evidenceInput": [
+          "DAT-20",
+          "DAT-21",
+          "DAT-22",
+          "DAT-23"
+        ],
+        "verificationOutput": "stdout"
+      }
+    },
+    {
       "id": "output-safety-policy",
       "label": "CMP-09 · Política de salida",
       "parentId": "application-control-boundary",
@@ -972,6 +998,39 @@
         "externalCalls": false,
         "outliersRemoved": false,
         "retries": 0
+      }
+    },
+    {
+      "id": "components-findings-verifies-adversarial-metrics",
+      "source": "control-findings-verifier",
+      "target": "adversarial-metrics-analyzer",
+      "label": "verifica contrato, hash y referencias de DAT-20",
+      "meta": {
+        "type": "reads",
+        "executesComponent": false,
+        "sourceEvidenceImmutable": true
+      }
+    },
+    {
+      "id": "components-findings-verifies-benign-utility",
+      "source": "control-findings-verifier",
+      "target": "benign-utility-evaluator",
+      "label": "verifica contrato, hash y referencias de DAT-21",
+      "meta": {
+        "type": "reads",
+        "executesComponent": false,
+        "sourceEvidenceImmutable": true
+      }
+    },
+    {
+      "id": "components-findings-verifies-operational-metrics",
+      "source": "control-findings-verifier",
+      "target": "operational-metrics-evaluator",
+      "label": "verifica contrato, hash y referencias de DAT-22",
+      "meta": {
+        "type": "reads",
+        "executesComponent": false,
+        "sourceEvidenceImmutable": true
       }
     }
   ]
