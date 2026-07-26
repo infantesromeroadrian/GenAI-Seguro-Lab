@@ -191,6 +191,26 @@
       }
     },
     {
+      "id": "adversarial-retest-runner",
+      "label": "CMP-13 · Runner neutral de retest",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/adversarial_retest.py",
+      "meta": {
+        "type": "service",
+        "technology": "pydantic",
+        "inventoryIds": [
+          "CMP-13"
+        ],
+        "state": "internal-support-only",
+        "cliProductReachable": false,
+        "externalCalls": false,
+        "canonicalEvidence": true,
+        "canonicalCases": 14,
+        "finalRetest": false,
+        "evidenceNamespace": "evaluations/adversarial-retest-v1"
+      }
+    },
+    {
       "id": "output-safety-policy",
       "label": "CMP-09 · Política de salida",
       "parentId": "application-control-boundary",
@@ -803,6 +823,30 @@
         "type": "calls",
         "canonicalEvidence": true,
         "directCheckoutWrite": false
+      }
+    },
+    {
+      "id": "components-retest-loads-and-compares-data",
+      "source": "adversarial-retest-runner",
+      "target": "dataset-loader",
+      "label": "verifica baseline, 5 archivos idénticos y deriva v1.3→v1.4",
+      "meta": {
+        "type": "calls",
+        "oraclesDeliveredToTarget": false,
+        "metadataManifestComparedSeparately": true
+      }
+    },
+    {
+      "id": "components-retest-drives-harness",
+      "source": "adversarial-retest-runner",
+      "target": "adversarial-evaluation-harness",
+      "label": "14 casos en orden → observación neutral y evidencia bajo $TMP",
+      "meta": {
+        "type": "calls",
+        "canonicalEvidence": true,
+        "directCheckoutWrite": false,
+        "finalRetest": false,
+        "effectivenessMeasured": false
       }
     }
   ]

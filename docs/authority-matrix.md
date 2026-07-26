@@ -5,10 +5,10 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-AUTH-MATRIX-001` |
-| Versión | `2.2.0` |
+| Versión | `2.3.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-04-M08 en esta revisión; el commit exacto se obtiene del historial Git |
+| Control vigente | PGS-05-M01, ejecutado contra el commit exacto `d236bbee9f371a75e330c227f100aef167b864b0` |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
 | Arquitectura de origen | [`architecture/manifest.json`](../architecture/manifest.json) |
 | Alcance | autoridad implementada en el checkout local actual |
@@ -83,6 +83,7 @@ residual.
 | `AUTH-16` | `CMP-01/02/03/05` o `TOL-02` solicitan consumir un recurso antes de una operación protegida | Ningún modelo configura límites ni concede excepciones | `IDN-01` ejecuta; `CMP-10` no posee identidad, credenciales o autoridad de efecto | Inspecciona tamaños y contadores; no conserva contenido ni amplía vistas | `CMP-10` (`ProductResourceControl`) y lock advisory sobre `DAT-03` | Aplicar `GSL-RESOURCE-POLICY-001`, consumir antes de operar, comprobar tiempo antes y después y fallar cerrado sin salida parcial | Elevar límites dinámicamente, esperar o reintentar el lock, cancelar una llamada bloqueada, crear autoridad o persistir contenido | `C0`: precondición satisfecha o rechazo; la operación posterior conserva su propia cadena y consecuencia |
 | `AUTH-17` | `CMP-01/03/05/10`, `TOL-01` o `TOL-02` observan una decisión durante una operación | Ningún modelo define el esquema, la señal o la correlación | `IDN-01` ejecuta; `CMP-11` no posee identidad, credenciales o autoridad de efecto | Solo metadatos enumerados de `DAT-14`; no conserva prompts, respuestas, argumentos, contenido, rutas, credenciales, identidad presentada o tokens | `CMP-11` (`SecurityEventJournal`) | Aplicar `GSL-SECURITY-EVENTS-001`, reservar capacidad, correlacionar, encadenar y exponer un snapshot saneado solo por opt-in | Crear o validar grants, ampliar scope, persistir o exportar automáticamente, confirmar un ataque, responder, reintentar o hacer rollback | `C0` en memoria; `C1` solo cuando `ACT-01` pide expresamente el informe por `stdout` |
 | `AUTH-18` | `TOL-02` inicia `CMP-12` durante construcción, creación o parada; API interna, no CLI | Ninguno participa ni configura la recuperación | `IDN-01` ejecuta; `CMP-12` no posee identidad, credenciales o grant | Examina solo `DAT-15`, el descriptor de `sandbox/drafts/` y, si existe, el `DAT-06` final nombrado por un marker válido | `CMP-12` (`SandboxTransactionController`) | Adquirir `flock` sin espera; publicar una vez el staging autorizado; en el siguiente arranque preservar un final coherente o retirar solo artefactos internos válidos; devolver conteos saneados | Publicar durante recuperación, restaurar cuota o autoridad, borrar/modificar el final, recorrer subdirectorios, esperar/reintentar, usar una señal como permiso o exponer contenido y contexto | `C0` si reconcilia sin efecto; conserva como máximo el `C2` ya publicado por `AUTH-07` |
+| `AUTH-19` | `ACT-02` ejecuta `CMP-13` con la petición vigente de PGS-05-M01; soporte interno, no CLI de producto | Conduce el único `MOD-01` determinista mediante la ejecución existente de `CMP-07`; no añade proveedor ni modelo | `IDN-01`; exige commit, tree, rama `main` y checkout endurecido exactos y limpios antes y después | Lee `DAT-01/02/03/07/08/09` y verifica `DAT-10/11/12/13`; escribe primero solo bajo `$TMP` y permite versionar `DAT-16/17/18/19` tras revisión | `CMP-13` reutiliza `CMP-07`, fija hashes y topes y aplica saneado y writer create-only | Ejecutar una vez los mismos 14 IDs y orden, dejar cuatro inertes, comparar el oráculo después del target y conservar solo estado, triple observado, relación e integridad | Entregar el oráculo al target, ampliar casos, usar red o datos reales, mutar el checkout durante el run, reintentar, interpretar tasas de PGS-05-M02 o declarar el retest final | `C2` solo para setups temporales confinados del harness; `C3` pertenece al versionado manual revisado por `ACT-02` |
 
 ## Cadenas de autoridad resumidas
 
@@ -253,4 +254,6 @@ sin convertir el journal en autoridad, telemetría persistente o respuesta.
 PGS-04-M08 añade `AUTH-18` y
 [`GSL-SANDBOX-RECOVERY-001`](./sandbox-recovery-policy.md): publica y
 reconcilia el único efecto local sin convertir estado duradero o señales en
-autoridad.
+autoridad. PGS-05-M01 añade `AUTH-19` únicamente como ejecución de soporte
+acotada y ya autorizada: no crea autoridad de producto ni interpreta las
+métricas reservadas a PGS-05-M02.

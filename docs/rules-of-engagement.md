@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `2.0.0` |
+| Versión | `2.1.0` |
 | Fecha de entrada en vigor | 2026-07-26 |
 | Baseline técnica de origen | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
@@ -259,6 +259,12 @@ personales. Cinco archivos de contenido deben ser byte-idénticos a la baseline;
 el manifiesto adversario se declara aparte como deriva de metadatos
 `1.3.0` → `1.4.0`, no como un sexto archivo idéntico.
 
+`GSL-ADV-RT-20260726-001` aplicó este contrato una sola vez al commit
+`d236bbee9f371a75e330c227f100aef167b864b0`, tree
+`b54b260245ba4e8426fbba86c2c22b0608960315`, en `main` limpio. Los 14 casos
+completaron, la evidencia revisada quedó en
+`evaluations/adversarial-retest-v1/` y conserva `final_retest: false`.
+
 Los logs brutos permanecen en el directorio temporal y no se versionan. Tras
 verificar la evidencia saneada se eliminan de forma acotada y recuperable
 cuando sea posible. `evaluations/` solo recibe artefactos sintéticos,
@@ -316,7 +322,7 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-19` | PGS-04-M06 no debe materializar ni ejecutar los casos DOS inertes | `CMP-10` se verifica con bordes sintéticos, reloj inyectado y lock cooperativo; el corpus adversario y la evidencia histórica permanecen inmutables y `AC-DOS-03` sigue requiriendo ampliación de estas RoE |
 | `ROE-20` | PGS-04-M07 no debe convertir el journal de producto en evidencia adversaria canónica | `CMP-11` se verifica con eventos y canarios sintéticos; no reescribe `DAT-10` a `DAT-13`, no entrega oráculos al producto, no ejecuta casos inertes y no persiste o exporta el informe opt-in |
 | `ROE-21` | PGS-04-M08 no debe reinterpretar o regenerar la baseline adversaria | `CMP-12` se verifica con sandboxes temporales, fault injection y canarios; no modifica el corpus, la evidencia histórica o el sandbox canónico, no ejecuta casos inertes y nunca publica staging durante recuperación |
-| `ROE-22` | PGS-05-M01 debe repetir el alcance histórico sin reinterpretarlo | El runner de retest exige commit, tree y `main` limpios; verifica evidencia histórica, cinco archivos byte-idénticos, deriva del manifiesto, hashes antes/después y 14 IDs en orden; escribe solo evidencia neutral create-only bajo `$TMP`, deja DOS/SC inertes y reserva tasas y llamadas para PGS-05-M02 |
+| `ROE-22` | PGS-05-M01 debe repetir el alcance histórico sin reinterpretarlo | `GSL-ADV-RT-20260726-001` verificó commit, tree y `main` limpios, evidencia histórica, cinco archivos byte-idénticos, deriva del manifiesto y hashes antes/después; ejecutó los 14 IDs en orden, dejó DOS/SC inertes y versionó solo evidencia neutral revisada con `final_retest: false`, reservando tasas y llamadas para PGS-05-M02 |
 
 ## Disparadores de revisión
 

@@ -1,0 +1,28 @@
+{
+  "candidate_commit": "d236bbee9f371a75e330c227f100aef167b864b0",
+  "candidate_tree": "b54b260245ba4e8426fbba86c2c22b0608960315",
+  "evidence_id": "GSL-EVIDENCE-ADVERSARIAL-RETEST-001",
+  "files": [
+    {
+      "bytes": 7943,
+      "path": "config.json",
+      "sha256": "647b4ff9237deb2a5db416d8c3837adb62aca15235a67cfee4b94fdd624bb83c"
+    },
+    {
+      "bytes": 9050,
+      "path": "results.json",
+      "sha256": "376f430ad82691903fec6bade99e919fd43498cfee67cb99e9c7a538cc12b050"
+    },
+    {
+      "bytes": 5583,
+      "path": "events.jsonl",
+      "sha256": "32e666b567d7e39667e6fdb62e8923f52efb9f9ccadb3eca040a9a27b2ac7743"
+    }
+  ],
+  "final_retest": false,
+  "retest_id": "GSL-RETEST-ADVERSARIAL-001",
+  "reviewed_for_versioning": true,
+  "run_id": "GSL-ADV-RT-20260726-001",
+  "schema_version": "1.0.0",
+  "total_bytes": 22576
+}

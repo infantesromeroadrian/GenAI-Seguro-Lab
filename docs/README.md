@@ -42,6 +42,10 @@ real.
 - [Baseline adversaria histórica](../evaluations/adversarial-baseline-v1/README.md):
   candidato exacto, reproducción, 13 `PASS`, 1 `RESIDUAL`, métricas, artefactos
   saneados y límites de interpretación.
+- [Retest adversario v1](../evaluations/adversarial-retest-v1/README.md):
+  candidato endurecido exacto, 14 ejecuciones completas, triples observados,
+  relaciones neutrales, comparabilidad de corpus e integridad saneada; no
+  anticipa las métricas de PGS-05-M02 y declara `final_retest: false`.
 - [Hallazgos de la baseline adversaria](./adversarial-baseline-findings.md):
   uso actual del laboratorio, impacto de las variantes observadas,
   reproducción, residual conocido y límites de la evidencia.

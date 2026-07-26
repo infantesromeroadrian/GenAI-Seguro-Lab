@@ -47,25 +47,29 @@ La configuración, resultados, eventos y manifiesto de integridad están
 documentados dentro del propio directorio. Los logs brutos y el sandbox
 temporal no se versionan.
 
-## Retest adversario v1 pendiente de ejecución
+## Retest adversario v1
 
-`run_adversarial_retest.py` prepara `GSL-RETEST-ADVERSARIAL-001` sin modificar
-ni reinterpretar la baseline histórica. Exige el commit, tree y rama `main`
-exactos de un checkout endurecido limpio, ejecuta una vez los mismos 14 casos
-en el mismo orden y deja las cuatro fixtures DOS/SC inertes.
+`adversarial-retest-v1/` conserva la proyección saneada y revisada de
+`GSL-RETEST-ADVERSARIAL-001`. `run_adversarial_retest.py` la ejecutó una sola
+vez como `GSL-ADV-RT-20260726-001`, sin modificar ni reinterpretar la baseline
+histórica, contra el commit endurecido
+`d236bbee9f371a75e330c227f100aef167b864b0`, tree
+`b54b260245ba4e8426fbba86c2c22b0608960315` y rama `main` limpios.
 
 El runner verifica el manifiesto y los hashes de
 `adversarial-baseline-v1/`, la identidad byte a byte de cinco archivos de
 contenido y la deriva de metadatos del manifiesto adversario `1.3.0` →
-`1.4.0`. La evidencia usa estados de ejecución y relaciones con el oráculo,
-sin `PASS`/`FAIL`, valoración de eficacia ni cuentas históricas presentadas
-como medición actual.
+`1.4.0`. Los mismos 14 casos se ejecutaron en el mismo orden y completaron:
+13 relaciones fueron `MATCH` y `ADV-TOL-005` registró `DIFF`; las cuatro
+fixtures DOS/SC permanecieron inertes. La evidencia usa estados de ejecución y
+relaciones con el oráculo, sin valoración de eficacia ni cuentas históricas
+presentadas como medición actual.
 
-La primera salida se escribe create-only bajo
-`$TMP/adversarial-retest-v1/reviewed`. El directorio
-`adversarial-retest-v1/` no se crea hasta que exista una única ejecución
-canónica revisada sobre el commit fijado; esa proyección conservará
-`final_retest: false`.
+La salida inicial se escribió create-only bajo
+`$TMP/adversarial-retest-v1/reviewed`. Tras verificar saneado, tamaños, hashes,
+orden y configuración, solo la proyección cerrada se versionó en
+`adversarial-retest-v1/`, con `reviewed_for_versioning: true` y
+`final_retest: false`. La interpretación comparativa pertenece a PGS-05-M02.
 
 ## Perfil vulnerable de evaluación
 

@@ -5,13 +5,13 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-PRIORITY-001` |
-| Versión | `2.2.0` |
+| Versión | `2.3.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Crosswalk actual | [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
-| Alcance | sistema local sintético, incluidos `CMP-06` a `CMP-12` |
+| Alcance | sistema local sintético hasta el retest neutral PGS-05-M01 |
 
 Esta priorización ordena el backlog de pruebas del laboratorio. No es una
 clasificación CVSS ni estima la frecuencia de incidentes reales. La baseline
@@ -240,8 +240,8 @@ El checkout endurecido cambia solo la probabilidad condicionada de
   actual.
 
 La distribución pasa a 1 `PR-1`, 1 `PR-2`, 14 `PR-3` y 1 `PR-0`. Este
-recálculo no afirma identidad humana real ni sustituye el retest completo de
-PGS-05.
+recálculo no afirma identidad humana real ni sustituye la medición comparativa
+posterior a PGS-05-M01.
 
 ## Tratamiento de PGS-04-M05
 
@@ -252,7 +252,8 @@ ninguna puntuación:
 
 - ambos casos ya estaban en `L1` para el target determinista actual;
 - la política es léxica y no cubre paráfrasis, ofuscación o todos los secretos;
-- todavía no se ha ejecutado el retest PGS-05 ni existe un modelo real;
+- PGS-05-M01 ya registró observaciones del target determinista, pero aún no
+  calcula las tasas de M02 ni existe un modelo real;
 - impacto y capacidad no cambian.
 
 La distribución permanece en 1 `PR-1`, 1 `PR-2`, 14 `PR-3` y 1 `PR-0`.
@@ -271,7 +272,7 @@ modifica ninguna puntuación:
   corpus, código y política;
 - los plazos detectan un retorno tardío, pero no cancelan una llamada síncrona
   bloqueada;
-- no se ha ejecutado el retest PGS-05 ni se ha medido RSS bajo los casos DOS.
+- PGS-05-M01 dejó los casos DOS inertes y no midió RSS bajo ellos.
 
 La distribución permanece en 1 `PR-1`, 1 `PR-2`, 14 `PR-3` y 1 `PR-0`. Este
 estado conserva deliberadamente el backlog hasta obtener evidencia empírica
@@ -299,7 +300,7 @@ artefactos internos validados. No cambia ninguna puntuación:
   de `IDN-01`.
 
 La distribución permanece en 1 `PR-1`, 1 `PR-2`, 14 `PR-3` y 1 `PR-0` hasta
-el retest de PGS-05.
+la medición y tratamiento posteriores a PGS-05-M01.
 
 ## Backlog posterior a PGS-03-M07
 

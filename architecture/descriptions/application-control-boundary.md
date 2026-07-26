@@ -6,7 +6,7 @@ del modelo.
 - ID: `TB-02`.
 - Incluye CLI, contrato de datos, flujo benigno, motor de baseline, política
   de salida, control de recursos, journal de seguridad, perfil vulnerable,
-  harness adversario y runner canónico.
+  harness adversario, runner histórico y runner neutral de retest.
 - Decide qué datos se cargan, qué herramienta se autoriza y cuándo termina el
   flujo.
 - Emite un principal y scope lógicos por operación y no deriva la autoridad
@@ -25,6 +25,9 @@ del modelo.
 - `CMP-08` exige exclusivamente el commit histórico limpio, aplica los
   presupuestos y escribe evidencia bruta únicamente bajo `$TMP`; no forma
   parte de la CLI de producto ni evalúa el checkout endurecido.
+- `CMP-13` exige un candidato endurecido exacto y limpio, verifica la evidencia
+  histórica y la comparabilidad del corpus y proyecta observaciones neutrales
+  bajo `$TMP`; no forma parte de la CLI ni calcula la eficacia de PGS-05-M02.
 - Los casos indirectos conectan una copia temporal al perfil, al doble
   determinista y a una búsqueda autorizada; los JB/EX añaden guardas,
   rechazos de búsqueda y una comprobación CLI saneada. TOL añade llamadas

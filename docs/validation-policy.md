@@ -195,4 +195,5 @@ esta microtarea.
 - `GSL-SANDBOX-RECOVERY-001` valida y reconcilia el efecto local, pero depende
   de primitivas POSIX y no resiste código hostil con la autoridad de
   `IDN-01`.
-- PGS-05 debe repetir el mismo corpus y medir el control frente a la baseline.
+- PGS-05-M01 ya repitió el mismo corpus; la medición frente a la baseline
+  comienza en PGS-05-M02.

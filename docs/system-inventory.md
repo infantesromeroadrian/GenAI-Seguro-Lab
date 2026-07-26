@@ -5,12 +5,12 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYS-INV-001` |
-| Versión | `2.3.0` |
+| Versión | `2.4.0` |
 | Fecha de corte | 2026-07-26 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-04-M08 en esta revisión; el commit exacto se obtiene del historial Git |
+| Control vigente | PGS-05-M01, ejecutado contra el commit exacto `d236bbee9f371a75e330c227f100aef167b864b0` |
 | Entorno | checkout local de desarrollo |
-| Alcance | estado implementado hasta PGS-04-M08, con baseline histórica PGS-03-M07 y publicación PGS-07-M08 |
+| Alcance | estado implementado hasta PGS-05-M01, con baseline histórica PGS-03-M07 y publicación PGS-07-M08 |
 
 Este documento inventaría el sistema que existe en el repositorio, no la
 solución futura descrita en el roadmap. PGS-03-M04/M05/M06 conectan 14 fixtures
@@ -82,6 +82,10 @@ ni procesos desatendidos.
 | `DAT-13` | Manifiesto de evidencia adversaria | JSON versionado y revisado | Fija tamaños y SHA-256 de `DAT-10` a `DAT-12` | `evaluations/adversarial-baseline-v1/manifest.json` |
 | `DAT-14` | Informe de eventos de seguridad | JSON efímero, cerrado y saneado | Snapshot opt-in de `CMP-11` por `stdout`; no se almacena o exporta automáticamente y no reutiliza `DAT-12` | `src/genai_seguro_lab/security_events.py`, `docs/security-events-policy.md` |
 | `DAT-15` | Estado transaccional del sandbox | Marker JSON y staging locales, reservados y efímeros; informe de recuperación solo en memoria | `CMP-12` valida y retira únicamente `.gsl-txn-<32 hex>.(json|stage)`; el marker excluye contenido y autoridad y nunca permite publicar durante recuperación | `src/genai_seguro_lab/sandbox_recovery.py`, `docs/sandbox-recovery-policy.md` |
+| `DAT-16` | Configuración del retest adversario M01 | JSON saneado y versionado | Fija candidato endurecido, runtime, referencia histórica, comparabilidad, autoridad, presupuesto y comando tokenizado | `evaluations/adversarial-retest-v1/config.json` |
+| `DAT-17` | Resultados del retest adversario M01 | JSON saneado y versionado | Conserva por caso solo estado de ejecución, triple observado y relación neutral, además de integridad y topes del run | `evaluations/adversarial-retest-v1/results.json` |
+| `DAT-18` | Eventos del retest adversario M01 | JSONL saneado y versionado | Registra inicio, 14 observaciones y cierre; excluye contenido, salida bruta, trazas, marcadores, credenciales y rutas personales | `evaluations/adversarial-retest-v1/events.jsonl` |
+| `DAT-19` | Manifiesto de evidencia del retest M01 | JSON versionado y revisado | Fija lista cerrada, tamaños y SHA-256 de `DAT-16` a `DAT-18`; declara `reviewed_for_versioning: true` y `final_retest: false` | `evaluations/adversarial-retest-v1/manifest.json` |
 
 El dataset `GSL-DATASET-001` declara 12 registros benignos, 8 documentos de
 conocimiento y 0 registros adversarios. No contiene datos personales,
@@ -114,14 +118,13 @@ descriptor no materializado que conserva
 | `CMP-10` | `ProductResourceControl` | Control de aplicación | Política obligatoria y fail-closed `GSL-RESOURCE-POLICY-001`: preflight acotado del corpus; límites UTF-8 de modelo, herramienta, resumen y borrador; perfiles `analyze`, `baseline` y `draft`; checkpoints cooperativos y lock advisory de CLI. No cancela llamadas síncronas bloqueadas ni limita invocaciones directas de la API entre procesos | `src/genai_seguro_lab/resource_control.py`, `tests/test_resource_control.py`, `docs/resource-limits-policy.md` |
 | `CMP-11` | `SecurityEventJournal` | Control de aplicación | Política `GSL-SECURITY-EVENTS-001`: eventos cerrados de hasta 2 KiB, perfiles en memoria de 32/32 KiB, 256/256 KiB y 32/32 KiB, secuencia global, correlación primaria e hija por caso de baseline, cadena SHA-256 y diez señales deterministas. No persiste, exporta, firma ni responde | `src/genai_seguro_lab/security_events.py`, `tests/test_security_events.py`, `docs/security-events-policy.md` |
 | `CMP-12` | `SandboxTransactionController` | Control de aplicación interno | Política `GSL-SANDBOX-RECOVERY-001`: marker/staging `0600`, hard link atómico create-only, `fsync`, lock no bloqueante, una reconciliación antes de registrar autoridad y reporte saneado. Preserva un final publicado, nunca republica staging y falla cerrado ante estado ambiguo | `src/genai_seguro_lab/sandbox_recovery.py`, `tests/test_sandbox_recovery.py`, `docs/sandbox-recovery-policy.md` |
+| `CMP-13` | Runner neutral de retest adversario | Soporte interno | Reutiliza la ejecución de `CMP-07` sin duplicar el harness; exige candidato endurecido exacto y limpio, verifica la baseline histórica y la comparabilidad del corpus, y proyecta bajo `$TMP` solo identidad, cardinalidad, ejecución, integridad y observaciones neutrales. No calcula eficacia ni métricas de PGS-05-M02 | `src/genai_seguro_lab/adversarial_retest.py`, `evaluations/run_adversarial_retest.py`, `tests/test_adversarial_retest.py` |
 
-El soporte de evaluación incorpora además
-`src/genai_seguro_lab/adversarial_retest.py` y
-`evaluations/run_adversarial_retest.py`. No abre una interfaz de producto ni
-duplica el harness: reutiliza la ejecución de `CMP-07`, mantiene separado el
-contrato histórico de `CMP-08` y proyecta bajo `$TMP` únicamente identidad,
-cardinalidad, ejecución, integridad y observaciones neutrales. La evidencia
-canónica de este retest sigue pendiente de la ejecución de PGS-05-M01.
+`CMP-13` no abre una interfaz de producto y mantiene separado el contrato
+histórico de `CMP-08`. El run `GSL-ADV-RT-20260726-001` produjo `DAT-16` a
+`DAT-19` contra el commit exacto
+`d236bbee9f371a75e330c227f100aef167b864b0`; la interpretación de tasas y
+llamadas permanece en PGS-05-M02.
 
 `MOD-01` es el único modelo activo, pero no es un modelo GenAI real. Tampoco
 hay un agente autónomo: `CMP-03` es un flujo acotado y determinista con una sola
@@ -132,9 +135,9 @@ principal y un scope lógicos, y cada instancia autoriza como máximo una
 `knowledge_search`. `ADV-TOL-003/004` usan la credencial sintética solo para
 alcanzar los controles de replay y filesystem. `ADV-TOL-005` intenta fabricar
 la confirmación literal histórica, se rechaza antes de I/O y crea cero
-archivos; no conecta `TOL-02` a la CLI ni al flujo benigno. `CMP-08` y el
-runner separado de retest no añaden una ruta de producto: el primero solo
-reproduce el commit histórico fijado y el segundo exige un candidato
+archivos; no conecta `TOL-02` a la CLI ni al flujo benigno. `CMP-08` y
+`CMP-13` no añaden una ruta de producto: el primero solo reproduce el commit
+histórico fijado y el segundo exige un candidato
 endurecido exacto; ambos escriben primero en un directorio temporal nuevo.
 
 ## Identidades, credenciales y autoridad
@@ -242,8 +245,10 @@ confirmación literal y crea cero archivos; la evidencia versionada conserva
 sin cambios el residual histórico del commit `93aefa45`. `CMP-08` queda fijado
 a ese candidato histórico, comprueba que el checkout y los inputs no cambian,
 conserva la evidencia bruta bajo `$TMP` y proyecta `DAT-10` a `DAT-13` para
-revisión y versionado manual. No hay una ruta adversaria equivalente desde la
-CLI ordinaria.
+revisión y versionado manual. El runner separado de retest verificó ese
+snapshot, repitió los mismos 14 IDs contra el candidato endurecido y proyectó
+`DAT-16` a `DAT-19` tras revisión. No hay una ruta adversaria equivalente
+desde la CLI ordinaria.
 
 ## Elementos confirmados como ausentes
 
@@ -283,9 +288,11 @@ reclasifica aquí como un requisito pendiente.
   GenAI real.
 - `DAT-05` y `DAT-14` no dejan un audit trail persistente; `DAT-04` es una
   instantánea funcional y `DAT-10` a `DAT-13` evidencia adversaria versionada
-  manualmente.
+  manualmente; `DAT-16` a `DAT-19` conservan solo la proyección neutral de
+  PGS-05-M01.
 - `CMP-09` solo cubre reglas explícitas. No sustituye detección contextual,
-  moderación completa, retest adversario ni evaluación con un modelo real.
+  moderación completa, la medición comparativa de PGS-05-M02 ni evaluación con
+  un modelo real.
 - `CMP-10` falla cerrado ante los excesos implementados, pero su plazo no
   interrumpe una llamada síncrona bloqueada y el lock solo coordina procesos
   que entran por la CLI. No existe cuota persistente, límite RSS, cgroup ni
@@ -302,6 +309,9 @@ reclasifica aquí como un requisito pendiente.
 - La baseline adversaria solo acredita las observaciones de las 14 variantes
   fijadas contra el candidato exacto; no acredita seguridad general, robustez
   frente a ataques desconocidos ni utilidad semántica.
+- El retest PGS-05-M01 acredita identidad, cardinalidad, ejecución, integridad
+  y triples observados contra otro candidato exacto. Sus relaciones
+  `MATCH`/`DIFF` no son todavía tasas de eficacia ni medición de llamadas.
 
 El [mapa C4 versionado](../architecture/manifest.json) materializa estos IDs
 con componentes, flujos y límites de confianza sin añadir infraestructura

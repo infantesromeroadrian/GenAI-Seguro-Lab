@@ -26,6 +26,9 @@ incidente.
   materializan en `$TMP`.
 - `DAT-08` se usa después de observar el target y nunca se incorpora a su
   petición.
+- `CMP-13` comprueba cinco archivos de contenido byte-idénticos a la baseline y
+  registra aparte la deriva de metadatos de `DAT-09`; no presenta los seis
+  archivos como idénticos.
 
 ## Persistencia
 

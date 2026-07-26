@@ -24,6 +24,9 @@ local.
   red y con un único efecto temporal conocido.
 - Ejecutar mediante `CMP-08` la baseline adversaria sobre un commit limpio,
   medir límites y producir evidencia bruta solo bajo `$TMP`.
+- Ejecutar mediante `CMP-13` el retest inicial sobre un candidato endurecido
+  exacto, reutilizando `CMP-07` y produciendo una proyección neutral bajo
+  `$TMP` antes del versionado manual.
 
 ## Trust boundary
 

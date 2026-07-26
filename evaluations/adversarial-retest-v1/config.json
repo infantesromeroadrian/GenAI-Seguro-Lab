@@ -1,0 +1,247 @@
+{
+  "authorization": {
+    "candidate_posture": "hardened_checkout",
+    "canonical_checkout_mutation": false,
+    "canonical_write_mode": "manual_after_review",
+    "case_ids": [
+      "ADV-PI-001",
+      "ADV-PI-002",
+      "ADV-PI-003",
+      "ADV-JB-001",
+      "ADV-JB-002",
+      "ADV-JB-003",
+      "ADV-EX-001",
+      "ADV-EX-002",
+      "ADV-EX-003",
+      "ADV-TOL-001",
+      "ADV-TOL-002",
+      "ADV-TOL-003",
+      "ADV-TOL-004",
+      "ADV-TOL-005"
+    ],
+    "external_network": false,
+    "max_case_seconds": 15,
+    "max_effect_files_per_case": 1,
+    "max_effect_files_per_run": 1,
+    "max_input_bytes_per_run": 10485760,
+    "max_rss_bytes": 536870912,
+    "max_run_seconds": 600,
+    "max_target_processes": 1,
+    "max_temporary_bytes_per_run": 26214400,
+    "raw_evidence_location": "temporary_directory",
+    "retry_count": 0,
+    "rules_of_engagement": "GSL-ROE-001",
+    "source_profile": "GSL-PROFILE-VULNERABLE-001",
+    "synthetic_data": true
+  },
+  "candidate": {
+    "branch": "main",
+    "clean_before_run": true,
+    "commit": "d236bbee9f371a75e330c227f100aef167b864b0",
+    "posture": "hardened_checkout",
+    "tree": "b54b260245ba4e8426fbba86c2c22b0608960315"
+  },
+  "cleanup_policy": [
+    "manual_review_before_versioning",
+    "version_only_reviewed_projection",
+    "no_automatic_retry"
+  ],
+  "command": [
+    "uv",
+    "run",
+    "--frozen",
+    "python",
+    "evaluations/run_adversarial_retest.py",
+    "--expected-commit",
+    "d236bbee9f371a75e330c227f100aef167b864b0",
+    "--expected-tree",
+    "b54b260245ba4e8426fbba86c2c22b0608960315",
+    "--expected-branch",
+    "main",
+    "--run-id",
+    "GSL-ADV-RT-20260726-001",
+    "--executed-at-utc",
+    "2026-07-26T16:50:37Z",
+    "--uv-version",
+    "0.6.10",
+    "--run-root",
+    "$TMP/adversarial-retest-v1"
+  ],
+  "corpus": {
+    "adversarial_manifest": {
+      "candidate_before_sha256": "99e8b44dbee5b0c52341a3ba496b50885f622ae531fc40b937a549bceaa893c3",
+      "candidate_version": "1.4.0",
+      "content_identity_scope": [
+        "data/incidents.jsonl",
+        "data/knowledge.jsonl",
+        "data/manifest.json",
+        "data/adversarial/inputs.jsonl",
+        "data/adversarial/oracles.jsonl"
+      ],
+      "historical_sha256": "324cf5d83dd9d253446015d0950ed3c78177817c7d726f3e3f03fdd874c88cdf",
+      "historical_version": "1.3.0",
+      "path": "data/adversarial/manifest.json",
+      "relation": "METADATA_ONLY_DRIFT_DECLARED"
+    },
+    "byte_identical_content_files": [
+      {
+        "candidate_before_bytes": 13325,
+        "candidate_before_sha256": "928af933a23ffe2851f5bf5206fa691e18dd7e3a6a6d621d3ad8af06d4c4870a",
+        "historical_bytes": 13325,
+        "historical_sha256": "928af933a23ffe2851f5bf5206fa691e18dd7e3a6a6d621d3ad8af06d4c4870a",
+        "path": "data/incidents.jsonl",
+        "relation": "BYTE_IDENTICAL"
+      },
+      {
+        "candidate_before_bytes": 7253,
+        "candidate_before_sha256": "f62fd7bb0051c5b97f5f5ce40941e77c1c8019d2b0ac6ceb3d2fa099d8ab92da",
+        "historical_bytes": 7253,
+        "historical_sha256": "f62fd7bb0051c5b97f5f5ce40941e77c1c8019d2b0ac6ceb3d2fa099d8ab92da",
+        "path": "data/knowledge.jsonl",
+        "relation": "BYTE_IDENTICAL"
+      },
+      {
+        "candidate_before_bytes": 815,
+        "candidate_before_sha256": "e758a72747dd33dbd78f17551a436dd6ae6278ca5e5306bf2ddb10fe56124926",
+        "historical_bytes": 815,
+        "historical_sha256": "e758a72747dd33dbd78f17551a436dd6ae6278ca5e5306bf2ddb10fe56124926",
+        "path": "data/manifest.json",
+        "relation": "BYTE_IDENTICAL"
+      },
+      {
+        "candidate_before_bytes": 15633,
+        "candidate_before_sha256": "ebf1d1f58a2969e856291640a97c74e6071405c202f415ecba02cef54f35e6b4",
+        "historical_bytes": 15633,
+        "historical_sha256": "ebf1d1f58a2969e856291640a97c74e6071405c202f415ecba02cef54f35e6b4",
+        "path": "data/adversarial/inputs.jsonl",
+        "relation": "BYTE_IDENTICAL"
+      },
+      {
+        "candidate_before_bytes": 12776,
+        "candidate_before_sha256": "ab0f70a8d225101168aa1be0e720b86320d9d910d1ef8358b3688ff7a5c6a9f0",
+        "historical_bytes": 12776,
+        "historical_sha256": "ab0f70a8d225101168aa1be0e720b86320d9d910d1ef8358b3688ff7a5c6a9f0",
+        "path": "data/adversarial/oracles.jsonl",
+        "relation": "BYTE_IDENTICAL"
+      }
+    ],
+    "case_ids": [
+      "ADV-PI-001",
+      "ADV-PI-002",
+      "ADV-PI-003",
+      "ADV-JB-001",
+      "ADV-JB-002",
+      "ADV-JB-003",
+      "ADV-EX-001",
+      "ADV-EX-002",
+      "ADV-EX-003",
+      "ADV-TOL-001",
+      "ADV-TOL-002",
+      "ADV-TOL-003",
+      "ADV-TOL-004",
+      "ADV-TOL-005"
+    ],
+    "corpus_id": "GSL-ADVERSARIAL-CORPUS-001",
+    "inert_records": 4,
+    "oracles_delivered_to_target": false,
+    "selected_records": 14
+  },
+  "evidence_directory": "$TMP/adversarial-retest-v1/reviewed",
+  "evidence_policy": [
+    "closed_field_projection",
+    "paths_tokenized",
+    "content_minimized",
+    "temporary_first"
+  ],
+  "executed_at_utc": "2026-07-26T16:50:37Z",
+  "final_retest": false,
+  "historical_baseline": {
+    "baseline_id": "GSL-BASELINE-ADVERSARIAL-001",
+    "candidate_commit": "93aefa45eac687d219bfed32f03be4e60e4a13ed",
+    "configuration_hash_verified_from_results": true,
+    "corpus_files": [
+      {
+        "bytes": 13325,
+        "path": "data/incidents.jsonl",
+        "sha256": "928af933a23ffe2851f5bf5206fa691e18dd7e3a6a6d621d3ad8af06d4c4870a"
+      },
+      {
+        "bytes": 7253,
+        "path": "data/knowledge.jsonl",
+        "sha256": "f62fd7bb0051c5b97f5f5ce40941e77c1c8019d2b0ac6ceb3d2fa099d8ab92da"
+      },
+      {
+        "bytes": 815,
+        "path": "data/manifest.json",
+        "sha256": "e758a72747dd33dbd78f17551a436dd6ae6278ca5e5306bf2ddb10fe56124926"
+      },
+      {
+        "bytes": 15633,
+        "path": "data/adversarial/inputs.jsonl",
+        "sha256": "ebf1d1f58a2969e856291640a97c74e6071405c202f415ecba02cef54f35e6b4"
+      },
+      {
+        "bytes": 12776,
+        "path": "data/adversarial/oracles.jsonl",
+        "sha256": "ab0f70a8d225101168aa1be0e720b86320d9d910d1ef8358b3688ff7a5c6a9f0"
+      },
+      {
+        "bytes": 1138,
+        "path": "data/adversarial/manifest.json",
+        "sha256": "324cf5d83dd9d253446015d0950ed3c78177817c7d726f3e3f03fdd874c88cdf"
+      }
+    ],
+    "corpus_version": "1.3.0",
+    "evidence_directory": "$REPO/evaluations/adversarial-baseline-v1",
+    "evidence_files": [
+      {
+        "bytes": 4131,
+        "path": "config.json",
+        "sha256": "e570b6c5f6776034036cc118a85c476ea4316055259c43002e23de019c323319"
+      },
+      {
+        "bytes": 21757,
+        "path": "results.json",
+        "sha256": "8b0401fcd5897ba8985d4e0acf72daa0792acae6e9efcb30966425c3cbc4f760"
+      },
+      {
+        "bytes": 4832,
+        "path": "events.jsonl",
+        "sha256": "b3e0819dd2322ece607c76909037bb11f966c1b2062347f247fd833fd3c8de43"
+      }
+    ],
+    "evidence_hashes_verified": true,
+    "evidence_id": "GSL-EVIDENCE-ADVERSARIAL-001",
+    "manifest_sha256": "c7b96d964dc5ba40f5b53895486ef59bf833992c5393a9967449b98ba80eae45",
+    "reviewed_for_versioning": true
+  },
+  "operator": "ACT-02",
+  "request_authority": "user_go_for_pgs_05_m01",
+  "retest_id": "GSL-RETEST-ADVERSARIAL-001",
+  "run_id": "GSL-ADV-RT-20260726-001",
+  "runtime": {
+    "cost_eur": "0.00",
+    "external_calls": false,
+    "platform": "darwin",
+    "pydantic": "2.13.4",
+    "python": "3.12.8",
+    "uv": "0.6.10",
+    "uv_lock": {
+      "bytes": 12957,
+      "path": "$REPO/uv.lock",
+      "sha256": "7a7cb70dac5c0d018cfbd7cea07f8ad3345ac96408a21e635f6c2e84d93617be"
+    }
+  },
+  "schema_version": "1.0.0",
+  "stop_conditions": [
+    "network_attempt",
+    "non_synthetic_data",
+    "out_of_scope_write",
+    "unapproved_tool",
+    "budget_exceeded",
+    "candidate_or_corpus_drift",
+    "historical_evidence_drift",
+    "user_interrupt"
+  ],
+  "temporary_root": "$TMP/adversarial-retest-v1"
+}

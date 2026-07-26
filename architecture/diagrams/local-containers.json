@@ -49,6 +49,7 @@
           "CMP-10",
           "CMP-11",
           "CMP-12",
+          "CMP-13",
           "MOD-01",
           "TOL-01",
           "TOL-02"
@@ -100,7 +101,11 @@
           "DAT-10",
           "DAT-11",
           "DAT-12",
-          "DAT-13"
+          "DAT-13",
+          "DAT-16",
+          "DAT-17",
+          "DAT-18",
+          "DAT-19"
         ],
         "writeMode": "manual-versioning"
       }
@@ -131,7 +136,7 @@
       "id": "containers-terminal-invokes-process",
       "source": "terminal-session",
       "target": "python-application-process",
-      "label": "argv: analyze | baseline; soporte: runner canónico",
+      "label": "argv: analyze | baseline; soporte: baseline histórica | retest neutral",
       "meta": {
         "type": "calls",
         "crossesBoundary": "TB-02"
@@ -163,7 +168,7 @@
       "id": "containers-process-projects-evidence",
       "source": "python-application-process",
       "target": "evaluation-evidence-store",
-      "label": "stdout o proyección saneada desde $TMP → versionado manual",
+      "label": "stdout o proyección saneada baseline/retest desde $TMP → versionado manual",
       "meta": {
         "type": "data-flow",
         "directWrite": false

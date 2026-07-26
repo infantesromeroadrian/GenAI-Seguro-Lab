@@ -15,7 +15,8 @@ de `GSL-ROE-001`.
   y 2 solicitudes por escenario, 0 subprocesos, 0 llamadas externas y como
   máximo 1 archivo temporal de efecto.
 - Evidencia propia: observación tipada en memoria. `CMP-08` consume estas
-  observaciones para crear la baseline canónica sin ampliar el target.
+  observaciones para crear la baseline histórica y `CMP-13` las reutiliza para
+  el retest neutral, sin duplicar el harness ni ampliar el target.
 
 ## Flujo
 

@@ -30,6 +30,7 @@ from genai_seguro_lab.adversarial_retest import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
+VERSIONED_RETEST_DIR = ROOT / "evaluations" / "adversarial-retest-v1"
 
 
 @pytest.fixture
@@ -535,3 +536,90 @@ def test_historical_runner_and_evidence_remain_byte_identical() -> None:
         path: sha256((ROOT / path).read_bytes()).hexdigest()
         for path in expected_hashes
     } == expected_hashes
+
+
+def test_versioned_retest_is_reviewed_sanitized_and_internally_consistent() -> None:
+    manifest = json.loads(
+        (VERSIONED_RETEST_DIR / "manifest.json").read_text(encoding="utf-8")
+    )
+    config_bytes = (VERSIONED_RETEST_DIR / "config.json").read_bytes()
+    results_bytes = (VERSIONED_RETEST_DIR / "results.json").read_bytes()
+    events_bytes = (VERSIONED_RETEST_DIR / "events.jsonl").read_bytes()
+    config = json.loads(config_bytes)
+    results = json.loads(results_bytes)
+    events = tuple(
+        json.loads(line)
+        for line in events_bytes.decode("utf-8").splitlines()
+        if line
+    )
+
+    assert manifest["reviewed_for_versioning"] is True
+    assert manifest["final_retest"] is False
+    assert manifest["candidate_commit"] == (
+        "d236bbee9f371a75e330c227f100aef167b864b0"
+    )
+    assert manifest["candidate_tree"] == (
+        "b54b260245ba4e8426fbba86c2c22b0608960315"
+    )
+    expected_files = {
+        "config.json": config_bytes,
+        "results.json": results_bytes,
+        "events.jsonl": events_bytes,
+    }
+    assert tuple(file["path"] for file in manifest["files"]) == tuple(
+        expected_files
+    )
+    assert manifest["total_bytes"] == sum(
+        len(content) for content in expected_files.values()
+    )
+    for file in manifest["files"]:
+        content = expected_files[file["path"]]
+        assert file["bytes"] == len(content)
+        assert file["sha256"] == sha256(content).hexdigest()
+
+    assert results["configuration_sha256"] == sha256(config_bytes).hexdigest()
+    assert config["candidate"]["commit"] == manifest["candidate_commit"]
+    assert config["candidate"]["tree"] == manifest["candidate_tree"]
+    assert config["candidate"]["branch"] == "main"
+    assert config["candidate"]["clean_before_run"] is True
+    assert config["candidate"]["posture"] == "hardened_checkout"
+    assert config["authorization"]["source_profile"] == (
+        "GSL-PROFILE-VULNERABLE-001"
+    )
+    assert len(config["corpus"]["byte_identical_content_files"]) == 5
+    assert config["corpus"]["adversarial_manifest"]["relation"] == (
+        "METADATA_ONLY_DRIFT_DECLARED"
+    )
+    assert config["historical_baseline"]["manifest_sha256"] == (
+        "c7b96d964dc5ba40f5b53895486ef59bf833992c5393a9967449b98ba80eae45"
+    )
+    assert results["summary"]["status"] == "COMPLETED"
+    assert results["summary"]["completed_cases"] == 14
+    assert results["summary"]["stopped_cases"] == 0
+    assert results["summary"]["error_cases"] == 0
+    assert tuple(case["case_id"] for case in results["cases"]) == (
+        CANONICAL_CASE_IDS
+    )
+    assert all(
+        case["execution_status"] == "COMPLETED"
+        for case in results["cases"]
+    )
+    assert len(events) == 16
+    assert events[0]["event"] == "run_started"
+    assert events[-1]["event"] == "run_completed"
+    assert events[-1]["execution_status"] == "COMPLETED"
+
+    serialized = (
+        config_bytes + results_bytes + events_bytes
+    ).decode("utf-8").casefold()
+    for forbidden_fragment in (
+        "/users/",
+        '"payload',
+        '"output',
+        '"stdout',
+        '"stderr',
+        '"traceback',
+        '"canary',
+        '"credential',
+    ):
+        assert forbidden_fragment not in serialized

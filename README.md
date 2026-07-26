@@ -2,11 +2,11 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-04-M09, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica evaluó 14 fixtures sintéticas: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`; su evidencia permanece inmutable. El checkout actual exige aprobación sintética para efectos, aplica una política de salida, limita tamaño, tiempo cooperativo, iteraciones y consumo, registra eventos saneados en memoria, publica/reconcilia borradores de forma atómica y mantiene una matriz canónica comprobable de controles. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud. La siguiente microtarea es PGS-05-M01.
+> **Estado:** PGS-00-M01 a PGS-05-M01, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica evaluó 14 fixtures sintéticas y su evidencia permanece inmutable. PGS-05-M01 repitió esos 14 IDs contra el commit endurecido exacto: los 14 completaron, con 13 relaciones `MATCH` y una `DIFF`, sin interpretar todavía eficacia ni tasas. El checkout actual exige aprobación sintética para efectos, aplica una política de salida, limita tamaño, tiempo cooperativo, iteraciones y consumo, registra eventos saneados en memoria, publica/reconcilia borradores de forma atómica y mantiene una matriz canónica comprobable de controles. Cuatro fixtures permanecen inertes. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud. La siguiente microtarea es PGS-05-M02.
 
-PGS-05-M01 dispone ya de un runner de retest separado y de su contrato de
-evidencia neutral; la ejecución canónica contra el commit endurecido limpio y
-el versionado de su proyección siguen pendientes.
+La proyección revisada de `GSL-RETEST-ADVERSARIAL-001` está versionada en
+[`evaluations/adversarial-retest-v1/`](./evaluations/adversarial-retest-v1/)
+con `final_retest: false`.
 
 ## En una frase
 
@@ -80,6 +80,12 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── run_adversarial_baseline.py
 │   ├── run_adversarial_retest.py
 │   ├── adversarial-baseline-v1/
+│   │   ├── README.md
+│   │   ├── config.json
+│   │   ├── events.jsonl
+│   │   ├── manifest.json
+│   │   └── results.json
+│   ├── adversarial-retest-v1/
 │   │   ├── README.md
 │   │   ├── config.json
 │   │   ├── events.jsonl
@@ -562,13 +568,15 @@ modelo GenAI real. El impacto, la reproducción y los límites consolidados se
 documentan en
 [GSL-FINDINGS-ADVERSARIAL-001](./docs/adversarial-baseline-findings.md).
 
-## Retest adversario preparado
+## Retest adversario v1
 
-`GSL-RETEST-ADVERSARIAL-001` mantiene separado el runner histórico y reutiliza
-la única ejecución de casos de `CMP-07`. Su contrato exige un commit, tree y
-rama `main` exactos con checkout limpio; registra Python, `uv`, Pydantic y el
-hash de `uv.lock`; y ejecuta una vez los mismos 14 IDs en el mismo orden. Las
-cuatro fixtures DOS/SC permanecen inertes y los oráculos se comparan solo
+`CMP-13` implementa `GSL-RETEST-ADVERSARIAL-001`, mantiene separado el runner
+histórico y reutiliza la única ejecución de casos de `CMP-07`.
+`GSL-ADV-RT-20260726-001` se ejecutó una vez contra el commit
+`d236bbee9f371a75e330c227f100aef167b864b0`, tree
+`b54b260245ba4e8426fbba86c2c22b0608960315`, rama `main` y checkout limpio
+antes y después. Registró Python, `uv`, Pydantic y el hash de `uv.lock`; las
+cuatro fixtures DOS/SC permanecieron inertes y los oráculos se compararon solo
 después de observar el target.
 
 La comparabilidad se limita de forma explícita a cinco archivos byte a byte:
@@ -579,15 +587,19 @@ archivo idéntico.
 
 Cada caso conserva solo `execution_status` (`COMPLETED`, `STOPPED` o `ERROR`),
 el triple observado resultado/decisión/efecto y `oracle_relation` (`MATCH`,
-`DIFF` o `NOT_EVALUATED`). PGS-05-M01 no interpreta eficacia ni serializa como
-medición actual cuentas históricas de modelo, herramienta o efectos. Esa
-comparación corresponde a PGS-05-M02.
+`DIFF` o `NOT_EVALUATED`). Los 14 casos completaron: 13 registraron `MATCH` y
+`ADV-TOL-005` registró `DIFF` con el triple `rejected` / `reject` / `none`.
+PGS-05-M01 no interpreta eficacia ni serializa como medición actual cuentas
+históricas de modelo, herramienta o efectos. Esa comparación corresponde a
+PGS-05-M02.
 
 El wrapper `evaluations/run_adversarial_retest.py` solo escribe una proyección
-cerrada bajo un directorio nuevo de `$TMP`, sin sobrescribir destinos. La
-evidencia canónica aún no existe: se incorporará a
-`evaluations/adversarial-retest-v1/` únicamente después de ejecutar y revisar
-el candidato fijado.
+cerrada bajo un directorio nuevo de `$TMP`, sin sobrescribir destinos. Tras la
+revisión de saneado e integridad, únicamente `config.json`, `results.json`,
+`events.jsonl`, su manifiesto y el README explicativo se incorporaron a
+[`evaluations/adversarial-retest-v1/`](./evaluations/adversarial-retest-v1/).
+El manifiesto declara `reviewed_for_versioning: true` y
+`final_retest: false`.
 
 ## Crosswalk de amenazas
 
@@ -1098,8 +1110,9 @@ nunca para ocultar un resultado ni para reescribir la baseline histórica.
 - [x] Implementar parada segura y recuperación del estado del sandbox.
 - [x] Asociar cada control a amenazas, responsable, pruebas y limitación.
 - [x] Crear el repositorio público y publicar `main` en GitHub.
+- [x] Repetir exactamente el corpus adversario de la baseline.
 
-**PGS-00-M01 a PGS-04-M09, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **39 de 66 microtareas (59,1 %)**, con 27 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-05-M01, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **40 de 66 microtareas (60,6 %)**, con 26 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -1109,7 +1122,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-05-M01 — repetir exactamente el corpus adversario de la baseline.**
+**PGS-05-M02 — medir tasa de éxito del ataque y llamadas no autorizadas antes y después.**
 
 ## Uso responsable
 

@@ -105,9 +105,9 @@ universal de secretos, PII, desinformación o contenido dañino. En particular,
 no cubre secretos codificados u ofuscados, homoglifos, paráfrasis, todos los
 formatos de credencial ni todas las formas de contenido activo.
 
-La evidencia actual usa un adaptador determinista. PGS-05 debe repetir el
-corpus fijado y medir seguridad y utilidad; cualquier modelo o proveedor real
-exige revisar estas reglas. `GSL-RESOURCE-POLICY-001` aplica los límites de
+La evidencia actual usa un adaptador determinista. PGS-05-M01 ya repitió el
+corpus fijado; seguridad y utilidad se medirán desde M02. Cualquier modelo o
+proveedor real exige revisar estas reglas. `GSL-RESOURCE-POLICY-001` aplica los límites de
 tamaño, tiempo cooperativo, iteraciones y consumo sin ampliar la detección
 léxica de esta política. Una señal `output_policy_intervention` solo acredita
 que esta política actuó; no prueba por sí misma un ataque o una fuga.
