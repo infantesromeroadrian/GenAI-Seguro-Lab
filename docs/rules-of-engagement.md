@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `2.4.0` |
+| Versión | `2.5.0` |
 | Fecha de entrada en vigor | 2026-07-27 |
 | Baseline técnica de origen | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
@@ -23,7 +23,10 @@ PGS-03-M03 preparó `GSL-ADVERSARIAL-CORPUS-001` con entradas y oráculos
 separados. PGS-03-M04/M05/M06 conectan `ADV-PI-001/002/003`,
 `ADV-JB-001/002/003`, `ADV-EX-001/002/003` y `ADV-TOL-001/002/003/004/005`
 al test interno. PGS-03-M07 ejecuta canónicamente esas 14 fixtures; las otras
-cuatro permanecen inertes.
+cuatro permanecen inertes. PGS-05-M07 fija además un único retest final sobre
+el commit `77edd64037bb0e41edffa58cae2682ba7d2694d2`: su rúbrica se versiona
+antes de la ejecución, el candidato se materializa bajo `$TMP` y el resultado
+solo puede emitirse por `stdout` para revisión y versionado manual.
 
 ## Objetivo y resultado permitido
 
@@ -376,6 +379,7 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-24` | PGS-05-M03 debe medir utilidad benigna sin entregar oráculos ni atribuir semántica | `CMP-15` verifica candidatos, fuentes y corpus; repite exactamente 12 casos con `CMP-03` y `CMP-10`, compara el oráculo después de cada salida y emite `DAT-21` saneado; no escribe, usa red, ejecuta `TOL-02`, amplía casos ni presenta cobertura textual exacta como equivalencia semántica |
 | `ROE-25` | PGS-05-M04 debe medir dos candidatos fijados sin alterar el repositorio ni presentar un benchmark universal | `CMP-16` verifica commits, árboles y hashes comunes; usa copias `$TMP`, tres pares de calentamiento y 30 pares AB/BA con procesos nuevos y entorno allowlisted; conserva todas las muestras y emite `DAT-22` saneado sin salida bruta, retry, red deliberada, instalación, score, umbral o versionado automático |
 | `ROE-26` | PGS-05-M05 debe consolidar evidencia existente sin ejecutar ni reinterpretar expansivamente | `CMP-17` verifica `DAT-20/21/22/23`, sus hashes, esquemas, 44 referencias escalares y el resumen; no genera clasificaciones, ejecuta componentes, escribe evidencia, decide M06, acepta riesgo o cambia `final_retest` |
+| `ROE-27` | PGS-05-M07 debe ejecutar una sola vez el candidato final fijado sin contaminarlo con rúbrica u oráculos | `CMP-18` exige el commit/árbol `77edd640`/`bc09b78f`, materializa el target mediante `git archive` bajo `$TMP`, bloquea red y credenciales, ejecuta 14 casos adversarios y 12 benignos más dos probes de frontera, deja cuatro casos inertes, verifica 15 artefactos históricos y emite solo una proyección saneada por `stdout`; el run canónico requiere evaluador comprometido, no escribe evidencia por sí mismo y no afirma seguridad general, equivalencia semántica general ni evaluación con un modelo GenAI real |
 
 ## Disparadores de revisión
 

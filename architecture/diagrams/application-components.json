@@ -301,6 +301,35 @@
       }
     },
     {
+      "id": "final-retest-evaluator",
+      "label": "CMP-18 · Evaluador del retest final",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/final_retest.py",
+      "meta": {
+        "type": "service",
+        "technology": "pydantic-python-stdlib",
+        "inventoryIds": [
+          "CMP-18"
+        ],
+        "state": "internal-support-pre-run",
+        "cliProductReachable": false,
+        "candidateCommit": "77edd64037bb0e41edffa58cae2682ba7d2694d2",
+        "candidateTree": "bc09b78f7f3d85f94241f9955e79abb264bd89de",
+        "candidateIsolation": "git-archive-temporary-process",
+        "canonicalAdversarialCases": 14,
+        "canonicalBenignCases": 12,
+        "boundaryProbes": 2,
+        "inertCasesExecuted": 0,
+        "externalCalls": false,
+        "providerCredentialsForwarded": false,
+        "rubricDeliveredToTarget": false,
+        "writesEvidence": false,
+        "rubricInput": "DAT-24",
+        "canonicalEvidence": false,
+        "finalRetestExecuted": false
+      }
+    },
+    {
       "id": "output-safety-policy",
       "label": "CMP-09 · Política de salida",
       "parentId": "application-control-boundary",
@@ -1030,6 +1059,44 @@
       "meta": {
         "type": "reads",
         "executesComponent": false,
+        "sourceEvidenceImmutable": true
+      }
+    },
+    {
+      "id": "components-final-retest-drives-adversarial-target",
+      "source": "final-retest-evaluator",
+      "target": "adversarial-retest-runner",
+      "label": "14 fixtures sobre 77edd640 bajo $TMP; oráculos posteriores",
+      "meta": {
+        "type": "calls",
+        "canonicalCases": 14,
+        "oraclesDeliveredToTarget": false,
+        "inertCasesExecuted": 0,
+        "directCheckoutWrite": false
+      }
+    },
+    {
+      "id": "components-final-retest-runs-benign-flow",
+      "source": "final-retest-evaluator",
+      "target": "benign-flow",
+      "label": "12 casos + 2 probes; rúbrica y expected_result fuera del target",
+      "meta": {
+        "type": "calls",
+        "canonicalCases": 12,
+        "boundaryProbes": 2,
+        "rubricDeliveredToTarget": false,
+        "externalCalls": false,
+        "sideEffects": false
+      }
+    },
+    {
+      "id": "components-final-retest-imports-closed-classification",
+      "source": "final-retest-evaluator",
+      "target": "adversarial-metrics-analyzer",
+      "label": "reutiliza clasificación M02 y verifica evidencia histórica",
+      "meta": {
+        "type": "reads",
+        "executesAnalyzer": false,
         "sourceEvidenceImmutable": true
       }
     }

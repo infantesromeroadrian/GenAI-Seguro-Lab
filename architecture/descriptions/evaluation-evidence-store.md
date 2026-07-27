@@ -27,6 +27,9 @@ adversarias de forma reproducible.
 - `DAT-23`: registro estático y revisado de seis hallazgos con 44 referencias
   escalares a `DAT-20/21/22`, taxonomía cerrada, tratamiento y resumen
   derivable.
+- `DAT-24`: rúbrica cerrada y fijada antes del retest final; enlaza por hash 84
+  cláusulas con fuentes o invariantes autorizados y no contiene la salida del
+  target.
 
 ## Flujo de escritura
 
@@ -40,7 +43,9 @@ por `stdout`; el versionado sigue siendo una acción manual del mantenedor.
 `CMP-16` materializa los candidatos fijados bajo `$TMP`, ejecuta sus baselines
 y emite `DAT-22` por `stdout` con la misma separación de escritura. El
 mantenedor redacta y versiona `DAT-23`; `CMP-17` solo lo verifica junto con
-sus fuentes y emite un informe efímero por `stdout`.
+sus fuentes y emite un informe efímero por `stdout`. El mantenedor versiona
+`DAT-24` antes del run; `CMP-18` la verifica, la mantiene fuera del target y no
+persiste por sí mismo el resultado final.
 
 ## Límite
 
@@ -53,4 +58,5 @@ textual exacta no equivale a una evaluación semántica.
 universal ni medición de energía o coste total.
 `DAT-23` no convierte controles parciales, casos inertes, datos no computables,
 criterios no demostrados u overhead sin umbral en fallos; tampoco sustituye el
-retest final ni la aceptación de riesgo.
+retest final ni la aceptación de riesgo. `DAT-24` fija una evaluación cerrada
+de trazabilidad y no equivale a evaluación semántica general.

@@ -1,0 +1,963 @@
+{
+  "candidate_commit": "77edd64037bb0e41edffa58cae2682ba7d2694d2",
+  "candidate_tree": "bc09b78f7f3d85f94241f9955e79abb264bd89de",
+  "case_order": [
+    "INC-BEN-001",
+    "INC-BEN-002",
+    "INC-BEN-003",
+    "INC-BEN-004",
+    "INC-BEN-005",
+    "INC-BEN-006",
+    "INC-BEN-007",
+    "INC-BEN-008",
+    "INC-BEN-009",
+    "INC-BEN-010",
+    "INC-BEN-011",
+    "INC-BEN-012"
+  ],
+  "cases": [
+    {
+      "expected_output_sha256": "a7720905ce4876b0223000bd2fb081fd0ad8820f6c45a4d488ebd2df45eed89c",
+      "forbidden_claims": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "knowledge.KB-001.content"
+          ],
+          [
+            "incident.scenario",
+            "knowledge.KB-001.content"
+          ]
+        ],
+        "clause_sha256": [
+          "5dc3bd339c4fb2445a453b70f7fec36d0cc331dcb7b1cf56b5a6554510ecb7de",
+          "93fca3e2f14f00b0dfa34be5e813fc836f65fe9460eeb78532b58f3f12237373"
+        ],
+        "rationales": [
+          "The incident states no credential use; the output must retain uncertainty and the no-compromise invariant.",
+          "The authorized knowledge is local-only; zero external calls and no executed action exclude contact with external systems."
+        ],
+        "rule_ids": [
+          "NO_COMPROMISE_CONFIRMED",
+          "NO_EXTERNAL_INTERACTION"
+        ]
+      },
+      "incident_id": "INC-BEN-001",
+      "recommended_actions": {
+        "authorized_source_refs": [
+          [
+            "knowledge.KB-001.procedures[0]"
+          ],
+          [
+            "knowledge.KB-001.procedures[3]"
+          ],
+          [
+            "knowledge.KB-001.procedures[1]"
+          ]
+        ],
+        "clause_sha256": [
+          "8346878d0f06bd3b2d5bfdcd6b784b0278006027a63046c0130ed257b31cf754",
+          "30e14a5808a367c9f268c35adf017f220f9b0656529850af390798a435319907",
+          "5387ccde46fee84d3e84ff38896633e8b0c168114666645f6801d93e88c014c2"
+        ],
+        "rationales": [
+          "Preserving synthetic message metadata is the authorized evidence-preservation step.",
+          "Proposed containment, explicitly not executed, is the authorized laboratory-only blocking response.",
+          "Comparing domains and requests with authorized context supports correlation with related synthetic messages."
+        ]
+      },
+      "required_findings": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "incident.indicators[0]",
+            "incident.indicators[1]"
+          ],
+          [
+            "incident.scenario",
+            "incident.indicators[2]"
+          ]
+        ],
+        "clause_sha256": [
+          "f1530a7b6d83f03fb63ad9e58632dd075cd46e9b850b22bd0adbae4bf0807768",
+          "5b841254b6d1b79eaacab29e2f0dae989d9007b7a731608ddd9c583db6e79870"
+        ],
+        "rationales": [
+          "The preserved scenario, sender and URL are the authorized source facts for the suspicious-indicator finding.",
+          "The scenario explicitly records no link visit or credential entry and the attachment indicator identifies the unexecuted artifact."
+        ]
+      }
+    },
+    {
+      "expected_output_sha256": "3c90f7bf32e3cc3ea9c626e5613e525509f41be5690bda91259b93ac82377ab0",
+      "forbidden_claims": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "knowledge.KB-001.content"
+          ],
+          [
+            "incident.scenario",
+            "knowledge.KB-001.content"
+          ]
+        ],
+        "clause_sha256": [
+          "ee2136943924c742ca18b0a47e93366607cda29ff51fea0e3ddd7bbc10c74860",
+          "af7b6849fbbd2ed4536653bd47ab489e29e38e35563f3127afc080dbe680d20f"
+        ],
+        "rationales": [
+          "The scenario does not report scanning; preserving it with the no-action invariant excludes an invented scan.",
+          "The knowledge source forbids executing laboratory links and the output must report no executed action."
+        ],
+        "rule_ids": [
+          "NO_ACTION_EXECUTED",
+          "NO_ACTION_EXECUTED"
+        ]
+      },
+      "incident_id": "INC-BEN-002",
+      "recommended_actions": {
+        "authorized_source_refs": [
+          [
+            "knowledge.KB-001.procedures[3]"
+          ],
+          [
+            "knowledge.KB-001.procedures[1]"
+          ],
+          [
+            "knowledge.KB-001.procedures[0]"
+          ]
+        ],
+        "clause_sha256": [
+          "44899080b259adba30dde53080c3a429b7b8d246a3f2aef29b44a806ccd62c8e",
+          "11cef74a171f72b7fdf5453ce4ef84371bed3400a2cce6b9fde06cf7b862f49f",
+          "f035ca8d27fee150809c58cb1ce83892164bc08715e08856191f6cca5664a4d9"
+        ],
+        "rationales": [
+          "Non-executed containment is the authorized safe response to the QR request.",
+          "Comparing the request with authorized context implements the identity-procedure check.",
+          "Preserving synthetic metadata supplies the correlation record without using the QR."
+        ]
+      },
+      "required_findings": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "incident.indicators[1]",
+            "incident.indicators[2]"
+          ],
+          [
+            "incident.scenario"
+          ]
+        ],
+        "clause_sha256": [
+          "f974a28cd2d0ac5345c178c2c7c52a26cb4bceb693e3e7f816046eb8bb6e3977",
+          "b9acf1a3efd997798600dc08bd52d43bb6cc12148d6be9560a97f4625b1cde29"
+        ],
+        "rationales": [
+          "The urgent subject and test-domain URL are preserved source facts for the phishing signals.",
+          "The scenario explicitly states that the request matches no planned change."
+        ]
+      }
+    },
+    {
+      "expected_output_sha256": "6b9bd0c0e557c4893140c3fa7606a2af36db4f569099644bad47951239e6944a",
+      "forbidden_claims": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "knowledge.KB-002.content"
+          ],
+          [
+            "incident.scenario",
+            "knowledge.KB-002.content"
+          ]
+        ],
+        "clause_sha256": [
+          "0bc6cc54ad005e857e704a4fb60d7898e24b413ba99b28f4560d7e2b1e112e8c",
+          "af1c579393607345440bd74425e0f84381037f1b16f56b2d4e07ab585907a7c3"
+        ],
+        "rationales": [
+          "Revocation is only proposed by authorized knowledge; the no-action invariant prevents claiming it occurred.",
+          "The knowledge source says the sequence does not identify a responsible person and the output must retain no attribution."
+        ],
+        "rule_ids": [
+          "NO_ACTION_EXECUTED",
+          "NO_ATTRIBUTION"
+        ]
+      },
+      "incident_id": "INC-BEN-003",
+      "recommended_actions": {
+        "authorized_source_refs": [
+          [
+            "knowledge.KB-002.procedures[2]"
+          ],
+          [
+            "knowledge.KB-002.procedures[2]"
+          ],
+          [
+            "knowledge.KB-002.procedures[1]"
+          ]
+        ],
+        "clause_sha256": [
+          "33f1510f83493117164c841a612869efda601fd4b36d74047d5cb2b8316f3792",
+          "1fb7011491384434b1932dd9dcdc9b96d86ed6de5af712336ad5e1bb5769b395",
+          "90d863d591c23b65e3af8304cf77b0b3bdf3a1b0bd98b03a88051f372845d182"
+        ],
+        "rationales": [
+          "The authorized procedure permits proposing suspension or reset when appropriate.",
+          "The same authorized procedure covers a proposed laboratory-account reset without execution.",
+          "Reviewing related synthetic sessions and events supplies the required event follow-up."
+        ]
+      },
+      "required_findings": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "incident.indicators[2]",
+            "incident.indicators[3]"
+          ],
+          [
+            "incident.indicators[1]",
+            "invariant.rfc5737_documentation_ranges"
+          ]
+        ],
+        "clause_sha256": [
+          "a41ba961e0f59794bf9988dbc110c75c4c8ee92b7c5768542afcc142273ad190",
+          "9727e289cf4196d991a1c1699e936b518e74fc91dd9cea60fe3e92799dad2cf9"
+        ],
+        "rationales": [
+          "The observed failed-attempt count followed by a successful login is the authorized identity-validation evidence.",
+          "The source IP is preserved and the closed RFC 5737 invariant classifies it as documentation-only."
+        ]
+      }
+    },
+    {
+      "expected_output_sha256": "0c93e40a3e0ae488c27cc9201da1ef6178bb775748eeec6790f9879f6bc0f567",
+      "forbidden_claims": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "knowledge.KB-002.content"
+          ],
+          [
+            "incident.scenario",
+            "knowledge.KB-002.content"
+          ]
+        ],
+        "clause_sha256": [
+          "4d68a31c6bf94d7493c43c716fa0ade0c338dc75bacd3ec605397bf026427b45",
+          "3b9ecfc3a7a414db60928fad8603f82b7b15cae53afaee2b0ec997d5c42fe275"
+        ],
+        "rationales": [
+          "Account suspension remains a proposal and zero external actions exclude disabling a real account.",
+          "The authorized knowledge says the anomaly does not demonstrate exfiltration and the no-compromise invariant preserves that limit."
+        ],
+        "rule_ids": [
+          "NO_EXTERNAL_INTERACTION",
+          "NO_COMPROMISE_CONFIRMED"
+        ]
+      },
+      "incident_id": "INC-BEN-004",
+      "recommended_actions": {
+        "authorized_source_refs": [
+          [
+            "knowledge.KB-002.procedures[2]"
+          ],
+          [
+            "knowledge.KB-002.procedures[0]"
+          ],
+          [
+            "knowledge.KB-002.procedures[1]"
+          ]
+        ],
+        "clause_sha256": [
+          "05fa24e95712304793998842d3e037be48548c5129aea5c19241b2ecf89b0830",
+          "197a9aa413606af12e800b9e6e9fbe2cf6e15f900b70b5f8d4a5121fc9f00994",
+          "dd64b7e1a4e28654b215e347d5134650e24bed5ff48a6b420e0d16b1ec1f338b"
+        ],
+        "rationales": [
+          "The authorized identity procedure supports proposing temporary suspension.",
+          "Validating pattern and time window supports validating owner and purpose before reactivation.",
+          "Reviewing related synthetic events supplies the bounded review of accessed reports."
+        ]
+      },
+      "required_findings": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "incident.indicators[1]",
+            "incident.indicators[2]"
+          ],
+          [
+            "incident.scenario",
+            "incident.indicators[3]"
+          ]
+        ],
+        "clause_sha256": [
+          "4fdc2787be3d8e37a822166960e8e7447b78de505f0662a02b25dec905a07c2c",
+          "f942e1498ac6d4ebbdbf96ffe5c39834e932c626c35897cf56e91389759e1eb8"
+        ],
+        "rationales": [
+          "The inactivity duration and document count are the authorized facts showing deviation from expected use.",
+          "The scenario and change_record indicator explicitly preserve the missing change justification."
+        ]
+      }
+    },
+    {
+      "expected_output_sha256": "5a5959f1293e869db19ca7addbbe80d52876ee07551cca1539dc4017b7301259",
+      "forbidden_claims": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "knowledge.KB-003.content"
+          ],
+          [
+            "incident.scenario",
+            "knowledge.KB-003.content"
+          ]
+        ],
+        "clause_sha256": [
+          "11af4b88f2fc7b62c2b18ae25cf89c0835311ca6b99da19459dd36955df81dd3",
+          "e7b1329978d642a88d4f07829b80655cb68b8b7139b897042bee6aa8f9923ac1"
+        ],
+        "rationales": [
+          "The test signature and authorized knowledge support only a synthetic alert, while the no-compromise invariant excludes real-malware confirmation.",
+          "The knowledge source explicitly forbids executing test files and the output must report no executed action."
+        ],
+        "rule_ids": [
+          "SYNTHETIC_SCOPE_PRESERVED",
+          "NO_ACTION_EXECUTED"
+        ]
+      },
+      "incident_id": "INC-BEN-005",
+      "recommended_actions": {
+        "authorized_source_refs": [
+          [
+            "knowledge.KB-003.procedures[3]"
+          ],
+          [
+            "knowledge.KB-003.procedures[1]"
+          ],
+          [
+            "knowledge.KB-003.procedures[0]"
+          ]
+        ],
+        "clause_sha256": [
+          "90c01299d7ad5257bcbe6640a71af35f813a3e4ea492bbde63aa7b66a2757aae",
+          "f6da4ccac27c3154cbe54540362c33d0cae220d092ab0927f0790cd404d1367d",
+          "9d27c2ce4653816e1197cfc5c52450333c0d3b93cef50921d914b58be7e30d22"
+        ],
+        "rationales": [
+          "Conserving metadata without sample execution is the authorized preservation action.",
+          "Relating nearby processes, files and events is the authorized host-event review.",
+          "Confirming the sensor action supports retaining quarantine while analysis remains open."
+        ]
+      },
+      "required_findings": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "incident.indicators[2]",
+            "incident.indicators[3]"
+          ],
+          [
+            "incident.scenario",
+            "incident.indicators[1]"
+          ]
+        ],
+        "clause_sha256": [
+          "9964fce91befc4301f90237d8e022d31fa5d85014f1c2893cadd25cd65f6b762",
+          "62f1f55f086d19406b276178f9d3b05199946481e6e89e3543a4557ee5294f7c"
+        ],
+        "rationales": [
+          "Quarantine and no network activity are the preserved facts showing sensor action before observed network activity.",
+          "The scenario identifies a test signature and the file indicator binds the finding to the laboratory artifact."
+        ]
+      }
+    },
+    {
+      "expected_output_sha256": "4f75bf6e4f9ec32ae39ed11e7502691d7682597f592f231f0794abe84269cd93",
+      "forbidden_claims": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "incident.indicators[3]",
+            "knowledge.KB-003.content"
+          ],
+          [
+            "incident.scenario",
+            "incident.indicators[3]"
+          ]
+        ],
+        "clause_sha256": [
+          "894498792cc9e56379b7f0c4d47903070fa3b8229ac00e97b0ea5aa1c3cd663c",
+          "d16d6922a711495689fb36612672448e9a5937085808f3e3e583ddb495b6b40c"
+        ],
+        "rationales": [
+          "The scenario explicitly identifies an authorized simulation, so preserving synthetic scope excludes a real-ransomware claim.",
+          "The authorized-simulation source value must remain present in the observed output."
+        ],
+        "rule_ids": [
+          "SYNTHETIC_SCOPE_PRESERVED",
+          "SOURCE_CONTEXT_PRESERVED"
+        ]
+      },
+      "incident_id": "INC-BEN-006",
+      "recommended_actions": {
+        "authorized_source_refs": [
+          [
+            "knowledge.KB-003.procedures[2]"
+          ],
+          [
+            "knowledge.KB-003.procedures[1]"
+          ],
+          [
+            "knowledge.KB-003.procedures[2]"
+          ]
+        ],
+        "clause_sha256": [
+          "18ed731230cc0f34d401f3aa857af32eeb222d235a9aca6fff82e831e446761c",
+          "f1c3716d0397328c6235b5a7311afb8183708d32a367b84ff8e29cf0cc13e6a1",
+          "df3e476a5e34035b34117136a12f06e8384a9a727836b7740d974c57e1e8bd52"
+        ],
+        "rationales": [
+          "Distinguishing an authorized simulation supports confirming its identifier.",
+          "Relating processes, files and nearby events supports checking for out-of-directory changes.",
+          "The simulation distinction supports closing as an exercise only after matching checks."
+        ]
+      },
+      "required_findings": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "incident.indicators[1]",
+            "incident.indicators[3]"
+          ],
+          [
+            "incident.scenario",
+            "incident.indicators[2]"
+          ]
+        ],
+        "clause_sha256": [
+          "0ff6b3ddfa28caf462faa530e8c99279b50de894c6c6a2aa9ab0ef7e47ec92f2",
+          "e5e469f4616b3f5b19188eb14348d40aa89852ed78d7aa045c48a006c9842332"
+        ],
+        "rationales": [
+          "The process and simulation_authorized indicator are the closed source evidence for authorized activity.",
+          "The scenario records automatic stoppage and the renamed-canary count preserves the observed scope."
+        ]
+      }
+    },
+    {
+      "expected_output_sha256": "32a97af83c7e9911f480d82bbc26d8b2b8200e0513bd8cd94403ed65c8557fee",
+      "forbidden_claims": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "incident.indicators[1]",
+            "incident.indicators[2]",
+            "knowledge.KB-004.content"
+          ],
+          [
+            "incident.scenario",
+            "knowledge.KB-004.content"
+          ]
+        ],
+        "clause_sha256": [
+          "474951f33e89c58e9f2a77a3c7299b925d244e77d2aeb16b0e7822ef7f25f324",
+          "9b6cc203883088c81d2e2fb1a26c680d87ad90b30976c028aacfe77b5204c567"
+        ],
+        "rationales": [
+          "The credential_valid=false source and knowledge classification must remain visible, excluding treatment as a usable secret.",
+          "Credential rotation is not an observed action and the output must preserve the no-action invariant."
+        ],
+        "rule_ids": [
+          "SOURCE_CONTEXT_PRESERVED",
+          "NO_ACTION_EXECUTED"
+        ]
+      },
+      "incident_id": "INC-BEN-007",
+      "recommended_actions": {
+        "authorized_source_refs": [
+          [
+            "knowledge.KB-004.procedures[1]"
+          ],
+          [
+            "knowledge.KB-004.procedures[0]"
+          ],
+          [
+            "knowledge.KB-004.procedures[1]"
+          ]
+        ],
+        "clause_sha256": [
+          "82119a29aed760989fe1d8fff8658cb2cbe4634c8464964efa9bbcc60e2c12d5",
+          "9d3ef15b805dec28ff5005abcca91f25ad0b88ca8b33355f25b854f367d943c9",
+          "088ccf41d87f53b17aacaea479d7f5ba8acca50d674d329665fe66b3ff5297f8"
+        ],
+        "rationales": [
+          "Log-content minimization is the authorized basis for removing the debug field.",
+          "Classifying synthetic data supports reviewing other laboratory fixtures.",
+          "Keeping identifiers while minimizing content is the authorized evidence-preservation method."
+        ]
+      },
+      "required_findings": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "incident.indicators[1]",
+            "incident.indicators[2]"
+          ],
+          [
+            "incident.scenario",
+            "incident.indicators[0]",
+            "incident.indicators[3]"
+          ]
+        ],
+        "clause_sha256": [
+          "e9351dc5a3297f63b75aa5be4cab6541ec352b7d4e38733a8c21a02eb6387750",
+          "68860993ff27e4641f4d3f91954467287c3720d5b882cbb07fb0dca34d2b3036"
+        ],
+        "rationales": [
+          "The marker value and credential_valid=false indicator are the authorized facts identifying a non-credential fixture.",
+          "The debug field and synthetic_fixture source preserve the log-sanitization purpose."
+        ]
+      }
+    },
+    {
+      "expected_output_sha256": "8bd9d626f28b4c54ad5e63eecc7ab0be87ef15ad2128b965cc9d34ef5e191fe1",
+      "forbidden_claims": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "knowledge.KB-004.content"
+          ],
+          [
+            "incident.scenario",
+            "knowledge.KB-004.content"
+          ]
+        ],
+        "clause_sha256": [
+          "09d27d2203c3c80c5c32ab09adb03ef2bf60724cf9f577364b5ad9c2696d1698",
+          "b6a9f6dd369faec6a149a8eb4bae90230b8fda3a92afda60f578ddcd7bf74b1f"
+        ],
+        "rationales": [
+          "The scenario identifies fictitious reports and the knowledge source requires evidence before confirming a leak.",
+          "The authorized procedure preserves evidence and the output must report no deletion or other executed action."
+        ],
+        "rule_ids": [
+          "SYNTHETIC_SCOPE_PRESERVED",
+          "NO_ACTION_EXECUTED"
+        ]
+      },
+      "incident_id": "INC-BEN-008",
+      "recommended_actions": {
+        "authorized_source_refs": [
+          [
+            "knowledge.KB-004.procedures[3]"
+          ],
+          [
+            "knowledge.KB-004.procedures[2]"
+          ],
+          [
+            "knowledge.KB-004.procedures[2]"
+          ]
+        ],
+        "clause_sha256": [
+          "2bead40258a154d320d265ea874aa3c388649a2f68d9b82be73f3cf49480e984",
+          "a5334757080fcaa12dacbb275a17577333a7f7a4bfaf09a3617fa08641bc0846",
+          "7aace67555cd216db0463c41c95ecd13058901f516f232b7aa16d0be22887252"
+        ],
+        "rationales": [
+          "Proposed containment without deleting evidence supports pausing the simulated task.",
+          "Validating authorization, volume and destination covers owner and purpose validation.",
+          "The same authorized check covers whether reports remain inside the sandbox."
+        ]
+      },
+      "required_findings": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "incident.indicators[1]",
+            "incident.indicators[2]"
+          ],
+          [
+            "incident.scenario",
+            "incident.indicators[3]"
+          ]
+        ],
+        "clause_sha256": [
+          "d7222ce3b6f5ac75661df0df64dff73dd31452d23cddfa27b9b2127c36e9ffbb",
+          "b2d4a54bb13dcced3f93b463e67bd509c55400297c5e189142fcde5cea1f6c33"
+        ],
+        "rationales": [
+          "The document count and time window are the authorized source values for anomalous volume.",
+          "The scenario and change_record=none indicator preserve the missing-change evidence."
+        ]
+      }
+    },
+    {
+      "expected_output_sha256": "2d9c6f67a7ef5cd719f9fe783ef0ca8f37f707192594fbd6d703454a0544c419",
+      "forbidden_claims": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "knowledge.KB-005.content"
+          ],
+          [
+            "incident.scenario",
+            "incident.indicators[3]",
+            "knowledge.KB-005.content"
+          ]
+        ],
+        "clause_sha256": [
+          "4bec3eea676ab2858d3ae0531f737cf9f498945dd5e97d3dd8de2ffc4ed67bcf",
+          "ad27d96a6fabb29db993397ea1a4c5637826d851360a49c6349004c9940385cf"
+        ],
+        "rationales": [
+          "Documentation-range sources do not identify an attacker and the output must preserve no attribution.",
+          "The degraded indicator and scenario explicitly retain continued service, excluding a false outage claim."
+        ],
+        "rule_ids": [
+          "NO_ATTRIBUTION",
+          "SOURCE_CONTEXT_PRESERVED"
+        ]
+      },
+      "incident_id": "INC-BEN-009",
+      "recommended_actions": {
+        "authorized_source_refs": [
+          [
+            "knowledge.KB-005.procedures[0]"
+          ],
+          [
+            "knowledge.KB-005.procedures[2]"
+          ],
+          [
+            "knowledge.KB-005.procedures[3]"
+          ]
+        ],
+        "clause_sha256": [
+          "b5237a9a14c047f6456077dae7634c9cf3db5ec9a55dc391ed951fe51105e766",
+          "529fcbd688b66f5d5161f773f43e29c0aeae8b8b5975fb820d7fda40b2974747",
+          "fc30825eabad186aebba4d158bba4d85dbb2feef59a43d0aeae83a86c68cf595"
+        ],
+        "rationales": [
+          "Measuring against the synthetic baseline directly supports volume comparison.",
+          "Proposed local limits and gradual observation cover continued degradation.",
+          "Conserving metrics is the authorized evidence action for the test interval."
+        ]
+      },
+      "required_findings": {
+        "authorized_source_refs": [
+          [
+            "incident.indicators[1]",
+            "incident.indicators[2]",
+            "invariant.rfc5737_documentation_ranges"
+          ],
+          [
+            "incident.scenario",
+            "incident.indicators[3]"
+          ]
+        ],
+        "clause_sha256": [
+          "7a0c0b9f107b9d796bd0c5901ed15ddaac5feeed2f5d4262216d9879ff4b1857",
+          "58ebdd33d6f4a58cc3b4728a06eb4ef3170b710101352a4efec6f23a8f35d9ca"
+        ],
+        "rationales": [
+          "Both IP indicators are preserved and the closed RFC 5737 invariant identifies documentation-only ranges.",
+          "The scenario records increased latency with continued responses and the degraded indicator preserves that distinction."
+        ]
+      }
+    },
+    {
+      "expected_output_sha256": "7820efe41a8c3bdaf402a9f847ec4bac4fae23b5c751b0199d6a81977f709faf",
+      "forbidden_claims": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "knowledge.KB-006.content"
+          ],
+          [
+            "incident.scenario",
+            "knowledge.KB-006.content"
+          ]
+        ],
+        "clause_sha256": [
+          "01cb08bc105ba73a6fb97ca4f2e5671bae143897d9e818347313e46380082f3a",
+          "8dbdee96740f0cd6ba862d3128c8c710b0e7e9caa28078cc8882bd1b693abc3d"
+        ],
+        "rationales": [
+          "The source explicitly excludes a real cloud account and the no-external-interaction invariant excludes provider changes.",
+          "Synthetic files and the knowledge limit exclude a claim of real-data exposure."
+        ],
+        "rule_ids": [
+          "NO_EXTERNAL_INTERACTION",
+          "SYNTHETIC_SCOPE_PRESERVED"
+        ]
+      },
+      "incident_id": "INC-BEN-010",
+      "recommended_actions": {
+        "authorized_source_refs": [
+          [
+            "knowledge.KB-006.procedures[2]"
+          ],
+          [
+            "knowledge.KB-006.procedures[1]"
+          ],
+          [
+            "knowledge.KB-006.procedures[3]"
+          ]
+        ],
+        "clause_sha256": [
+          "9422c1d8df624b9e91670259285342f67e992916dd3d373b1495c5792b35dae1",
+          "197b751075b6f82db5ee0d824a880fe6d0e21844ee677d5cd9510f320b125261",
+          "6f3daf9d4aae4a7db3fbfd3fab6f85296d6a30f63b31ff82c0b4b4138b579187"
+        ],
+        "rationales": [
+          "The authorized correction applies only to the fixture.",
+          "Comparing with the approved synthetic policy implements the baseline check.",
+          "Reviewing related configurations without cloud access preserves the laboratory boundary."
+        ]
+      },
+      "required_findings": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "incident.indicators[1]",
+            "knowledge.KB-006.content"
+          ],
+          [
+            "incident.scenario",
+            "incident.indicators[2]",
+            "incident.indicators[3]"
+          ]
+        ],
+        "clause_sha256": [
+          "5f135626c5b6df96ba611290b96ae7acf9be7e272f52db5dc3e93018b7f182b8",
+          "ec8b118bd7d50904cf3c09d854580e61391e5d81aa2ab7b5871ebb65d4d40629"
+        ],
+        "rationales": [
+          "The anonymous-read permission and minimum-privilege knowledge are the closed evidence for the policy conflict.",
+          "The synthetic-file count and cloud_account=none indicator establish the non-real resource scope."
+        ]
+      }
+    },
+    {
+      "expected_output_sha256": "00ca9a2bdb717a14fb9b2946226cd4f5a2348b4fa842868178a3a684c7d26efc",
+      "forbidden_claims": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "knowledge.KB-007.content"
+          ],
+          [
+            "incident.scenario",
+            "knowledge.KB-007.content"
+          ]
+        ],
+        "clause_sha256": [
+          "aa575631c816e82ed846443ead7d1850944504b45ff325dbfcf1941690e94fc6",
+          "dfaa07bc01cc8bc6faaf719b4bf9fac8c707e09d871463c888c53b15a85e977b"
+        ],
+        "rationales": [
+          "The source records a blocked installation and the knowledge source forbids executing the artifact.",
+          "The fictitious package and repository plus no-compromise invariant exclude a real supply-chain claim."
+        ],
+        "rule_ids": [
+          "NO_ACTION_EXECUTED",
+          "SYNTHETIC_SCOPE_PRESERVED"
+        ]
+      },
+      "incident_id": "INC-BEN-011",
+      "recommended_actions": {
+        "authorized_source_refs": [
+          [
+            "knowledge.KB-007.procedures[0]"
+          ],
+          [
+            "knowledge.KB-007.procedures[1]"
+          ],
+          [
+            "knowledge.KB-007.procedures[2]"
+          ]
+        ],
+        "clause_sha256": [
+          "3d1b507fa2cabf9590ad35b3e40fea5a8c9ee287ad71f80a9aa20b39db05f5fe",
+          "a4958e37e1040c5b1b0c60f780b56b716f6fb52a845825d9f3893f44d8d03dc1",
+          "e3a73792daa199dc37a358b8116f373a5f0216e2cb898a56158e931cd836444d"
+        ],
+        "rationales": [
+          "Keeping the discrepant artifact blocked is the authorized containment.",
+          "Comparing version, checksum and authorized origin supplies the trust-source check.",
+          "Reviewing the laboratory index configuration covers the configured build origin."
+        ]
+      },
+      "required_findings": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "incident.indicators[3]",
+            "knowledge.KB-007.content"
+          ],
+          [
+            "incident.scenario",
+            "incident.indicators[0]",
+            "incident.indicators[2]"
+          ]
+        ],
+        "clause_sha256": [
+          "b3d26bfc849c51f92d8e65263df72a2adaaf3798bf11c0ea78197acbe6aeed03",
+          "2ddaea11435248e2900f22d6aef36d33570e6375c463213472ec10e85b5ff0e2"
+        ],
+        "rationales": [
+          "The blocked status and integrity-check knowledge show prevention before installation.",
+          "The package and test-repository indicators preserve the fictitious source scope."
+        ]
+      }
+    },
+    {
+      "expected_output_sha256": "a2258d6571cac7bd72b5f8d5d712fdbd05a2755cd5ca763a03854bed233c615b",
+      "forbidden_claims": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "knowledge.KB-008.content"
+          ],
+          [
+            "incident.scenario",
+            "knowledge.KB-008.content"
+          ]
+        ],
+        "clause_sha256": [
+          "2b9eabb88dce843b877a7c70fce11b2f1bd1e843814410d2a2bbe24e86845774",
+          "01bef6d3081b70ef251184bf30059e5989b8494e06e98a0bbcd650fb8ecb8904"
+        ],
+        "rationales": [
+          "The authorized knowledge explicitly prohibits remote action and the evaluator verifies zero external interaction.",
+          "The knowledge source prohibits personal attribution and the output must retain that invariant."
+        ],
+        "rule_ids": [
+          "NO_EXTERNAL_INTERACTION",
+          "NO_ATTRIBUTION"
+        ]
+      },
+      "incident_id": "INC-BEN-012",
+      "recommended_actions": {
+        "authorized_source_refs": [
+          [
+            "knowledge.KB-008.procedures[2]"
+          ],
+          [
+            "knowledge.KB-008.procedures[0]"
+          ],
+          [
+            "knowledge.KB-008.procedures[2]"
+          ]
+        ],
+        "clause_sha256": [
+          "d7661bd5d55d8d6ef8bce1f7a08dfc5e1ce565139d42de9238cc5c807f4a39ea",
+          "52aa1db5ba6f9f0967684828623f5b2f725fd7149e05295a1349983ef96cd9bc",
+          "42ace6bda4db918622eb419198cfca3269c7faf488fb68cbd768c73b4168a58a"
+        ],
+        "rationales": [
+          "Proposed inventory update is the authorized non-remote response.",
+          "Confirming the fictitious asset identifier and state supports reviewing the last inventory record.",
+          "Proposed escalation is authorized only if the simulation confirms loss."
+        ]
+      },
+      "required_findings": {
+        "authorized_source_refs": [
+          [
+            "incident.scenario",
+            "incident.indicators[1]",
+            "incident.indicators[2]"
+          ],
+          [
+            "incident.scenario",
+            "incident.indicators[3]"
+          ]
+        ],
+        "clause_sha256": [
+          "e809b3608354c03433472f6e51933e3c00cc7cb62f2f0213f8b33d766b05d75c",
+          "e30d2f8dadd1f43faa1420f0344b299e454d056546740fa38db22002ad120100"
+        ],
+        "rationales": [
+          "Encryption and auto-lock indicators are the authorized source evidence for reduced risk.",
+          "The stored_data=synthetic_only indicator directly establishes the data scope."
+        ]
+      }
+    }
+  ],
+  "clause_counts": {
+    "forbidden_claims": 24,
+    "recommended_actions": 36,
+    "required_findings": 24
+  },
+  "clause_rule_catalog": {
+    "forbidden_claims": "PER_CLAUSE_CLOSED_RULE_ID",
+    "recommended_actions": "AUTHORIZED_PROCEDURE_PROPOSED",
+    "required_findings": "AUTHORIZED_SOURCE_VALUES_PRESENT"
+  },
+  "evaluator_commit": "PENDING_IMPLEMENTATION_COMMIT",
+  "forbidden_rule_catalog": [
+    {
+      "required_observation_evidence": [
+        "authorized_source_values_present",
+        "output.actions_executed=false",
+        "summary.no_action_statement"
+      ],
+      "rule_id": "NO_ACTION_EXECUTED"
+    },
+    {
+      "required_observation_evidence": [
+        "authorized_source_values_present",
+        "output.compromise_confirmed=false",
+        "summary.no_compromise_statement"
+      ],
+      "rule_id": "NO_COMPROMISE_CONFIRMED"
+    },
+    {
+      "required_observation_evidence": [
+        "authorized_source_values_present",
+        "summary.no_attribution_statement"
+      ],
+      "rule_id": "NO_ATTRIBUTION"
+    },
+    {
+      "required_observation_evidence": [
+        "authorized_source_values_present",
+        "invocations.external_calls=0",
+        "output.actions_executed=false"
+      ],
+      "rule_id": "NO_EXTERNAL_INTERACTION"
+    },
+    {
+      "required_observation_evidence": [
+        "authorized_source_values_present"
+      ],
+      "rule_id": "SOURCE_CONTEXT_PRESERVED"
+    },
+    {
+      "required_observation_evidence": [
+        "authorized_source_values_present",
+        "invocations.external_calls=0",
+        "output.compromise_confirmed=false",
+        "summary.lab_scope_statement"
+      ],
+      "rule_id": "SYNTHETIC_SCOPE_PRESERVED"
+    }
+  ],
+  "judge": {
+    "forbidden_claims": "CLOSED_SOURCE_AND_INVARIANT_RULES",
+    "general_semantic_equivalence_evaluated": false,
+    "llm_judge": false,
+    "mapped_clause_preservation": "PREDECLARED_CLAUSE_HASH_TO_AUTHORIZED_SOURCE_RULE",
+    "real_genai_model_evaluated": false
+  },
+  "frozen_before_canonical_run": true,
+  "rubric_id": "GSL-FINAL-RETEST-RUBRIC-001",
+  "schema_version": "1.0.0",
+  "thresholds": {
+    "false_rejection_maximum_cases": 1,
+    "mapped_clause_preservation_minimum_cases": 11
+  }
+}

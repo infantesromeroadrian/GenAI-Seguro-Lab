@@ -38,6 +38,9 @@ local.
 - Verificar mediante `CMP-17` el registro estático `DAT-23`, los hashes y
   contratos de `DAT-20/21/22`, sus 44 referencias escalares y su resumen, sin
   ejecutar fuentes o escribir evidencia.
+- Ejecutar mediante `CMP-18` el candidato final fijado desde una copia Git
+  temporal: 14 casos adversarios, 12 benignos y dos probes, con `DAT-24` y los
+  oráculos fuera del target y una única salida saneada por `stdout`.
 
 ## Trust boundary
 
@@ -57,6 +60,9 @@ local.
   kernel.
 - `CMP-17` es de solo lectura respecto al repositorio y no genera la
   clasificación que valida.
+- `CMP-18` bloquea red y credenciales en su subproceso, pero sigue ejecutándose
+  bajo `IDN-01`; no aporta aislamiento del sistema operativo ni convierte el
+  run final en una garantía general.
 
 ## Tecnología
 

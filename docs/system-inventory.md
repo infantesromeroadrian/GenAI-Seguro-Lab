@@ -5,12 +5,12 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYS-INV-001` |
-| Versión | `2.8.0` |
+| Versión | `2.9.0` |
 | Fecha de corte | 2026-07-27 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-05-M05, registro canónico de hallazgos |
+| Control vigente | PGS-05-M07, evaluador y rúbrica del retest final previos al run |
 | Entorno | checkout local de desarrollo |
-| Alcance | estado implementado hasta PGS-05-M05, con baseline histórica PGS-03-M07 y publicación PGS-07-M08 |
+| Alcance | estado implementado hasta el contrato pre-run de PGS-05-M07, con baseline histórica PGS-03-M07 y publicación PGS-07-M08 |
 
 Este documento inventaría el sistema que existe en el repositorio, no la
 solución futura descrita en el roadmap. PGS-03-M04/M05/M06 conectan 14 fixtures
@@ -59,6 +59,12 @@ seis hallazgos sobre `DAT-20/21/22`, mientras el verificador comprueba hashes,
 esquemas, 44 referencias escalares y el resumen. No ejecuta los evaluadores,
 genera clasificaciones, escribe evidencia, acepta riesgo ni declara un retest
 final.
+PGS-05-M07 añade `CMP-18` y `DAT-24` antes de la ejecución canónica:
+el evaluador fija el candidato `77edd640`/`bc09b78f`, 14 casos adversarios,
+12 benignos, dos probes, cuatro entradas inertes y 15 artefactos históricos.
+La rúbrica enlaza 84 cláusulas con fuentes o invariantes autorizados; no se
+entrega al target y no afirma equivalencia semántica general o evaluación con
+un modelo GenAI real.
 
 ## Convenciones de estado
 
@@ -110,6 +116,7 @@ ni procesos desatendidos.
 | `DAT-21` | Comparación de utilidad benigna M03 | Dos JSON canónicos, saneados y versionados: proyección precontroles y snapshot comparativo | `CMP-15` fija commits y árboles, verifica el corpus y ocho fuentes de producto, ejecuta 12 casos postcontroles y compara oráculos solo después de cada salida; conserva métricas enteras, hashes, límites y `semantic_equivalence_evaluated: false` | `evaluations/benign-pre-controls-functional-v1.json`, `evaluations/benign-utility-v1.json` |
 | `DAT-22` | Métricas operativas benignas M04 | JSON canónico y saneado con 30 pares pre/post, muestras crudas, estadísticas, consumo y complejidad descriptiva | `CMP-16` fija commits, árboles y hashes comunes; usa procesos nuevos, conserva todos los outliers y valida cada salida sin guardar su contenido bruto. No fija umbral, score o significación y declara energía/TCO sin medir | `evaluations/operational-metrics-v1.json` |
 | `DAT-23` | Registro canónico de hallazgos M05 | JSON estático, saneado, revisado y versionado con seis hallazgos disjuntos | `CMP-17` verifica los hashes y esquemas de `DAT-20/21/22`, resuelve 44 referencias escalares y recalcula el resumen. El mantenedor es quien clasifica y versiona; el verificador no genera, corrige o acepta hallazgos | `evaluations/control-findings-v1.json` |
+| `DAT-24` | Rúbrica cerrada pre-run de M07 | JSON versionado antes del retest con 24 hallazgos, 36 acciones y 24 prohibiciones, hashes únicos, fuentes autorizadas, racionales y seis reglas cerradas | `CMP-18` verifica su SHA-256 y la aplica solo después de congelar la salida del target. No contiene un juez LLM, no entra en la petición y mantiene `general_semantic_equivalence_evaluated: false` | `evaluations/final-retest-rubric-v1.json` |
 
 El dataset `GSL-DATASET-001` declara 12 registros benignos, 8 documentos de
 conocimiento y 0 registros adversarios. No contiene datos personales,
@@ -147,6 +154,7 @@ descriptor no materializado que conserva
 | `CMP-15` | Evaluador comparativo de utilidad benigna | Soporte interno | Verifica la proyección precontroles y el checkout, ejecuta los 12 incidentes canónicos uno a uno mediante `CMP-03` con `CMP-10`, y compara tras cada salida invariantes funcionales y cobertura textual exacta. Emite JSON saneado por `stdout`; no entrega oráculos al target, no escribe evidencia, no usa red y no interpreta equivalencia semántica | `src/genai_seguro_lab/benign_utility.py`, `evaluations/run_benign_utility.py`, `tests/test_benign_utility.py` |
 | `CMP-16` | Evaluador offline de métricas operativas | Soporte interno | Materializa bajo `$TMP` los commits benignos pre/post fijados, verifica corpus, entrada y lock byte a byte y ejecuta 3 pares de calentamiento y 30 pares AB/BA con procesos nuevos. Mide pared, CPU y RSS, valida y hashea la salida y emite JSON por `stdout`; no cambia el checkout, instala dependencias, conserva salida bruta o aplica un umbral universal | `src/genai_seguro_lab/operational_metrics.py`, `evaluations/run_operational_metrics.py`, `tests/test_operational_metrics.py` |
 | `CMP-17` | Verificador offline del registro de hallazgos | Soporte interno | Lee `DAT-20/21/22/23`, exige fuentes fijadas, esquema cerrado, referencias resolubles y resumen derivado y emite solo un informe efímero por `stdout`. No contiene generador, ejecuta targets, llama a modelos o herramientas, escribe evidencia, decide M06, acepta riesgo o cambia `final_retest` | `src/genai_seguro_lab/control_findings.py`, `evaluations/verify_control_findings.py`, `tests/test_control_findings.py` |
+| `CMP-18` | Evaluador offline del retest final | Soporte interno, pendiente de run canónico | Verifica el candidato, el evaluador, `DAT-24` y 15 artefactos históricos; materializa `77edd640` mediante `git archive` bajo `$TMP`, bloquea red y credenciales, ejecuta 14 casos adversarios y 12 benignos más dos probes y evalúa después sus observaciones. El runner no acepta argumentos, no escribe evidencia y solo puede marcar `final_retest: true` con sus tres fuentes comprometidas | `src/genai_seguro_lab/final_retest.py`, `evaluations/run_final_retest.py`, `evaluations/final-retest-rubric-v1.json`, `tests/test_final_retest.py` |
 
 `CMP-13` no abre una interfaz de producto y mantiene separado el contrato
 histórico de `CMP-08`. El run `GSL-ADV-RT-20260726-001` produjo `DAT-16` a
@@ -159,7 +167,9 @@ postcontroles `ba600ca8ca25074a7806b6502ad59c0847212650` y produce `DAT-21`.
 `CMP-16` reutiliza esa pareja, verifica además `main.py`, `pyproject.toml` y
 `uv.lock` byte a byte y produce `DAT-22` desde copias temporales. `CMP-17`
 verifica después el registro manual `DAT-23` contra los hashes fijados de
-`DAT-20/21/22`; no produce otra observación.
+`DAT-20/21/22`; no produce otra observación. `CMP-18` usa `DAT-24` como
+contrato pre-run, separa su commit del árbol candidato y no persiste el
+resultado que emite.
 La dependencia del objeto Git histórico es deliberadamente fail-closed: un
 archivo o clon sin ese objeto no puede regenerar la comparación.
 
@@ -173,13 +183,15 @@ principal y un scope lógicos, y cada instancia autoriza como máximo una
 alcanzar los controles de replay y filesystem. `ADV-TOL-005` intenta fabricar
 la confirmación literal histórica, se rechaza antes de I/O y crea cero
 archivos; no conecta `TOL-02` a la CLI ni al flujo benigno. `CMP-08`, `CMP-13`,
-`CMP-14`, `CMP-15`, `CMP-16` y `CMP-17` no añaden una ruta de producto: el primero solo reproduce
+`CMP-14`, `CMP-15`, `CMP-16`, `CMP-17` y `CMP-18` no añaden una ruta de producto: el primero solo reproduce
 el commit histórico fijado y el segundo exige un candidato endurecido exacto;
 ambos escriben primero en un directorio temporal nuevo. El tercero solo lee
 evidencia adversaria versionada. El cuarto ejecuta únicamente el flujo benigno
 canónico y emite una comparación saneada por `stdout`. El quinto ejecuta ambos
 candidatos benignos fijados en procesos temporales y emite métricas operativas.
-El sexto solo valida el registro revisado y sus fuentes.
+El sexto solo valida el registro revisado y sus fuentes. El séptimo ejecuta el
+candidato final fijado en una copia temporal con evaluación posterior y salida
+saneada.
 
 ## Identidades, credenciales y autoridad
 
@@ -332,7 +344,8 @@ reclasifica aquí como un requisito pendiente.
   manualmente; `DAT-16` a `DAT-19` conservan la proyección neutral de
   PGS-05-M01, `DAT-20` su comparación cerrada de M02 y `DAT-21` la comparación
   funcional benigna de M03. `DAT-22` conserva la comparación operativa M04 y
-  `DAT-23` el registro revisado de M05.
+  `DAT-23` el registro revisado de M05; `DAT-24` fija la rúbrica pre-run M07,
+  no un resultado final.
 - `CMP-09` solo cubre reglas explícitas. M02 mide las fixtures observadas, pero
   no sustituye detección contextual, moderación completa ni evaluación con un
   modelo real.
@@ -376,7 +389,8 @@ producto, PGS-04-M06 añade `CMP-10`, PGS-04-M07 añade `CMP-11`, PGS-04-M08
 añade `CMP-12`, PGS-05-M02 añade `CMP-14` y PGS-05-M03 añade `CMP-15`, sin
 crear una nueva autoridad. PGS-05-M04 añade `CMP-16` como soporte temporal y
 `DAT-22`; PGS-05-M05 añade `CMP-17` y `DAT-23`, también sin crear una ruta de
-producto. La
+producto. PGS-05-M07 añade `CMP-18` y `DAT-24` como contrato previo al único
+run canónico, sin ampliar la CLI. La
 [matriz de autoridad y consecuencias](./authority-matrix.md) distingue
 propuestas del modelo, construcción del perfil, ejecución por el proceso,
 efectos internos y autoridad externa de mantenimiento.
