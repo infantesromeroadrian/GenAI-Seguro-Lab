@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-05-M05 completadas; PGS-04 y P01-M08
+- **Estado actual:** PGS-00-M01 a PGS-05-M06 completadas; PGS-04 y P01-M08
   quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
   repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
   1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no
@@ -30,6 +30,12 @@
   conserva un bypass histórico pendiente del retest final, dos resultados
   negativos y tres gaps de evidencia. Los estados `PARCIAL`,
   `NOT_DEMONSTRATED`, `NOT_COMPUTABLE` e inerte no se reclasifican como fallo.
+  M06 confirmó `CF-004` como defecto funcional previo a los controles y lo
+  corrigió sin usar `expected_result`: el candidato fijado en `77edd64` genera
+  12 salidas estructuradas distintas, con cuatro actuaciones propuestas por
+  caso, 12/12 terminaciones técnicas, cero solicitudes no autorizadas, llamadas
+  externas o efectos y dos redacciones esperadas. La evidencia histórica
+  permanece intacta y `SC-07` sigue `NOT_DEMONSTRATED` hasta el retest final.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** repositorio público ya autorizado y evidencia
@@ -319,7 +325,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-05-M03** Repetir el corpus benigno y medir éxito de tarea y falsos rechazos.
 - [x] **PGS-05-M04** Comparar latencia, consumo y complejidad operativa.
 - [x] **PGS-05-M05** Registrar controles fallidos, bypasses y resultados negativos.
-- [ ] **PGS-05-M06** Corregir únicamente defectos demostrados dentro del alcance.
+- [x] **PGS-05-M06** Corregir únicamente defectos demostrados dentro del alcance.
 - [ ] **PGS-05-M07** Ejecutar el retest final y fijar los resultados.
 - [ ] **PGS-05-M08** Documentar riesgo residual y compensaciones entre seguridad y utilidad.
 - [ ] **PGS-05-M09** Redactar el ADR de la solución seleccionada, alternativas y rollback.
@@ -504,6 +510,13 @@ requiriendo una decisión separada.
   44 referencias escalares y recalcula el resumen; no genera el registro,
   reejecuta evaluadores, decide correcciones, acepta riesgo o declara el retest
   final.
+- `GSL-BENIGN-CORRECTION-CANDIDATE-001`, generado por
+  `src/genai_seguro_lab/benign_correction.py` y
+  `evaluations/run_benign_correction.py`, fija el candidato `77edd64`, conserva
+  byte a byte baseline, `DAT-21` y `DAT-23`, registra los hashes de las 12
+  salidas estructuradas y demuestra mediante mutación y canario que el oráculo
+  no entra en la petición ni cambia la salida. Declara `final_retest: false`,
+  no evalúa equivalencia semántica ni cierra `SC-07`.
 - `docs/adversarial-baseline-findings.md` fija
   `GSL-FINDINGS-ADVERSARIAL-001`: explica cómo usar hoy la CLI, consolida seis
   hallazgos, acota el impacto del residual `ADV-TOL-005`, documenta la
@@ -517,6 +530,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-05-M06 — corregir únicamente defectos demostrados dentro del alcance.**
+**PGS-05-M07 — ejecutar el retest final y fijar los resultados.**
 
-**Progreso interno:** 44 de 66 microtareas completadas, 22 abiertas (**66,7 %**).
+**Progreso interno:** 45 de 66 microtareas completadas, 21 abiertas (**68,2 %**).

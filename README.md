@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-05-M05, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica evaluó 14 fixtures sintéticas y su evidencia permanece inmutable. PGS-05-M01 repitió esos 14 IDs contra el commit endurecido exacto y PGS-05-M02 derivó una tasa de éxito de ataque de 1/14 (7,14 %) a 0/14 (0 %), con operaciones no autorizadas aceptadas o ejecutadas de 1 a 0. PGS-05-M03 repitió individualmente los 12 casos benignos: pre y post conservan 12/12 terminaciones técnicas, 0/12 falsos rechazos y cero efectos externos, pero solo 0/12 cumplen de forma estricta todas las cláusulas del resultado esperado. Los 12 quedan `PARTIAL`, sin regresiones atribuibles a los controles, y `SC-07` permanece `NOT_DEMONSTRATED` porque la equivalencia semántica y las prohibiciones no se han evaluado. PGS-05-M04 midió 30 pares pre/post: la mediana end-to-end pasó de 189,69 ms a 259,17 ms, con un delta emparejado mediano de 67,39 ms; CPU y RSS también aumentaron, mientras los conteos 12/24/12/12, las llamadas externas y el coste de proveedor/cloud permanecieron sin cambio. PGS-05-M05 consolida esas fuentes en seis hallazgos: 0 fallos y 0 bypasses actuales observados dentro de las 14 fixtures medidas, 1 bypass histórico pendiente del retest final, 2 resultados negativos y 3 gaps de evidencia. No convierte controles `PARCIAL` ni fixtures inertes en fallos. El código y la evidencia saneada están publicados, pero todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud. La siguiente microtarea es PGS-05-M06.
+> **Estado:** PGS-00-M01 a PGS-05-M06, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica evaluó 14 fixtures sintéticas y su evidencia permanece inmutable. PGS-05-M01 repitió esos 14 IDs contra el commit endurecido exacto y PGS-05-M02 derivó una tasa de éxito de ataque de 1/14 (7,14 %) a 0/14 (0 %), con operaciones no autorizadas aceptadas o ejecutadas de 1 a 0. PGS-05-M03 repitió individualmente los 12 casos benignos: pre y post conservan 12/12 terminaciones técnicas, 0/12 falsos rechazos y cero efectos externos, pero 0/12 incluyen literalmente los dos hallazgos y las tres acciones requeridos. Los 12 quedan `PARTIAL`, sin regresiones atribuibles a los controles, y `SC-07` permanece `NOT_DEMONSTRATED` porque la equivalencia semántica y las prohibiciones no se han evaluado. PGS-05-M04 midió 30 pares pre/post: la mediana end-to-end pasó de 189,69 ms a 259,17 ms, con un delta emparejado mediano de 67,39 ms; CPU y RSS también aumentaron, mientras los conteos 12/24/12/12, las llamadas externas y el coste de proveedor/cloud permanecieron sin cambio. PGS-05-M05 consolidó seis hallazgos y M06 confirmó que `CF-004` era un defecto funcional previo a los controles: el candidato corregido produce 12 salidas distintas y estructuradas, cuatro actuaciones propuestas por caso, 12/12 terminaciones, cero solicitudes no autorizadas, llamadas externas o efectos y dos intervenciones de redacción esperadas. La mutación de `expected_result` no cambia la petición ni la salida; los artefactos históricos siguen byte a byte intactos. M06 no evalúa equivalencia semántica ni cierra `SC-07`; eso corresponde al retest final M07. Todavía no existe un modelo GenAI real, proveedor, frontal web o despliegue cloud.
 
 La proyección revisada de `GSL-RETEST-ADVERSARIAL-001` está versionada en
 [`evaluations/adversarial-retest-v1/`](./evaluations/adversarial-retest-v1/)
@@ -88,10 +88,12 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │   ├── run_adversarial_baseline.py
 │   ├── run_adversarial_metrics.py
 │   ├── run_adversarial_retest.py
+│   ├── run_benign_correction.py
 │   ├── run_benign_utility.py
 │   ├── run_operational_metrics.py
 │   ├── verify_control_findings.py
 │   ├── adversarial-metrics-v1.json
+│   ├── benign-correction-candidate-v1.json
 │   ├── benign-pre-controls-functional-v1.json
 │   ├── benign-utility-v1.json
 │   ├── operational-metrics-v1.json
@@ -731,6 +733,37 @@ El registro contiene exactamente:
 significados distintos. El verificador no genera hallazgos, selecciona
 correcciones, acepta riesgo ni convierte el retest inicial en final.
 
+## Corrección benigna candidata M06
+
+`CF-004` quedó confirmado como defecto funcional previo a los controles: la
+plantilla histórica completaba el ciclo técnico, pero no materializaba el
+resumen estructurado ni la propuesta de actuación aprobados. El candidato
+`77edd64` construye la respuesta únicamente desde `BenignIncidentInput` y el
+`KnowledgeSearchResult` autorizado; `expected_result` no entra en la petición
+ni en la construcción de la salida.
+
+```bash
+uv run --frozen python evaluations/run_benign_correction.py
+```
+
+La evidencia saneada
+[`evaluations/benign-correction-candidate-v1.json`](./evaluations/benign-correction-candidate-v1.json)
+fija el commit y el árbol del producto, los SHA-256 de las 12 salidas y estos
+resultados:
+
+- 12/12 terminaciones técnicas y 12 salidas distintas;
+- cuatro actuaciones propuestas por caso y resúmenes entre 1.423 y 1.495 bytes;
+- 24 invocaciones, 12 búsquedas autorizadas, 0 solicitudes no autorizadas,
+  llamadas externas o efectos;
+- dos intervenciones esperadas de la política de salida para redactar contenido
+  sintético;
+- una prueba metamórfica donde mutar el oráculo no cambia petición ni salida.
+
+La baseline, `DAT-21` y `DAT-23` permanecen byte a byte intactos. Este artefacto
+es candidato, declara `final_retest: false` y no evalúa equivalencia semántica,
+afirmaciones prohibidas ni un modelo GenAI real. Por tanto, `SC-07` sigue
+`NOT_DEMONSTRATED` hasta M07.
+
 ## Crosswalk de amenazas
 
 [docs/threat-crosswalk.md](./docs/threat-crosswalk.md) fija
@@ -1245,8 +1278,9 @@ nunca para ocultar un resultado ni para reescribir la baseline histórica.
 - [x] Repetir el corpus benigno y medir éxito de tarea y falsos rechazos.
 - [x] Comparar latencia, consumo, coste y complejidad operativa.
 - [x] Registrar controles fallidos, bypasses y resultados negativos sin ocultar gaps.
+- [x] Corregir el defecto funcional demostrado sin entregar el oráculo al target.
 
-**PGS-00-M01 a PGS-05-M05, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **44 de 66 microtareas (66,7 %)**, con 22 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-05-M06, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **45 de 66 microtareas (68,2 %)**, con 21 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -1256,7 +1290,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-05-M06 — corregir únicamente defectos demostrados dentro del alcance.**
+**PGS-05-M07 — ejecutar el retest final y fijar los resultados.**
 
 ## Uso responsable
 
