@@ -115,7 +115,8 @@
           "DAT-21",
           "DAT-22",
           "DAT-23",
-          "DAT-24"
+          "DAT-24",
+          "DAT-25"
         ],
         "writeMode": "manual-versioning"
       }
@@ -189,7 +190,7 @@
       "id": "containers-process-projects-evidence",
       "source": "python-application-process",
       "target": "evaluation-evidence-store",
-      "label": "stdout o proyección saneada → versionado manual; DAT-23 es redactado y DAT-24 fijado por el mantenedor",
+      "label": "stdout o proyección saneada → versionado manual; DAT-23/24 revisados y DAT-25 fijado tras el único run",
       "meta": {
         "type": "data-flow",
         "directWrite": false,

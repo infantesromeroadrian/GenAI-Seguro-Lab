@@ -39,9 +39,10 @@ mediante un flujo determinista y herramientas con autoridad acotada.
 - Consolidar manualmente seis hallazgos en `DAT-23` y verificar mediante
   `CMP-17` sus fuentes, referencias y resumen sin reejecutar evaluadores o
   generar clasificaciones.
-- Fijar mediante `DAT-24` la rúbrica previa y preparar `CMP-18` para ejecutar
-  una sola vez el candidato final exacto en una copia temporal, sin entregar
-  oráculos o rúbrica al target ni escribir evidencia automáticamente.
+- Fijar mediante `DAT-24` la rúbrica previa y ejecutar mediante `CMP-18` una
+  sola vez el candidato final exacto en una copia temporal, sin entregar
+  oráculos o rúbrica al target ni escribir evidencia automáticamente; la
+  proyección revisada queda en `DAT-25`.
 
 ## Límites de confianza
 
@@ -80,8 +81,8 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
   retest neutral inicial, `CMP-14` deriva su comparación y las otras cuatro
   entradas siguen inertes. `CMP-15` solo ejecuta el corpus benigno canónico y
   `CMP-16` solo mide dos candidatos benignos fijados bajo `$TMP`; `CMP-17`
-  solo verifica `DAT-20/21/22/23` y emite un informe efímero. `CMP-18` conserva
-  `DAT-24` fuera del target y aún no representa un run canónico ejecutado.
+  solo verifica `DAT-20/21/22/23` y emite un informe efímero. `CMP-18` conservó
+  `DAT-24` fuera del target y fijó `DAT-25` tras el único run canónico.
 - El perfil vulnerable existe como API interna `C0`; solo `CMP-07` conduce sus
   peticiones hacia el doble determinista y `TOL-01`; M06 invoca `TOL-02`
   únicamente desde pytest y bajo `$TMP`, nunca desde la CLI o el flujo benigno.
@@ -102,5 +103,6 @@ representan aislamiento por contenedor, usuario del sistema operativo o red.
 - `evaluations/operational-metrics-v1.json`
 - `evaluations/control-findings-v1.json`
 - `evaluations/final-retest-rubric-v1.json`
+- `evaluations/final-retest-v1.json`
 - `docs/resource-limits-policy.md`
 - `docs/sandbox-recovery-policy.md`

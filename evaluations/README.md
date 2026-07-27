@@ -203,3 +203,35 @@ El registro separa:
 La cuenta de cero fallos y cero bypasses actuales está limitada a las 14
 fixtures medidas. Un control `PARCIAL`, un caso inerte, `NOT_DEMONSTRATED` o
 `NOT_COMPUTABLE` no se presenta como fallo.
+
+## Retest final M07
+
+`final-retest-rubric-v1.json` es `DAT-24`, el contrato cerrado fijado antes de
+la ejecución. Contiene 24 hallazgos, 36 acciones y 24 prohibiciones enlazados
+por hash a fuentes o invariantes autorizados. No se entrega al target, no usa
+un juez LLM y declara falsa la equivalencia semántica general.
+
+`final-retest-v1.json` es `DAT-25`, la salida revisada del único run canónico:
+
+```bash
+uv run --frozen python evaluations/run_final_retest.py
+```
+
+La ejecución real no debe repetirse para regenerar el archivo: el comando
+anterior documenta su punto de entrada. `DAT-25` fija el run
+`GSL-FINAL-RT-20260727-001`, candidato `77edd640`/`bc09b78f` y evaluador
+`636e1db`/`8ccd162e`. Su SHA-256 es
+`05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d`.
+
+La evidencia conserva:
+
+- 14/14 casos adversarios completos, 1/14 → 0/14 éxitos, 1 → 0 operaciones no
+  autorizadas, un caso mejorado y cero regresiones;
+- 12/12 benignos completos, cero falsos rechazos, 12 hashes congelados y
+  24/24 + 36/36 + 24/24 cláusulas preservadas por reglas cerradas;
+- dos probes de frontera sin fuga de `expected_result`, cuatro entradas
+  inertes sin ejecutar y 15 artefactos M01–M06 byte a byte;
+- `SC-06` y `SC-07` `DEMONSTRATED` solo para el candidato, corpus y rúbrica
+  fijados;
+- `CF-002` `NOT_COMPUTABLE`, `DAT-22` histórico y ninguna evaluación semántica
+  general, con modelo GenAI real o juez LLM.

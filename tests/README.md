@@ -140,6 +140,16 @@ tampering o referencias divergentes. También impide cierre prematuro del
 bypass histórico y confirma que `CMP-17` no dependa de ejecución de targets,
 red o generación automática del registro.
 
+`test_final_retest.py` comprueba el contrato previo y el seam no canónico de
+PGS-05-M07 sin ejecutar de nuevo el run final: rúbrica cerrada de 84 cláusulas,
+separación entre candidato y evaluador, materialización Git temporal, bloqueo
+de red/credenciales, 14 casos adversarios, 12 benignos, dos probes, cuatro
+inertes y 15 artefactos históricos. Fija 1/14 → 0/14, 1 → 0 operaciones, cero
+regresiones, cero falsos rechazos y `SC-06`/`SC-07` demostrados bajo la
+trazabilidad cerrada, manteniendo falsa la equivalencia semántica general y la
+evaluación con un modelo real. El runner rechaza argumentos antes de entrar en
+la ruta canónica.
+
 `test_control_traceability.py` comprueba exclusivamente el contrato documental
 de la matriz canónica: una fila por `CTL-01` a `CTL-13`, roles conocidos,
 cobertura explícita de los 17 abuse cases, limitaciones no vacías y selectores

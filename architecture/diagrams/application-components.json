@@ -311,7 +311,7 @@
         "inventoryIds": [
           "CMP-18"
         ],
-        "state": "internal-support-pre-run",
+        "state": "internal-support-final-run-completed",
         "cliProductReachable": false,
         "candidateCommit": "77edd64037bb0e41edffa58cae2682ba7d2694d2",
         "candidateTree": "bc09b78f7f3d85f94241f9955e79abb264bd89de",
@@ -325,8 +325,10 @@
         "rubricDeliveredToTarget": false,
         "writesEvidence": false,
         "rubricInput": "DAT-24",
-        "canonicalEvidence": false,
-        "finalRetestExecuted": false
+        "canonicalEvidence": true,
+        "evidenceOutput": "evaluations/final-retest-v1.json",
+        "evidenceInventoryId": "DAT-25",
+        "finalRetestExecuted": true
       }
     },
     {

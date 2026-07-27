@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-05-M06 completadas; PGS-04 y P01-M08
+- **Estado actual:** PGS-00-M01 a PGS-05-M07 completadas; PGS-04 y P01-M08
   quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
   repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
   1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no
@@ -35,7 +35,13 @@
   12 salidas estructuradas distintas, con cuatro actuaciones propuestas por
   caso, 12/12 terminaciones técnicas, cero solicitudes no autorizadas, llamadas
   externas o efectos y dos redacciones esperadas. La evidencia histórica
-  permanece intacta y `SC-07` sigue `NOT_DEMONSTRATED` hasta el retest final.
+  permanece intacta. M07 ejecutó una sola vez el candidato `77edd640` con el
+  evaluador `636e1db`: 14/14 casos adversarios y 12/12 benignos terminaron,
+  `ADV-TOL-005` mejoró, no hubo regresiones ni falsos rechazos y las 84
+  cláusulas mapeadas se preservaron bajo la rúbrica cerrada. `SC-06` y `SC-07`
+  quedan `DEMONSTRATED` para ese candidato y contrato; la equivalencia
+  semántica general y el modelo GenAI real siguen sin evaluarse, `CF-002`
+  permanece `NOT_COMPUTABLE` y las cuatro fixtures DOS/SC continúan inertes.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** repositorio público ya autorizado y evidencia
@@ -326,7 +332,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-05-M04** Comparar latencia, consumo y complejidad operativa.
 - [x] **PGS-05-M05** Registrar controles fallidos, bypasses y resultados negativos.
 - [x] **PGS-05-M06** Corregir únicamente defectos demostrados dentro del alcance.
-- [ ] **PGS-05-M07** Ejecutar el retest final y fijar los resultados.
+- [x] **PGS-05-M07** Ejecutar el retest final y fijar los resultados.
 - [ ] **PGS-05-M08** Documentar riesgo residual y compensaciones entre seguridad y utilidad.
 - [ ] **PGS-05-M09** Redactar el ADR de la solución seleccionada, alternativas y rollback.
 
@@ -517,6 +523,17 @@ requiriendo una decisión separada.
   salidas estructuradas y demuestra mediante mutación y canario que el oráculo
   no entra en la petición ni cambia la salida. Declara `final_retest: false`,
   no evalúa equivalencia semántica ni cierra `SC-07`.
+- `CMP-18`, implementado en `src/genai_seguro_lab/final_retest.py` y
+  `evaluations/run_final_retest.py`, verificó el candidato `77edd640`, su árbol,
+  el evaluador `636e1db`, `DAT-24` y 15 artefactos históricos. El único run
+  `GSL-FINAL-RT-20260727-001` materializó el target bajo `$TMP`, bloqueó red y
+  credenciales, ejecutó 14 casos adversarios, 12 benignos y dos probes, y dejó
+  cuatro entradas inertes. `evaluations/final-retest-v1.json` (`DAT-25`) fija
+  1/14 → 0/14 éxitos, 1 → 0 operaciones no autorizadas, 0 regresiones, 0 falsos
+  rechazos y 84/84 cláusulas preservadas bajo trazabilidad cerrada. Declara
+  `final_retest: true`, `SC-06` y `SC-07` `DEMONSTRATED`, pero mantiene falsas
+  la equivalencia semántica general, el juez LLM y la evaluación con modelo
+  real; `CF-002` sigue `NOT_COMPUTABLE` y `DAT-22` es solo histórico.
 - `docs/adversarial-baseline-findings.md` fija
   `GSL-FINDINGS-ADVERSARIAL-001`: explica cómo usar hoy la CLI, consolida seis
   hallazgos, acota el impacto del residual `ADV-TOL-005`, documenta la
@@ -530,6 +547,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-05-M07 — ejecutar el retest final y fijar los resultados.**
+**PGS-05-M08 — documentar riesgo residual y compensaciones entre seguridad y utilidad.**
 
-**Progreso interno:** 45 de 66 microtareas completadas, 21 abiertas (**68,2 %**).
+**Progreso interno:** 46 de 66 microtareas completadas, 20 abiertas (**69,7 %**).

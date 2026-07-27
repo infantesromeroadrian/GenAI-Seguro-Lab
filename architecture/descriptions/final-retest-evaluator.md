@@ -16,6 +16,11 @@ fijado, sin añadir una ruta de producto.
 - Evaluar las observaciones después de congelar la salida y emitir una
   proyección saneada por `stdout`.
 
+El run canónico `GSL-FINAL-RT-20260727-001` se ejecutó una sola vez desde el
+evaluador `636e1db` y produjo `DAT-25`: 14/14 casos adversarios y 12/12 benignos
+completos, cero regresiones y falsos rechazos, y `SC-06`/`SC-07` demostrados
+dentro de la rúbrica cerrada.
+
 ## Límites
 
 - No forma parte de `main.py`, no acepta argumentos y no escribe evidencia.
@@ -32,4 +37,5 @@ fijado, sin añadir una ruta de producto.
 - `src/genai_seguro_lab/final_retest.py`
 - `evaluations/run_final_retest.py`
 - `evaluations/final-retest-rubric-v1.json`
+- `evaluations/final-retest-v1.json`
 - `tests/test_final_retest.py`

@@ -5,10 +5,10 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-AUTH-MATRIX-001` |
-| Versión | `2.8.0` |
+| Versión | `2.9.0` |
 | Fecha de corte | 2026-07-27 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-05-M07, contrato del retest final previo a ejecución |
+| Control vigente | PGS-05-M07, evidencia canónica del retest final |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
 | Arquitectura de origen | [`architecture/manifest.json`](../architecture/manifest.json) |
 | Alcance | autoridad implementada en el checkout local actual |
@@ -220,7 +220,7 @@ ACT-02 (retest final M07)
   → DAT-24 fija antes del run 84 cláusulas y reglas cerradas
   → CMP-18 materializa 77edd640 bajo $TMP, sin red ni credenciales
   → 14 casos adversarios + 12 benignos + 2 probes; 4 inertes
-  → resultado saneado por stdout; versionado posterior manual
+  → DAT-25 saneado por stdout; versionado posterior manual
 ```
 
 La primera cadena es la única alcanzable mediante `main.py`. La segunda existe

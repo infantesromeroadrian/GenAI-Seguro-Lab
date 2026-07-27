@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `2.5.0` |
+| Versión | `2.6.0` |
 | Fecha de entrada en vigor | 2026-07-27 |
 | Baseline técnica de origen | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
@@ -407,3 +407,14 @@ fixtures contra el commit limpio `93aefa45`: 13 `PASS`, 1 `RESIDUAL`, 0
 residual; los oráculos no se entregaron al target, el checkout permaneció
 limpio, no hubo red ni llamadas externas y las otras cuatro fixtures continúan
 inertes. Solo la proyección revisada y saneada se versiona.
+
+## Estado de cierre de PGS-05-M07
+
+`CMP-18` ejecutó una sola vez `GSL-FINAL-RT-20260727-001` desde el commit
+limpio del evaluador `636e1db`, materializando el candidato
+`77edd640`/`bc09b78f` bajo `$TMP`. Completó 14 casos adversarios, 12 benignos y
+dos probes, mantuvo cuatro entradas inertes, cero red, credenciales, reintentos
+y escrituras automáticas, y conservó 15 artefactos M01–M06 byte a byte.
+`DAT-25` es la única proyección revisada y versionada con
+`final_retest: true`; su alcance no se generaliza a ataques desconocidos,
+semántica general o un modelo GenAI real.

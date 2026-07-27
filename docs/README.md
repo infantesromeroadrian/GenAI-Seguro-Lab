@@ -59,6 +59,13 @@ real.
   seis observaciones revisadas sobre `DAT-20/21/22`, con 0 fallos actuales
   observados, 1 bypass histórico, 2 resultados negativos y 3 gaps; no
   sustituye la matriz canónica de controles ni el riesgo residual de M08.
+- [Rúbrica cerrada del retest final M07](../evaluations/final-retest-rubric-v1.json):
+  `DAT-24`, fijada antes del run con 84 cláusulas, fuentes e invariantes
+  autorizados, sin juez LLM ni entrega al target.
+- [Evidencia del retest final M07](../evaluations/final-retest-v1.json):
+  `DAT-25`, 14 casos adversarios y 12 benignos sobre el candidato `77edd640`,
+  con `SC-06` y `SC-07` demostrados dentro del contrato cerrado y límites
+  explícitos frente a generalización, semántica y modelo real.
 - [Hallazgos de la baseline adversaria](./adversarial-baseline-findings.md):
   uso actual del laboratorio, impacto de las variantes observadas,
   reproducción, residual conocido y límites de la evidencia.

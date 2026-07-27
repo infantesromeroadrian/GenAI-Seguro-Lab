@@ -30,6 +30,9 @@ adversarias de forma reproducible.
 - `DAT-24`: rúbrica cerrada y fijada antes del retest final; enlaza por hash 84
   cláusulas con fuentes o invariantes autorizados y no contiene la salida del
   target.
+- `DAT-25`: proyección saneada del único retest final, con provenance de
+  candidato/evaluador, 14 casos adversarios, 12 benignos, dos probes, métricas
+  derivadas y límites explícitos.
 
 ## Flujo de escritura
 
@@ -59,4 +62,6 @@ universal ni medición de energía o coste total.
 `DAT-23` no convierte controles parciales, casos inertes, datos no computables,
 criterios no demostrados u overhead sin umbral en fallos; tampoco sustituye el
 retest final ni la aceptación de riesgo. `DAT-24` fija una evaluación cerrada
-de trazabilidad y no equivale a evaluación semántica general.
+de trazabilidad y no equivale a evaluación semántica general. `DAT-25`
+demuestra `SC-06` y `SC-07` solo para el candidato, corpus y rúbrica fijados;
+no evalúa ataques desconocidos o un modelo real.
