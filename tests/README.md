@@ -160,8 +160,15 @@ evaluadores o runners.
 `test_architecture_decision.py` valida exclusivamente el ADR de PGS-05-M09:
 identidad y evidencia fijadas, diez invariantes, siete alternativas no
 seleccionadas para el futuro, siete triggers, consecuencias, rollback
-compensatorio, conservación de DAT-25 y coherencia del roadmap. No ejecuta
+compensatorio, conservación de DAT-25 y enlaces documentales estables. No ejecuta
 producto, harness, evaluadores o runners.
+
+`test_governance_cards.py` valida exclusivamente las tres fichas de
+PGS-06-M01: identidad y corte documental, seis trust boundaries, actores,
+componentes, `DAT-01` a `DAT-25`, manifiestos y hashes de ambos corpus,
+contrato real de `MOD-01`, métricas acotadas de `DAT-25`, riesgos pendientes y
+coherencia del progreso actual. No ejecuta producto, harness, evaluadores o
+runners.
 
 `test_control_traceability.py` comprueba exclusivamente el contrato documental
 de la matriz canónica: una fila por `CTL-01` a `CTL-13`, roles conocidos,

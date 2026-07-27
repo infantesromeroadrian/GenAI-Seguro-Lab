@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-05-M09 completadas; PGS-04 y P01-M08
+- **Estado actual:** PGS-00-M01 a PGS-05-M09 y PGS-06-M01 completadas; PGS-04 y P01-M08
   quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
   repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
   1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no
@@ -52,6 +52,14 @@
   alcance actual la baseline local-first determinista con autoridad fuera del
   modelo, compara siete alternativas y define triggers, rollback compensatorio
   y supersesión sin seleccionar capacidades futuras ni aceptar riesgo.
+  PGS-06-M01 publica
+  [`GSL-SYSTEM-CARD-001`](./docs/system-card.md),
+  [`GSL-DATA-CARD-001`](./docs/data-card.md) y
+  [`GSL-MODEL-CARD-001`](./docs/model-card.md): tres vistas descriptivas del
+  alcance observado que fijan fuentes, usos, autoridad, ciclo de vida,
+  evidencia y límites sin certificar el sistema ni aceptar los seis riesgos
+  pendientes. `MOD-01` queda identificado expresamente como doble
+  determinista sin entrenamiento ni proveedor real.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** el repositorio público y su `main`
@@ -352,7 +360,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 
 **Objetivo:** hacer que la seguridad sea mantenible y explicable.
 
-- [ ] **PGS-06-M01** Crear system card, data card y model card.
+- [x] **PGS-06-M01** Crear system card, data card y model card.
 - [ ] **PGS-06-M02** Completar la evaluación de impacto de IA.
 - [ ] **PGS-06-M03** Crear RACI y registro de riesgos.
 - [ ] **PGS-06-M04** Crear el mapa de cumplimiento, diferenciando obligación, guía y decisión voluntaria.
@@ -561,6 +569,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-06-M01 — crear system card, data card y model card.**
+**PGS-06-M02 — completar la evaluación de impacto de IA.**
 
-**Progreso interno:** 48 de 66 microtareas completadas, 18 abiertas (**72,7 %**).
+**Progreso interno:** 49 de 66 microtareas completadas, 17 abiertas (**74,2 %**).

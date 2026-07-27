@@ -12,6 +12,13 @@ real.
 - [Inventario del sistema actual](./system-inventory.md): actores, datos,
   componentes, modelo, herramientas, identidades, dependencias,
   infraestructura, integraciones y ausencias verificadas.
+- [System card](./system-card.md): propósito, usuarios, usos, arquitectura,
+  autoridad, evidencia, límites y riesgos del sistema local observado.
+- [Data card](./data-card.md): inventario de `DAT-01` a `DAT-25`, procedencia,
+  sensibilidad, calidad, acceso, ciclo de vida y límites de los datos
+  sintéticos y de la evidencia.
+- [Model card](./model-card.md): contrato y límites de `MOD-01`, identificado
+  expresamente como doble determinista sin entrenamiento ni proveedor real.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.

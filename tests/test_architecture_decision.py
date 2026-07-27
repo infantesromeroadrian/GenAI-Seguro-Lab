@@ -177,7 +177,7 @@ def test_triggers_and_rollback_are_compensating_and_preserve_history() -> None:
     assert "`RR-01` a `RR-06`" in _document()
 
 
-def test_documentation_and_roadmap_reference_the_accepted_adr() -> None:
+def test_documentation_references_the_accepted_adr_and_completed_m09() -> None:
     readme = README.read_text(encoding="utf-8")
     docs_readme = DOCS_README.read_text(encoding="utf-8")
     plan = PLAN.read_text(encoding="utf-8")
@@ -185,15 +185,4 @@ def test_documentation_and_roadmap_reference_the_accepted_adr() -> None:
     assert "./docs/architecture-decision-record.md" in readme
     assert "./architecture-decision-record.md" in docs_readme
     assert "- [x] **PGS-05-M09**" in plan
-    assert "48 de 66 microtareas completadas" in plan
-    assert "18 abiertas (**72,7 %**)" in plan
-    assert (
-        "**PGS-06-M01 — crear system card, data card y model card.**"
-        in plan
-    )
     assert "PGS-00-M01 a PGS-05-M09" in readme
-    assert "48 de 66 microtareas (72,7 %)" in readme
-    assert (
-        "**PGS-06-M01 — crear system card, data card y model card.**"
-        in readme
-    )
