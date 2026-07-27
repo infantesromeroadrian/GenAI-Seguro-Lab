@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-05-M07, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica permanece inmutable. El retest final M07 ejecutó una sola vez el candidato `77edd640` con el evaluador comprometido en `636e1db`: los 14 casos terminaron, la tasa de éxito pasó de 1/14 (7,14 %) a 0/14 (0 %), las operaciones no autorizadas aceptadas o ejecutadas de 1 a 0, `ADV-TOL-005` mejoró y no hubo regresiones. Los 12 casos benignos terminaron sin falsos rechazos, conservaron sus invariantes y las 84 cláusulas mapeadas por la rúbrica cerrada; por ello `SC-07` queda `DEMONSTRATED` dentro de ese contrato. La coincidencia literal sigue en 0/24 hallazgos y 0/36 acciones, y la evidencia declara que no evalúa equivalencia semántica general, afirmaciones prohibidas con semántica general ni un modelo GenAI real. `CF-002` permanece `NOT_COMPUTABLE`, las cuatro fixtures DOS/SC siguen inertes y `DAT-22` continúa siendo una referencia histórica, no rendimiento del candidato final. Todavía no existe proveedor, frontal web o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-05-M08, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica permanece inmutable. El retest final M07 ejecutó una sola vez el candidato `77edd640` con el evaluador comprometido en `636e1db`: los 14 casos terminaron, la tasa de éxito pasó de 1/14 (7,14 %) a 0/14 (0 %), las operaciones no autorizadas aceptadas o ejecutadas de 1 a 0, `ADV-TOL-005` mejoró y no hubo regresiones. Los 12 casos benignos terminaron sin falsos rechazos, conservaron sus invariantes y las 84 cláusulas mapeadas por la rúbrica cerrada; por ello `SC-07` queda `DEMONSTRATED` dentro de ese contrato. La coincidencia literal sigue en 0/24 hallazgos y 0/36 acciones, y la evidencia declara que no evalúa equivalencia semántica general, afirmaciones prohibidas con semántica general ni un modelo GenAI real. `CF-002` permanece `NOT_COMPUTABLE`, las cuatro fixtures DOS/SC siguen inertes y `DAT-22` continúa siendo una referencia histórica, no rendimiento del candidato final. M08 documenta seis riesgos primarios sin recalcular la priorización ni aceptar riesgo. Todavía no existe proveedor, frontal web o despliegue cloud.
 
 La proyección revisada de `GSL-RETEST-ADVERSARIAL-001` está versionada en
 [`evaluations/adversarial-retest-v1/`](./evaluations/adversarial-retest-v1/)
@@ -793,6 +793,15 @@ Resultados fijados:
 El SHA-256 de `DAT-25` es
 `05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d`.
 
+## Riesgo residual M08
+
+[`GSL-RESIDUAL-RISK-001`](./docs/residual-risk-and-tradeoffs.md) fija el
+snapshot posterior a `DAT-25`: seis riesgos primarios cubren una sola vez los
+17 abuse cases, mantienen las cuatro fixtures DOS/SC inertes fuera del
+denominador y separan el resultado final de las fuentes históricas. El
+documento propone tratamientos sobre targets ya planificados, pero no
+recalcula puntuaciones, crea el registro formal de PGS-06-M03 ni acepta riesgo.
+
 ## Crosswalk de amenazas
 
 [docs/threat-crosswalk.md](./docs/threat-crosswalk.md) fija
@@ -1310,7 +1319,7 @@ nunca para ocultar un resultado ni para reescribir la baseline histórica.
 - [x] Corregir el defecto funcional demostrado sin entregar el oráculo al target.
 - [x] Ejecutar una sola vez el retest final y fijar su evidencia saneada.
 
-**PGS-00-M01 a PGS-05-M07, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **46 de 66 microtareas (69,7 %)**, con 20 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-05-M08, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **47 de 66 microtareas (71,2 %)**, con 19 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -1320,7 +1329,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-05-M08 — documentar riesgo residual y compensaciones entre seguridad y utilidad.**
+**PGS-05-M09 — redactar el ADR de la solución seleccionada, alternativas y rollback.**
 
 ## Uso responsable
 

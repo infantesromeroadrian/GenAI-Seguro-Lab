@@ -11,13 +11,17 @@
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Crosswalk actual | [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
-| Alcance | sistema local sintético hasta la comparación funcional PGS-05-M03 |
+| Alcance de la puntuación | sistema local sintético hasta la comparación funcional PGS-05-M03; puntuaciones heredadas basadas en controles hasta PGS-04-M08 |
+| Superposición informativa | `DAT-25` final y [`GSL-RESIDUAL-RISK-001`](./residual-risk-and-tradeoffs.md), corte 2026-07-27 |
 
 Esta priorización ordena el backlog de pruebas del laboratorio. No es una
 clasificación CVSS ni estima la frecuencia de incidentes reales. La baseline
 histórica reproduce el residual concreto de `AC-TOL-05`; el checkout actual
-rechaza ese literal y la tabla incorpora los controles hasta PGS-04-M08. Cada caso
-se valora únicamente contra las capacidades presentes en el corte indicado.
+rechaza ese literal y la tabla incorpora los controles hasta PGS-04-M08. Cada
+caso se valora únicamente contra las capacidades presentes en el corte
+indicado. PGS-05-M07 y PGS-05-M08 se superponen como resultado final y
+tratamiento documental: no cambian la versión, los valores ni el orden de esta
+tabla.
 
 ## Método
 
@@ -35,8 +39,9 @@ S = (I + 1) × L × K
   actual.
 
 El término «probabilidad» no expresa un porcentaje ni una previsión de
-incidentes. Permite distinguir un residual aceptado actualmente de un
-comportamiento que los controles ya rechazan.
+incidentes. Permite distinguir un comportamiento tolerado por el corte técnico
+de otro que los controles ya rechazan; no constituye aceptación humana de
+riesgo.
 
 ### Impacto `I`
 
@@ -302,6 +307,28 @@ artefactos internos validados. No cambia ninguna puntuación:
 La distribución permanece en 1 `PR-1`, 1 `PR-2`, 14 `PR-3` y 1 `PR-0` hasta
 la medición y tratamiento posteriores a PGS-05-M01.
 
+## Superposición posterior a PGS-05-M07/M08
+
+La tabla, su distribución y sus scores siguen siendo los de
+`GSL-RISK-PRIORITY-001` v2.4.0, con corte 2026-07-26. No se recalculan a partir
+de los hitos posteriores:
+
+- `DAT-25` es la única evidencia `FINAL` del candidato `77edd640`: conserva
+  14/14 casos adversarios completados, 1/14 → 0/14 de éxito observado, 1 → 0
+  operaciones no autorizadas, 1 caso mejorado, 0 regresiones, 12/12 casos
+  benignos y 0/12 falsos rechazos;
+- `SC-07` queda `DEMONSTRATED` solo para el candidato, corpus, invariantes y
+  rúbrica cerrada de M07, no para equivalencia semántica general, ataques
+  desconocidos o un modelo real;
+- [`GSL-RESIDUAL-RISK-001`](./residual-risk-and-tradeoffs.md) agrupa una sola
+  vez los 17 abuse cases en seis riesgos, propone tratamientos sobre targets
+  existentes y mantiene toda aceptación `PENDIENTE_HUMANA`;
+- las cuatro fixtures DOS/SC continúan inertes, `OUTSIDE_DENOMINATOR` y con
+  0 ejecutadas; `CF-002` continúa `NOT_COMPUTABLE`.
+
+Esta superposición no convierte un resultado de rúbrica en una nueva
+estimación de probabilidad o impacto.
+
 ## Backlog posterior a PGS-03-M07
 
 Las cuatro fixtures todavía inertes delimitan el backlog ejecutable posterior:
@@ -355,12 +382,10 @@ de estos supuestos:
 Los 17 abuse cases aparecen exactamente una vez y conservan la alcanzabilidad
 de `GSL-ABUSE-CASES-001`. El perfil vulnerable está construido y aislado;
 `CMP-08` fija la baseline de las 14 fixtures PI/JB/EX/TOL sin crear una ruta
-de producto y las otras cuatro permanecen sin ejecutar. `CMP-13` y `CMP-14`
-fijan el retest inicial y su comparación sin reescribir aquella evidencia.
-`CMP-15` añade la comparación benigna: 12/12 terminaciones, 0 falsos rechazos
-y 0 regresiones pre/post, pero `SC-07` permanece no demostrado porque no se
-evaluó equivalencia semántica. Estos resultados no cambian por sí solos las
-puntuaciones de riesgo.
+de producto y las otras cuatro permanecen sin ejecutar. `DAT-20/21/22/23`
+quedan `HISTORICAL_ONLY`; `DAT-25` es `FINAL` para el candidato fijado y
+demuestra `SC-07` únicamente bajo la rúbrica cerrada. Ninguno de estos
+resultados recalcula por sí solo las puntuaciones heredadas.
 [`GSL-FINDINGS-ADVERSARIAL-001`](./adversarial-baseline-findings.md) documenta
 los hallazgos, impacto, reproducción y límites y cierra PGS-03-M08 sin cambiar
 las puntuaciones.
@@ -370,4 +395,6 @@ OWASP y MITRE ATLAS sin cambiar sus puntuaciones.
 [`GSL-NIST-CONTROLS-001`](./control-responsibility-mapping.md) asigna
 responsables y controles previstos sin modificar el orden. Cualquier
 corrección de alcance deberá quedar justificada en una nueva versión de este
-registro.
+registro. [`GSL-RESIDUAL-RISK-001`](./residual-risk-and-tradeoffs.md) documenta
+el tratamiento posterior sin aceptar riesgo ni sustituir el registro formal de
+PGS-06-M03.

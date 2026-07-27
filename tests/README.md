@@ -150,6 +150,13 @@ trazabilidad cerrada, manteniendo falsa la equivalencia semántica general y la
 evaluación con un modelo real. El runner rechaza argumentos antes de entrar en
 la ruta canónica.
 
+`test_residual_risk.py` valida exclusivamente el snapshot documental de
+PGS-05-M08: identidad, candidato, roles de `DAT-20` a `DAT-25`, hashes
+inmutables de sus evidencias, seis riesgos con cobertura exacta y única de los
+17 abuse cases, cuatro fixtures inertes fuera del denominador, métricas
+acotadas, límites y aceptación humana pendiente. No importa ni ejecuta
+evaluadores o runners.
+
 `test_control_traceability.py` comprueba exclusivamente el contrato documental
 de la matriz canónica: una fila por `CTL-01` a `CTL-13`, roles conocidos,
 cobertura explícita de los 17 abuse cases, limitaciones no vacías y selectores

@@ -66,6 +66,11 @@ real.
   `DAT-25`, 14 casos adversarios y 12 benignos sobre el candidato `77edd640`,
   con `SC-06` y `SC-07` demostrados dentro del contrato cerrado y límites
   explícitos frente a generalización, semántica y modelo real.
+- [Riesgo residual y compensaciones](./residual-risk-and-tradeoffs.md):
+  `GSL-RESIDUAL-RISK-001` agrupa los 17 abuse cases una sola vez en seis
+  riesgos posteriores a `DAT-25`, distingue fuentes finales, históricas e
+  inertes y mantiene pendiente toda decisión humana sin recalcular scores ni
+  crear el registro formal de riesgos.
 - [Hallazgos de la baseline adversaria](./adversarial-baseline-findings.md):
   uso actual del laboratorio, impacto de las variantes observadas,
   reproducción, residual conocido y límites de la evidencia.

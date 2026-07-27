@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-05-M07 completadas; PGS-04 y P01-M08
+- **Estado actual:** PGS-00-M01 a PGS-05-M08 completadas; PGS-04 y P01-M08
   quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
   repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
   1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no
@@ -42,6 +42,11 @@
   quedan `DEMONSTRATED` para ese candidato y contrato; la equivalencia
   semántica general y el modelo GenAI real siguen sin evaluarse, `CF-002`
   permanece `NOT_COMPUTABLE` y las cuatro fixtures DOS/SC continúan inertes.
+  M08 fija
+  [`GSL-RESIDUAL-RISK-001`](./docs/residual-risk-and-tradeoffs.md): seis
+  riesgos cubren una sola vez los 17 abuse cases, conservan el scoring
+  heredado y mantienen toda aceptación pendiente sin adelantar el registro
+  formal de PGS-06-M03.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** repositorio público ya autorizado y evidencia
@@ -333,7 +338,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-05-M05** Registrar controles fallidos, bypasses y resultados negativos.
 - [x] **PGS-05-M06** Corregir únicamente defectos demostrados dentro del alcance.
 - [x] **PGS-05-M07** Ejecutar el retest final y fijar los resultados.
-- [ ] **PGS-05-M08** Documentar riesgo residual y compensaciones entre seguridad y utilidad.
+- [x] **PGS-05-M08** Documentar riesgo residual y compensaciones entre seguridad y utilidad.
 - [ ] **PGS-05-M09** Redactar el ADR de la solución seleccionada, alternativas y rollback.
 
 **Salida:** informe comparativo baseline/control/retest con métricas reproducibles.
@@ -547,6 +552,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-05-M08 — documentar riesgo residual y compensaciones entre seguridad y utilidad.**
+**PGS-05-M09 — redactar el ADR de la solución seleccionada, alternativas y rollback.**
 
-**Progreso interno:** 46 de 66 microtareas completadas, 20 abiertas (**69,7 %**).
+**Progreso interno:** 47 de 66 microtareas completadas, 19 abiertas (**71,2 %**).
