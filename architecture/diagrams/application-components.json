@@ -1098,7 +1098,7 @@
       "label": "reutiliza clasificación M02 y verifica evidencia histórica",
       "meta": {
         "type": "reads",
-        "executesAnalyzer": false,
+        "executesAnalyzer": true,
         "sourceEvidenceImmutable": true
       }
     }
