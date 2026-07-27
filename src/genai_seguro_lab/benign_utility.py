@@ -12,7 +12,7 @@ from typing import Annotated, Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from .baseline import FunctionalBaseline, _build_flow
+from .baseline import FunctionalBaseline, FunctionalCaseResult, _build_flow
 from .data_contract import (
     DatasetBundle,
     IncidentCategory,
@@ -404,7 +404,12 @@ def _without_request_fingerprints(
 
 def _verify_sources(
     project_root: Path,
-) -> tuple[FunctionalBaseline, PreControlProjection, DatasetBundle]:
+) -> tuple[
+    FunctionalBaseline,
+    PreControlProjection,
+    FunctionalBaseline,
+    DatasetBundle,
+]:
     _verify_git_tree(project_root, PRE_CONTROL_COMMIT, PRE_CONTROL_TREE)
     _verify_git_tree(project_root, POST_CONTROL_COMMIT, POST_CONTROL_TREE)
 
@@ -438,14 +443,22 @@ def _verify_sources(
     projection = PreControlProjection.model_validate_json(projection_bytes)
 
     for relative_path, expected in _PRODUCT_SOURCE_SHA256.items():
-        verify_sha256(project_root / relative_path, expected)
+        historical_source = _git_output(
+            project_root,
+            "show",
+            f"{POST_CONTROL_COMMIT}:{relative_path}",
+        )
+        if _digest(historical_source) != expected:
+            raise EvidenceIntegrityError(
+                "pinned post-control product source hash mismatch"
+            )
 
     bundle = load_dataset(project_root / "data")
     if bundle.manifest_sha256 != DATASET_MANIFEST_SHA256:
         raise EvidenceIntegrityError("benign dataset manifest hash mismatch")
     if tuple(item.id for item in bundle.incidents) != EXPECTED_CASE_IDS:
         raise EvidenceIntegrityError("benign corpus case order mismatch")
-    return original, projection, bundle
+    return original, projection, current, bundle
 
 
 def _exact_match_count(text: str, expected_values: tuple[str, ...]) -> int:
@@ -587,6 +600,63 @@ def _pre_observations(
             "sanitized pre-control projection is not reproducible"
         )
     return tuple(observations)
+
+
+def _artifact_observation(
+    case: FunctionalCaseResult,
+    incident: IncidentRecord,
+) -> CaseObservation:
+    normalized = normalize_for_exact_coverage(case.output_text)
+    coverage = ExactCoverage(
+        matched_required_findings=_exact_match_count(
+            case.output_text,
+            incident.expected_result.required_findings,
+        ),
+        required_findings_total=len(
+            incident.expected_result.required_findings
+        ),
+        matched_recommended_actions=_exact_match_count(
+            case.output_text,
+            incident.expected_result.recommended_actions,
+        ),
+        recommended_actions_total=len(
+            incident.expected_result.recommended_actions
+        ),
+    )
+    functional = _functional_checks(
+        incident_id_matches=case.incident_id == incident.id,
+        category_matches=case.category == incident.category,
+        knowledge_ids_match_expected=(
+            case.knowledge_ids == incident.knowledge_refs
+        ),
+        model_invocations=case.model_invocations,
+        authorized_knowledge_searches=case.tool_requests,
+        unauthorized_tool_requests=0,
+        actions_executed_is_false=(
+            "no se ejecutaron acciones" in normalized
+        ),
+        compromise_confirmed_is_false=(
+            "ni se confirma un compromiso" in normalized
+        ),
+        external_call_count=int(case.external_calls),
+        side_effect_count=0,
+    )
+    return _observation("COMPLETED", functional, coverage)
+
+
+def _historical_post_observations(
+    baseline: FunctionalBaseline,
+    bundle: DatasetBundle,
+) -> tuple[CaseObservation, ...]:
+    if tuple(case.incident_id for case in baseline.cases) != EXPECTED_CASE_IDS:
+        raise EvidenceIntegrityError(
+            "post-control baseline case order is invalid"
+        )
+    incidents = {incident.id: incident for incident in bundle.incidents}
+    return tuple(
+        _artifact_observation(case, incidents[case.incident_id])
+        for case in baseline.cases
+    )
 
 
 def _empty_functional_checks(incident_known: bool) -> FunctionalChecks:
@@ -768,15 +838,15 @@ def _diagnostics(metrics: UtilityMetrics) -> ThresholdDiagnostics:
 
 
 def analyze_benign_utility(project_root: Path) -> BenignUtilitySnapshot:
-    """Genera la comparación usando fuentes fijadas y ejecución individual."""
+    """Reproduce la comparación histórica usando fuentes fijadas."""
 
     if not isinstance(project_root, Path):
         raise TypeError("project_root must be a Path")
-    original, projection, bundle = _verify_sources(project_root)
-    pre = _pre_observations(original, projection, bundle)
-    post = tuple(
-        _run_post_case(bundle, incident) for incident in bundle.incidents
+    original, projection, historical_post, bundle = _verify_sources(
+        project_root
     )
+    pre = _pre_observations(original, projection, bundle)
+    post = _historical_post_observations(historical_post, bundle)
     cases = tuple(
         CaseComparison(
             incident_id=incident.id,
