@@ -106,7 +106,8 @@ general, ataques desconocidos, producción, umbral operacional, significación,
 energía, TCO, concurrencia o carga sostenida. Tampoco hay revisión humana
 independiente ni registro formal de aceptación.
 
-PGS-05-M09 conserva la decisión arquitectónica, alternativas y rollback.
+[`GSL-ADR-001`](./architecture-decision-record.md) conserva la decisión
+arquitectónica, alternativas, triggers, consecuencias y rollback.
 PGS-06-M03 conserva la creación de la RACI y el registro formal de riesgos.
 Hasta una decisión humana explícita posterior, los seis riesgos permanecen
 `PENDIENTE_HUMANA`; M08 únicamente documenta el corte.

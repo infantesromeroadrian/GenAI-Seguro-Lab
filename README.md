@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-05-M08, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica permanece inmutable. El retest final M07 ejecutó una sola vez el candidato `77edd640` con el evaluador comprometido en `636e1db`: los 14 casos terminaron, la tasa de éxito pasó de 1/14 (7,14 %) a 0/14 (0 %), las operaciones no autorizadas aceptadas o ejecutadas de 1 a 0, `ADV-TOL-005` mejoró y no hubo regresiones. Los 12 casos benignos terminaron sin falsos rechazos, conservaron sus invariantes y las 84 cláusulas mapeadas por la rúbrica cerrada; por ello `SC-07` queda `DEMONSTRATED` dentro de ese contrato. La coincidencia literal sigue en 0/24 hallazgos y 0/36 acciones, y la evidencia declara que no evalúa equivalencia semántica general, afirmaciones prohibidas con semántica general ni un modelo GenAI real. `CF-002` permanece `NOT_COMPUTABLE`, las cuatro fixtures DOS/SC siguen inertes y `DAT-22` continúa siendo una referencia histórica, no rendimiento del candidato final. M08 documenta seis riesgos primarios sin recalcular la priorización ni aceptar riesgo. Todavía no existe proveedor, frontal web o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-05-M09, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica permanece inmutable. El retest final M07 ejecutó una sola vez el candidato `77edd640` con el evaluador comprometido en `636e1db`: los 14 casos terminaron, la tasa de éxito pasó de 1/14 (7,14 %) a 0/14 (0 %), las operaciones no autorizadas aceptadas o ejecutadas de 1 a 0, `ADV-TOL-005` mejoró y no hubo regresiones. Los 12 casos benignos terminaron sin falsos rechazos, conservaron sus invariantes y las 84 cláusulas mapeadas por la rúbrica cerrada; por ello `SC-07` queda `DEMONSTRATED` dentro de ese contrato. La coincidencia literal sigue en 0/24 hallazgos y 0/36 acciones, y la evidencia declara que no evalúa equivalencia semántica general, afirmaciones prohibidas con semántica general ni un modelo GenAI real. `CF-002` permanece `NOT_COMPUTABLE`, las cuatro fixtures DOS/SC siguen inertes y `DAT-22` continúa siendo una referencia histórica, no rendimiento del candidato final. M08 documenta seis riesgos primarios sin recalcular la priorización ni aceptar riesgo. M09 acepta para el alcance actual la baseline local-first determinista, con autoridad fuera del modelo y evaluación separada del producto; no selecciona una tecnología futura ni acepta riesgo. Todavía no existe proveedor, frontal web o despliegue cloud.
 
 La proyección revisada de `GSL-RETEST-ADVERSARIAL-001` está versionada en
 [`evaluations/adversarial-retest-v1/`](./evaluations/adversarial-retest-v1/)
@@ -802,6 +802,16 @@ denominador y separan el resultado final de las fuentes históricas. El
 documento propone tratamientos sobre targets ya planificados, pero no
 recalcula puntuaciones, crea el registro formal de PGS-06-M03 ni acepta riesgo.
 
+## Decisión arquitectónica M09
+
+[`GSL-ADR-001`](./docs/architecture-decision-record.md) mantiene para el
+alcance actual la baseline local-first, determinista y sin red. La aplicación
+posee validación, políticas, grants y ejecución; el modelo solo produce datos
+no confiables y el harness, la rúbrica y los oráculos permanecen fuera del
+producto. El ADR compara siete alternativas, conserva seis riesgos pendientes
+y define triggers, rollback compensatorio y supersesión sin reescribir
+`DAT-25`.
+
 ## Crosswalk de amenazas
 
 [docs/threat-crosswalk.md](./docs/threat-crosswalk.md) fija
@@ -1230,10 +1240,10 @@ Toda acción no enumerada como permitida queda denegada por defecto.
 - No construirá interfaz gráfica, arquitectura multiagente, múltiples proveedores o toda la plataforma Docker AI sin una necesidad demostrada.
 - No ejecutará acciones autónomas fuera del sandbox ni pruebas contra terceros.
 - No obtendrá una certificación regulatoria ni afirmará cumplimiento legal integral.
-- La única publicación de resultados autorizada hasta ahora es la evidencia
-  saneada de `GSL-BASELINE-ADVERSARIAL-001` incorporada por PGS-03-M07.
-  Releases y cualquier otro artefacto externo requieren una decisión posterior
-  independiente.
+- El repositorio público autorizado conserva en `main` el código, la
+  documentación y las evidencias saneadas versionadas del proyecto. Releases,
+  cloud y cualquier otro artefacto o canal externo requieren una decisión
+  posterior independiente.
 
 ## Criterios de éxito aprobados
 
@@ -1318,8 +1328,9 @@ nunca para ocultar un resultado ni para reescribir la baseline histórica.
 - [x] Registrar controles fallidos, bypasses y resultados negativos sin ocultar gaps.
 - [x] Corregir el defecto funcional demostrado sin entregar el oráculo al target.
 - [x] Ejecutar una sola vez el retest final y fijar su evidencia saneada.
+- [x] Documentar el riesgo residual y fijar la decisión arquitectónica con alternativas y rollback.
 
-**PGS-00-M01 a PGS-05-M08, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **47 de 66 microtareas (71,2 %)**, con 19 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-05-M09, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **48 de 66 microtareas (72,7 %)**, con 18 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -1329,7 +1340,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-05-M09 — redactar el ADR de la solución seleccionada, alternativas y rollback.**
+**PGS-06-M01 — crear system card, data card y model card.**
 
 ## Uso responsable
 

@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-05-M08 completadas; PGS-04 y P01-M08
+- **Estado actual:** PGS-00-M01 a PGS-05-M09 completadas; PGS-04 y P01-M08
   quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
   repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
   1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no
@@ -47,11 +47,16 @@
   riesgos cubren una sola vez los 17 abuse cases, conservan el scoring
   heredado y mantienen toda aceptación pendiente sin adelantar el registro
   formal de PGS-06-M03.
+  M09 fija
+  [`GSL-ADR-001`](./docs/architecture-decision-record.md): acepta para el
+  alcance actual la baseline local-first determinista con autoridad fuera del
+  modelo, compara siete alternativas y define triggers, rollback compensatorio
+  y supersesión sin seleccionar capacidades futuras ni aceptar riesgo.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
-- **Publicación, cloud y gasto:** repositorio público ya autorizado y evidencia
-  saneada de PGS-03-M07 versionada; releases, cloud, gasto y cualquier otra
-  publicación externa requieren autorización específica.
+- **Publicación, cloud y gasto:** el repositorio público y su `main`
+  versionado están autorizados para este proyecto; releases, cloud, gasto y
+  cualquier otro artefacto o canal externo requieren autorización específica.
 
 ## Objetivo
 
@@ -339,7 +344,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-05-M06** Corregir únicamente defectos demostrados dentro del alcance.
 - [x] **PGS-05-M07** Ejecutar el retest final y fijar los resultados.
 - [x] **PGS-05-M08** Documentar riesgo residual y compensaciones entre seguridad y utilidad.
-- [ ] **PGS-05-M09** Redactar el ADR de la solución seleccionada, alternativas y rollback.
+- [x] **PGS-05-M09** Redactar el ADR de la solución seleccionada, alternativas y rollback.
 
 **Salida:** informe comparativo baseline/control/retest con métricas reproducibles.
 
@@ -398,6 +403,10 @@ requiriendo una decisión separada.
 ## Dependencias y decisiones abiertas
 
 - Elegir un proveedor real solo si aporta evidencia que el sustituto determinista no pueda producir; cualquier llamada y gasto exigirán autorización específica.
+- `GSL-ADR-001` mantiene la baseline local-first determinista como decisión
+  revisable del alcance actual. Modelo, proveedor, Docker, UI/API, aislamiento
+  y frameworks continúan diferidos o rechazados para este corte y requieren un
+  trigger, autoridad y ADR sucesor.
 - El repositorio local en `main` sigue
   `origin/main` del remoto público
   [infantesromeroadrian/GenAI-Seguro-Lab](https://github.com/infantesromeroadrian/GenAI-Seguro-Lab).
@@ -552,6 +561,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-05-M09 — redactar el ADR de la solución seleccionada, alternativas y rollback.**
+**PGS-06-M01 — crear system card, data card y model card.**
 
-**Progreso interno:** 47 de 66 microtareas completadas, 19 abiertas (**71,2 %**).
+**Progreso interno:** 48 de 66 microtareas completadas, 18 abiertas (**72,7 %**).

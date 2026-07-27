@@ -157,6 +157,12 @@ inmutables de sus evidencias, seis riesgos con cobertura exacta y única de los
 acotadas, límites y aceptación humana pendiente. No importa ni ejecuta
 evaluadores o runners.
 
+`test_architecture_decision.py` valida exclusivamente el ADR de PGS-05-M09:
+identidad y evidencia fijadas, diez invariantes, siete alternativas no
+seleccionadas para el futuro, siete triggers, consecuencias, rollback
+compensatorio, conservación de DAT-25 y coherencia del roadmap. No ejecuta
+producto, harness, evaluadores o runners.
+
 `test_control_traceability.py` comprueba exclusivamente el contrato documental
 de la matriz canónica: una fila por `CTL-01` a `CTL-13`, roles conocidos,
 cobertura explícita de los 17 abuse cases, limitaciones no vacías y selectores

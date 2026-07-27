@@ -71,6 +71,10 @@ real.
   riesgos posteriores a `DAT-25`, distingue fuentes finales, históricas e
   inertes y mantiene pendiente toda decisión humana sin recalcular scores ni
   crear el registro formal de riesgos.
+- [ADR de la baseline local-first](./architecture-decision-record.md):
+  `GSL-ADR-001` acepta la arquitectura determinista para el alcance actual,
+  compara alternativas y fija triggers, consecuencias, rollback compensatorio
+  y supersesión sin seleccionar capacidades futuras ni aceptar riesgo.
 - [Hallazgos de la baseline adversaria](./adversarial-baseline-findings.md):
   uso actual del laboratorio, impacto de las variantes observadas,
   reproducción, residual conocido y límites de la evidencia.
