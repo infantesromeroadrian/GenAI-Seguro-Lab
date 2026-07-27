@@ -614,7 +614,7 @@ def test_baseline_uses_one_opaque_child_correlation_per_case() -> None:
 
     report = journal.report()
     primary = report.events[0].correlation_id
-    assert report.events_count == 86
+    assert report.events_count == 88
     assert report.correlations_count == 13
     assert [
         event.kind
@@ -637,15 +637,30 @@ def test_baseline_uses_one_opaque_child_correlation_per_case() -> None:
 
     assert len(child_blocks) == 12
     assert len({correlation for correlation, _ in child_blocks}) == 12
-    assert all(len(sequences) == 7 for _, sequences in child_blocks)
+    assert sorted(len(sequences) for _, sequences in child_blocks) == [
+        *([7] * 10),
+        8,
+        8,
+    ]
     assert all(
-        sequences == tuple(range(sequences[0], sequences[0] + 7))
+        sequences
+        == tuple(range(sequences[0], sequences[0] + len(sequences)))
         for _, sequences in child_blocks
     )
     assert all(
         set(left_sequences).isdisjoint(right_sequences)
         for index, (_, left_sequences) in enumerate(child_blocks)
         for _, right_sequences in child_blocks[index + 1 :]
+    )
+    interventions = tuple(
+        event for event in report.events if event.kind == "security_signal"
+    )
+    assert len(interventions) == 2
+    assert all(
+        event.source == "output_policy"
+        and event.outcome == "intervened"
+        and event.signal == "output_policy_intervention"
+        for event in interventions
     )
     serialized = canonical_security_report_json(report)
     bundle = load_dataset(DATA_DIR)
@@ -658,7 +673,13 @@ def test_cli_default_is_byte_identical_and_opt_in_is_sanitized_envelope() -> Non
 
     assert default.returncode == opt_in.returncode == 0
     assert default.stderr == opt_in.stderr == ""
-    assert default.stdout == BASELINE.read_text(encoding="utf-8")
+    assert default.stdout != BASELINE.read_text(encoding="utf-8")
+    assert json.loads(default.stdout)["baseline_id"] == (
+        "GSL-CORRECTION-CANDIDATE-BENIGN-001"
+    )
+    assert json.loads(BASELINE.read_text(encoding="utf-8"))[
+        "baseline_id"
+    ] == "GSL-BASELINE-BENIGN-001"
 
     envelope = json.loads(opt_in.stdout)
     assert set(envelope) == {"result", "security_report"}
@@ -667,7 +688,7 @@ def test_cli_default_is_byte_identical_and_opt_in_is_sanitized_envelope() -> Non
         json.dumps(envelope["security_report"])
     )
     assert report.profile == "baseline"
-    assert report.events_count == 86
+    assert report.events_count == 88
     assert report.correlations_count == 13
     assert report.events[-1].kind == "operation_completed"
     assert all(canary not in opt_in.stdout for canary in CANARIES)

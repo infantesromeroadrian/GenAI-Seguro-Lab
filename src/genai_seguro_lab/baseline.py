@@ -14,6 +14,7 @@ from .benign_flow import (
     BenignAnalysisFlow,
     BenignAnalysisResult,
     BenignFinalOutput,
+    BenignIncidentInput,
     canonical_flow_json,
 )
 from .data_contract import (
@@ -83,7 +84,10 @@ class FunctionalBaselineSummary(BaselineSchema):
 
 
 class FunctionalBaseline(BaselineSchema):
-    baseline_id: Literal["GSL-BASELINE-BENIGN-001"]
+    baseline_id: Literal[
+        "GSL-BASELINE-BENIGN-001",
+        "GSL-CORRECTION-CANDIDATE-BENIGN-001",
+    ]
     schema_version: Literal["1.0.0"]
     profile: Literal["deterministic_benign"]
     evaluation_scope: Literal["benign_flow_functionality"]
@@ -156,18 +160,81 @@ def _knowledge_request(incident: IncidentRecord) -> ModelToolRequest:
     )
 
 
-def _output_text(
-    incident: IncidentRecord,
-    knowledge_ids: tuple[str, ...],
-) -> str:
-    references = ", ".join(knowledge_ids)
-    return (
-        f"{incident.id}: {incident.title}. "
-        f"Se observaron {len(incident.indicators)} indicadores sintéticos "
-        f"de la categoría {incident.category} y se consultó conocimiento "
-        f"autorizado ({references}). No se ejecutaron acciones ni se "
-        "confirma un compromiso."
+def _incident_input(incident: IncidentRecord) -> BenignIncidentInput:
+    return BenignIncidentInput(
+        category=incident.category,
+        id=incident.id,
+        indicators=incident.indicators,
+        knowledge_refs=incident.knowledge_refs,
+        scenario=incident.scenario,
+        title=incident.title,
     )
+
+
+def _output_text(
+    incident: BenignIncidentInput,
+    knowledge: KnowledgeSearchResult,
+) -> str:
+    if not isinstance(incident, BenignIncidentInput):
+        raise TypeError("incident must be a BenignIncidentInput")
+    if not isinstance(knowledge, KnowledgeSearchResult):
+        raise TypeError("knowledge must be a KnowledgeSearchResult")
+    if not knowledge.hits:
+        raise ValueError("structured output requires authorized knowledge")
+
+    source_lines = tuple(
+        f"- {hit.id}: {hit.title}" for hit in knowledge.hits
+    )
+    justification_lines = tuple(
+        f"- {hit.id}: {hit.content}" for hit in knowledge.hits
+    )
+    proposed_steps = tuple(
+        procedure
+        for hit in knowledge.hits
+        for procedure in hit.procedures
+    )
+    if len(proposed_steps) < 3:
+        raise ValueError(
+            "structured output requires at least three proposed steps"
+        )
+
+    lines = (
+        f"{incident.id}: {incident.title}",
+        "",
+        "Hechos observados",
+        (
+            "- Escenario sintético aportado como contenido no confiable: "
+            f"{incident.scenario}"
+        ),
+        (
+            "- Indicadores sintéticos observados: "
+            f"{'; '.join(incident.indicators)}"
+        ),
+        "",
+        "Fuentes autorizadas",
+        *source_lines,
+        "",
+        "Incertidumbres y datos ausentes",
+        "- No se confirma un compromiso ni se atribuye autoría.",
+        (
+            "- Deben completarse las validaciones propuestas antes de "
+            "elevar una hipótesis a conclusión."
+        ),
+        "",
+        "Actuación propuesta",
+        *(f"- Propuesta: {step}" for step in proposed_steps),
+        "",
+        "Justificación",
+        *justification_lines,
+        "",
+        "Riesgos y límites",
+        (
+            "- Las propuestas se limitan al laboratorio y no deben "
+            "presentarse como acciones realizadas."
+        ),
+        "- No se ejecutaron acciones ni se confirma un compromiso.",
+    )
+    return "\n".join(lines)
 
 
 def _scripted_knowledge_fixture(
@@ -205,6 +272,7 @@ def _build_flow(
 ) -> BenignAnalysisFlow:
     scripts: list[ScriptedExchange] = []
     for incident in incidents:
+        incident_input = _incident_input(incident)
         initial = BenignAnalysisFlow.build_initial_request(incident)
         tool_request = _knowledge_request(incident)
         first_response = ModelResponse(
@@ -228,8 +296,8 @@ def _build_flow(
                 BenignFinalOutput(
                     incident_id=incident.id,
                     summary=_output_text(
-                        incident,
-                        tuple(hit.id for hit in knowledge.hits),
+                        incident_input,
+                        knowledge,
                     ),
                     knowledge_ids=tuple(hit.id for hit in knowledge.hits),
                     actions_executed=False,
@@ -407,7 +475,7 @@ def run_functional_baseline(
             for incident in bundle.incidents
         )
         result = FunctionalBaseline(
-            baseline_id="GSL-BASELINE-BENIGN-001",
+            baseline_id="GSL-CORRECTION-CANDIDATE-BENIGN-001",
             schema_version="1.0.0",
             profile="deterministic_benign",
             evaluation_scope="benign_flow_functionality",

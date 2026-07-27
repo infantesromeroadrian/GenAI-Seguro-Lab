@@ -56,18 +56,28 @@ def test_entrypoint_analyzes_from_outside_repository(
     assert payload["tool_requests"] == 1
     assert payload["external_calls"] is False
     assert payload["cost_eur"] == 0
+    assert "Hechos observados" in payload["output_text"]
+    assert "Fuentes autorizadas" in payload["output_text"]
+    assert "Incertidumbres y datos ausentes" in payload["output_text"]
+    assert "Actuación propuesta" in payload["output_text"]
+    assert payload["output_text"].count("- Propuesta:") >= 3
 
 
-def test_baseline_is_reproducible_and_matches_snapshot() -> None:
+def test_correction_candidate_is_reproducible_without_rewriting_baseline() -> None:
     first = _run_entrypoint("baseline")
     second = _run_entrypoint("baseline")
 
     assert first.returncode == second.returncode == 0
     assert first.stderr == second.stderr == ""
     assert first.stdout == second.stdout
-    assert first.stdout == BASELINE.read_text(encoding="utf-8")
+    assert first.stdout != BASELINE.read_text(encoding="utf-8")
 
     payload = json.loads(first.stdout)
+    historical = json.loads(BASELINE.read_text(encoding="utf-8"))
+    assert payload["baseline_id"] == (
+        "GSL-CORRECTION-CANDIDATE-BENIGN-001"
+    )
+    assert historical["baseline_id"] == "GSL-BASELINE-BENIGN-001"
     assert payload["summary"] == {
         "cases_failed": 0,
         "cases_passed": 12,
