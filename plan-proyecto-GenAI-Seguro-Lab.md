@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-06-M09 completadas; PGS-04 y P01-M08
+- **Estado actual:** PGS-00-M01 a PGS-07-M01 completadas; PGS-04 y P01-M08
   quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
   repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
   1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no
@@ -97,6 +97,12 @@
   [`GSL-MODEL-CHANGE-001`](./docs/model-change-reevaluation-policy.md):
   clasifica nueve cambios y ocho paquetes de evaluación, conserva `DAT-25` y
   separa trigger, evidencia, revisión y autoridad.
+  PGS-07-M01 fija
+  [`GSL-CLEAN-REBUILD-001`](./evaluations/clean-rebuild-v1.json): un clon
+  público nuevo del candidato `93d9a058` valida lock, instalación sin caché,
+  segunda sincronización sin cambios y el punto de entrada `main.py`. La red
+  usada queda declarada, no se atribuye hermeticidad y `DAT-25` no se ejecuta
+  ni cambia.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** el repositorio público y su `main`
@@ -413,7 +419,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 
 **Objetivo:** convertir el laboratorio en evidencia admisible para SEC-1.
 
-- [ ] **PGS-07-M01** Reconstruir el proyecto desde un entorno limpio.
+- [x] **PGS-07-M01** Reconstruir el proyecto desde un entorno limpio.
 - [ ] **PGS-07-M02** Ejecutar tests, corpus benigno y corpus adversario.
 - [ ] **PGS-07-M03** Verificar que los logs y artefactos no contienen secretos ni datos reales.
 - [ ] **PGS-07-M04** Pedir una revisión independiente del threat model y de una prueba.
@@ -606,6 +612,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-07-M01 — reconstruir el proyecto desde un entorno limpio.**
+**PGS-07-M02 — ejecutar tests, corpus benigno y corpus adversario autorizado.**
 
-**Progreso interno:** 57 de 66 microtareas completadas, 9 abiertas (**86,4 %**).
+**Progreso interno:** 58 de 66 microtareas completadas, 8 abiertas (**87,9 %**).

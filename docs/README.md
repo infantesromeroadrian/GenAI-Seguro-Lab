@@ -103,6 +103,11 @@ real.
   `DAT-25`, 14 casos adversarios y 12 benignos sobre el candidato `77edd640`,
   con `SC-06` y `SC-07` demostrados dentro del contrato cerrado y límites
   explícitos frente a generalización, semántica y modelo real.
+- [Reconstrucción limpia de cierre
+  v1](../evaluations/clean-rebuild-v1.json): clon público nuevo, lock fijado,
+  instalación sin caché y smoke del punto de entrada sobre el candidato
+  `93d9a058`, con red declarada y sin atribuir hermeticidad ni ampliar el
+  alcance de la prueba.
 - [Riesgo residual y compensaciones](./residual-risk-and-tradeoffs.md):
   `GSL-RESIDUAL-RISK-001` agrupa los 17 abuse cases una sola vez en seis
   riesgos posteriores a `DAT-25`, distingue fuentes finales, históricas e

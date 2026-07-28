@@ -189,3 +189,9 @@ de la matriz canónica: una fila por `CTL-01` a `CTL-13`, roles conocidos,
 cobertura explícita de los 17 abuse cases, limitaciones no vacías y selectores
 pytest que apuntan a ficheros y funciones existentes. Esta validación no prueba
 la eficacia de los controles.
+
+`test_clean_rebuild_evidence.py` valida la identidad Git, los hashes de
+entrada, el entorno, las diez distribuciones instaladas y los resultados
+acotados de `GSL-CLEAN-REBUILD-001`. También impide rutas personales, conserva
+el hash de `DAT-25` y exige que la documentación no convierta una
+reconstrucción con red en build hermética ni en prueba del producto.

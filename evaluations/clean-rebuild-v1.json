@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "snapshot_id": "GSL-CLEAN-REBUILD-001",
+  "microtask": "PGS-07-M01",
+  "executed_at": "2026-07-28T09:54:58Z",
+  "candidate": {
+    "commit": "93d9a0587a94e5d621f0735b673a90450cc5da70",
+    "tree": "af53562353360cdd504411842f56c2218e707ce1",
+    "branch": "main",
+    "remote": "https://github.com/infantesromeroadrian/GenAI-Seguro-Lab.git"
+  },
+  "environment": {
+    "os": "Darwin",
+    "architecture": "arm64",
+    "os_version": "26.6",
+    "python": "3.12.8",
+    "uv": "0.6.10",
+    "uv_commit": "f2a2d982b"
+  },
+  "inputs": {
+    ".python-version": "7b55f8e67b5623c4bef3fa691288da9437d79d3aba156de48d481db32ac7d16d",
+    "pyproject.toml": "cb3ca6ea34bda636d4ae4b49a751642a25001287e525bc8b24473d0a1b0fc699",
+    "uv.lock": "7a7cb70dac5c0d018cfbd7cea07f8ad3345ac96408a21e635f6c2e84d93617be"
+  },
+  "protocol": {
+    "fresh_public_clone": true,
+    "local_clone_reuse": false,
+    "pre_status_count": 0,
+    "lock_check": {
+      "command": "uv lock --check",
+      "result": "PASS"
+    },
+    "sync": {
+      "command": "uv sync --frozen --no-cache",
+      "result": "PASS",
+      "network_used": true,
+      "cache_reuse": false,
+      "locked_external_packages": 11,
+      "installed_packages": 10,
+      "conditional_not_installed": [
+        "colorama==0.4.6; sys_platform == 'win32'"
+      ]
+    },
+    "sync_check": {
+      "command": "uv sync --frozen --check",
+      "result": "PASS",
+      "changes_required": 0
+    },
+    "dependency_imports": {
+      "pydantic": "PASS",
+      "pytest": "PASS"
+    },
+    "entrypoint_contract": "flat application with tool.uv package=false; main.py is the supported product entrypoint",
+    "cli_smoke": {
+      "command": "uv run --frozen --no-sync python main.py --help",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    "post_status_count": 0,
+    "post_tracked_diff_count": 0,
+    "venv_ignored": true,
+    "temporary_root_cleanup": "MOVED_TO_TRASH"
+  },
+  "installed_packages": [
+    {
+      "name": "annotated-types",
+      "version": "0.8.0"
+    },
+    {
+      "name": "iniconfig",
+      "version": "2.3.0"
+    },
+    {
+      "name": "packaging",
+      "version": "26.2"
+    },
+    {
+      "name": "pluggy",
+      "version": "1.6.0"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.13.4"
+    },
+    {
+      "name": "pydantic-core",
+      "version": "2.46.4"
+    },
+    {
+      "name": "pygments",
+      "version": "2.20.0"
+    },
+    {
+      "name": "pytest",
+      "version": "9.1.1"
+    },
+    {
+      "name": "typing-extensions",
+      "version": "4.16.0"
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.2"
+    }
+  ],
+  "dat25": {
+    "executed": false,
+    "changed": false,
+    "sha256": "05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d"
+  },
+  "result": "PASS",
+  "limits": [
+    "Single clean rebuild on one Darwin arm64 host and session.",
+    "The public clone and package downloads used the network; this is not an offline or hermetic build.",
+    "The supported product smoke covers main.py; the local application is deliberately not installed as a package.",
+    "Product tests and the benign and authorised adversarial corpora are reserved for PGS-07-M02.",
+    "Secret and real-data scanning is reserved for PGS-07-M03.",
+    "No vulnerability, licence, provenance, signature or independent-review claim is made.",
+    "DAT-25 was neither executed nor changed."
+  ]
+}

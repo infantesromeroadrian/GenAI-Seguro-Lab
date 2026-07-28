@@ -235,3 +235,21 @@ La evidencia conserva:
   fijados;
 - `CF-002` `NOT_COMPUTABLE`, `DAT-22` histórico y ninguna evaluación semántica
   general, con modelo GenAI real o juez LLM.
+
+## Reconstrucción limpia de cierre v1
+
+[`clean-rebuild-v1.json`](./clean-rebuild-v1.json) es la evidencia saneada de
+`GSL-CLEAN-REBUILD-001`. Se obtuvo desde un clon nuevo del repositorio público,
+con el candidato `93d9a058` y el árbol `af535623`, sin reutilizar el checkout
+local ni la caché de paquetes.
+
+La ejecución validó el lock, instaló las diez distribuciones aplicables en
+Darwin arm64, confirmó que una segunda sincronización no requería cambios y
+ejecutó el punto de entrada soportado `main.py --help`. El checkout empezó y
+terminó limpio, `.venv` permaneció ignorado y el directorio temporal se movió
+a la Papelera.
+
+La descarga del repositorio y de los paquetes usó red, por lo que no se
+presenta como build offline o hermética. Tampoco acredita tests del producto,
+corpus, ausencia de secretos, vulnerabilidades, licencias, procedencia, firmas
+o revisión independiente. `DAT-25` no se ejecutó ni cambió.
