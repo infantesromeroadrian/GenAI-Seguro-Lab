@@ -195,3 +195,9 @@ entrada, el entorno, las diez distribuciones instaladas y los resultados
 acotados de `GSL-CLEAN-REBUILD-001`. También impide rutas personales, conserva
 el hash de `DAT-25` y exige que la documentación no convierta una
 reconstrucción con red en build hermética ni en prueba del producto.
+
+`test_closure_execution_evidence.py` valida el commit y árbol de
+`GSL-CLOSURE-EXECUTION-001`, los hashes históricos de entrada, las 327 pruebas,
+el resumen de 12 benignos y la separación exacta entre 14 casos adversarios
+ejecutados y cuatro DOS/SC inertes. También comprueba el saneado, la ausencia
+del runner de `DAT-25`, su hash inmutable y el cierre documental de M02.

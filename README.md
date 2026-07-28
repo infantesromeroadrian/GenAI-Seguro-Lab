@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-07-M01, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica permanece inmutable. El retest final M07 ejecutó una sola vez el candidato `77edd640` con el evaluador comprometido en `636e1db`: los 14 casos terminaron, la tasa de éxito pasó de 1/14 (7,14 %) a 0/14 (0 %), las operaciones no autorizadas aceptadas o ejecutadas de 1 a 0, `ADV-TOL-005` mejoró y no hubo regresiones. Los 12 casos benignos terminaron sin falsos rechazos, conservaron sus invariantes y las 84 cláusulas mapeadas por la rúbrica cerrada; por ello `SC-07` queda `DEMONSTRATED` dentro de ese contrato. La coincidencia literal sigue en 0/24 hallazgos y 0/36 acciones, y la evidencia declara que no evalúa equivalencia semántica general, afirmaciones prohibidas con semántica general ni un modelo GenAI real. `CF-002` permanece `NOT_COMPUTABLE`, las cuatro fixtures DOS/SC siguen inertes y `DAT-22` continúa siendo una referencia histórica, no rendimiento del candidato final. M08 documenta seis riesgos primarios sin recalcular la priorización ni aceptar riesgo. M09 acepta para el alcance actual la baseline local-first determinista, con autoridad fuera del modelo y evaluación separada del producto; no selecciona una tecnología futura ni acepta riesgo. PGS-06-M01 añade fichas descriptivas del sistema, los datos y `MOD-01`; no certifica el laboratorio, no acepta riesgo y mantiene explícito que el modelo es un doble determinista. PGS-06-M02 completa la evaluación de impacto del sistema actual: acota diez dimensiones, mantiene `RR-01` a `RR-06` pendientes y obliga a reevaluar antes de ampliar modelo, datos, interfaz, efectos o despliegue. PGS-06-M03 formaliza doce actividades RACI y un registro vivo de los seis riesgos; `ACT-02` conserva el accountability actual, `REV-01` sigue sin asignar y todas las decisiones continúan `PENDIENTE_HUMANA`. PGS-06-M04 separa obligaciones potenciales, estándares y guías voluntarias y decisiones internas sin atribuir conformidad o clasificación jurídica. PGS-06-M05 mantiene el runtime sin persistencia y fija el ciclo de vida de ocho clases observables. PGS-06-M06 añade respuesta humana por severidad y familia sin atribuir automatización. PGS-06-M07 fija parada, reconciliación y reanudación sin añadir una superficie nueva. PGS-06-M08 registra dependencias y gaps de supply chain sin afirmar un escaneo inexistente. PGS-06-M09 clasifica los cambios y su reevaluación sin ampliar autoridad. PGS-07-M01 demuestra una reconstrucción desde un clon público nuevo con lock fijado, instalación sin caché y smoke del punto de entrada; usó red y no afirma hermeticidad. Todavía no existe proveedor, frontal web o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-07-M02, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica permanece inmutable. El retest final M07 ejecutó una sola vez el candidato `77edd640` con el evaluador comprometido en `636e1db`: los 14 casos terminaron, la tasa de éxito pasó de 1/14 (7,14 %) a 0/14 (0 %), las operaciones no autorizadas aceptadas o ejecutadas de 1 a 0, `ADV-TOL-005` mejoró y no hubo regresiones. Los 12 casos benignos terminaron sin falsos rechazos, conservaron sus invariantes y las 84 cláusulas mapeadas por la rúbrica cerrada; por ello `SC-07` queda `DEMONSTRATED` dentro de ese contrato. La coincidencia literal sigue en 0/24 hallazgos y 0/36 acciones, y la evidencia declara que no evalúa equivalencia semántica general, afirmaciones prohibidas con semántica general ni un modelo GenAI real. `CF-002` permanece `NOT_COMPUTABLE`, las cuatro fixtures DOS/SC siguen inertes y `DAT-22` continúa siendo una referencia histórica, no rendimiento del candidato final. M08 documenta seis riesgos primarios sin recalcular la priorización ni aceptar riesgo. M09 acepta para el alcance actual la baseline local-first determinista, con autoridad fuera del modelo y evaluación separada del producto; no selecciona una tecnología futura ni acepta riesgo. PGS-06-M01 añade fichas descriptivas del sistema, los datos y `MOD-01`; no certifica el laboratorio, no acepta riesgo y mantiene explícito que el modelo es un doble determinista. PGS-06-M02 completa la evaluación de impacto del sistema actual: acota diez dimensiones, mantiene `RR-01` a `RR-06` pendientes y obliga a reevaluar antes de ampliar modelo, datos, interfaz, efectos o despliegue. PGS-06-M03 formaliza doce actividades RACI y un registro vivo de los seis riesgos; `ACT-02` conserva el accountability actual, `REV-01` sigue sin asignar y todas las decisiones continúan `PENDIENTE_HUMANA`. PGS-06-M04 separa obligaciones potenciales, estándares y guías voluntarias y decisiones internas sin atribuir conformidad o clasificación jurídica. PGS-06-M05 mantiene el runtime sin persistencia y fija el ciclo de vida de ocho clases observables. PGS-06-M06 añade respuesta humana por severidad y familia sin atribuir automatización. PGS-06-M07 fija parada, reconciliación y reanudación sin añadir una superficie nueva. PGS-06-M08 registra dependencias y gaps de supply chain sin afirmar un escaneo inexistente. PGS-06-M09 clasifica los cambios y su reevaluación sin ampliar autoridad. PGS-07-M01 demuestra una reconstrucción desde un clon público nuevo con lock fijado, instalación sin caché y smoke del punto de entrada; usó red y no afirma hermeticidad. PGS-07-M02 ejecuta 327 pruebas, 12 benignos y los 14 adversarios autorizados sobre el commit público `6d4f132`; las cuatro fixtures DOS/SC siguen inertes. Todavía no existe proveedor, frontal web o despliegue cloud.
 
 La proyección revisada de `GSL-RETEST-ADVERSARIAL-001` está versionada en
 [`evaluations/adversarial-retest-v1/`](./evaluations/adversarial-retest-v1/)
@@ -906,6 +906,16 @@ paquetes se descargaron por red, así que la evidencia no afirma hermeticidad,
 ausencia de vulnerabilidades ni ejecución del producto o sus corpus.
 `DAT-25` no se ejecutó ni cambió.
 
+## Ejecución de cierre PGS-07-M02
+
+[`GSL-CLOSURE-EXECUTION-001`](./evaluations/closure-execution-v1.json) fija
+otro clon público nuevo, ahora del commit `6d4f132`: 327/327 pruebas, 12/12
+casos benignos y los 14 casos adversarios PI/JB/EX/TOL autorizados terminaron
+correctamente. Los tres casos DOS y el caso de supply chain permanecieron
+inertes. La evidencia declara las repeticiones y limita el resultado al
+producto, corpus, host y contratos versionados; no afirma seguridad universal.
+`DAT-25` no se ejecutó ni cambió.
+
 ## Crosswalk de amenazas
 
 [docs/threat-crosswalk.md](./docs/threat-crosswalk.md) fija
@@ -1439,7 +1449,7 @@ nunca para ocultar un resultado ni para reescribir la baseline histórica.
 - [x] Documentar cambios de modelo y qué evaluaciones, decisiones y autoridad
   exige cada clase.
 
-**PGS-00-M01 a PGS-07-M01, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **58 de 66 microtareas (87,9 %)**, con 8 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-07-M02, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **59 de 66 microtareas (89,4 %)**, con 7 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -1449,7 +1459,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-07-M02 — ejecutar tests, corpus benigno y corpus adversario autorizado.**
+**PGS-07-M03 — verificar que logs y artefactos no contienen secretos ni datos reales.**
 
 ## Uso responsable
 

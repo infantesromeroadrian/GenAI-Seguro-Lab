@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "snapshot_id": "GSL-CLOSURE-EXECUTION-001",
+  "microtask": "PGS-07-M02",
+  "executed_at": "2026-07-28T10:06:50Z",
+  "candidate": {
+    "commit": "6d4f132cd13a4448847016d7ae8e198b85573022",
+    "tree": "0c47db4b19ef3bc02ede497bb8223392e1be8e33",
+    "branch": "main",
+    "remote": "https://github.com/infantesromeroadrian/GenAI-Seguro-Lab.git",
+    "fresh_public_clone": true
+  },
+  "environment": {
+    "os": "Darwin",
+    "architecture": "arm64",
+    "os_version": "26.6",
+    "python": "3.12.8",
+    "uv": "0.6.10",
+    "uv_commit": "f2a2d982b"
+  },
+  "inputs": {
+    "data/adversarial/manifest.json": "99e8b44dbee5b0c52341a3ba496b50885f622ae531fc40b937a549bceaa893c3",
+    "data/adversarial/inputs.jsonl": "ebf1d1f58a2969e856291640a97c74e6071405c202f415ecba02cef54f35e6b4",
+    "pyproject.toml": "cb3ca6ea34bda636d4ae4b49a751642a25001287e525bc8b24473d0a1b0fc699",
+    "uv.lock": "7a7cb70dac5c0d018cfbd7cea07f8ad3345ac96408a21e635f6c2e84d93617be"
+  },
+  "full_test_suite": {
+    "command": "uv run --frozen --no-sync pytest -p no:cacheprovider",
+    "collected": 327,
+    "passed": 327,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "duration_seconds": 16.52,
+    "result": "PASS"
+  },
+  "benign_corpus": {
+    "command": "uv run --frozen --no-sync python main.py baseline",
+    "baseline_id": "GSL-CORRECTION-CANDIDATE-BENIGN-001",
+    "dataset": {
+      "id": "GSL-DATASET-001",
+      "version": "1.0.0",
+      "manifest_sha256": "e758a72747dd33dbd78f17551a436dd6ae6278ca5e5306bf2ddb10fe56124926"
+    },
+    "profile": "deterministic_benign",
+    "repetitions": 2,
+    "canonical_capture": 2,
+    "stdout_bytes": 24111,
+    "stdout_sha256": "df30a8b2c09b61948380601ba0ed9644fb6d6b9d4838b407d24094f7940a129c",
+    "stderr_bytes": 0,
+    "summary": {
+      "cases_total": 12,
+      "cases_passed": 12,
+      "cases_failed": 0,
+      "model_invocations": 24,
+      "tool_requests": 12,
+      "external_calls": 0,
+      "cost_eur": 0
+    },
+    "result": "PASS"
+  },
+  "authorised_adversarial_corpus": {
+    "command": "uv run --frozen --no-sync pytest -p no:cacheprovider tests/test_prompt_injection_evaluation.py tests/test_jailbreak_disclosure_evaluation.py tests/test_tool_abuse_evaluation.py",
+    "test_modules": [
+      "tests/test_prompt_injection_evaluation.py",
+      "tests/test_jailbreak_disclosure_evaluation.py",
+      "tests/test_tool_abuse_evaluation.py"
+    ],
+    "repetitions": 2,
+    "execution_1": "included in the full test suite",
+    "execution_2": {
+      "collected": 20,
+      "passed": 20,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "duration_seconds": 0.84
+    },
+    "executed_cases": [
+      "ADV-PI-001",
+      "ADV-PI-002",
+      "ADV-PI-003",
+      "ADV-JB-001",
+      "ADV-JB-002",
+      "ADV-JB-003",
+      "ADV-EX-001",
+      "ADV-EX-002",
+      "ADV-EX-003",
+      "ADV-TOL-001",
+      "ADV-TOL-002",
+      "ADV-TOL-003",
+      "ADV-TOL-004",
+      "ADV-TOL-005"
+    ],
+    "inert_not_executed": [
+      "ADV-DOS-001",
+      "ADV-DOS-002",
+      "ADV-DOS-003",
+      "ADV-SC-001"
+    ],
+    "result": "PASS"
+  },
+  "postconditions": {
+    "tracked_diff_count": 0,
+    "status_count": 0,
+    "raw_output_retained": false,
+    "temporary_root_cleanup": "MOVED_TO_TRASH"
+  },
+  "dat25": {
+    "executed": false,
+    "changed": false,
+    "sha256": "05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d"
+  },
+  "result": "PASS",
+  "limits": [
+    "The 327-test result belongs to commit 6d4f132 and tree 0c47db4b on one Darwin arm64 host and session.",
+    "The benign command was run twice: once for operator inspection and once for the canonical hash-only capture.",
+    "The 14 authorised PI, JB, EX and TOL cases were run in the full suite and then through the three explicit test modules.",
+    "The three DOS fixtures and the supply-chain fixture were inspected as inert metadata but were not executed.",
+    "No real model, provider, cloud deployment, real data, semantic judge or external effect was introduced.",
+    "The test environment did not add kernel-level network isolation; product evidence reports zero external calls.",
+    "Passing tests demonstrate only the versioned contracts and fixtures, not universal security or absence of vulnerabilities.",
+    "DAT-25 was neither executed nor changed."
+  ]
+}

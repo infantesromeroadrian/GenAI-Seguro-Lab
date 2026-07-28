@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-07-M01 completadas; PGS-04 y P01-M08
+- **Estado actual:** PGS-00-M01 a PGS-07-M02 completadas; PGS-04 y P01-M08
   quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
   repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
   1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no
@@ -103,6 +103,12 @@
   segunda sincronización sin cambios y el punto de entrada `main.py`. La red
   usada queda declarada, no se atribuye hermeticidad y `DAT-25` no se ejecuta
   ni cambia.
+  PGS-07-M02 fija
+  [`GSL-CLOSURE-EXECUTION-001`](./evaluations/closure-execution-v1.json): sobre
+  otro clon nuevo del commit `6d4f132` superan 327 pruebas, 12 benignos y los
+  14 adversarios PI/JB/EX/TOL autorizados. Las cuatro fixtures DOS/SC siguen
+  inertes, las repeticiones quedan declaradas y `DAT-25` no se ejecuta ni
+  cambia.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** el repositorio público y su `main`
@@ -420,7 +426,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 **Objetivo:** convertir el laboratorio en evidencia admisible para SEC-1.
 
 - [x] **PGS-07-M01** Reconstruir el proyecto desde un entorno limpio.
-- [ ] **PGS-07-M02** Ejecutar tests, corpus benigno y corpus adversario.
+- [x] **PGS-07-M02** Ejecutar tests, corpus benigno y corpus adversario.
 - [ ] **PGS-07-M03** Verificar que los logs y artefactos no contienen secretos ni datos reales.
 - [ ] **PGS-07-M04** Pedir una revisión independiente del threat model y de una prueba.
 - [ ] **PGS-07-M05** Incorporar correcciones justificadas y registrar discrepancias.
@@ -612,6 +618,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-07-M02 — ejecutar tests, corpus benigno y corpus adversario autorizado.**
+**PGS-07-M03 — verificar que logs y artefactos no contienen secretos ni datos reales.**
 
-**Progreso interno:** 58 de 66 microtareas completadas, 8 abiertas (**87,9 %**).
+**Progreso interno:** 59 de 66 microtareas completadas, 7 abiertas (**89,4 %**).

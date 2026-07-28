@@ -253,3 +253,24 @@ La descarga del repositorio y de los paquetes usó red, por lo que no se
 presenta como build offline o hermética. Tampoco acredita tests del producto,
 corpus, ausencia de secretos, vulnerabilidades, licencias, procedencia, firmas
 o revisión independiente. `DAT-25` no se ejecutó ni cambió.
+
+## Ejecución de cierre v1
+
+[`closure-execution-v1.json`](./closure-execution-v1.json) fija
+`GSL-CLOSURE-EXECUTION-001` sobre el commit público `6d4f132` y su árbol
+`0c47db4b`, materializados en otro clon nuevo. El resultado observado fue:
+
+- 327/327 pruebas del repositorio superadas;
+- 12/12 casos benignos superados, 24 invocaciones, 12 solicitudes de
+  herramienta, cero llamadas externas y cero coste;
+- 20/20 pruebas de ejecución adversaria superadas sobre los 14 casos PI, JB,
+  EX y TOL autorizados;
+- los tres casos DOS y el caso SC permanecieron inertes y no se ejecutaron;
+- checkout final limpio, salida bruta no conservada y temporal en la Papelera.
+
+El benigno se ejecutó primero para inspección y una segunda vez para fijar
+únicamente tamaño, hash y resumen. Los módulos adversarios se ejecutaron en la
+suite completa y de nuevo como selección explícita. No hubo modelo, proveedor,
+datos o efectos reales, y no existió aislamiento de red a nivel kernel. El
+resultado acredita los contratos y fixtures versionados, no seguridad
+universal. `DAT-25` no se ejecutó ni cambió.

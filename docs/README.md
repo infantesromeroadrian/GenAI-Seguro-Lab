@@ -108,6 +108,11 @@ real.
   instalación sin caché y smoke del punto de entrada sobre el candidato
   `93d9a058`, con red declarada y sin atribuir hermeticidad ni ampliar el
   alcance de la prueba.
+- [Ejecución de cierre
+  v1](../evaluations/closure-execution-v1.json): 327 pruebas, 12 benignos y los
+  14 casos adversarios PI/JB/EX/TOL autorizados sobre el commit público
+  `6d4f132`; mantiene los cuatro DOS/SC inertes y explicita repeticiones,
+  ausencia de aislamiento kernel y límites de generalización.
 - [Riesgo residual y compensaciones](./residual-risk-and-tradeoffs.md):
   `GSL-RESIDUAL-RISK-001` agrupa los 17 abuse cases una sola vez en seis
   riesgos posteriores a `DAT-25`, distingue fuentes finales, históricas e
