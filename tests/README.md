@@ -237,3 +237,8 @@ riesgos abiertos o el estado de `SEC-1`.
 `P01-M01` y `P01-M04` a `P01-M11`, ocho criterios satisfechos, la revisión
 independiente no satisfecha, referencias locales válidas y la separación de
 `P01-M02/M03`.
+
+`test_sec_1_status.py` valida 66 posiciones internas con 65 completadas, una
+omitida y cero abiertas, además de mantener `BASE`, `P01-M11` y `SEC-1`
+abiertos sin convertir el cierre interno en gate, aprobación o aceptación de
+riesgo.

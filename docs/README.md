@@ -74,6 +74,9 @@ real.
   01](./phase-01-criteria-review.md): contrasta `P01-M01` y `P01-M04` a
   `P01-M11` con la fuente padre vigente; satisface ocho criterios y conserva
   `P01-M11` abierta.
+- [Estado de SEC-1](./sec-1-status.md): separa el roadmap interno
+  65 completadas + 1 omitida del gate global, que continúa
+  `OPEN_NOT_ACHIEVED` por `BASE` y la reproducción independiente ausente.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.

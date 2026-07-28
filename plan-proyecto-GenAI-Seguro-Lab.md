@@ -115,6 +115,8 @@
   son sintéticos. El historial conserva procedencia personal y cuatro commits
   que tocaron una ruta local ya retirada; se declara sin copiar valores y sin
   reescribir el historial público.
+- **Cierre interno:** 65 microtareas completadas, PGS-07-M04 omitida y 0
+  abiertas. P01-M11, BASE, la fase 01 y SEC-1 continúan abiertos.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** el repositorio público y su `main`
@@ -440,12 +442,12 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-07-M07** Preparar resumen técnico y resumen ejecutivo.
 - [x] **PGS-07-M08** Crear el repositorio público y publicar `main` tras una autorización separada.
 - [x] **PGS-07-M09** Revisar P01-M01 y P01-M04–P01-M11 contra sus criterios.
-- [ ] **PGS-07-M10** Registrar el estado de SEC-1 sin cerrarlo mientras BASE siga pendiente.
+- [x] **PGS-07-M10** Registrar el estado de SEC-1 sin cerrarlo mientras BASE siga pendiente.
 
-**Salida:** proyecto reproducible, revisado y trazable; el código fuente y la
-evidencia saneada concreta de PGS-03-M07 disponen de publicación pública
-autorizada, mientras que releases y otros artefactos externos siguen
-requiriendo una decisión separada.
+**Salida:** proyecto reproducible y trazable con revisión independiente
+omitida; el código fuente y la evidencia saneada concreta de PGS-03-M07
+disponen de publicación pública autorizada, mientras que releases y otros
+artefactos externos siguen requiriendo una decisión separada.
 
 ## Trazabilidad con la fase 01
 
@@ -627,8 +629,10 @@ requiriendo una decisión separada.
   fuera de alcance.
 - Completar P00-M08, P00-M09 y P00-M10 antes de declarar superado SEC-1.
 
-## Próxima microtarea
+## Estado final del roadmap interno
 
-**PGS-07-M10 — registrar el estado real de SEC-1 sin cerrarlo.**
+No quedan microtareas internas abiertas. El siguiente trabajo pertenece al
+roadmap global: completar `BASE` y, si se decide en el futuro, aportar la
+revisión independiente que falta para P01-M11.
 
-**Progreso interno:** 64 completadas + 1 omitida = 65/66 resueltas; 1 abierta.
+**Progreso interno:** 65 completadas + 1 omitida = 66/66 resueltas; 0 abiertas.

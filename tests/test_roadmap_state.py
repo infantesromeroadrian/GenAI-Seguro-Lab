@@ -1,5 +1,7 @@
 """Único owner de los contadores y del siguiente paso mutable del roadmap."""
 
+import re
+from collections import Counter
 from pathlib import Path
 
 
@@ -12,14 +14,20 @@ def test_current_project_progress_and_next_microtask_are_consistent() -> None:
     readme = README.read_text(encoding="utf-8")
     plan = PLAN.read_text(encoding="utf-8")
 
-    assert "64 completadas + 1 omitida = 65/66 resueltas" in readme
-    assert "1 abierta" in readme
-    assert (
-        "**PGS-07-M10 — registrar el estado real de SEC-1 sin cerrarlo.**"
-    ) in readme
+    expected = "65 completadas + 1 omitida = 66/66 resueltas"
+    assert expected in readme
+    assert "0 abiertas" in readme
+    assert "No queda una siguiente microtarea interna." in readme
 
-    assert "64 completadas + 1 omitida = 65/66 resueltas" in plan
-    assert "1 abierta" in plan
-    assert (
-        "**PGS-07-M10 — registrar el estado real de SEC-1 sin cerrarlo.**"
-    ) in plan
+    assert expected in plan
+    assert "0 abiertas" in plan
+    assert "No quedan microtareas internas abiertas." in plan
+
+    rows = re.findall(
+        r"^- \[([ x-])\] \*\*(PGS-\d{2}-M\d{2})\*\*", plan, re.MULTILINE
+    )
+    assert len(rows) == 66
+    assert Counter(state for state, _ in rows) == {"x": 65, "-": 1}
+    assert [identifier for state, identifier in rows if state == "-"] == [
+        "PGS-07-M04"
+    ]
