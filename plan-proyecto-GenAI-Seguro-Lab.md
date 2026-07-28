@@ -470,6 +470,10 @@ requiriendo una decisión separada.
   revisable del alcance actual. Modelo, proveedor, Docker, UI/API, aislamiento
   y frameworks continúan diferidos o rechazados para este corte y requieren un
   trigger, autoridad y ADR sucesor.
+- [`GSL-REV-PACK-001`](./reviews/independent-review-pack-v1.json) deja fijados
+  el candidato, seis documentos, `ADV-TOL-005`, preguntas y formato de
+  respuesta. Sigue `READY_AWAITING_HUMAN_REVIEW`: no completa PGS-07-M04 ni
+  asigna `REV-01` hasta que una persona cualificada e independiente acepte.
 - El repositorio local en `main` sigue
   `origin/main` del remoto público
   [infantesromeroadrian/GenAI-Seguro-Lab](https://github.com/infantesromeroadrian/GenAI-Seguro-Lab).

@@ -930,6 +930,18 @@ reescribe el historial público: sería destructivo y no está autorizado. Por
 ello el resultado es `PASS_WITH_DECLARED_HISTORICAL_RESIDUAL`, no una garantía
 universal de ausencia de secretos.
 
+## Paquete preparado para PGS-07-M04
+
+[`GSL-REV-PACK-001`](./reviews/independent-review-pack-v1.json) fija el commit
+`1508cad`, seis documentos del threat model y la prueba `ADV-TOL-005`. La
+[solicitud](./docs/independent-review-request.md) contiene las preguntas, el
+comando acotado y el contrato de respuesta para una persona cualificada
+distinta de diseño e implementación.
+
+El paquete está `READY_AWAITING_HUMAN_REVIEW`: no cuenta como revisión,
+aprobación ni aceptación de riesgo. PGS-07-M04 y el progreso permanecen
+abiertos hasta que una persona elegible acepte `REV-01` y devuelva evidencia.
+
 ## Crosswalk de amenazas
 
 [docs/threat-crosswalk.md](./docs/threat-crosswalk.md) fija

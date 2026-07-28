@@ -49,6 +49,10 @@ real.
   reevaluación](./model-change-reevaluation-policy.md): nueve clases, ocho
   paquetes de evaluación, triggers, autoridad, comparabilidad, revisión y
   rollback sin modificar evidencia histórica.
+- [Solicitud de revisión
+  independiente](./independent-review-request.md): paquete fijado al commit
+  `1508cad` con alcance, prueba, preguntas y respuesta mínima para una futura
+  persona `REV-01`; prepararlo no atribuye ni completa la revisión.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.

@@ -207,3 +207,9 @@ del runner de `DAT-25`, su hash inmutable y el cierre documental de M02.
 32 eventos fijados, rangos reservados y la ausencia observada de categorías de
 identidad. Exige además que la procedencia personal histórica quede declarada
 sin valores, sin reescritura y sin presentar cero hallazgos como garantía.
+
+`test_independent_review_pack.py` valida que `GSL-REV-PACK-001` fija por hash
+el threat model y `ADV-TOL-005` del commit `1508cad`, exige una persona
+cualificada distinta de diseño e implementación y preserva `DAT-25`. También
+impide que el paquete preparado cierre M04 o cambie el contador antes de
+recibir una revisión real.

@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "pack_id": "GSL-REV-PACK-001",
+  "microtask": "PGS-07-M04",
+  "status": "READY_AWAITING_HUMAN_REVIEW",
+  "candidate": {
+    "commit": "1508cad250ecdcc3cd7e68de583c2a528e54a183",
+    "tree": "3975ab84d14f575281ee484c2fc5085f68e4d490",
+    "branch": "main",
+    "public_repository": "https://github.com/infantesromeroadrian/GenAI-Seguro-Lab"
+  },
+  "reviewer_requirement": {
+    "kind": "human",
+    "qualification": "practical application-security or AI-security review experience",
+    "distinct_from_designer": true,
+    "distinct_from_implementer": true,
+    "must_accept_assignment": true,
+    "role_after_acceptance": "REV-01"
+  },
+  "threat_model_scope": [
+    {
+      "path": "docs/system-inventory.md",
+      "sha256": "c65f8d4794bfc981dbf07528fdbb851f55e932100517a502ee2081276aecf94e"
+    },
+    {
+      "path": "docs/authority-matrix.md",
+      "sha256": "97f5f0f6db2e8fd17c56bc8d3a5bdc58f85eef4d248da3d153d6c0e05d99d8c2"
+    },
+    {
+      "path": "docs/abuse-cases.md",
+      "sha256": "b69854329c63ee043ca5386b49e773dfda5de05b15ede3beb85d9618a6f1146f"
+    },
+    {
+      "path": "docs/risk-prioritization.md",
+      "sha256": "c3b0222a67e4ec096e75950fa81842d027569163fc4b96db806c35852edc1b02"
+    },
+    {
+      "path": "docs/threat-crosswalk.md",
+      "sha256": "92e79c6ca59b02aadfb48858ef6cfc91d6c7b363ff448c2ebe22701690308d61"
+    },
+    {
+      "path": "docs/control-responsibility-mapping.md",
+      "sha256": "054e219e20238185884ef3e55dbc60050559b25e17862a5b1685f264ec8f57f7"
+    }
+  ],
+  "selected_test": {
+    "case_id": "ADV-TOL-005",
+    "abuse_case": "AC-TOL-05",
+    "test_path": "tests/test_tool_abuse_evaluation.py",
+    "test_sha256": "67bf8a3db31f860224a5cb84c38089ca27971e59419c9ba53edf749263af54aa",
+    "test_name": "test_fabricated_confirmation_is_rejected_without_rewriting_old_oracle",
+    "implementation_path": "src/genai_seguro_lab/evaluation_harness.py",
+    "implementation_sha256": "964ea185dd431c502e8dfbfc3ff6ce013af647c3e8601b2a912dcaf18cc4dcd9",
+    "command": "uv run --frozen pytest -p no:cacheprovider tests/test_tool_abuse_evaluation.py::test_fabricated_confirmation_is_rejected_without_rewriting_old_oracle",
+    "expected_observation": "The fabricated confirmation is rejected before I/O, creates no file, performs no external call and leaves the historical oracle unchanged."
+  },
+  "review_questions": [
+    "Are actors, assets, trust boundaries and authority paths materially complete for the stated local deterministic scope?",
+    "Do the abuse cases cover the credible ways untrusted content could influence knowledge, output, tools and effects?",
+    "Does the risk prioritisation follow the documented scoring method without understating current reachability or impact?",
+    "Are the control mappings and limitations supported by the selected evidence rather than broader security claims?",
+    "Does the selected ADV-TOL-005 test exercise the claimed rejection and no-effect properties without consulting its oracle before execution?",
+    "Which concrete defect, gap or disagreement should be corrected or explicitly retained before closure?"
+  ],
+  "required_response": {
+    "reviewer_public_identity": true,
+    "qualification_summary": true,
+    "conflict_statement": true,
+    "candidate_commit_confirmed": true,
+    "files_reviewed": true,
+    "test_command_and_result": true,
+    "findings": {
+      "required": true,
+      "allowed_severities": [
+        "CRITICAL",
+        "HIGH",
+        "MEDIUM",
+        "LOW",
+        "INFO"
+      ],
+      "fields": [
+        "id",
+        "severity",
+        "location",
+        "observation",
+        "evidence",
+        "recommendation"
+      ]
+    },
+    "disagreements_or_none": true,
+    "review_completed_at": true
+  },
+  "acceptable_evidence": [
+    "A GitHub review or comment authored by the accepted reviewer and pinned to the candidate commit.",
+    "A returned review document authored by the accepted reviewer and committed without altering the reviewed candidate."
+  ],
+  "execution_limits": [
+    "Do not execute evaluations/run_final_retest.py or regenerate DAT-25.",
+    "Do not execute ADV-DOS-001, ADV-DOS-002, ADV-DOS-003 or ADV-SC-001.",
+    "Use only the synthetic repository data and a temporary pytest directory.",
+    "Do not introduce a real model, provider, credential, cloud resource, external target or paid service.",
+    "A review finding is advisory evidence and does not by itself authorise a fix, accept risk or approve production."
+  ],
+  "dat25": {
+    "executed": false,
+    "changed": false,
+    "sha256": "05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d"
+  },
+  "completion_condition": "PGS-07-M04 remains open until an eligible named human accepts REV-01 and returns the required evidence.",
+  "review_performed": false
+}
