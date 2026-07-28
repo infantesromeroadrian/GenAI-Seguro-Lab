@@ -27,6 +27,19 @@
       }
     },
     {
+      "id": "local-browser",
+      "label": "TB-07 · Navegador local",
+      "parentId": "local-host-boundary",
+      "meta": {
+        "type": "frontend",
+        "technology": "html-css-javascript",
+        "trustBoundary": true,
+        "boundaryId": "TB-07",
+        "interface": "http-loopback",
+        "remoteAccess": false
+      }
+    },
+    {
       "id": "python-application-process",
       "label": "Proceso Python de GenAI Seguro Lab",
       "parentId": "local-host-boundary",
@@ -55,6 +68,7 @@
           "CMP-16",
           "CMP-17",
           "CMP-18",
+          "CMP-19",
           "MOD-01",
           "TOL-01",
           "TOL-02"
@@ -147,10 +161,33 @@
       "id": "containers-terminal-invokes-process",
       "source": "terminal-session",
       "target": "python-application-process",
-      "label": "argv: analyze | baseline; soporte: baseline | retest | métricas | utilidad | hallazgos | retest final",
+      "label": "argv: analyze | baseline | web; soporte: baseline | retest | métricas | utilidad | hallazgos | retest final",
       "meta": {
         "type": "calls",
         "crossesBoundary": "TB-02"
+      }
+    },
+    {
+      "id": "containers-browser-calls-process",
+      "source": "local-browser",
+      "target": "python-application-process",
+      "label": "GET assets/status · POST analyze/baseline · Host/Origin/CSRF",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-07",
+        "transport": "http-127.0.0.1"
+      }
+    },
+    {
+      "id": "containers-process-returns-browser",
+      "source": "python-application-process",
+      "target": "local-browser",
+      "label": "HTML/CSS/JS local + JSON saneado y efímero",
+      "meta": {
+        "type": "data-flow",
+        "crossesBoundary": "TB-07",
+        "cors": false,
+        "persistence": false
       }
     },
     {

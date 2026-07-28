@@ -14,6 +14,13 @@ real.
   infraestructura, integraciones y ausencias verificadas.
 - [System card](./system-card.md): propósito, usuarios, usos, arquitectura,
   autoridad, evidencia, límites y riesgos del sistema local observado.
+- [Especificación del frontal web
+  local](./web-interface-spec.md): alcance, no-objetivos, requisitos
+  funcionales, controles, accesibilidad y criterios verificables de
+  `GSL-WEB-001`.
+- [Threat model del frontal
+  web](./web-threat-model.md): activos, flujo, doce amenazas, controles y
+  cuatro riesgos residuales de `CMP-19` y `TB-07`.
 - [Data card](./data-card.md): inventario de `DAT-01` a `DAT-25`, procedencia,
   sensibilidad, calidad, acceso, ciclo de vida y límites de los datos
   sintéticos y de la evidencia.

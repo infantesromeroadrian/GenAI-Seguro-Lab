@@ -5,12 +5,13 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYSTEM-CARD-001` |
-| Versión | `1.2.0` |
+| Versión | `1.3.0` |
 | Fecha de corte | 2026-07-28 |
 | Estado | `DESCRIPTIVA_ALCANCE_ACTUAL` |
 | Corte de las fuentes del repositorio | commit `648dd9afe9ef696388257ebf8dda4b59ece1aeb5` |
 | Candidato de producto evaluado | commit `77edd64037bb0e41edffa58cae2682ba7d2694d2`, árbol `bc09b78f7f3d85f94241f9955e79abb264bd89de` |
 | Evidencia final | `DAT-25`, SHA-256 `05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d` |
+| Extensión actual | `GSL-WEB-001` — frontal HTTP exclusivo de loopback, posterior a `DAT-25` |
 | Ámbito | Laboratorio local, determinista y con datos exclusivamente sintéticos |
 
 Esta ficha resume el sistema observado. No sustituye el
@@ -26,12 +27,12 @@ producción, una declaración de conformidad o una aceptación de riesgo.
 GenAI Seguro Lab permite aprender y demostrar, de forma reproducible, cómo una
 aplicación con herramientas separa contenido no confiable, autoridad,
 controles y evaluación. El producto actual analiza incidentes ficticios desde
-una CLI y compara comportamiento benigno y adversario sobre entradas
-enumeradas.
+la CLI o desde un frontal web local y compara comportamiento benigno y
+adversario sobre entradas enumeradas.
 
 | Actor | Relación actual con el sistema |
 |---|---|
-| `ACT-01` | Operador local que ejecuta `analyze` o `baseline` y recibe JSON por `stdout`; la aplicación no ofrece login propio. |
+| `ACT-01` | Operador local que usa `analyze`, `baseline` o el navegador de loopback y recibe una proyección saneada; la aplicación no ofrece login propio. |
 | `ACT-02` | Mantenedor y ejecutor de pruebas que modifica, valida y versiona el laboratorio mediante su autoridad de sistema operativo y GitHub. [`GSL-RACI-001`](./raci.md) formaliza la concentración actual de accountability. |
 | `ACT-03` | Llamador interno del flujo de borradores; usa una identidad sintética, no una presencia humana verificada. Este flujo no está expuesto por la CLI. |
 
@@ -60,10 +61,11 @@ Usos no previstos o prohibidos:
 
 ## Arquitectura y límites de confianza
 
-El runtime observado es un solo proceso Python local. No hay proveedor,
-conexión de red de runtime, servicio web, interfaz gráfica, base de datos,
-vector store, cloud, Docker, cuenta de servicio ni telemetría externa. La
-cuenta macOS que inicia el proceso conserva la autoridad efectiva del host.
+El runtime observado es un solo proceso Python local. `CMP-19` añade un
+listener HTTP fijo en `127.0.0.1` y una interfaz gráfica servida con assets
+propios. No hay proveedor, conexión externa, API pública, base de datos, vector
+store, cloud, Docker, cuenta de servicio ni telemetría externa. La cuenta
+macOS que inicia el proceso conserva la autoridad efectiva del host.
 
 <!-- system-boundaries:start -->
 | Frontera | Función | Aislamiento observado |
@@ -74,20 +76,22 @@ cuenta macOS que inicia el proceso conserva la autoridad efectiva del host.
 | `TB-04` | Autoridad de herramientas | La aplicación, no el modelo, valida y concede una operación acotada. |
 | `TB-05` | Sandbox de borradores | Almacén local create-only con transacción y recuperación; no es aislamiento de sistema operativo. |
 | `TB-06` | Datos sintéticos versionados | Manifiestos, esquemas y hashes detectan deriva; la autoridad de mantenimiento aún puede cambiar el repositorio. |
+| `TB-07` | Navegador ↔ gateway HTTP | Loopback, Host/Origin/CSRF y cabeceras de navegador; separación lógica dentro del mismo host y usuario. |
 <!-- system-boundaries:end -->
 
 ## Componentes y superficies
 
 | Grupo | Elementos | Papel |
 |---|---|---|
-| Ruta de producto | `CMP-01`, `CMP-02`, `CMP-03`, `CMP-04`, `CMP-05`, `CMP-09`, `CMP-10`, `CMP-11`, `MOD-01`, `TOL-01` | CLI, carga validada, flujo benigno, baseline, políticas, eventos efímeros, doble determinista y consulta de conocimiento de solo lectura. |
+| Ruta de producto | `CMP-01`, `CMP-02`, `CMP-03`, `CMP-04`, `CMP-05`, `CMP-09`, `CMP-10`, `CMP-11`, `CMP-19`, `MOD-01`, `TOL-01` | CLI y frontal de loopback, carga validada, flujo benigno, baseline, políticas, eventos efímeros, doble determinista y consulta de conocimiento de solo lectura. |
 | Efecto interno no expuesto | `TOL-02`, `CMP-12`, `IDN-03` | Propuesta, aprobación sintética y creación confinada de un borrador; no hay ruta desde `CMP-01`. |
 | Evaluación y soporte | `CMP-06`, `CMP-07`, `CMP-08`, `CMP-13`, `CMP-14`, `CMP-15`, `CMP-16`, `CMP-17`, `CMP-18` | Perfil vulnerable, harness y analizadores separados de la ruta de producto. |
 | Identidad efectiva | `IDN-01`, `IDN-04`, `IDN-05` | Cuenta local del proceso, ausencia de autoridad en el modelo y grants lógicos por operación. |
 
 Flujo de producto:
 
-1. `ACT-01` selecciona un incidente mediante `CMP-01`.
+1. `ACT-01` selecciona un incidente mediante `CMP-01` o `CMP-19`; la ruta web
+   valida Host, Origin, CSRF, tamaño y esquema antes de continuar.
 2. `CMP-10` acota el snapshot y `CMP-02` valida manifiesto, registros y hashes.
 3. `CMP-03` entrega a `MOD-01` una petición con instrucción, datos de usuario y
    contenido no confiable separados.
@@ -99,6 +103,10 @@ Flujo de producto:
 El modelo no autentica, concede permisos, ejecuta herramientas ni produce por
 sí mismo efectos. El flujo de borradores es una API interna distinta y su
 identidad sintética no demuestra presencia humana.
+
+El [threat model del frontal](./web-threat-model.md) documenta la nueva
+frontera, sus controles y cuatro riesgos residuales. `DAT-25` es anterior a
+esta extensión y no evalúa `CMP-19` o `TB-07`.
 
 ## Datos, modelo y efectos
 

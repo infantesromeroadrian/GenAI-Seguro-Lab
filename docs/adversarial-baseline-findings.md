@@ -144,13 +144,16 @@ anti-replay no prueban quién autorizó la acción.
 
 ## Límites de interpretación
 
+Los siguientes límites describen el corte histórico de esta baseline, anterior
+a la extensión local `GSL-WEB-001`; no describen el checkout actual.
+
 - El único modelo es un doble determinista; no se ha evaluado un LLM real.
 - Los datos son sintéticos y no representan secretos, personas ni incidentes
   reales.
 - La CLI solo expone `analyze` y `baseline`; no existe prompt libre.
 - `DraftWriterTool` es una API Python interna y no está conectada a la CLI.
-- No existe frontal web, interfaz gráfica, API pública, autenticación, red,
-  cloud, telemetría externa o despliegue.
+- No existían frontal web, interfaz gráfica, API pública, autenticación, red,
+  cloud, telemetría externa o despliegue en el candidato evaluado.
 - Cuatro fixtures —tres de disponibilidad y una de supply chain— permanecen
   preparadas pero inertes.
 - No se han probado ataques desconocidos, fuzzing, carga, proveedores, modelos
@@ -159,10 +162,10 @@ anti-replay no prueban quién autorizó la acción.
   requieren una nueva ejecución identificada.
 - Todavía no se ha realizado la revisión independiente prevista para PGS-07.
 
-Añadir un frontal cambiaría la superficie de entrada, la autenticación y la
-frontera de confirmación humana. Por eso no forma parte de esta baseline: se
-debe decidir y probar después de implementar los controles y ejecutar el
-retest, no asumir que una UI es solo presentación.
+Un frontal cambia la superficie de entrada, la autenticación y la frontera de
+confirmación humana. Por eso `GSL-WEB-001` no forma parte de esta baseline y se
+documenta y prueba como una extensión posterior; no se reinterpreta la
+evidencia histórica como cobertura de la UI.
 
 ## Cierre histórico y tratamiento actual
 

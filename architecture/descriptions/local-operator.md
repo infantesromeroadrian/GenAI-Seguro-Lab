@@ -1,9 +1,9 @@
-Inicia las operaciones expuestas del laboratorio desde una terminal local y
-consume el resultado JSON.
+Inicia las operaciones expuestas del laboratorio desde una terminal o un
+navegador local y consume el resultado JSON saneado.
 
 ## Responsabilidades
 
-- Elegir `analyze` o `baseline`.
+- Elegir `analyze` o `baseline` desde CLI o desde el frontal de loopback.
 - Proporcionar un identificador de incidente cuando usa `analyze`.
 - Interpretar la salida sin asumir que constituye una evaluación de seguridad.
 
@@ -11,7 +11,7 @@ consume el resultado JSON.
 
 - No inicia sesión en la aplicación.
 - El proceso utiliza los permisos de su cuenta local de macOS.
-- No puede alcanzar `DraftWriterTool` mediante la CLI actual.
+- No puede alcanzar `DraftWriterTool` mediante las rutas expuestas.
 
 ## Inventario
 

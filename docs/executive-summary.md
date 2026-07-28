@@ -8,6 +8,10 @@ aplicación con comportamiento parecido al de un sistema GenAI con
 herramientas. Funciona localmente con datos ficticios y un doble determinista;
 no conecta un modelo de IA real ni servicios externos.
 
+Una extensión posterior al cierre añade un frontal visual exclusivamente
+local para ejecutar los 12 casos benignos y observar sus eventos saneados. No
+añade prompt libre, datos reales, persistencia ni acceso remoto.
+
 ## Qué aporta
 
 - Un caso de estudio público con arquitectura, amenazas, controles, pruebas,

@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-AIA-001` |
-| Versión | `1.1.0` |
+| Versión | `1.2.0` |
 | Fecha | 2026-07-28 |
 | Estado de la evaluación | `COMPLETADA_ALCANCE_ACTUAL` |
 | Decisión que habilita | `CONTINUAR_SOLO_LABORATORIO_ACTUAL` |
@@ -15,8 +15,9 @@
 | Evaluador de `DAT-25` | commit `636e1dbb8cac21c8c7bfc0709bf1d88b4b56304e` |
 | Evidencia final | `DAT-25`, SHA-256 `05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d` |
 
-Esta evaluación responde a `PGS-06-M02` y examina el sistema completo que
-existe hoy. `MOD-01` forma parte de ese sistema, pero es un doble determinista:
+Esta evaluación responde a `PGS-06-M02` y fue reevaluada para la extensión
+local `GSL-WEB-001`. Examina el sistema completo que existe hoy. `MOD-01`
+forma parte de ese sistema, pero es un doble determinista:
 no es un modelo de machine learning ni un modelo GenAI real. El documento no
 es una evaluación jurídica, una DPIA, una clasificación bajo una regulación,
 un mapa de cumplimiento, una aprobación de producción ni una aceptación de
@@ -25,9 +26,10 @@ riesgo.
 ## Decisión y jerarquía de fuentes
 
 La decisión habilitada es continuar aprendiendo, desarrollando y verificando el
-laboratorio dentro de su alcance local, sintético, determinista y sin red. No
-habilita datos reales, usuarios externos, prompt libre, un modelo real, una
-interfaz remota, nuevos efectos ni un despliegue.
+laboratorio dentro de su alcance local, sintético, determinista y sin red
+externa. Incluye el frontal fijado a `127.0.0.1`; no habilita datos reales,
+usuarios externos, prompt libre, un modelo real, una interfaz remota, nuevos
+efectos ni un despliegue.
 
 En caso de discrepancia, prevalecen las fuentes especializadas:
 
@@ -58,19 +60,37 @@ Las clasificaciones de esta evaluación no son puntuaciones de riesgo:
 <!-- aia-screening:start -->
 | Pregunta | Respuesta observada | Consecuencia para esta evaluación |
 |---|---|---|
-| ¿Qué capacidad se evalúa? | CLI local para analizar 12 incidentes ficticios con `MOD-01` `deterministic/scripted-v1` | Se evalúa el sistema socio-técnico del laboratorio, no se presume una capacidad de IA aprendida |
-| ¿Quién lo usa hoy? | `ACT-01` opera la CLI; `ACT-02` mantiene y prueba; `ACT-03` representa un principal sintético en un flujo interno | Son las únicas partes directamente relacionadas con el alcance actual |
+| ¿Qué capacidad se evalúa? | CLI y frontal de loopback para analizar 12 incidentes ficticios con `MOD-01` `deterministic/scripted-v1` | Se evalúa el sistema socio-técnico del laboratorio, no se presume una capacidad de IA aprendida |
+| ¿Quién lo usa hoy? | `ACT-01` opera la CLI o el navegador local; `ACT-02` mantiene y prueba; `ACT-03` representa un principal sintético en un flujo interno | Son las únicas partes directamente relacionadas con el alcance actual |
 | ¿Hay usuarios externos o público afectado? | No | Cualquier incorporación exige reevaluación previa |
 | ¿Toma decisiones automatizadas sobre personas? | No | No se permite usar sus salidas para decisiones médicas, legales, laborales, financieras o de seguridad física |
 | ¿Usa datos personales, reales, secretos o corporativos? | No; `DAT-01` a `DAT-25` son sintéticos o derivados de ejecuciones sintéticas | Los datos reales están fuera de alcance, no implícitamente autorizados |
 | ¿Entrena o ajusta un modelo? | No hay entrenamiento, fine-tuning, pesos ni parámetros aprendidos | No se evalúan impactos propios de un dataset de entrenamiento real |
-| ¿Expone prompt libre, UI, API o listener? | No | La entrada está enumerada y la salida se entrega como JSON por `stdout` |
+| ¿Expone prompt libre, UI, API o listener? | Expone `CMP-19`, una UI con listener fijo en `127.0.0.1`; no expone prompt libre, API pública o bind remoto | La entrada está enumerada, validada y limitada a `analyze` o `baseline`; la salida es JSON efímero por `stdout` o HTTP de loopback |
 | ¿Realiza efectos externos? | No | La ruta expuesta solo consulta conocimiento local; `TOL-02` es interno y create-only |
 | ¿Existe presencia humana verificada? | No | `IDN-03` es una identidad sintética y no equivale a una persona presente |
 | ¿Hay red, proveedor, cloud, base de datos o telemetría externa? | No | No se extrapolan garantías a una arquitectura distribuida o alojada |
 | ¿Cuál es el efecto máximo actual? | Lectura local confinada en producto y creación interna de un borrador ficticio en sandbox | El host y la cuenta macOS siguen siendo la frontera efectiva |
 | ¿Se ha realizado una clasificación jurídica o regulatoria? | No | Corresponde a `PGS-06-M04` distinguir obligación, guía y decisión voluntaria |
 <!-- aia-screening:end -->
+
+## Reevaluación de la extensión `GSL-WEB-001`
+
+`AIA-TRG-02` se activó al incorporar una UI y un listener. La reevaluación
+mantiene `CONTINUAR_SOLO_LABORATORIO_ACTUAL` porque la extensión:
+
+- se fija a `127.0.0.1` y no ofrece bind configurable, CORS o acceso remoto;
+- acepta solo un identificador benigno cerrado o un cuerpo vacío de baseline;
+- aplica Host, Origin, CSRF, `Content-Type`, 1 KiB, esquema estricto, CSP y
+  cabeceras de navegador;
+- reutiliza la autoridad, datos, límites y política de salida ya existentes;
+- no añade prompt, uploads, rutas, borradores, persistencia, red externa,
+  proveedor, modelo o decisiones sobre personas.
+
+El [threat model del frontal](./web-threat-model.md) documenta `TB-07` y los
+riesgos residuales específicos. Esta reevaluación no modifica el mapa de
+impactos, la clasificación jurídica, las decisiones humanas pendientes ni la
+evidencia histórica `DAT-25`.
 
 ## Partes interesadas y potencialmente afectadas
 
@@ -80,7 +100,7 @@ Las clasificaciones de esta evaluación no son puntuaciones de riesgo:
 | `ACT-02` — mantenedor y tester | Controla código, corpus, dependencias, Git y ejecución bajo su cuenta | La concentración de autoridad no constituye una RACI formal |
 | `ACT-03` — principal sintético | Demuestra binding y consumo de una aprobación técnica interna | No acredita identidad, comprensión o presencia humana real |
 | Titulares de datos reales | Ninguno en el alcance actual | Deben identificarse antes de admitir cualquier dato real |
-| Terceros, organizaciones o público | Ninguno recibe decisiones o efectos actuales | Deben identificarse antes de una UI, API, integración o uso de alto impacto |
+| Terceros, organizaciones o público | Ninguno recibe decisiones o efectos actuales | Deben identificarse antes de una UI remota, API pública, integración o uso de alto impacto |
 | Revisor independiente `REV-01` | Papel planificado, no ejercido | No se atribuye revisión independiente a esta evaluación |
 
 ## Beneficios previstos y daños plausibles

@@ -4,7 +4,10 @@ mediante un flujo determinista y herramientas con autoridad acotada.
 ## Responsabilidades
 
 - Cargar y validar el corpus sintético versionado.
-- Ejecutar `analyze` o `baseline` sin llamadas externas.
+- Ejecutar `analyze` o `baseline` sin llamadas externas, desde CLI o desde el
+  frontal fijado a loopback.
+- Servir cuatro assets allowlisted y tres rutas API locales mediante `CMP-19`,
+  sin prompt libre, uploads, rutas, persistencia o CORS.
 - Validar el corpus adversario y conectar 14 fixtures PI/JB/EX/TOL al harness
   interno de test.
 - Separar la salida del modelo de la autorización de herramientas.
@@ -54,14 +57,17 @@ mediante un flujo determinista y herramientas con autoridad acotada.
 | `TB-04` | Autoridad de herramientas | El adaptador no autoriza ni ejecuta herramientas |
 | `TB-05` | Efecto en filesystem | Solo publicación atómica aprobada y reconciliación interna dentro de `sandbox/drafts/` |
 | `TB-06` | Integridad de datos versionados | Esquema estricto, referencias, conteos y hashes SHA-256 |
+| `TB-07` | Navegador local ↔ gateway HTTP | Loopback, Host/Origin/CSRF, cuerpo ≤ 1 KiB, esquema estricto, CSP y cabeceras cerradas |
 
-`TB-02`, `TB-03` y `TB-04` son límites lógicos dentro del mismo proceso; no
-representan aislamiento por contenedor, usuario del sistema operativo o red.
+`TB-02`, `TB-03` y `TB-04` son límites lógicos dentro del mismo proceso.
+`TB-07` separa el DOM del gateway, pero ambos permanecen en el mismo host y
+cuenta. Ninguno representa aislamiento por contenedor o identidad del sistema
+operativo.
 
 ## Exclusiones verificadas
 
-- No hay modelo GenAI real, proveedor, red, API web, Docker, cloud o base de
-  datos.
+- No hay modelo GenAI real, proveedor, red externa, API pública, Docker, cloud
+  o base de datos. `CMP-19` solo atiende en `127.0.0.1`.
 - No hay autenticación general, service account, logging persistente o
   telemetría externa. Solo existe la autoridad sintética interna de
   borradores; no verifica presencia humana. El remoto GitHub público es una

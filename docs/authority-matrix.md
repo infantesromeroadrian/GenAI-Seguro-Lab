@@ -5,8 +5,8 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-AUTH-MATRIX-001` |
-| Versión | `2.9.0` |
-| Fecha de corte | 2026-07-27 |
+| Versión | `2.10.0` |
+| Fecha de corte | 2026-07-28 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Control vigente | PGS-05-M07, evidencia canónica del retest final |
 | Inventario de origen | [`GSL-SYS-INV-001`](./system-inventory.md) |
@@ -60,6 +60,9 @@ En el sistema actual:
     observaciones contra `DAT-24`; no entrega la rúbrica u oráculos al target,
     no usa red o credenciales, no escribe evidencia ni convierte
     `final_retest` en una afirmación de seguridad general.
+17. `CMP-19` acepta únicamente selecciones benignas tipadas desde un navegador
+    local, aplica Host, Origin, CSRF, tamaño y esquema, y reutiliza las mismas
+    cadenas `AUTH-01` y `AUTH-02`; no crea autoridad, persistencia o efectos.
 
 `IDN-04` es, por tanto, una ausencia deliberada de autoridad: el modelo no
 posee una identidad de aplicación, credenciales, permisos de filesystem ni
@@ -73,7 +76,7 @@ residual.
 | Nivel | Consecuencia máxima implementada |
 |---|---|
 | `C0` | Datos tipados en memoria; no existe efecto externo o persistente directo |
-| `C1` | Lectura de datos sintéticos versionados y emisión efímera por `stdout` o `stderr` |
+| `C1` | Lectura de datos sintéticos versionados y emisión efímera por `stdout`, `stderr` o una respuesta HTTP de loopback |
 | `C2` | Creación exclusiva de un Markdown sintético dentro de `sandbox/drafts/` |
 | `C3` | Mutación del código, corpus, dependencias o evidencia versionada por el mantenedor, fuera de los controles de runtime |
 
@@ -105,20 +108,22 @@ residual.
 | `AUTH-22` | `ACT-02` ejecuta `CMP-16` con la petición vigente de PGS-05-M04; soporte interno, no CLI de producto | Cada candidato usa su `MOD-01` determinista mediante el mismo baseline benigno | `IDN-01` ejecuta; `CMP-16` no posee credenciales ni autoridad propia y crea un proceso hijo con cuatro variables allowlisted | Lee objetos Git fijados, verifica `DAT-01/02/03/04`, materializa copias bajo `$TMP` y emite `DAT-22` por `stdout`; solo conserva tamaño/hash e identidades de la salida | `CMP-16`, Git local, librería estándar, los dos `main.py baseline` fijados y `evaluations/run_operational_metrics.py` | Verificar commits, árboles y cuatro hashes comunes; descartar tres pares de calentamiento, medir 30 pares AB/BA sin retry, validar las salidas y calcular estadísticas y consumo sin umbral universal | Cambiar checkout o worktree, instalar dependencias, heredar secretos, usar red deliberadamente, almacenar salida bruta, eliminar outliers, inventar costes, aplicar score o versionar evidencia automáticamente | `C1`: copias temporales, procesos y JSON efímero; `C3` pertenece solo al versionado deliberado de `DAT-22` por `ACT-02` |
 | `AUTH-23` | `ACT-02` ejecuta `CMP-17` con la petición vigente de PGS-05-M05; soporte offline, no CLI de producto | Ningún modelo participa | `IDN-01` solo lee; `CMP-17` no posee credenciales, grants o autoridad de efecto | Lee `DAT-20`, `DAT-21`, `DAT-22` y el registro revisado `DAT-23`; emite un informe efímero por `stdout` | `CMP-17` y `evaluations/verify_control_findings.py` | Verificar hashes, esquemas, 44 referencias escalares, taxonomía y resumen sin mutar fuentes | Ejecutar evaluadores o targets, llamar modelos o herramientas, escribir o generar `DAT-23`, inferir valores ausentes, corregir, aceptar riesgo o declarar el retest final | `C1`: lectura y validación efímera; `C3` pertenece solo al versionado deliberado de `DAT-23` por `ACT-02` |
 | `AUTH-24` | `ACT-02` ejecuta `CMP-18` con el `GO` vigente de PGS-05-M07; soporte final interno, no CLI de producto | El candidato fijado usa únicamente `MOD-01` determinista dentro de una copia temporal; ningún modelo juzga la salida | `IDN-01` ejecuta; el subproceso recibe un entorno allowlisted sin credenciales y `CMP-18` no posee autoridad propia | Lee el objeto Git `77edd640`, `DAT-07/08/09`, la rúbrica pre-run `DAT-24` y 15 artefactos históricos; materializa el target bajo `$TMP` y emite una proyección final saneada por `stdout` | `CMP-18`, Git local, librería estándar, `CMP-13`, `CMP-14`, `CMP-03` y `evaluations/run_final_retest.py` | Verificar candidato, fuentes, separación del evaluador y hashes; ejecutar una vez 14 casos adversarios, 12 benignos y dos probes; evaluar después las observaciones mediante reglas cerradas y marcar provenance `final_retest: true` solo con evaluador comprometido | Entregar `DAT-24`, `DAT-08` o `expected_result` al target; ejecutar DOS/SC, usar red, proveedor o credenciales, escribir evidencia, reintentar, modificar fuentes históricas, afirmar equivalencia semántica general o seguridad frente a ataques desconocidos | `C1`: procesos y JSON efímero saneado; `C3` pertenece solo al versionado deliberado posterior del resultado por `ACT-02` |
+| `AUTH-25` | `ACT-01` usa `CMP-19` desde un navegador del mismo host para consultar estado, analizar un `INC-BEN-NNN` o ejecutar la baseline | `MOD-01` conserva las respuestas deterministas de `AUTH-01` y `AUTH-02`; el navegador no envía prompts | `IDN-01` ejecuta el proceso y el navegador; no existe identidad de aplicación o login. El token CSRF es una defensa de canal, no una identidad | Lee la lista mínima de `DAT-01` y, tras validar la petición, alcanza los mismos datos benignos y el journal efímero `DAT-14` que las rutas de producto existentes | `CMP-19`, `CMP-02` a `CMP-05`, `CMP-09`, `CMP-10`, `CMP-11`, `MOD-01` y `TOL-01` | Servir cuatro assets allowlisted y `GET /api/status`; aceptar solo `POST /api/analyze` o `POST /api/baseline` con Host, Origin, CSRF, `application/json`, cuerpo ≤ 1 KiB y esquema cerrado; adquirir el lock y devolver una proyección JSON saneada | Escuchar fuera de `127.0.0.1`, aceptar prompt, upload, ruta, ID arbitrario o campos extra, activar CORS, persistir entrada o salida, ejecutar `TOL-02`, harnesses, red, proveedor o cualquier efecto | `C1`: lectura sintética y respuesta HTTP efímera de loopback; no añade consecuencia respecto a `AUTH-01` o `AUTH-02` |
 
 ## Cadenas de autoridad resumidas
 
 ```text
 ACT-01
   → IDN-01
-  → CMP-01 adquiere el lock advisory de CMP-10
+  → CMP-01 (CLI) o CMP-19 (loopback) valida la entrada
+  → la ruta elegida adquiere el lock advisory de CMP-10
   → CMP-10 limita snapshots y abre el perfil analyze o baseline
   → CMP-02/CMP-04/CMP-03
   → MOD-01 propone datos
   → CMP-03 solicita IDN-05 y consume CMP-10 por incidente
   → TOL-01 acepta un grant ligado y una ejecución acotada
   → CMP-11 observa sin conceder autoridad
-  → DAT-05 por stdout; DAT-14 solo con --security-report
+  → DAT-05 y DAT-14 por stdout opt-in o respuesta HTTP efímera
 ```
 
 ```text
@@ -248,16 +253,16 @@ de producto.
 | `CMP-06` | Invocar por sí mismo `MOD-01`, `TOL-01` o `TOL-02` | Sin ruta: el perfil solo construye una `ModelRequest`; `CMP-07` es quien conduce el doble y autoriza una búsqueda |
 | `DAT-08` | Entrar en `CMP-06`, `MOD-01` o una herramienta | Sin ruta: `CMP-07` recibe solo `DAT-07`; pytest compara el oráculo después de observar el target |
 | Las otras 4 entradas de `DAT-07` | Entrar en `CMP-06`, `MOD-01` o una herramienta | Sin ruta tras PGS-03-M07: `CMP-07` y `CMP-08` rechazan cualquier ID fuera de las 14 fixtures PI/JB/EX/TOL |
-| `CMP-01` | Invocar `TOL-02` | Sin ruta: la CLI solo expone `analyze` y `baseline` |
-| Runtime ordinario de aplicación | Escribir `DAT-04` o `DAT-10` a `DAT-13` | Sin ruta directa: la CLI solo emite por `stdout`; `CMP-08` es una operación explícita de soporte y el mantenedor versiona su proyección revisada |
+| `CMP-01` o `CMP-19` | Invocar `TOL-02` | Sin ruta: CLI y frontal solo exponen `analyze` y `baseline` |
+| Runtime ordinario de aplicación | Escribir `DAT-04` o `DAT-10` a `DAT-13` | Sin ruta directa: CLI y frontal solo emiten resultados efímeros; `CMP-08` es una operación explícita de soporte y el mantenedor versiona su proyección revisada |
 | `CMP-14` | Ejecutar el target, el harness, runners o herramientas | Sin ruta: solo importa esquemas, verifica evidencia versionada y emite una proyección canónica por `stdout` |
 | `CMP-15` | Escribir evidencia, entregar oráculos al target o afirmar equivalencia semántica | Sin ruta: ejecuta el flujo benigno canónico con autoridad de producto acotada, compara el oráculo después de la salida y solo emite una proyección saneada por `stdout` |
 | `CMP-16` | Cambiar el checkout, instalar dependencias o versionar `DAT-22` | Sin ruta directa: solo lee objetos Git fijados, escribe copias temporales, ejecuta procesos con entorno allowlisted y emite JSON por `stdout` |
 | `CMP-17` | Ejecutar evaluadores, generar o modificar `DAT-23`, corregir o aceptar riesgo | Sin ruta: solo verifica fuentes, referencias y resumen y emite un informe efímero |
 | `CMP-18` | Recibir la rúbrica u oráculos dentro del target, escribir evidencia o ampliar el alcance | Sin ruta: materializa el candidato fijado bajo `$TMP`, usa un entorno allowlisted, evalúa las observaciones después del target y emite únicamente JSON saneado por `stdout` |
-| Runtime de aplicación | Shell, red, proveedor, cloud, base de datos o secretos | Sin capacidad implementada ni credenciales |
-| Usuario remoto | Entrar en el sistema | Sin interfaz: no hay API, UI remota, cuenta de aplicación o listener |
-| `IDN-03` | Demostrar presencia o identidad de una persona real | Sin mecanismo: la autoridad acredita solo la identidad sintética configurada; no existe UI ni autenticador del sistema operativo |
+| Runtime de aplicación | Shell, red externa, proveedor, cloud, base de datos o secretos | Sin capacidad implementada ni credenciales; `CMP-19` solo atiende HTTP en loopback |
+| Usuario remoto | Entrar en el sistema | Sin ruta: no hay bind externo, API pública, UI remota, cuenta de aplicación o CORS |
+| `IDN-03` | Demostrar presencia o identidad de una persona real | Sin mecanismo: la autoridad acredita solo la identidad sintética configurada; el frontal no expone aprobación ni autenticador del sistema operativo |
 
 «Sin ruta» significa que el comportamiento no está implementado en la
 aplicación actual. No es una garantía frente a la modificación del código o a
@@ -302,7 +307,7 @@ cases, probabilidad, impacto ni riesgo residual. Debe revisarse antes de
 incorporar cualquiera de estos cambios:
 
 - un modelo o proveedor real;
-- red, API, interfaz remota o ejecución desatendida;
+- red externa, API pública, interfaz remota o ejecución desatendida;
 - autenticación, roles, service accounts o secretos;
 - nuevas herramientas o conexión de `TOL-02` a la CLI;
 - escritura sobre datos o evidencia versionada;
@@ -339,3 +344,6 @@ genera observaciones, ejecuta targets, decide M06 o amplía autoridad.
 PGS-05-M07 añade `AUTH-24` como ejecución final acotada del candidato
 corregido; la rúbrica pre-run y los oráculos permanecen fuera del target, y el
 marcador `final_retest` solo identifica provenance del run canónico.
+`GSL-WEB-001` añade `AUTH-25` como proyección HTTP de loopback de las rutas
+benignas ya existentes; no añade herramienta, dato, identidad, persistencia o
+consecuencia máxima.

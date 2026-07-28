@@ -23,12 +23,23 @@ from .security_events import (
     SecurityEventJournal,
     SecurityEventReport,
 )
+from .web import DEFAULT_PORT, serve
 
 
 def repository_data_dir() -> Path:
     """Resuelve el corpus versionado desde el checkout local instalado."""
 
     return Path(__file__).resolve().parents[2] / "data"
+
+
+def _web_port(value: str) -> int:
+    try:
+        port = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("port must be an integer") from exc
+    if port < 1024 or port > 65535:
+        raise argparse.ArgumentTypeError("port must be between 1024 and 65535")
+    return port
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -67,6 +78,18 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Incluye un journal de seguridad saneado en un sobre JSON.",
     )
+
+    web = subparsers.add_parser(
+        "web",
+        help="Inicia el frontal local en 127.0.0.1.",
+        allow_abbrev=False,
+    )
+    web.add_argument(
+        "--port",
+        default=DEFAULT_PORT,
+        type=_web_port,
+        help=f"Puerto local entre 1024 y 65535 (por defecto: {DEFAULT_PORT}).",
+    )
     return parser
 
 
@@ -93,11 +116,18 @@ def _canonical_security_envelope(
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Ejecuta la CLI sin red ni escritura de archivos."""
+    """Ejecuta la CLI o el frontal de loopback sin escribir resultados."""
 
     parser = build_parser()
     arguments = parser.parse_args(argv)
     data_dir = repository_data_dir()
+    if arguments.command == "web":
+        try:
+            return serve(data_dir, port=arguments.port)
+        except (OSError, ResourceLimitError, TypeError, ValueError):
+            print("error: local web interface is unavailable", file=sys.stderr)
+            return 1
+
     profile = "analyze" if arguments.command == "analyze" else "baseline"
     journal = SecurityEventJournal(profile)
 

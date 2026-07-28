@@ -5,12 +5,12 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYS-INV-001` |
-| Versión | `2.10.0` |
-| Fecha de corte | 2026-07-27 |
+| Versión | `2.11.0` |
+| Fecha de corte | 2026-07-28 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-05-M07, retest final ejecutado y evidencia fijada |
+| Control vigente | Extensión post-roadmap `GSL-WEB-001`; DAT-25 permanece fijado |
 | Entorno | checkout local de desarrollo |
-| Alcance | estado implementado hasta PGS-05-M07, con baseline histórica PGS-03-M07 y publicación PGS-07-M08 |
+| Alcance | cierre interno 66/66 más frontal local de loopback; baseline y retest históricos inmutables |
 
 Este documento inventaría el sistema que existe en el repositorio, no la
 solución futura descrita en el roadmap. PGS-03-M04/M05/M06 conectan 14 fixtures
@@ -19,6 +19,9 @@ limpio: 13 `PASS`, 1 `RESIDUAL`, 0 `FAIL` y 0 `STOPPED`. Los oráculos
 permanecen separados del target y las otras cuatro fixtures siguen inertes.
 PGS-07-M08 añade un remoto público de desarrollo; ese remoto no forma parte
 del runtime ni introduce llamadas externas en la aplicación.
+`GSL-WEB-001` añade `CMP-19`: un navegador y gateway HTTP local que sirven
+assets propios y proyectan únicamente las operaciones benignas existentes en
+`127.0.0.1`. No añade datos, modelo, herramienta, efecto o persistencia.
 PGS-04-M04 sustituye la confirmación literal por una autoridad local efímera
 que autentica un principal sintético y emite aprobaciones opacas. No añade una
 interfaz ni demuestra presencia o identidad de una persona real.
@@ -83,7 +86,7 @@ PGS-02-M04.
 
 | ID | Actor | Estado | Interacción y autoridad real |
 |---|---|---|---|
-| `ACT-01` | Operador local del laboratorio | Expuesto | Lanza `analyze` o `baseline`, elige un identificador de incidente y recibe JSON por `stdout`; puede pedir el informe saneado con `--security-report`. No inicia sesión en la aplicación; el proceso hereda los permisos de su cuenta local. |
+| `ACT-01` | Operador local del laboratorio | Expuesto | Usa la CLI o un navegador en loopback, elige un identificador benigno y recibe una proyección saneada; puede ejecutar la baseline y ver el journal efímero. No inicia sesión en la aplicación; el proceso hereda los permisos de su cuenta local. |
 | `ACT-02` | Mantenedor y ejecutor de pruebas | Soporte | Modifica código y corpus, sincroniza dependencias, ejecuta pytest, construye explícitamente el perfil de evaluación y conserva snapshots mediante Git. Puede publicar commits revisados en `origin`; su autoridad procede del sistema operativo y de GitHub, no de un rol interno de la aplicación. |
 | `ACT-03` | Llamador que confirma un borrador | Interno | Solicita un challenge para la propuesta exacta y presenta a `DraftApprovalAuthority` la identidad y credencial sintéticas configuradas. La autoridad emite una aprobación opaca y efímera; la CLI no expone el flujo y el mecanismo no verifica presencia humana real. |
 
@@ -136,7 +139,8 @@ descriptor no materializado que conserva
 
 | ID | Componente | Estado | Función y límite comprobado | Evidencia |
 |---|---|---|---|---|
-| `CMP-01` | Punto de entrada y CLI local | Expuesto | `main.py` ofrece únicamente `analyze` y `baseline`; ambas operaciones son de solo lectura y sin red. Mantiene durante la operación un lock advisory exclusivo y no bloqueante de `CMP-10` sobre `DAT-03`; `--security-report` incluye `DAT-14` sin alterar la salida predeterminada | `main.py`, `src/genai_seguro_lab/cli.py` |
+| `CMP-01` | Punto de entrada y CLI local | Expuesto | `main.py` ofrece `analyze`, `baseline` y `web`; las dos operaciones históricas conservan su salida y `web` solo inicia `CMP-19` en loopback. Mantiene durante cada análisis el lock advisory exclusivo y no bloqueante de `CMP-10` sobre `DAT-03` | `main.py`, `src/genai_seguro_lab/cli.py`, `tests/test_cli_smoke.py` |
+| `CMP-19` | Frontal y gateway HTTP local | Expuesto en loopback | Sirve cuatro assets allowlisted y tres rutas API sobre `127.0.0.1`; valida Host, Origin, token CSRF, Content-Type, 1 KiB y esquema antes de reutilizar el flujo benigno. Aplica CSP/cabeceras cerradas, no CORS, no logs raw, no persistencia y no expone prompts, rutas, uploads o borradores | `src/genai_seguro_lab/web.py`, `src/genai_seguro_lab/web_assets/`, `tests/test_web_interface.py` |
 | `CMP-02` | Contrato y cargador de datos | Expuesto para benigno; interno para adversario | `load_dataset()` obtiene mediante `CMP-10` un único snapshot benigno acotado a 64 KiB, 8 KiB por registro y 32+32 registros antes de parsear o hashear; `load_adversarial_corpus()` conserva su contrato separado y no interpreta ni ejecuta fixtures | `src/genai_seguro_lab/data_contract.py`, `tests/test_adversarial_corpus.py`, `tests/test_resource_control.py` |
 | `CMP-03` | Flujo benigno | Expuesto | Coordina exactamente dos invocaciones de modelo, una petición y una ejecución de herramienta y una respuesta final; consume el perfil `analyze` o el presupuesto agregado recibido de `baseline`, y aplica `CMP-09` antes de devolver una proyección segura | `src/genai_seguro_lab/benign_flow.py`, `tests/test_resource_control.py` |
 | `MOD-01` | `DeterministicModelAdapter` | Expuesto | Doble `deterministic/scripted-v1` en el mismo proceso; responde solo a peticiones guionizadas, falla cerrado, hace 0 llamadas externas y registra 0 € | `src/genai_seguro_lab/model_adapter.py` |
@@ -313,7 +317,7 @@ desde la CLI ordinaria.
 | ID | Elemento ausente | Situación prevista |
 |---|---|---|
 | `GAP-01` | Modelo GenAI real y proveedor | Opcional y desactivado hasta una autorización específica |
-| `GAP-02` | Red, API pública o servicio web | Fuera del mínimo viable actual |
+| `GAP-02` | API pública, acceso remoto o servicio web externo | No implementados; `CMP-19` existe solo en loopback |
 | `GAP-03` | Docker, contenedor o Docker Model Runner | Solo candidato documentado; no forma parte del runtime |
 | `GAP-04` | Cloud, base de datos, vector store, cola o almacenamiento remoto | Fuera de alcance |
 | `GAP-05` | Autenticación general, autorización por roles y service accounts | No implementadas. Solo existe la credencial sintética, efímera e interna de `IDN-03` para aprobar borradores |
@@ -333,6 +337,9 @@ reclasifica aquí como un requisito pendiente.
   ejecución arbitraria de Python continúa dentro de la autoridad de `IDN-01`.
 - `ACT-01` no se autentica. `IDN-03` autentica un principal sintético local,
   pero no demuestra presencia ni identidad humana real.
+- `TB-07` separa el DOM del gateway HTTP, pero permanece dentro de `TB-01`.
+  Host/Origin/CSRF protegen el navegador; no autentican un proceso hostil que
+  ya ejecute bajo `IDN-01`.
 - `TOL-02` tiene efecto local, pero actualmente solo es alcanzable mediante su
   API Python interna y las pruebas. `CMP-12` hace atómica y recuperable esa
   creación para procesos cooperantes, pero no añade una ruta expuesta.

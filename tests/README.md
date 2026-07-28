@@ -19,6 +19,12 @@ la reproducción exacta de la baseline versionada, el resultado byte a byte de
 un caso repetido, el error saneado ante un identificador desconocido y que la
 ejecución no cree borradores.
 
+`test_web_interface.py` levanta `CMP-19` en un puerto efímero de loopback y
+comprueba assets locales, CSP y cabeceras, inventario de 12 casos, análisis y
+baseline, Host/Origin/CSRF, esquema y tamaño cerrados, fallo saneado, ausencia
+de CORS y cero borradores. No ejecuta fixtures adversarias ni convierte el
+frontal en evidencia de seguridad para un modelo real.
+
 `test_instruction_boundary.py` comprueba que el flujo ordinario separa
 instrucciones confiables, datos de usuario y contenido no confiable; que las
 salidas del modelo y de herramientas conservan su clasificación; y que los

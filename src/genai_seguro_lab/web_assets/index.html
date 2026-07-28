@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <meta
+      name="description"
+      content="Banco de trabajo local para observar el flujo seguro de GenAI Seguro Lab."
+    >
+    <title>GenAI Seguro Lab</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/app.css">
+    <script src="/assets/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#workspace">Saltar al banco de trabajo</a>
+
+    <div class="page-shell">
+      <header class="topbar" aria-label="Cabecera principal">
+        <a class="brand" href="/" aria-label="GenAI Seguro Lab, inicio">
+          <span class="brand-mark" aria-hidden="true">
+            <span></span>
+          </span>
+          <span class="brand-copy">
+            <strong>GenAI Seguro</strong>
+            <small>LAB / LOCAL WORKBENCH</small>
+          </span>
+        </a>
+
+        <div class="environment-badges" aria-label="Entorno de ejecución">
+          <span class="badge"><i class="status-dot"></i> Local</span>
+          <span class="badge">Sintético</span>
+          <span class="badge">Determinista</span>
+        </div>
+      </header>
+
+      <main id="workspace">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow">AI SECURITY WORKBENCH · 01</p>
+            <h1 id="hero-title">
+              Analiza.
+              <span>Observa.</span>
+              Verifica.
+            </h1>
+            <p class="hero-lead">
+              Un laboratorio visual para recorrer un análisis defensivo,
+              entender cada control y comprobar los límites del sistema sin
+              salir de tu equipo.
+            </p>
+          </div>
+
+          <div class="posture-card" aria-label="Postura del laboratorio">
+            <div class="posture-heading">
+              <span>Postura del runtime</span>
+              <strong id="system-status">Conectando</strong>
+            </div>
+            <dl>
+              <div>
+                <dt>Modelo</dt>
+                <dd>scripted-v1</dd>
+              </div>
+              <div>
+                <dt>Llamadas externas</dt>
+                <dd>0</dd>
+              </div>
+              <div>
+                <dt>Persistencia</dt>
+                <dd>Desactivada</dd>
+              </div>
+              <div>
+                <dt>Superficie</dt>
+                <dd>Loopback</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+
+        <section class="workbench" aria-label="Banco de trabajo">
+          <aside class="control-panel">
+            <div class="panel-heading">
+              <p class="panel-index">01 / ENTRADA</p>
+              <h2>Selecciona un escenario</h2>
+              <p>
+                Solo puedes elegir incidentes benignos, sintéticos y
+                previamente validados.
+              </p>
+            </div>
+
+            <label for="incident-select">Incidente del corpus</label>
+            <div class="select-wrap">
+              <select id="incident-select" disabled>
+                <option>Cargando corpus…</option>
+              </select>
+              <span aria-hidden="true">⌄</span>
+            </div>
+
+            <article class="incident-preview" id="incident-preview">
+              <span class="category-chip">Esperando datos</span>
+              <h3>Elige un incidente para comenzar</h3>
+              <p>
+                La interfaz no acepta texto libre, adjuntos ni rutas del
+                sistema.
+              </p>
+            </article>
+
+            <div class="action-stack">
+              <button class="primary-action" id="analyze-button" disabled>
+                <span>Analizar incidente</span>
+                <i aria-hidden="true">→</i>
+              </button>
+              <button class="secondary-action" id="baseline-button" disabled>
+                Ejecutar baseline de 12 casos
+              </button>
+            </div>
+
+            <div class="boundary-note">
+              <span class="boundary-icon" aria-hidden="true">◇</span>
+              <p>
+                <strong>Frontera activa</strong>
+                Ninguna salida puede autorizar herramientas ni presentar una
+                propuesta como ejecutada.
+              </p>
+            </div>
+          </aside>
+
+          <section class="result-panel" aria-labelledby="result-title">
+            <div class="result-toolbar">
+              <div>
+                <p class="panel-index">02 / RESULTADO</p>
+                <h2 id="result-title">Salida controlada</h2>
+              </div>
+              <div
+                class="run-state"
+                id="run-state"
+                role="status"
+                aria-live="polite"
+              >
+                <i></i>
+                Preparado
+              </div>
+            </div>
+
+            <div class="error-banner" id="error-banner" role="alert" hidden>
+              <strong>No se pudo completar la operación</strong>
+              <span id="error-message"></span>
+            </div>
+
+            <div class="empty-state" id="empty-state">
+              <div class="empty-visual" aria-hidden="true">
+                <span class="orbit orbit-one"></span>
+                <span class="orbit orbit-two"></span>
+                <span class="empty-core">GSL</span>
+              </div>
+              <h3>El sistema está listo</h3>
+              <p>
+                Ejecuta un caso para ver el diagnóstico, las métricas y la
+                cadena de decisiones de seguridad.
+              </p>
+            </div>
+
+            <div class="loading-state" id="loading-state" hidden>
+              <div class="scan-line" aria-hidden="true"></div>
+              <p>Validando corpus y aplicando controles…</p>
+            </div>
+
+            <div class="analysis-view" id="analysis-view" hidden>
+              <div class="result-summary">
+                <div>
+                  <span class="result-kicker">Análisis completado</span>
+                  <h3 id="analysis-title"></h3>
+                </div>
+                <span class="result-status">PASS</span>
+              </div>
+
+              <div class="metric-grid" id="analysis-metrics"></div>
+              <div class="output-sections" id="output-sections"></div>
+            </div>
+
+            <div class="baseline-view" id="baseline-view" hidden>
+              <div class="result-summary">
+                <div>
+                  <span class="result-kicker">Baseline funcional</span>
+                  <h3>Los 12 escenarios del corpus</h3>
+                </div>
+                <span class="result-status">PASS</span>
+              </div>
+
+              <div class="metric-grid" id="baseline-metrics"></div>
+              <div class="case-list" id="case-list"></div>
+            </div>
+          </section>
+        </section>
+
+        <section class="security-panel" aria-labelledby="security-title">
+          <div class="section-heading">
+            <div>
+              <p class="panel-index">03 / TELEMETRÍA EFÍMERA</p>
+              <h2 id="security-title">Cadena de seguridad</h2>
+            </div>
+            <p>
+              Eventos saneados, encadenados y mantenidos únicamente durante
+              esta operación.
+            </p>
+          </div>
+
+          <div class="timeline-empty" id="timeline-empty">
+            La cronología aparecerá después de ejecutar una operación.
+          </div>
+          <ol class="event-timeline" id="event-timeline" hidden></ol>
+        </section>
+
+        <section class="principles" aria-label="Principios de diseño">
+          <article>
+            <span>01</span>
+            <h2>Datos cerrados</h2>
+            <p>Doce incidentes sintéticos, con esquema y hashes verificados.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h2>Autoridad fuera del modelo</h2>
+            <p>La aplicación decide qué herramienta y qué vista puede usarse.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h2>Sin efectos ocultos</h2>
+            <p>Este frontal no escribe archivos, no llama a red y no persiste.</p>
+          </article>
+        </section>
+      </main>
+
+      <footer>
+        <span>GENAI SEGURO LAB · GSL-WEB-001</span>
+        <span>Local · educativo · no productivo</span>
+      </footer>
+    </div>
+  </body>
+</html>

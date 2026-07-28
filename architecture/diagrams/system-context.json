@@ -59,7 +59,7 @@
       "id": "context-operator-runs-lab",
       "source": "local-operator",
       "target": "genai-seguro-lab",
-      "label": "CLI local: argv → JSON stdout",
+      "label": "CLI local o navegador de loopback → JSON efímero",
       "meta": {
         "type": "calls"
       }

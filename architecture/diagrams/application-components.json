@@ -54,6 +54,25 @@
       }
     },
     {
+      "id": "web-interface",
+      "label": "CMP-19 · Frontal HTTP de loopback",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/web.py",
+      "meta": {
+        "type": "gateway",
+        "technology": "python-stdlib-http",
+        "inventoryIds": [
+          "CMP-19"
+        ],
+        "state": "exposed-loopback",
+        "bind": "127.0.0.1",
+        "remoteAccess": false,
+        "cors": false,
+        "persistence": false,
+        "maxRequestBytes": 1024
+      }
+    },
+    {
       "id": "dataset-loader",
       "label": "CMP-02 · Contrato de datos",
       "parentId": "application-control-boundary",
@@ -511,6 +530,54 @@
     }
   ],
   "edges": [
+    {
+      "id": "components-web-loads-data",
+      "source": "web-interface",
+      "target": "dataset-loader",
+      "label": "status + selección INC-BEN-NNN validada",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-07",
+        "freePrompt": false,
+        "uploads": false
+      }
+    },
+    {
+      "id": "components-web-starts-benign-operations",
+      "source": "web-interface",
+      "target": "baseline-engine",
+      "label": "run_incident() | run_functional_baseline()",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-07",
+        "allowedRoutes": [
+          "/api/analyze",
+          "/api/baseline"
+        ]
+      }
+    },
+    {
+      "id": "components-web-uses-resource-control",
+      "source": "web-interface",
+      "target": "resource-control",
+      "label": "lock advisory no bloqueante + cuerpo ≤ 1 KiB",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-07",
+        "waitOrRetry": false
+      }
+    },
+    {
+      "id": "components-web-uses-security-journal",
+      "source": "web-interface",
+      "target": "security-event-journal",
+      "label": "informe saneado y efímero por operación",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-07",
+        "automaticPersistence": false
+      }
+    },
     {
       "id": "components-cli-uses-security-journal",
       "source": "cli-dispatcher",

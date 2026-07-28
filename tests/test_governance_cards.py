@@ -28,7 +28,7 @@ CARD_STATUS = "DESCRIPTIVA_ALCANCE_ACTUAL"
 EXPECTED_CARD_METADATA = {
     SYSTEM_CARD: (
         "GSL-SYSTEM-CARD-001",
-        "1.2.0",
+        "1.3.0",
         "648dd9afe9ef696388257ebf8dda4b59ece1aeb5",
     ),
     DATA_CARD: (
@@ -42,7 +42,7 @@ EXPECTED_CARD_METADATA = {
         "52e039f0c72f96671170e977a761691aa81c525e",
     ),
 }
-EXPECTED_BOUNDARIES = {f"TB-{index:02d}" for index in range(1, 7)}
+EXPECTED_BOUNDARIES = {f"TB-{index:02d}" for index in range(1, 8)}
 EXPECTED_DATA_ASSETS = {f"DAT-{index:02d}" for index in range(1, 26)}
 
 
@@ -94,7 +94,7 @@ def test_system_card_covers_boundaries_actors_components_and_pending_risks() -> 
 
     for actor in ("ACT-01", "ACT-02", "ACT-03"):
         assert f"`{actor}`" in document
-    for component_index in range(1, 19):
+    for component_index in range(1, 20):
         assert f"`CMP-{component_index:02d}`" in document
     for element in ("MOD-01", "TOL-01", "TOL-02", "IDN-01", "IDN-03", "IDN-04", "IDN-05"):
         assert f"`{element}`" in document
@@ -105,7 +105,8 @@ def test_system_card_covers_boundaries_actors_components_and_pending_risks() -> 
     compact = _compact(document)
     for expected in (
         "no hay proveedor",
-        "servicio web",
+        "frontal web local",
+        "`127.0.0.1`",
         "base de datos",
         "vector store",
         "cloud",

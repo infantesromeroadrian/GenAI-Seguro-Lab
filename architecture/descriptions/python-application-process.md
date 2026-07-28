@@ -4,6 +4,8 @@ local.
 ## Responsabilidades
 
 - Resolver la CLI desde el checkout.
+- Servir mediante `CMP-19` los assets y operaciones benignas del frontal en
+  loopback, con Host, Origin, CSRF, tamaño y esquema cerrados.
 - Validar el dataset benigno antes de utilizarlo.
 - Aplicar `CMP-10` a corpus, fronteras, operaciones, sesiones de borrador y
   concurrencia cooperativa de la CLI.
@@ -68,4 +70,5 @@ local.
 
 - Python 3.12.8.
 - Pydantic 2.13.4.
+- Servidor HTTP de la librería estándar, sin framework web.
 - Sin framework de agentes o SDK de proveedor.

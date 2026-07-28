@@ -66,7 +66,7 @@ def test_aia_pins_scope_sources_and_non_authorizing_outcome() -> None:
     document = _read(AIA)
     for expected in (
         "`GSL-AIA-001`",
-        "`1.1.0`",
+        "`1.2.0`",
         "2026-07-28",
         "`COMPLETADA_ALCANCE_ACTUAL`",
         "`CONTINUAR_SOLO_LABORATORIO_ACTUAL`",
@@ -102,6 +102,9 @@ def test_screening_matches_the_current_system_and_affected_parties() -> None:
         "No",
         "`TOL-02` es interno y create-only",
         "`IDN-03` es una identidad sintética",
+        "`CMP-19`",
+        "`127.0.0.1`",
+        "no expone prompt libre",
         "cuenta macOS",
         "`PGS-06-M04`",
     ):
@@ -114,6 +117,8 @@ def test_screening_matches_the_current_system_and_affected_parties() -> None:
         "`REV-01`",
     ):
         assert party in document
+    assert "AIA-TRG-02` se activó" in document
+    assert "./web-threat-model.md" in document
 
 
 def test_impact_register_is_complete_classified_and_control_linked() -> None:

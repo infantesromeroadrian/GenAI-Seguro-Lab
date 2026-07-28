@@ -42,13 +42,23 @@ abierta.
 El certificado del curso, el repositorio público, los tests superados o el
 cierre contable interno no sustituyen ninguna de esas condiciones.
 
+## Extensión posterior al cierre
+
+`GSL-WEB-001` añade un frontal HTTP exclusivo de loopback después de la
+contabilidad 66/66. La interfaz mejora la operabilidad y obliga a actualizar
+inventario, RoE, threat model y arquitectura, pero no satisface `BASE`,
+`P01-M11` ni la reproducción independiente. Tampoco convierte el doble
+determinista en un modelo GenAI real.
+
 ## Límites
 
 Las cuatro fixtures DOS/SC siguen inertes. `DAT-25` continúa inmutable con
 SHA-256
 `05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d`.
 El sistema sigue siendo local, sintético y determinista, sin modelo real,
-proveedor, frontal, cloud o aislamiento del sistema operativo.
+proveedor, acceso web externo, cloud o aislamiento del sistema operativo. El
+frontal local no tiene autenticación y sus controles de navegador no
+autentican procesos hostiles bajo la misma cuenta.
 
 Este registro no es una revisión independiente, aprobación, waiver,
 certificación, declaración de producción o aceptación de riesgo.

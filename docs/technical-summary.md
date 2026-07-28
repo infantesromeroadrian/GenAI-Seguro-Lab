@@ -7,6 +7,10 @@ deliberadamente acotado. Usa un **doble determinista**, no un LLM real, para
 probar fronteras de instrucciones, conocimiento, herramientas, autoridad,
 salida, recursos, eventos y recuperación sin red ni efectos externos.
 
+La extensión posterior [`GSL-WEB-001`](./web-interface-spec.md) añade un
+frontal visual fijado a loopback. Reutiliza el flujo benigno y no altera la
+evidencia ni los contadores del cierre descritos en este documento.
+
 La [matriz final](./final-traceability-matrix.md) traza 25 requisitos:
 8 `DEMONSTRATED`, 14 `DEMONSTRATED_BOUNDED`, 2 `PARTIAL` y 1
 `NOT_DEMONSTRATED`. La revisión humana independiente fue omitida; por ello
@@ -28,8 +32,10 @@ Las superficies y la autoridad se localizan en:
 - [system, data y model cards](./system-card.md), [data card](./data-card.md) y
   [model card](./model-card.md).
 
-No existen proveedor, modelo GenAI real, API o frontal web, Docker, cloud,
-base de datos, telemetría externa, SIEM o identidad humana de producción.
+No existen proveedor, modelo GenAI real, API pública o frontal remoto, Docker,
+cloud, base de datos, telemetría externa, SIEM o identidad humana de
+producción. Sí existe un frontal local en `127.0.0.1`, sin prompt libre,
+persistencia o llamadas externas.
 
 ## Amenazas y controles
 

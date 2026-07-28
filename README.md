@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** roadmap interno resuelto con 65 microtareas completadas, PGS-07-M04 omitida y 0 abiertas. P01-M01 y P01-M04 a P01-M10 cumplen sus criterios; P01-M11, BASE, la fase 01 y SEC-1 continúan abiertos. La baseline adversaria histórica permanece inmutable. El retest final M07 ejecutó una sola vez el candidato `77edd640` con el evaluador comprometido en `636e1db`: los 14 casos terminaron, la tasa de éxito pasó de 1/14 (7,14 %) a 0/14 (0 %), las operaciones no autorizadas aceptadas o ejecutadas de 1 a 0, `ADV-TOL-005` mejoró y no hubo regresiones. Los 12 casos benignos terminaron sin falsos rechazos, conservaron sus invariantes y las 84 cláusulas mapeadas por la rúbrica cerrada; por ello `SC-07` queda `DEMONSTRATED` dentro de ese contrato. La coincidencia literal sigue en 0/24 hallazgos y 0/36 acciones, y la evidencia declara que no evalúa equivalencia semántica general, afirmaciones prohibidas con semántica general ni un modelo GenAI real. `CF-002` permanece `NOT_COMPUTABLE`, las cuatro fixtures DOS/SC siguen inertes y `DAT-22` continúa siendo una referencia histórica, no rendimiento del candidato final. M08 documenta seis riesgos primarios sin recalcular la priorización ni aceptar riesgo. M09 acepta para el alcance actual la baseline local-first determinista, con autoridad fuera del modelo y evaluación separada del producto; no selecciona una tecnología futura ni acepta riesgo. PGS-06-M01 añade fichas descriptivas del sistema, los datos y `MOD-01`; no certifica el laboratorio, no acepta riesgo y mantiene explícito que el modelo es un doble determinista. PGS-06-M02 completa la evaluación de impacto del sistema actual: acota diez dimensiones, mantiene `RR-01` a `RR-06` pendientes y obliga a reevaluar antes de ampliar modelo, datos, interfaz, efectos o despliegue. PGS-06-M03 formaliza doce actividades RACI y un registro vivo de los seis riesgos; `ACT-02` conserva el accountability actual, `REV-01` sigue sin asignar y todas las decisiones continúan `PENDIENTE_HUMANA`. PGS-06-M04 separa obligaciones potenciales, estándares y guías voluntarias y decisiones internas sin atribuir conformidad o clasificación jurídica. PGS-06-M05 mantiene el runtime sin persistencia y fija el ciclo de vida de ocho clases observables. PGS-06-M06 añade respuesta humana por severidad y familia sin atribuir automatización. PGS-06-M07 fija parada, reconciliación y reanudación sin añadir una superficie nueva. PGS-06-M08 registra dependencias y gaps de supply chain sin afirmar un escaneo inexistente. PGS-06-M09 clasifica los cambios y su reevaluación sin ampliar autoridad. PGS-07-M01 demuestra una reconstrucción desde un clon público nuevo con lock fijado, instalación sin caché y smoke del punto de entrada; usó red y no afirma hermeticidad. PGS-07-M02 ejecuta 327 pruebas, 12 benignos y los 14 adversarios autorizados sobre el commit público `6d4f132`; las cuatro fixtures DOS/SC siguen inertes. PGS-07-M03 observa cero secretos en el árbol y el historial y 56/56 registros sintéticos, pero declara la procedencia personal que aún conserva Git sin reescribir el historial. PGS-07-M04 queda omitida por decisión expresa: no hubo revisión humana, `REV-01` no se asignó y no se acepta riesgo. PGS-07-M05 registra 0 observaciones, 0 correcciones y `D-REV-01` abierta sin inventar hallazgos. PGS-07-M06 consolida 25 requisitos y conserva `SC-12` como no demostrado. PGS-07-M07 añade resúmenes técnico y ejecutivo con uso admisible y límites. PGS-07-M09 revisa el roadmap padre. PGS-07-M10 registra `SEC-1` como `OPEN_NOT_ACHIEVED` sin cerrarlo. Todavía no existe proveedor, frontal web o despliegue cloud.
+> **Estado:** roadmap interno resuelto con 65 microtareas completadas, PGS-07-M04 omitida y 0 abiertas. P01-M01 y P01-M04 a P01-M10 cumplen sus criterios; P01-M11, BASE, la fase 01 y SEC-1 continúan abiertos. La baseline adversaria histórica permanece inmutable. El retest final M07 ejecutó una sola vez el candidato `77edd640` con el evaluador comprometido en `636e1db`: los 14 casos terminaron, la tasa de éxito pasó de 1/14 (7,14 %) a 0/14 (0 %), las operaciones no autorizadas aceptadas o ejecutadas de 1 a 0, `ADV-TOL-005` mejoró y no hubo regresiones. Los 12 casos benignos terminaron sin falsos rechazos, conservaron sus invariantes y las 84 cláusulas mapeadas por la rúbrica cerrada; por ello `SC-07` queda `DEMONSTRATED` dentro de ese contrato. La coincidencia literal sigue en 0/24 hallazgos y 0/36 acciones, y la evidencia declara que no evalúa equivalencia semántica general, afirmaciones prohibidas con semántica general ni un modelo GenAI real. `CF-002` permanece `NOT_COMPUTABLE`, las cuatro fixtures DOS/SC siguen inertes y `DAT-22` continúa siendo una referencia histórica, no rendimiento del candidato final. M08 documenta seis riesgos primarios sin recalcular la priorización ni aceptar riesgo. M09 acepta para el alcance actual la baseline local-first determinista, con autoridad fuera del modelo y evaluación separada del producto; no selecciona una tecnología futura ni acepta riesgo. PGS-06-M01 añade fichas descriptivas del sistema, los datos y `MOD-01`; no certifica el laboratorio, no acepta riesgo y mantiene explícito que el modelo es un doble determinista. PGS-06-M02 completa la evaluación de impacto del sistema actual: acota diez dimensiones, mantiene `RR-01` a `RR-06` pendientes y obliga a reevaluar antes de ampliar modelo, datos, interfaz, efectos o despliegue. PGS-06-M03 formaliza doce actividades RACI y un registro vivo de los seis riesgos; `ACT-02` conserva el accountability actual, `REV-01` sigue sin asignar y todas las decisiones continúan `PENDIENTE_HUMANA`. PGS-06-M04 separa obligaciones potenciales, estándares y guías voluntarias y decisiones internas sin atribuir conformidad o clasificación jurídica. PGS-06-M05 mantiene el runtime sin persistencia y fija el ciclo de vida de ocho clases observables. PGS-06-M06 añade respuesta humana por severidad y familia sin atribuir automatización. PGS-06-M07 fija parada, reconciliación y reanudación sin añadir una superficie nueva. PGS-06-M08 registra dependencias y gaps de supply chain sin afirmar un escaneo inexistente. PGS-06-M09 clasifica los cambios y su reevaluación sin ampliar autoridad. PGS-07-M01 demuestra una reconstrucción desde un clon público nuevo con lock fijado, instalación sin caché y smoke del punto de entrada; usó red y no afirma hermeticidad. PGS-07-M02 ejecuta 327 pruebas, 12 benignos y los 14 adversarios autorizados sobre el commit público `6d4f132`; las cuatro fixtures DOS/SC siguen inertes. PGS-07-M03 observa cero secretos en el árbol y el historial y 56/56 registros sintéticos, pero declara la procedencia personal que aún conserva Git sin reescribir el historial. PGS-07-M04 queda omitida por decisión expresa: no hubo revisión humana, `REV-01` no se asignó y no se acepta riesgo. PGS-07-M05 registra 0 observaciones, 0 correcciones y `D-REV-01` abierta sin inventar hallazgos. PGS-07-M06 consolida 25 requisitos y conserva `SC-12` como no demostrado. PGS-07-M07 añade resúmenes técnico y ejecutivo con uso admisible y límites. PGS-07-M09 revisa el roadmap padre. PGS-07-M10 registra `SEC-1` como `OPEN_NOT_ACHIEVED` sin cerrarlo. Como extensión posterior al cierre, `GSL-WEB-001` añade un frontal web local de loopback para el flujo benigno; no existe proveedor, modelo GenAI real, acceso web externo o despliegue cloud.
 
 La proyección revisada de `GSL-RETEST-ADVERSARIAL-001` está versionada en
 [`evaluations/adversarial-retest-v1/`](./evaluations/adversarial-retest-v1/)
@@ -59,7 +59,9 @@ GenAI Seguro Lab será un asistente que analiza incidentes de ciberseguridad fic
 │       ├── output_policy.py
 │       ├── resource_control.py
 │       ├── sandbox_recovery.py
-│       └── security_events.py
+│       ├── security_events.py
+│       ├── web.py
+│       └── web_assets/
 ├── tests/
 │   ├── README.md
 │   ├── test_benign_flow.py
@@ -293,7 +295,7 @@ uv run --frozen pytest tests/test_instruction_boundary.py tests/test_benign_flow
 
 ## Interfaz local y baseline funcional
 
-`main.py` expone dos operaciones locales, de solo lectura y con salida JSON:
+`main.py` conserva dos operaciones locales, de solo lectura y con salida JSON:
 
 ```bash
 uv run --frozen python main.py analyze --incident INC-BEN-001
@@ -329,18 +331,43 @@ secuencia, correlaciones y cadena SHA-256, pero no prompts, respuestas,
 argumentos, rutas, credenciales ni excepciones. Es efímero: no crea logs,
 telemetría o persistencia.
 
-Comprobación específica:
+Comprobación específica de la CLI:
 
 ```bash
 uv run --frozen pytest tests/test_cli_smoke.py
 ```
 
-### Uso actual y frontal
+### Frontal web local
 
-La interfaz actual es la propia CLI. No existe frontal web, aplicación de
-escritorio ni API pública. Esto es deliberado: el contrato excluye una
-interfaz gráfica hasta validar el núcleo, porque una nueva entrada cambiaría
-la superficie de ataque y la futura autenticación de la confirmación humana.
+La extensión `GSL-WEB-001` proyecta las mismas operaciones benignas en una
+interfaz visual:
+
+```bash
+uv run --frozen python main.py web
+```
+
+Abre <http://127.0.0.1:8765>. Para usar otro puerto local:
+
+```bash
+uv run --frozen python main.py web --port 9000
+```
+
+El frontal permite seleccionar uno de los 12 incidentes, ejecutar su análisis,
+repetir la baseline y observar el journal como cronología. No acepta prompt
+libre, uploads, rutas o acciones. Se fija a `127.0.0.1`, usa assets propios,
+valida Host, Origin, token CSRF, tamaño y esquema, y no ofrece CORS,
+persistencia o logging de peticiones.
+
+La [especificación](./docs/web-interface-spec.md) y el
+[threat model](./docs/web-threat-model.md) separan lo demostrado de los
+riesgos residuales. Este frontal no es una API pública, no tiene autenticación
+multiusuario y no amplía `DAT-25` a una superficie que no evaluó.
+
+Comprobación específica:
+
+```bash
+uv run --frozen pytest tests/test_web_interface.py tests/test_cli_smoke.py
+```
 
 Una guía ejecutable para analizar un incidente, repetir las baselines,
 inspeccionar la evidencia y entender sus límites está en
@@ -1405,7 +1432,10 @@ Toda acción no enumerada como permitida queda denegada por defecto.
 - No reutilizará código o arquitectura de FraudAI-Agent.
 - No utilizará datos personales, corporativos, confidenciales o incidentes reales.
 - No desplegará en AWS, cloud o una API pública durante esta fase.
-- No construirá interfaz gráfica, arquitectura multiagente, múltiples proveedores o toda la plataforma Docker AI sin una necesidad demostrada.
+- El alcance inicial no incluía interfaz gráfica, arquitectura multiagente,
+  múltiples proveedores o toda la plataforma Docker AI. `GSL-WEB-001`
+  documenta la excepción posterior para un frontal exclusivamente local; los
+  demás no-objetivos se mantienen.
 - No ejecutará acciones autónomas fuera del sandbox ni pruebas contra terceros.
 - No obtendrá una certificación regulatoria ni afirmará cumplimiento legal integral.
 - El repositorio público autorizado conserva en `main` el código, la

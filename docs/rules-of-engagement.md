@@ -5,14 +5,14 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `2.6.0` |
-| Fecha de entrada en vigor | 2026-07-27 |
+| Versión | `2.7.0` |
+| Fecha de entrada en vigor | 2026-07-28 |
 | Baseline técnica de origen | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
 | Operador | `ACT-01` — operador local |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Priorización de origen | [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) |
-| Ámbito | checkout local propio, datos sintéticos y procesos aislados de evaluación |
+| Ámbito | checkout local propio, datos sintéticos, procesos aislados de evaluación y frontal HTTP exclusivo de loopback |
 
 Estas Rules of Engagement (RoE) delimitan cómo se podrán preparar y ejecutar
 las evaluaciones adversarias de GenAI Seguro Lab. No son una autorización
@@ -27,6 +27,12 @@ cuatro permanecen inertes. PGS-05-M07 fija además un único retest final sobre
 el commit `77edd64037bb0e41edffa58cae2682ba7d2694d2`: su rúbrica se versiona
 antes de la ejecución, el candidato se materializa bajo `$TMP` y el resultado
 solo puede emitirse por `stdout` para revisión y versionado manual.
+
+La versión 2.7.0 incorpora `GSL-WEB-001` como extensión posterior al cierre
+interno 66/66. Autoriza únicamente el listener de producto en `127.0.0.1`, sus
+assets locales y las rutas benignas cerradas descritas en
+[`GSL-WEB-THREAT-001`](./web-threat-model.md). No autoriza pruebas adversarias
+nuevas, exposición externa, proxy, túnel, datos reales o un modelo real.
 
 ## Objetivo y resultado permitido
 
@@ -80,6 +86,8 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
   versionarla.
 - Procesos locales hijos iniciados expresamente por el harness dentro de los
   límites de este documento.
+- `CMP-19`, sus cuatro assets estáticos y el listener HTTP fijado a
+  `127.0.0.1`, solo durante una ejecución vigente de `main.py web`.
 
 ### Activos excluidos
 
@@ -91,8 +99,9 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
 - Datos personales, corporativos, confidenciales, credenciales, secretos,
   incidentes reales o material de procedencia no verificada.
 - GitHub, remotos Git, CI/CD, cloud, Docker, proveedores GenAI y cualquier
-  endpoint de red, incluido `localhost`, hasta una autorización posterior que
-  actualice estas reglas.
+  endpoint de red distinto del listener exacto de `CMP-19` en loopback.
+- Proxy, túnel, redirección, binding distinto de `127.0.0.1`, acceso desde otro
+  equipo y cualquier publicación del frontal.
 - El host macOS como objetivo: sus controles, permisos, procesos ajenos,
   persistencia, llavero, configuración y disponibilidad global quedan fuera.
 
@@ -100,6 +109,9 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
 
 - Leer, validar y hashear los activos incluidos.
 - Ejecutar tests y comandos documentados de la CLI contra datos sintéticos.
+- Iniciar `main.py web` en `127.0.0.1`, cargar sus assets allowlisted y usar
+  `GET /api/status`, `POST /api/analyze` y `POST /api/baseline` desde un
+  navegador same-origin.
 - Sustituir respuestas del modelo mediante dobles deterministas dentro del
   proceso de test.
 - Preparar entradas adversarias no ejecutables y observar las decisiones,
@@ -114,6 +126,8 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
 ## Acciones prohibidas
 
 - Conectar a red, proveedor, servicio externo o endpoint no autorizado.
+- Cambiar el binding, exponer el listener, añadir una ruta, desactivar
+  Host/Origin/CSRF/CSP, aceptar prompt libre, uploads o campos adicionales.
 - Usar datos reales, secretos o malware; ejecutar payloads, shell, código
   generado, persistencia, escalada de privilegios o evasión de controles del
   host.
@@ -361,7 +375,7 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-06` | Ninguna salida del modelo puede ampliar autoridad | Cada herramienta ejecutada tiene autorización de aplicación independiente |
 | `ROE-07` | La evidencia debe ser reproducible y saneada | Incluye commit, hashes, métricas, resultado y rutas `$REPO`/`$TMP` |
 | `ROE-08` | Los 17 casos deben tener vehículo y restricción propios | La tabla contiene una fila única por cada ID de `GSL-ABUSE-CASES-001` |
-| `ROE-09` | Cambios de superficie deben invalidar la versión vigente | Se revisan las RoE antes de usar red, proveedor, Docker, cloud o datos reales |
+| `ROE-09` | Cambios de superficie deben invalidar la versión vigente | Se revisan las RoE antes de ampliar el listener local o usar proveedor, Docker, cloud o datos reales |
 | `ROE-10` | PGS-03-M01 no debe ejecutar ataques | El commit solo contiene documentación y verificaciones ordinarias |
 | `ROE-11` | PGS-03-M02 no debe crear una ruta de ejecución | El perfil exige autorización exacta y `$TMP`, no está en la CLI y termina al devolver una `ModelRequest` |
 | `ROE-12` | PGS-03-M03 no debe ejecutar ni conectar las fixtures durante su creación | La versión 1.0.0 del corpus en el commit `e8cf8699` declaró 0 conexiones y 0 ejecuciones |
@@ -380,13 +394,16 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-25` | PGS-05-M04 debe medir dos candidatos fijados sin alterar el repositorio ni presentar un benchmark universal | `CMP-16` verifica commits, árboles y hashes comunes; usa copias `$TMP`, tres pares de calentamiento y 30 pares AB/BA con procesos nuevos y entorno allowlisted; conserva todas las muestras y emite `DAT-22` saneado sin salida bruta, retry, red deliberada, instalación, score, umbral o versionado automático |
 | `ROE-26` | PGS-05-M05 debe consolidar evidencia existente sin ejecutar ni reinterpretar expansivamente | `CMP-17` verifica `DAT-20/21/22/23`, sus hashes, esquemas, 44 referencias escalares y el resumen; no genera clasificaciones, ejecuta componentes, escribe evidencia, decide M06, acepta riesgo o cambia `final_retest` |
 | `ROE-27` | PGS-05-M07 debe ejecutar una sola vez el candidato final fijado sin contaminarlo con rúbrica u oráculos | `CMP-18` exige el commit/árbol `77edd640`/`bc09b78f`, materializa el target mediante `git archive` bajo `$TMP`, bloquea red y credenciales, ejecuta 14 casos adversarios y 12 benignos más dos probes de frontera, deja cuatro casos inertes, verifica 15 artefactos históricos y emite solo una proyección saneada por `stdout`; el run canónico requiere evaluador comprometido, no escribe evidencia por sí mismo y no afirma seguridad general, equivalencia semántica general ni evaluación con un modelo GenAI real |
+| `ROE-28` | El frontal local no debe ampliar datos, autoridad o efectos | `CMP-19` se fija a `127.0.0.1`, rutas y assets allowlisted, entrada JSON estricta de 1 KiB, Host/Origin/CSRF y cabeceras cerradas; reutiliza el flujo benigno y crea cero borradores |
 
 ## Disparadores de revisión
 
 Estas reglas deben revisarse y versionarse antes de:
 
-- conectar un modelo real, Docker, `localhost`, red, API, cloud o proveedor;
-- añadir una herramienta, identidad, interfaz, servicio o efecto nuevo;
+- conectar un modelo real, Docker, red externa, API pública, cloud o proveedor;
+- cambiar el binding, ruta, método, asset, esquema, origen o controles de
+  `CMP-19`;
+- añadir otra herramienta, identidad, interfaz, servicio o efecto;
 - usar datos que no sean los sintéticos aprobados;
 - cambiar los límites del host, del corpus, del sandbox o del harness;
 - mover el repositorio, introducir un remoto o cambiar la estrategia de
