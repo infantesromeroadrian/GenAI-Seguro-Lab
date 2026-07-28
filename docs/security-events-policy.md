@@ -3,8 +3,8 @@
 ## Identidad y alcance
 
 - **ID:** `GSL-SECURITY-EVENTS-001`
-- **Versión:** `1.0.0`
-- **Microtarea:** `PGS-04-M07`
+- **Versión:** `1.1.0`
+- **Microtareas:** `PGS-04-M07` y `PGS-06-M05`
 - **Propietario:** `ACT-02`, mantenedor del laboratorio
 - **Ámbito:** operaciones `analyze` y `baseline`, flujo benigno, búsqueda
   autorizada, política de salida, límites de recursos y sesión interna de
@@ -121,13 +121,82 @@ proceso.
 
 Quedan fuera de esta microtarea:
 
-- logging persistente, retención, búsqueda o correlación entre sesiones;
+- logging persistente, búsqueda o correlación entre sesiones;
 - SIEM, métricas remotas, alertas, telemetría o exportación automática;
 - detección de anomalías mediante ML o cobertura universal de secretos y PII;
 - respuesta operativa general, comunicación, rollback de un final publicado o
   retirada;
 - usar el journal como estado duradero o autoridad de recuperación;
 - acreditar un modelo GenAI real, proveedor, MCP o aislamiento de SO.
+
+## Política de logs, redacción, conservación y eliminación
+
+PGS-06-M05 gobierna el ciclo de vida de los datos observables sin añadir
+persistencia a la aplicación. La regla por defecto es **no recopilar** texto
+libre ni conservar automáticamente una salida. Todo dato se reduce al mínimo
+antes de abandonar el componente que lo origina.
+
+### Redacción antes de emitir
+
+1. El contrato de `SecurityEvent` es una allowlist; un campo no declarado se
+   rechaza en lugar de serializarse.
+2. Prompts, respuestas, argumentos, conocimiento, contenido de borradores,
+   rutas, entorno, credenciales, tokens, excepciones y tracebacks nunca son
+   campos permitidos.
+3. `CMP-09` redacta la salida de producto antes de entregarla o incorporarla a
+   una propuesta. La señal solo registra que hubo intervención, no el valor.
+4. Los runners que producen evidencia versionable conservan únicamente
+   proyecciones y agregados declarados; la salida bruta no se convierte
+   automáticamente en artefacto.
+5. Si una revisión encuentra un secreto, dato personal o ruta privada, se
+   detiene la publicación. La redacción posterior no convierte una exposición
+   previa en inexistente.
+
+### Matriz de ciclo de vida
+
+<!-- log-lifecycle:start -->
+| ID | Clase | Persistencia y acceso | Conservación | Eliminación o cierre | Verificación y límite |
+|---|---|---|---|---|---|
+| `LOG-01` | Journal de seguridad en memoria | Solo proceso local durante `analyze`, `baseline` o sesión de borrador | Hasta terminar la operación o proceso; sin retención entre sesiones | La aplicación libera su referencia al finalizar; no implementa borrado seguro de RAM | Un proceso nuevo no puede consultar el journal anterior. El SO y el runtime pueden conservar copias fuera del control demostrable |
+| `LOG-02` | Resultado e informe opcional por `stdout` | No se almacena por la aplicación; visible al operador que ejecuta la CLI | Cero retención automática | El operador controla cualquier redirección, historial o captura externa y debe eliminarla según su propio sistema | El proyecto puede demostrar que no abre un fichero, no que terminales o herramientas externas no capturen la salida |
+| `LOG-03` | Temporales de evaluación y reconstrucción | Directorio temporal local, accesible al proceso y al mantenedor | Solo durante la ejecución autorizada que lo crea | Cierre normal elimina el árbol temporal; ante fallo se comprueba y elimina antes de publicar evidencia | No usar un checkout temporal como registro canónico ni incluir su ruta en artefactos públicos |
+| `LOG-04` | Evidencia saneada y manifiestos versionados | Git público tras revisión deliberada; lectura pública | Sin caducidad automática mientras sustente reproducibilidad, resultados o decisiones | Un commit puede retirarla del árbol actual, pero no purga el historial; reescribir historia, release o remoto exige autoridad separada | Conservar ID, commit, hashes, fuentes, resultado y límites. `DAT-25` no se regenera, sobrescribe ni elimina durante este cierre |
+| `LOG-05` | Corpus y documentación sintéticos | Git público tras revisión; mantenidos por `ACT-02` | Hasta ser sustituidos por una versión trazable | Sustitución mediante commit que conserva procedencia y relación con evidencia previa | No introducir datos reales; una versión nueva no reinterpreta artefactos históricos |
+| `LOG-06` | Borrador final del sandbox | Fichero local ignorado por Git, modo `0600`, accesible por la cuenta host | Hasta eliminación deliberada del operador | El producto no borra ni sobrescribe un borrador publicado; el operador elimina el fichero cuando ya no sea necesario | La cuenta host no está aislada. La eliminación local no demuestra borrado seguro del soporte |
+| `LOG-07` | Staging y estado transaccional del sandbox | Local e interno a `TOL-02` | Solo mientras la transacción está abierta o requiere reconciliación | `stop()` revoca autoridad y limpia staging; el siguiente arranque reconcilia metadatos con un final ya publicado | No republica staging, restaura grants ni reintenta efectos |
+| `LOG-08` | Registro humano de gobierno | Nota saneada separada del runtime y de la evidencia canónica | Mientras sea necesario para continuidad del proyecto | Corrección o retirada deliberada por el owner de ese registro | No es log de aplicación, autoridad técnica ni sustituto de Git y puede quedar desactualizado |
+<!-- log-lifecycle:end -->
+
+### Acceso y responsabilidades
+
+- `ACT-01` puede ver la salida de su proceso y eliminar capturas que haya
+  creado. No publica evidencia ni cambia la política.
+- `ACT-02` revisa y decide qué proyección saneada se versiona; conserva hashes
+  y dependencias, y registra cualquier retirada.
+- `ACT-03` no recibe acceso a logs: solo interviene en el challenge sintético
+  ligado a una propuesta.
+- `REV-01` no está asignado. Una revisión futura recibe evidencia saneada, no
+  secretos, datos reales o salida bruta.
+
+No se ha fijado un plazo legal de conservación porque no hay un tratamiento
+real ni una obligación aplicable determinada. Una obligación futura prevalece
+solo tras documentar su fuente, ámbito, owner y efecto sobre esta matriz.
+
+### Procedimiento de retirada
+
+1. Clasificar el material con un `LOG-*` y detener cualquier publicación
+   pendiente si puede contener un secreto o dato real.
+2. Identificar qué evaluación, riesgo, decisión o referencia depende de él.
+3. Conservar únicamente una descripción saneada del incidente y las huellas
+   necesarias cuando hacerlo sea seguro y esté autorizado.
+4. Eliminar la copia controlada por el owner adecuado. Para Git, una retirada
+   del árbol actual no equivale a purga del historial.
+5. Verificar ausencia en el destino que estaba bajo control y registrar los
+   destinos no verificables. No afirmar borrado seguro del soporte, terminal,
+   copias externas o remoto sin evidencia específica.
+6. Si hubo secreto o dato real, seguir el runbook de incidentes, rotar o
+   revocar el secreto en su sistema de origen y reevaluar el alcance antes de
+   continuar.
 
 La ventana de borrador entre I/O parcial y resultado queda cerrada por
 [`GSL-SANDBOX-RECOVERY-001`](./sandbox-recovery-policy.md): `CMP-12` publica

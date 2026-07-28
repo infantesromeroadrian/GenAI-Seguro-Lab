@@ -114,8 +114,8 @@ real.
   borradores y procesos cooperantes de la CLI para PGS-04-M06.
 - [Política de eventos y señales de seguridad](./security-events-policy.md):
   journal cerrado y acotado en memoria, correlación por operación y caso,
-  cadena SHA-256, señales deterministas, salida CLI opt-in y límites de
-  PGS-04-M07.
+  cadena SHA-256, señales deterministas, salida CLI opt-in, redacción y matriz
+  de conservación o retirada por clase para PGS-04-M07 y PGS-06-M05.
 - [Política de parada y recuperación del
   sandbox](./sandbox-recovery-policy.md): publicación atómica create-only,
   revocación de autoridad, reconciliación preautoridad y límites de

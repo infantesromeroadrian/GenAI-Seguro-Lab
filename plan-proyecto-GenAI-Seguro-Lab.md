@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-05-M09 y PGS-06-M01 a M04 completadas; PGS-04 y P01-M08
+- **Estado actual:** PGS-00-M01 a PGS-05-M09 y PGS-06-M01 a M05 completadas; PGS-04 y P01-M08
   quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
   repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
   1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no
@@ -77,6 +77,10 @@
   [`GSL-COMPLIANCE-MAP-001`](./docs/compliance-map.md): clasifica nueve
   fuentes y decisiones sin convertir guías en obligaciones, atribuir
   conformidad o realizar una clasificación jurídica del laboratorio.
+  PGS-06-M05 amplía
+  [`GSL-SECURITY-EVENTS-001`](./docs/security-events-policy.md): mantiene
+  el runtime sin persistencia y fija redacción, acceso, conservación y
+  retirada por ocho clases sin prometer purga fuera del control observado.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** el repositorio público y su `main`
@@ -381,7 +385,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-06-M02** Completar la evaluación de impacto de IA.
 - [x] **PGS-06-M03** Crear RACI y registro de riesgos.
 - [x] **PGS-06-M04** Crear el mapa de cumplimiento, diferenciando obligación, guía y decisión voluntaria.
-- [ ] **PGS-06-M05** Definir política de logs, redacción, conservación y eliminación.
+- [x] **PGS-06-M05** Definir política de logs, redacción, conservación y eliminación.
 - [ ] **PGS-06-M06** Crear el runbook de respuesta a incidentes de IA.
 - [ ] **PGS-06-M07** Crear el procedimiento de parada y recuperación.
 - [ ] **PGS-06-M08** Registrar dependencias y riesgos de supply chain.
@@ -586,6 +590,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-06-M05 — definir política de logs, redacción, conservación y eliminación.**
+**PGS-06-M06 — crear el runbook de respuesta a incidentes de IA.**
 
-**Progreso interno:** 52 de 66 microtareas completadas, 14 abiertas (**78,8 %**).
+**Progreso interno:** 53 de 66 microtareas completadas, 13 abiertas (**80,3 %**).

@@ -147,9 +147,10 @@ Limitaciones:
 | Salida y eventos de runtime | Son efímeros por `stdout` o memoria; no hay persistencia automática. |
 | Sandbox | Borradores y estado transaccional permanecen locales, ignorados por Git y sometidos a publicación create-only y recuperación acotada. |
 
-La política formal de logs, redacción, plazos de conservación y eliminación
-se definirá en `PGS-06-M05`. Hasta entonces, esta ficha describe el
-comportamiento existente y no inventa periodos de retención.
+La [política formal de logs y ciclo de vida](./security-events-policy.md)
+completa `PGS-06-M05`: mantiene el journal sin persistencia, aplica redacción
+antes de emitir y fija conservación o retirada por clase. No inventa plazos
+legales ni promete purga de Git, memoria, terminales o soportes.
 
 ## Usos permitidos y no permitidos
 
