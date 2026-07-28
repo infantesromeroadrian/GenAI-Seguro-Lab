@@ -17,7 +17,7 @@ README = ROOT / "README.md"
 PLAN = ROOT / "plan-proyecto-GenAI-Seguro-Lab.md"
 DAT25 = ROOT / "evaluations" / "final-retest-v1.json"
 
-SOURCE_COMMIT = "a4ab56c3f706ae1073f9006b2f74e96d3c187b17"
+SOURCE_COMMIT = "648dd9afe9ef696388257ebf8dda4b59ece1aeb5"
 CANDIDATE_COMMIT = "77edd64037bb0e41edffa58cae2682ba7d2694d2"
 EVALUATOR_COMMIT = "636e1dbb8cac21c8c7bfc0709bf1d88b4b56304e"
 DAT25_SHA256 = "05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d"
@@ -66,7 +66,7 @@ def test_aia_pins_scope_sources_and_non_authorizing_outcome() -> None:
     document = _read(AIA)
     for expected in (
         "`GSL-AIA-001`",
-        "`1.0.0`",
+        "`1.1.0`",
         "2026-07-28",
         "`COMPLETADA_ALCANCE_ACTUAL`",
         "`CONTINUAR_SOLO_LABORATORIO_ACTUAL`",

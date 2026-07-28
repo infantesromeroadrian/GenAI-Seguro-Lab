@@ -23,6 +23,12 @@ real.
   actual, partes afectadas, diez dimensiones de impacto, handoff de los seis
   riesgos pendientes y triggers de reevaluación; no autoriza producción,
   ampliaciones ni aceptación de riesgo.
+- [Matriz RACI](./raci.md): doce actividades con exactamente un accountable
+  actual, responsabilidades ejercidas y planificadas separadas, límites de
+  decisión y concentración de funciones explícita.
+- [Registro formal de riesgos](./risk-register.md): seguimiento vivo de
+  `RR-01` a `RR-06`, owner, controles, brecha, respuesta propuesta, targets,
+  triggers y seis decisiones `PENDIENTE_HUMANA`.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.
@@ -80,8 +86,8 @@ real.
 - [Riesgo residual y compensaciones](./residual-risk-and-tradeoffs.md):
   `GSL-RESIDUAL-RISK-001` agrupa los 17 abuse cases una sola vez en seis
   riesgos posteriores a `DAT-25`, distingue fuentes finales, históricas e
-  inertes y mantiene pendiente toda decisión humana sin recalcular scores ni
-  crear el registro formal de riesgos.
+  inertes y mantiene pendiente toda decisión humana sin recalcular scores; es
+  el snapshot de entrada del registro formal.
 - [ADR de la baseline local-first](./architecture-decision-record.md):
   `GSL-ADR-001` acepta la arquitectura determinista para el alcance actual,
   compara alternativas y fija triggers, consecuencias, rollback compensatorio

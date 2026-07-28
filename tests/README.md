@@ -175,6 +175,12 @@ PGS-06-M02: identidad y fuentes, cribado, diez impactos, los seis handoffs
 Lee la evidencia inmutable, pero no ejecuta producto, harness, evaluadores o
 runners.
 
+`test_raci_risk_register.py` valida exclusivamente los artefactos de
+PGS-06-M03: doce actividades con un único accountable actual, participación
+planificada de `REV-01`, seis riesgos abiertos con los 17 abuse cases únicos y
+seis decisiones `PENDIENTE_HUMANA`. También fija el hash de `DAT-25` sin
+ejecutar producto, harness, evaluadores o runners.
+
 `test_roadmap_state.py` es el único owner de los contadores y de la siguiente
 microtarea mutable que comparten el plan y el README.
 

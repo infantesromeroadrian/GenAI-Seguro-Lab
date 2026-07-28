@@ -28,8 +28,8 @@ CARD_STATUS = "DESCRIPTIVA_ALCANCE_ACTUAL"
 EXPECTED_CARD_METADATA = {
     SYSTEM_CARD: (
         "GSL-SYSTEM-CARD-001",
-        "1.1.0",
-        "a4ab56c3f706ae1073f9006b2f74e96d3c187b17",
+        "1.2.0",
+        "648dd9afe9ef696388257ebf8dda4b59ece1aeb5",
     ),
     DATA_CARD: (
         "GSL-DATA-CARD-001",

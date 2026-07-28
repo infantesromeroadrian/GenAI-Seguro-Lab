@@ -5,10 +5,10 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYSTEM-CARD-001` |
-| Versión | `1.1.0` |
+| Versión | `1.2.0` |
 | Fecha de corte | 2026-07-28 |
 | Estado | `DESCRIPTIVA_ALCANCE_ACTUAL` |
-| Corte de las fuentes del repositorio | commit `a4ab56c3f706ae1073f9006b2f74e96d3c187b17` |
+| Corte de las fuentes del repositorio | commit `648dd9afe9ef696388257ebf8dda4b59ece1aeb5` |
 | Candidato de producto evaluado | commit `77edd64037bb0e41edffa58cae2682ba7d2694d2`, árbol `bc09b78f7f3d85f94241f9955e79abb264bd89de` |
 | Evidencia final | `DAT-25`, SHA-256 `05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d` |
 | Ámbito | Laboratorio local, determinista y con datos exclusivamente sintéticos |
@@ -32,7 +32,7 @@ enumeradas.
 | Actor | Relación actual con el sistema |
 |---|---|
 | `ACT-01` | Operador local que ejecuta `analyze` o `baseline` y recibe JSON por `stdout`; la aplicación no ofrece login propio. |
-| `ACT-02` | Mantenedor y ejecutor de pruebas que modifica, valida y versiona el laboratorio mediante su autoridad de sistema operativo y GitHub. La RACI formal sigue pendiente de `PGS-06-M03`. |
+| `ACT-02` | Mantenedor y ejecutor de pruebas que modifica, valida y versiona el laboratorio mediante su autoridad de sistema operativo y GitHub. [`GSL-RACI-001`](./raci.md) formaliza la concentración actual de accountability. |
 | `ACT-03` | Llamador interno del flujo de borradores; usa una identidad sintética, no una presencia humana verificada. Este flujo no está expuesto por la CLI. |
 
 ## Usos previstos y prohibidos
@@ -173,6 +173,9 @@ Revisar esta ficha si cambia cualquiera de estos elementos:
 
 La [evaluación de impacto `GSL-AIA-001`](./ai-impact-assessment.md) completa
 `PGS-06-M02` para el alcance actual sin autorizar una ampliación ni aceptar
-riesgo. Todavía no existen la RACI y el registro formal de riesgos
-(`PGS-06-M03`), el mapa de cumplimiento (`PGS-06-M04`) ni la política completa
-de cambios de modelo y reevaluación (`PGS-06-M09`).
+riesgo. La [RACI `GSL-RACI-001`](./raci.md) y el
+[registro `GSL-RISK-REGISTER-001`](./risk-register.md) completan
+`PGS-06-M03`, mantienen las seis decisiones humanas pendientes y no atribuyen
+una revisión independiente inexistente. Todavía no existen el mapa de
+cumplimiento (`PGS-06-M04`) ni la política completa de cambios de modelo y
+reevaluación (`PGS-06-M09`).

@@ -5,10 +5,10 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-NIST-CONTROLS-001` |
-| Versión | `1.12.0` |
-| Fecha de corte | 2026-07-27 |
+| Versión | `1.13.0` |
+| Fecha de corte | 2026-07-28 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
-| Control vigente | PGS-05-M07, retest final canónico; PGS-05-M08 añade solo el snapshot documental de riesgo residual |
+| Control vigente | PGS-05-M07, retest final canónico; PGS-06-M02 y PGS-06-M03 añaden evaluación de impacto, RACI y registro formal sin aceptar riesgo |
 | Threat model de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md), [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) y [`GSL-THREAT-CROSSWALK-001`](./threat-crosswalk.md) |
 | Autoridad de origen | [`GSL-AUTH-MATRIX-001`](./authority-matrix.md) |
 | Baseline normativa | [NIST AI RMF 1.0 y NIST SP 800-218A](./framework-versions.md) |
@@ -59,31 +59,15 @@ separado en el registro de controles.
 | `ACT-03` — confirmador de un borrador | Actual, interno | Autentica un principal sintético configurado y aprueba una propuesta concreta antes de un efecto `C2`. No acredita presencia ni identidad de una persona real. |
 | `REV-01` — revisor independiente | Planificado | Persona cualificada distinta de quien diseñó e implementó el candidato. Revisará threat model y al menos una prueba en PGS-07-M04; todavía no hay una persona asignada. |
 
-### Distribución preliminar del ciclo
+### Distribución formal del ciclo
 
-`A`, `R`, `C` e `I` son abreviaturas documentales de la distribución actual, no
-una RACI formal ni un registro de aceptación. PGS-06-M03 conserva la creación
-de ambos artefactos. Las marcas de `REV-01` solo se activarán cuando exista una
-persona independiente.
-
-| Actividad | `ACT-02` | `ACT-01` | `ACT-03` | `REV-01` |
-|---|---|---|---|---|
-| Requisitos, tolerancia, priorización y aceptación de riesgo residual | `A/R` | `C` | `C` | `I` planificado |
-| Inventario, threat model, arquitectura y diseño de controles | `A/R` | `C` | `C` | `C` planificado |
-| Código, datos, dependencias, build y evidencia de release | `A/R` | `I` | `I` | `C` planificado |
-| Operación autorizada y comunicación de anomalías | `A` | `R` | `I` | `I` planificado |
-| Confirmación humana de una acción con efecto | `A` | `I` | `R` | `C` planificado |
-| Diseño del harness, ejecución de pruebas, métricas y retest | `A/R` | `C` | `I` | `C` planificado |
-| Parada inicial, respuesta, recuperación y análisis de causa | `A/R` | `R` | `I` | `C` planificado |
-| Revisión independiente | `A`, solo la encarga | `I` | `I` | `R` planificado |
-| Cambio, release, rollback y retirada del sistema | `A/R` | `I` | `I` | `C` planificado |
-
-La concentración actual de `A` y `R` en `ACT-02` es una limitación conocida
-del laboratorio individual. No se presenta como separación de funciones.
-`ACT-03` constituye una identidad sintética autenticada, no una identidad
-humana real. Si se incorpora un proveedor, repositorio remoto o servicio
-operado por un tercero, deberá
-definirse entonces el modelo de responsabilidad compartida; hoy no existe.
+[`GSL-RACI-001`](./raci.md) es la única matriz RACI formal del alcance actual.
+Mantiene exactamente un accountable por actividad, distingue responsabilidades
+actuales de marcas planificadas y documenta la concentración de funciones en
+`ACT-02`. [`GSL-RISK-REGISTER-001`](./risk-register.md) es el registro formal
+de `RR-01` a `RR-06`; las seis decisiones permanecen
+`PENDIENTE_HUMANA`. Este mapa conserva únicamente el resumen de roles necesario
+para interpretar los controles y no duplica esos dos artefactos.
 
 ## Registro de controles
 
@@ -94,7 +78,7 @@ documentales; no prueba que un control sea eficaz frente a un atacante.
 <!-- control-traceability:start -->
 | ID | Control | Estado | Responsable | Amenazas | Evidencia actual | Pruebas actuales | Limitación | Próxima evidencia prevista |
 |---|---|---|---|---|---|---|---|---|
-| `CTL-01` | Requisitos de seguridad, tolerancia y tratamiento de riesgo | `PARCIAL` | `A/R ACT-02` | `AC-PI-01`, `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-JB-02`, `AC-EX-01`, `AC-EX-02`, `AC-EX-03`, `AC-TOL-01`, `AC-TOL-02`, `AC-TOL-03`, `AC-TOL-04`, `AC-TOL-05`, `AC-DOS-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | README, criterios de éxito, catálogo y priorización fijan límites; `GSL-RESIDUAL-RISK-001` documenta seis tratamientos posteriores a `DAT-25` sin cambiar scores | `tests/test_control_traceability.py::test_control_traceability_matrix_is_complete_and_well_formed`<br>`tests/test_adversarial_corpus.py::test_corpus_covers_all_abuse_cases_and_six_families`<br>`tests/test_residual_risk.py::test_six_primary_risks_cover_each_abuse_case_exactly_once` | El snapshot valida trazabilidad y cobertura documental, no eficacia ni aceptación; faltan la evaluación de impacto, la RACI, el registro formal, las decisiones humanas y la revisión periódica | PGS-06-M02 a M04 |
+| `CTL-01` | Requisitos de seguridad, tolerancia y tratamiento de riesgo | `PARCIAL` | `A/R ACT-02` | `AC-PI-01`, `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-JB-02`, `AC-EX-01`, `AC-EX-02`, `AC-EX-03`, `AC-TOL-01`, `AC-TOL-02`, `AC-TOL-03`, `AC-TOL-04`, `AC-TOL-05`, `AC-DOS-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | README, criterios de éxito y priorización fijan límites; `GSL-AIA-001`, `GSL-RACI-001` y `GSL-RISK-REGISTER-001` formalizan impacto, responsabilidades, seguimiento y seis decisiones pendientes sin cambiar scores | `tests/test_control_traceability.py::test_control_traceability_matrix_is_complete_and_well_formed`<br>`tests/test_adversarial_corpus.py::test_corpus_covers_all_abuse_cases_and_six_families`<br>`tests/test_residual_risk.py::test_six_primary_risks_cover_each_abuse_case_exactly_once`<br>`tests/test_raci_risk_register.py::test_formal_risk_register_preserves_scope_ownership_and_pending_decisions` | La trazabilidad documental no demuestra eficacia ni aceptación; faltan las seis decisiones humanas, clasificación de cumplimiento y revisión periódica | PGS-06-M04 y revisión en cada trigger |
 | `CTL-02` | Inventario, límites, autoridad, threat model y disparadores de cambio | `PRESENTE` | `A/R ACT-02`; `C REV-01` planificado | `AC-PI-01`, `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-JB-02`, `AC-EX-01`, `AC-EX-02`, `AC-EX-03`, `AC-TOL-01`, `AC-TOL-02`, `AC-TOL-03`, `AC-TOL-04`, `AC-TOL-05`, `AC-DOS-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | Inventario, C4, autoridad, catálogo y priorización incorporan `CMP-06` y el alcance PI/JB/EX/TOL de `CMP-07` | `tests/test_control_traceability.py::test_control_traceability_matrix_is_complete_and_well_formed`<br>`tests/test_adversarial_corpus.py::test_manifest_fixes_scope_counts_and_partial_test_wiring` | La coherencia documental no sustituye revisar el threat model cuando el harness conecte nuevos casos, cambie el target o aparezca un disparador | Revisión en cada disparador y matriz final PGS-07-M06 |
 | `CTL-03` | Procedencia, esquema e integridad del corpus y artefactos | `PRESENTE` para los corpus sintéticos actuales | `A/R ACT-02` | `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | Los corpus aplican esquemas estrictos, procedencia, conteos y SHA-256; `CMP-18` fijó 22 fuentes del runtime, 6 fuentes de corpus y 15 artefactos históricos, mantuvo entradas, oráculos y rúbrica fuera del candidato y conservó sus hashes en `DAT-25` | `tests/test_data_contract.py::test_manifest_hashes_counts_and_references`<br>`tests/test_adversarial_corpus.py::test_inputs_and_oracles_are_strictly_separated_and_joined`<br>`tests/test_final_retest.py::test_candidate_is_exact_isolated_and_all_sources_are_hashed`<br>`tests/test_final_retest.py::test_historical_artifacts_are_pinned_and_dat22_is_not_final_performance` | No hay firma ni control de acceso propio, y los límites actuales no sustituyen una política para futuros corpus o datos reales | Supply chain PGS-06-M08 |
 | `CTL-04` | Separación de instrucciones y contenido no confiable, resistencia a inyección y jailbreak | `PARCIAL` | `A/R ACT-02` | `AC-PI-01`, `AC-PI-02`, `AC-PI-03`, `AC-JB-01` | `ModelMessage` clasifica los dominios de confianza; `ModelRequest` exige una instrucción confiable inicial, datos de usuario y contenido no confiable, y las salidas de herramienta vuelven como no confiables; `DAT-25` conserva 14/14 casos adversarios completados, reduce el éxito observado de 1/14 a 0/14 y mantiene 12/12 casos benignos sin regresión técnica | `tests/test_instruction_boundary.py::test_initial_request_separates_every_trust_domain`<br>`tests/test_prompt_injection_evaluation.py::test_indirect_prompt_injection_completes_safely_in_a_temporary_copy`<br>`tests/test_final_retest.py::test_final_adversarial_metrics_are_observation_derived`<br>`tests/test_final_retest.py::test_final_benign_rubric_demonstrates_sc07_without_semantic_claim` | La comparación cubre un doble determinista y una rúbrica cerrada, no paráfrasis generales, equivalencia semántica, ataques desconocidos o un modelo GenAI real | Evaluación con modelo real posterior |
@@ -105,7 +89,7 @@ documentales; no prueba que un control sea eficaz frente a un atacante.
 | `CTL-09` | Política de salida, redacción, errores saneados y detección de fugas | `PARCIAL` | `A/R ACT-02` | `AC-JB-01`, `AC-EX-03` | `CMP-09` aplica `reject > redact > allow`, sustituye correo y rutas por marcadores fijos, rechaza categorías de alta señal y evita conservar texto bruto; `DAT-25` conserva 12/12 casos benignos, 0 falsos rechazos y demuestra SC-07 solo mediante las 84 reglas cerradas predeclaradas en `DAT-24` | `tests/test_output_policy.py::test_redaction_is_deterministic_idempotent_and_value_free`<br>`tests/test_jailbreak_disclosure_evaluation.py::test_knowledge_disclosure_is_rejected_without_content_or_enumeration`<br>`tests/test_final_retest.py::test_final_benign_rubric_demonstrates_sc07_without_semantic_claim`<br>`tests/test_final_retest.py::test_m06_oracle_boundary_probe_is_repeated_without_leakage` | La cobertura literal continúa en cero y la rúbrica cerrada no demuestra equivalencia semántica general, detección universal ni comportamiento de un modelo real | Evaluación semántica autorizada y modelo real posterior |
 | `CTL-10` | Límites de tamaño, tiempo, iteraciones, concurrencia y consumo | `PARCIAL` | `A/R ACT-02` | `AC-JB-02`, `AC-TOL-02`, `AC-DOS-01`, `AC-DOS-03` | `CMP-10` implementa preflight benigno, límites UTF-8, presupuestos por operación, consumo previo, checkpoints y lock advisory; `CMP-16` conserva 30 pares operativos, `DAT-25` fija cuatro fixtures DOS/SC inertes y `GSL-RESIDUAL-RISK-001` conserva esa exposición sin ejecutarla | `tests/test_resource_control.py::test_operation_budget_is_cumulative_and_observable`<br>`tests/test_resource_control.py::test_cli_lock_conflict_is_immediate_and_keeps_stdout_empty`<br>`tests/test_operational_metrics.py::test_reduced_real_smoke_verifies_both_candidates_without_repo_mutation`<br>`tests/test_final_retest.py::test_noncanonical_seam_cannot_masquerade_as_final` | El plazo no cancela llamadas síncronas, la API puede omitir el lock y no hay rate limit persistente, cuota distribuida, límite RSS o aislamiento de SO; los cuatro casos DOS/SC no se ejecutaron y M08 no mide su consumo | PGS-06-M07 y PGS-07-M02, bajo autorización posterior |
 | `CTL-11` | Integridad de código, dependencias, cambios y releases | `PARCIAL` | `A/R ACT-02`; `C REV-01` planificado | `AC-DOS-02`, `AC-SC-01` | Git, remoto público, `uv.lock`, hashes del corpus y commits granulares permiten detectar diferencias en los artefactos cubiertos | `tests/test_adversarial_baseline.py::test_run_rejects_candidate_drift`<br>`tests/test_adversarial_baseline.py::test_versioned_evidence_is_reviewed_sanitized_and_internally_consistent` | No existen firma, CI, SBOM, revisión independiente ni política de release; las pruebas no cubren toda la cadena de suministro | PGS-06-M08 y PGS-07-M01/M03/M04 |
-| `CTL-12` | Harness adversario, métricas, regresión y revisión independiente | `PARCIAL` | `A/R ACT-02`; `R REV-01` solo para revisión independiente | `AC-PI-01`, `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-JB-02`, `AC-EX-01`, `AC-EX-02`, `AC-EX-03`, `AC-TOL-01`, `AC-TOL-02`, `AC-TOL-03`, `AC-TOL-04`, `AC-TOL-05`, `AC-DOS-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | `CMP-07` conecta 14 fixtures PI/JB/EX/TOL con oráculos separados; `CMP-08` fija la baseline histórica; `CMP-13` a `CMP-17` conservan las comparaciones intermedias; `CMP-18` produjo `DAT-25` con 14/14 adversarios, 12/12 benignos y SC-06/SC-07 demostrados en su alcance cerrado; `GSL-RESIDUAL-RISK-001` documenta seis exposiciones sin aceptar riesgo | `tests/test_adversarial_corpus.py::test_manifest_fixes_scope_counts_and_partial_test_wiring`<br>`tests/test_control_findings.py::test_verifier_checks_all_pinned_sources_and_evidence_assertions`<br>`tests/test_final_retest.py::test_pre_run_rubric_is_closed_complete_and_hash_pinned`<br>`tests/test_final_retest.py::test_final_adversarial_metrics_are_observation_derived`<br>`tests/test_final_retest.py::test_final_benign_rubric_demonstrates_sc07_without_semantic_claim`<br>`tests/test_final_retest.py::test_historical_artifacts_are_pinned_and_dat22_is_not_final_performance`<br>`tests/test_final_retest.py::test_snapshot_is_closed_sanitized_and_metrics_fail_closed` | Cuatro casos DOS/SC siguen inertes; `CF-002` no es computable; no se evalúan equivalencia semántica general, ataques desconocidos ni un LLM real; `DAT-22` es histórico, de un host/sesión y sin energía, TCO o significación; faltan el registro formal, decisiones humanas y revisión independiente | PGS-05-M09, PGS-06-M03 y PGS-07-M01 a M06 |
+| `CTL-12` | Harness adversario, métricas, regresión y revisión independiente | `PARCIAL` | `A/R ACT-02`; `R REV-01` solo para revisión independiente | `AC-PI-01`, `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-JB-02`, `AC-EX-01`, `AC-EX-02`, `AC-EX-03`, `AC-TOL-01`, `AC-TOL-02`, `AC-TOL-03`, `AC-TOL-04`, `AC-TOL-05`, `AC-DOS-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | `CMP-07` conecta 14 fixtures PI/JB/EX/TOL con oráculos separados; `CMP-08` fija la baseline histórica; `CMP-13` a `CMP-17` conservan las comparaciones intermedias; `CMP-18` produjo `DAT-25` con 14/14 adversarios, 12/12 benignos y SC-06/SC-07 demostrados en su alcance cerrado; `GSL-RISK-REGISTER-001` mantiene seis exposiciones abiertas sin aceptar riesgo | `tests/test_adversarial_corpus.py::test_manifest_fixes_scope_counts_and_partial_test_wiring`<br>`tests/test_control_findings.py::test_verifier_checks_all_pinned_sources_and_evidence_assertions`<br>`tests/test_final_retest.py::test_pre_run_rubric_is_closed_complete_and_hash_pinned`<br>`tests/test_final_retest.py::test_final_adversarial_metrics_are_observation_derived`<br>`tests/test_final_retest.py::test_final_benign_rubric_demonstrates_sc07_without_semantic_claim`<br>`tests/test_final_retest.py::test_historical_artifacts_are_pinned_and_dat22_is_not_final_performance`<br>`tests/test_final_retest.py::test_snapshot_is_closed_sanitized_and_metrics_fail_closed` | Cuatro casos DOS/SC siguen inertes; `CF-002` no es computable; no se evalúan equivalencia semántica general, ataques desconocidos ni un LLM real; `DAT-22` es histórico, de un host/sesión y sin energía, TCO o significación; faltan decisiones humanas y revisión independiente | PGS-07-M01 a M06 |
 | `CTL-13` | Eventos, monitorización, respuesta, rollback, comunicación y retirada | `PARCIAL` | `A/R ACT-02`; `R ACT-01` para avisos y parada | `AC-EX-03`, `AC-DOS-01`, `AC-DOS-02`, `AC-DOS-03`, `AC-SC-01` | `CMP-11` aporta observabilidad efímera y saneada; `CMP-12` detiene y reconcilia únicamente el efecto local de borrador según su condición real | `tests/test_security_events.py::test_event_and_report_are_closed_frozen_and_canonically_chained`<br>`tests/test_security_events.py::test_resource_and_lock_failures_emit_sanitized_signals`<br>`tests/test_sandbox_recovery.py::test_stop_is_idempotent_revokes_authority_and_context_failure_is_terminal` | No hay logging persistente, telemetría o monitor externo, alertas, runbook, respuesta general, comunicación o retirada; una señal no confirma un ataque ni activa la recuperación | PGS-06-M05 a M07 y PGS-07 |
 <!-- control-traceability:end -->
 
@@ -170,9 +154,10 @@ documentales; no prueba que un control sea eficaz frente a un atacante.
   ni regresión técnica. SC-07 solo queda demostrado bajo la rúbrica cerrada
   fijada en `DAT-24`; no se afirma equivalencia semántica general ni eficacia
   frente a un modelo GenAI real.
-- `GSL-RESIDUAL-RISK-001` documenta seis riesgos y tratamientos posteriores,
-  pero no completa `CTL-07`, `CTL-10` o `CTL-12`, no acredita revisión humana y
-  no crea el registro formal o la aceptación reservados a PGS-06-M03.
+- `GSL-RESIDUAL-RISK-001` documenta el snapshot de seis riesgos;
+  `GSL-RISK-REGISTER-001` los mantiene abiertos y
+  `GSL-RACI-001` formaliza responsabilidades. Ninguno completa `CTL-07`,
+  `CTL-10` o `CTL-12`, acredita revisión humana o acepta riesgo.
 - `AC-SC-01` no puede cerrarse solo con Git local y un lockfile.
 - PGS-02-M08 no implementó por sí sola los controles de PGS-04. Con la
   implementación y verificación documental de PGS-04-M09, PGS-04 y el hito
@@ -223,5 +208,8 @@ PGS-05-M07 fija la rúbrica `DAT-24`, ejecuta una sola vez el retest mediante
 `CMP-18` y conserva el resultado saneado en `DAT-25`. PGS-05-M08 añade
 [`GSL-RESIDUAL-RISK-001`](./residual-risk-and-tradeoffs.md) sin reinterpretar
 los cuatro casos inertes, la ausencia de un modelo real o la rúbrica cerrada
-como garantías más amplias. El siguiente tratamiento es PGS-05-M09; la RACI,
-el registro formal y cualquier aceptación continúan en PGS-06-M03.
+como garantías más amplias. PGS-05-M09 fija la decisión arquitectónica;
+PGS-06-M02 evalúa el impacto y PGS-06-M03 crea la
+[RACI](./raci.md) y el [registro formal](./risk-register.md). La clasificación
+de cumplimiento continúa en PGS-06-M04 y cualquier aceptación sigue siendo
+una decisión humana pendiente.

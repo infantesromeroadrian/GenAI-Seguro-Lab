@@ -5,12 +5,12 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-AIA-001` |
-| Versión | `1.0.0` |
+| Versión | `1.1.0` |
 | Fecha | 2026-07-28 |
 | Estado de la evaluación | `COMPLETADA_ALCANCE_ACTUAL` |
 | Decisión que habilita | `CONTINUAR_SOLO_LABORATORIO_ACTUAL` |
 | Límite de autoridad | `NO_AUTORIZA_AMPLIACION` |
-| Corte de las fuentes | commit `a4ab56c3f706ae1073f9006b2f74e96d3c187b17` |
+| Corte de las fuentes | commit `648dd9afe9ef696388257ebf8dda4b59ece1aeb5` |
 | Candidato de producto evaluado | commit `77edd64037bb0e41edffa58cae2682ba7d2694d2` |
 | Evaluador de `DAT-25` | commit `636e1dbb8cac21c8c7bfc0709bf1d88b4b56304e` |
 | Evidencia final | `DAT-25`, SHA-256 `05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d` |
@@ -105,8 +105,8 @@ Daños plausibles incluso en el laboratorio:
 ## Registro de impactos
 
 Cada fila identifica la exposición actual, la evidencia disponible y el
-trigger que impide extrapolarla. No sustituye el registro formal de riesgos de
-`PGS-06-M03`.
+trigger que impide extrapolarla. No sustituye el
+[registro formal de riesgos](./risk-register.md).
 
 <!-- aia-impact-register:start -->
 | ID | Dimensión y partes afectadas | Evidencia y salvaguardas actuales | Impacto o incertidumbre no resueltos | Trigger y tratamiento previo | Clasificación actual |
@@ -120,7 +120,7 @@ trigger que impide extrapolarla. No sustituye el registro formal de riesgos de
 | `AIA-IMP-07` | Seguridad física y decisiones de alto impacto; futuras personas afectadas | No hay actuador físico ni uso médico, legal, laboral, financiero o de infraestructura crítica | No se han definido severidad, tolerancia, fallback o responsabilidad para esos usos | Un uso de alto impacto exige evaluación nueva y autorización distinta antes de diseñarlo | `NO_APLICA_ALCANCE_ACTUAL` |
 | `AIA-IMP-08` | Disponibilidad, recursos e impacto operativo; `ACT-01`, `ACT-02`, host local | Presupuestos cooperativos, preflight, checkpoints y lock advisory; `CTL-10` y `CTL-13` | `RR-01` y `RR-02` conservan DOS/corpus inertes; no hay carga, concurrencia, RSS bajo ataque, energía ni recuperación medida | Solo ejecutar pruebas DOS bajo RoE, topes, parada, recuperación y autorización nuevas | `NO_DEMOSTRADO` |
 | `AIA-IMP-09` | Supply chain, propiedad intelectual y terceros; `ACT-02`, mantenedores futuros | Git, `uv.lock`, manifiestos y SHA-256 detectan parte del drift; `CTL-03` y `CTL-11` | `RR-03`: no hay firma, SBOM, CI, release policy, separación de funciones o ataque ejercitado | Inventariar dependencias, procedencia y proceso de release antes de otra distribución o integración | `NO_DEMOSTRADO` |
-| `AIA-IMP-10` | Rendición de cuentas, auditabilidad y contestabilidad; `ACT-01`, `ACT-02`, `ACT-03` | Matriz técnica de responsabilidades, evidencia versionada y eventos efímeros; `CTL-01`, `CTL-02`, `CTL-12` y `CTL-13` | No hay RACI formal, registro formal, decisión humana de riesgo, logs persistentes o canal de reclamación | Completar `PGS-06-M03`, M05 y M06 antes de atribuir gobierno operativo completo | `NO_DEMOSTRADO` |
+| `AIA-IMP-10` | Rendición de cuentas, auditabilidad y contestabilidad; `ACT-01`, `ACT-02`, `ACT-03` | `GSL-RACI-001`, `GSL-RISK-REGISTER-001`, evidencia versionada y eventos efímeros; `CTL-01`, `CTL-02`, `CTL-12` y `CTL-13` | La autoridad sigue concentrada; faltan decisiones humanas de riesgo, logs persistentes, revisor asignado y canal de reclamación | Completar M05, M06 y `PGS-07-M04` antes de atribuir gobierno operativo completo | `NO_DEMOSTRADO` |
 <!-- aia-impact-register:end -->
 
 ## Handoff de riesgo residual
@@ -134,7 +134,7 @@ repriorizar, cerrar o duplicar los riesgos.
 | `RR-01` | `AIA-IMP-08` | ¿Qué exposición a agotamiento local y qué prueba limitada se autorizan? | `PGS-06-M07`, `PGS-07-M02` | `PENDIENTE_HUMANA` |
 | `RR-02` | `AIA-IMP-02`, `AIA-IMP-08` | ¿Qué corrupción, tamaño y tolerancia de indisponibilidad se evaluarán? | `PGS-06-M08`, `PGS-07-M01`, `PGS-07-M02` | `PENDIENTE_HUMANA` |
 | `RR-03` | `AIA-IMP-09`, `AIA-IMP-10` | ¿Qué procedencia, revisión y release se exigirán antes de publicar otro artefacto? | `PGS-06-M08`, `PGS-07-M01`, `PGS-07-M04` | `PENDIENTE_HUMANA` |
-| `RR-04` | `AIA-IMP-01`, `AIA-IMP-10` | ¿La aprobación sigue siendo sintética o requiere presencia humana real? | `PGS-06-M03`, `PGS-07-M04` | `PENDIENTE_HUMANA` |
+| `RR-04` | `AIA-IMP-01`, `AIA-IMP-10` | ¿La aprobación sigue siendo sintética o requiere presencia humana real? | `PGS-07-M04` | `PENDIENTE_HUMANA` |
 | `RR-05` | `AIA-IMP-05`, `AIA-IMP-07` | ¿El confinamiento lógico basta para el siguiente efecto autorizado? | `PGS-06-M07`, `PGS-07-M01`, `PGS-07-M02` | `PENDIENTE_HUMANA` |
 | `RR-06` | `AIA-IMP-03`, `AIA-IMP-04`, `AIA-IMP-06` | ¿Qué modelo, interfaz, distribución y revisión independiente justifican ampliar las afirmaciones? | `PGS-06-M09`, `PGS-07-M02`, `PGS-07-M04`, `PGS-07-M06` | `PENDIENTE_HUMANA` |
 <!-- aia-risk-handoff:end -->
@@ -178,7 +178,7 @@ La evaluación queda `COMPLETADA_ALCANCE_ACTUAL`. El impacto directo actual es
 acotado porque el producto es local, sintético, enumerado, sin red, sin
 usuarios externos y sin decisiones de alto impacto. Esto no convierte en
 aceptables las incertidumbres: disponibilidad, supply chain, presencia humana,
-aislamiento, generalización y gobierno formal continúan abiertas.
+aislamiento, generalización y gobierno operativo continúan abiertas.
 
 Se permite continuar únicamente con el laboratorio ya descrito. Debe
 detenerse una ampliación antes de implementarla si introduce cualquier trigger
@@ -188,11 +188,15 @@ nueva o versionada, evidencia proporcional y la autoridad correspondiente.
 
 Siguientes entregas:
 
-- `PGS-06-M03`: RACI y registro formal de riesgos, sin heredar aceptación;
 - `PGS-06-M04`: mapa de cumplimiento y clasificación de obligaciones;
 - `PGS-06-M05` a M07: logs, respuesta, parada y recuperación;
 - `PGS-06-M08`: dependencias y supply chain;
 - `PGS-06-M09`: política de cambios de modelo y reevaluación.
+
+`PGS-06-M03` ya está completada mediante
+[`GSL-RACI-001`](./raci.md) y
+[`GSL-RISK-REGISTER-001`](./risk-register.md), sin heredar aceptación ni
+atribuir revisión independiente.
 
 ## Relación con Tecture
 

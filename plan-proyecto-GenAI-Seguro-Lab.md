@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-05-M09 y PGS-06-M01 a M02 completadas; PGS-04 y P01-M08
+- **Estado actual:** PGS-00-M01 a PGS-05-M09 y PGS-06-M01 a M03 completadas; PGS-04 y P01-M08
   quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
   repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
   1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no
@@ -66,6 +66,13 @@
   como `PENDIENTE_HUMANA` y exige reevaluar antes de ampliar modelo, datos,
   interfaz, efectos o despliegue. No realiza clasificación jurídica, no crea
   el registro formal de M03 ni autoriza producción.
+  PGS-06-M03 publica
+  [`GSL-RACI-001`](./docs/raci.md) y
+  [`GSL-RISK-REGISTER-001`](./docs/risk-register.md): doce actividades tienen
+  exactamente un accountable actual y los seis riesgos conservan owner,
+  controles, brecha, respuesta propuesta, target, trigger y una decisión
+  `PENDIENTE_HUMANA`. `REV-01` continúa planificado y sin asignar; no se acepta
+  riesgo ni se atribuye revisión independiente.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** el repositorio público y su `main`
@@ -368,7 +375,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 
 - [x] **PGS-06-M01** Crear system card, data card y model card.
 - [x] **PGS-06-M02** Completar la evaluación de impacto de IA.
-- [ ] **PGS-06-M03** Crear RACI y registro de riesgos.
+- [x] **PGS-06-M03** Crear RACI y registro de riesgos.
 - [ ] **PGS-06-M04** Crear el mapa de cumplimiento, diferenciando obligación, guía y decisión voluntaria.
 - [ ] **PGS-06-M05** Definir política de logs, redacción, conservación y eliminación.
 - [ ] **PGS-06-M06** Crear el runbook de respuesta a incidentes de IA.
@@ -575,6 +582,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-06-M03 — crear RACI y registro de riesgos.**
+**PGS-06-M04 — crear el mapa de cumplimiento, diferenciando obligación, guía y decisión voluntaria.**
 
-**Progreso interno:** 50 de 66 microtareas completadas, 16 abiertas (**75,8 %**).
+**Progreso interno:** 51 de 66 microtareas completadas, 15 abiertas (**77,3 %**).
