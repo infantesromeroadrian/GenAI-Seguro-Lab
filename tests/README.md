@@ -201,3 +201,9 @@ reconstrucción con red en build hermética ni en prueba del producto.
 el resumen de 12 benignos y la separación exacta entre 14 casos adversarios
 ejecutados y cuatro DOS/SC inertes. También comprueba el saneado, la ausencia
 del runner de `DAT-25`, su hash inmutable y el cierre documental de M02.
+
+`test_content_scan_evidence.py` valida el candidato de
+`GSL-CONTENT-SCAN-001`, las dos pasadas de Gitleaks, 56 registros sintéticos,
+32 eventos fijados, rangos reservados y la ausencia observada de categorías de
+identidad. Exige además que la procedencia personal histórica quede declarada
+sin valores, sin reescritura y sin presentar cero hallazgos como garantía.

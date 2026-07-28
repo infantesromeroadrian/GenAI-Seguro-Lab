@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-07-M02 completadas; PGS-04 y P01-M08
+- **Estado actual:** PGS-00-M01 a PGS-07-M03 completadas; PGS-04 y P01-M08
   quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
   repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
   1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no
@@ -109,6 +109,12 @@
   14 adversarios PI/JB/EX/TOL autorizados. Las cuatro fixtures DOS/SC siguen
   inertes, las repeticiones quedan declaradas y `DAT-25` no se ejecuta ni
   cambia.
+  PGS-07-M03 fija
+  [`GSL-CONTENT-SCAN-001`](./evaluations/content-scan-v1.json): Gitleaks no
+  observa secretos en el árbol ni en 67 commits y los 56 registros del corpus
+  son sintéticos. El historial conserva procedencia personal y cuatro commits
+  que tocaron una ruta local ya retirada; se declara sin copiar valores y sin
+  reescribir el historial público.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** el repositorio público y su `main`
@@ -427,7 +433,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 
 - [x] **PGS-07-M01** Reconstruir el proyecto desde un entorno limpio.
 - [x] **PGS-07-M02** Ejecutar tests, corpus benigno y corpus adversario.
-- [ ] **PGS-07-M03** Verificar que los logs y artefactos no contienen secretos ni datos reales.
+- [x] **PGS-07-M03** Verificar que los logs y artefactos no contienen secretos ni datos reales.
 - [ ] **PGS-07-M04** Pedir una revisión independiente del threat model y de una prueba.
 - [ ] **PGS-07-M05** Incorporar correcciones justificadas y registrar discrepancias.
 - [ ] **PGS-07-M06** Crear la matriz final requisito–evidencia–resultado–límite.
@@ -618,6 +624,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-07-M03 — verificar que logs y artefactos no contienen secretos ni datos reales.**
+**PGS-07-M04 — obtener una revisión humana independiente del threat model y de una prueba.**
 
-**Progreso interno:** 59 de 66 microtareas completadas, 7 abiertas (**89,4 %**).
+**Progreso interno:** 60 de 66 microtareas completadas, 6 abiertas (**90,9 %**).

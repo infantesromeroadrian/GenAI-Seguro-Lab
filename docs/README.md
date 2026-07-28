@@ -113,6 +113,11 @@ real.
   14 casos adversarios PI/JB/EX/TOL autorizados sobre el commit público
   `6d4f132`; mantiene los cuatro DOS/SC inertes y explicita repeticiones,
   ausencia de aislamiento kernel y límites de generalización.
+- [Escaneo de contenido
+  v1](../evaluations/content-scan-v1.json): cero hallazgos de Gitleaks en árbol
+  e historial, 56/56 registros sintéticos y eventos saneados; declara sin
+  copiar valores que la procedencia Git histórica conserva metadatos
+  personales y que no hubo reescritura destructiva.
 - [Riesgo residual y compensaciones](./residual-risk-and-tradeoffs.md):
   `GSL-RESIDUAL-RISK-001` agrupa los 17 abuse cases una sola vez en seis
   riesgos posteriores a `DAT-25`, distingue fuentes finales, históricas e

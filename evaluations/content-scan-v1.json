@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "snapshot_id": "GSL-CONTENT-SCAN-001",
+  "microtask": "PGS-07-M03",
+  "executed_at": "2026-07-28T10:16:17Z",
+  "candidate": {
+    "commit": "7f007a9573c7790e50953d205d64c65a4d4b3c0b",
+    "tree": "795f3e52a966984e2e036c1061170227bc57ccee",
+    "branch": "main",
+    "tracked_files": 176,
+    "tracked_bytes": 1960699
+  },
+  "secret_scan": {
+    "scanner": "gitleaks",
+    "version": "8.30.1",
+    "configuration": "embedded default rules",
+    "redaction_percent": 100,
+    "tracked_tree": {
+      "source": "git archive of the candidate tree",
+      "bytes_scanned": 1960699,
+      "findings": 0,
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    "git_history": {
+      "scope": "all refs",
+      "commits_scanned": 67,
+      "bytes_scanned": 2425087,
+      "findings": 0,
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    "raw_reports_retained": false
+  },
+  "versioned_artifacts": {
+    "machine_readable_evaluation_files": 19,
+    "versioned_event_files": [
+      {
+        "path": "evaluations/adversarial-baseline-v1/events.jsonl",
+        "records": 16,
+        "sha256": "b3e0819dd2322ece607c76909037bb11f966c1b2062347f247fd833fd3c8de43"
+      },
+      {
+        "path": "evaluations/adversarial-retest-v1/events.jsonl",
+        "records": 16,
+        "sha256": "32e666b567d7e39667e6fdb62e8923f52efb9f9ccadb3eca040a9a27b2ac7743"
+      }
+    ],
+    "event_records": 32,
+    "secret_or_real_identity_marker_hits_in_event_files": 0,
+    "sensitive_filename_hits": 0
+  },
+  "real_data_classification": {
+    "structured_corpus_records": 56,
+    "records_marked_synthetic": 56,
+    "records_with_other_sensitivity": 0,
+    "synthetic_home_path_canaries": 5,
+    "synthetic_email_canaries": 8,
+    "synthetic_private_key_header_canaries": 1,
+    "non_fixture_home_path_hits_in_current_tree": 0,
+    "non_example_email_hits_in_current_tree": 0,
+    "government_identity_number_hits": 0,
+    "payment_card_candidates_after_hex_boundary_filter": 0,
+    "ipv4_addresses": {
+      "unique": 6,
+      "documentation_ranges": 6,
+      "other": 0
+    },
+    "url_hosts": {
+      "unique": 18,
+      "classification": "official references, package infrastructure, the public repository or reserved example domains",
+      "unclassified": 0
+    },
+    "public_repository_owner_occurrences": 10,
+    "public_repository_owner_classification": "expected public routing and provenance metadata"
+  },
+  "historical_provenance_residual": {
+    "present": true,
+    "secret": false,
+    "personal_author_email_identities": 1,
+    "commits_touching_a_removed_personal_home_path": 4,
+    "files_touching_a_removed_personal_home_path": 3,
+    "raw_values_recorded": false,
+    "current_tree_occurrences": 0,
+    "history_rewrite_performed": false,
+    "reason_not_rewritten": "Public history rewriting is destructive and outside the authorised microtask.",
+    "disposition": "DECLARED_RESIDUAL"
+  },
+  "postconditions": {
+    "tracked_diff_count": 0,
+    "status_count": 0,
+    "temporary_scan_root_cleanup": "MOVED_TO_TRASH"
+  },
+  "dat25": {
+    "executed": false,
+    "changed": false,
+    "sha256": "05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d"
+  },
+  "result": "PASS_WITH_DECLARED_HISTORICAL_RESIDUAL",
+  "limits": [
+    "Zero Gitleaks findings means no match to the embedded Gitleaks 8.30.1 rules, not proof that no secret can exist.",
+    "Real-data classification uses explicit finite patterns, corpus metadata and reserved ranges; it is not a universal data-loss-prevention system.",
+    "Synthetic canaries are deliberately present to test redaction and are not credentials, identities or local paths of a real operator.",
+    "The public repository owner is expected public routing metadata and is not part of the runtime corpus.",
+    "Git author metadata and a removed personal local path remain in public history; no raw value is copied into this evidence.",
+    "No history rewrite, credential rotation, repository transfer or other destructive action was authorised or performed.",
+    "DAT-25 was neither executed nor changed."
+  ]
+}

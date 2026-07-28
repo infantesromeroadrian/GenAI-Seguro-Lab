@@ -274,3 +274,26 @@ suite completa y de nuevo como selección explícita. No hubo modelo, proveedor,
 datos o efectos reales, y no existió aislamiento de red a nivel kernel. El
 resultado acredita los contratos y fixtures versionados, no seguridad
 universal. `DAT-25` no se ejecutó ni cambió.
+
+## Escaneo de contenido v1
+
+[`content-scan-v1.json`](./content-scan-v1.json) fija
+`GSL-CONTENT-SCAN-001` sobre el commit `7f007a9` y su árbol `795f3e52`.
+Gitleaks 8.30.1, con redacción completa y reglas por defecto, observó cero
+hallazgos tanto en los 176 archivos del árbol exacto como en los 67 commits
+alcanzables.
+
+La revisión acotada de datos confirmó 56/56 registros sintéticos, 32 eventos
+versionados sin marcadores de identidad real y únicamente canarios de test:
+rutas con identidades ficticias, correos bajo dominios reservados y una
+cabecera de clave privada inerte. Las seis IPv4 pertenecen a rangos de
+documentación y todos los hosts son fuentes públicas, infraestructura de
+paquetes, el repositorio público o dominios reservados.
+
+El resultado es `PASS_WITH_DECLARED_HISTORICAL_RESIDUAL`: el árbol actual no
+conserva la antigua ruta personal, pero el historial público mantiene
+metadatos de autor y cuatro commits que tocaron esa ruta antes de retirarla.
+No se copian los valores a la evidencia ni se reescribe el historial, porque
+esa acción sería destructiva y no está autorizada. Cero coincidencias no
+demuestra ausencia universal de secretos o datos. `DAT-25` no se ejecutó ni
+cambió.
