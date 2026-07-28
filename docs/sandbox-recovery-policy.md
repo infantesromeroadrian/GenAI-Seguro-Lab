@@ -154,5 +154,7 @@ sesiones.
 - No instala handlers globales de `SIGINT` o `SIGTERM`, no reanuda trabajo y
   no ofrece una ruta CLI, MCP o remota de recuperación.
 - No aporta aislamiento del sistema operativo, autenticación humana real,
-  logging persistente, telemetría, SIEM o respuesta operativa. El
-  procedimiento humano completo sigue planificado en `PGS-06-M07`.
+  logging persistente, telemetría, SIEM o respuesta automática. El
+  [procedimiento humano de parada y
+  recuperación](./stop-recovery-procedure.md) completa `PGS-06-M07` sin
+  añadir esas capacidades al runtime.

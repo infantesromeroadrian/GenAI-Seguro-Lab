@@ -37,6 +37,10 @@ real.
   IA](./ai-incident-response-runbook.md): activación, cuatro severidades, ocho
   pasos, ocho playbooks, roles, evidencia, recuperación y límites sin
   atribuir automatización o revisión independiente.
+- [Procedimiento de parada y
+  recuperación](./stop-recovery-procedure.md): cuatro niveles, ocho pasos,
+  reconciliación, reanudación y rollback acotados sobre la implementación
+  existente, sin handlers globales ni borrado manual de transacciones.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.

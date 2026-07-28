@@ -110,7 +110,9 @@ retirada. Git o una nota humana no sustituyen el estado real del sistema.
 
 ## Criterios de recuperación y cierre
 
-Una operación solo se reanuda si:
+El [procedimiento de parada y
+recuperación](./stop-recovery-procedure.md) detalla la ejecución de estos
+criterios. Una operación solo se reanuda si:
 
 1. el target y el commit están identificados;
 2. no quedan grants o staging reutilizables;
