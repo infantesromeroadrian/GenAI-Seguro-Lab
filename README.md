@@ -2,7 +2,7 @@
 
 Laboratorio local y reproducible para aprender y demostrar cómo se diseña, ataca, protege y evalúa una aplicación GenAI con herramientas.
 
-> **Estado:** PGS-00-M01 a PGS-05-M09, PGS-06-M01 a PGS-06-M05, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica permanece inmutable. El retest final M07 ejecutó una sola vez el candidato `77edd640` con el evaluador comprometido en `636e1db`: los 14 casos terminaron, la tasa de éxito pasó de 1/14 (7,14 %) a 0/14 (0 %), las operaciones no autorizadas aceptadas o ejecutadas de 1 a 0, `ADV-TOL-005` mejoró y no hubo regresiones. Los 12 casos benignos terminaron sin falsos rechazos, conservaron sus invariantes y las 84 cláusulas mapeadas por la rúbrica cerrada; por ello `SC-07` queda `DEMONSTRATED` dentro de ese contrato. La coincidencia literal sigue en 0/24 hallazgos y 0/36 acciones, y la evidencia declara que no evalúa equivalencia semántica general, afirmaciones prohibidas con semántica general ni un modelo GenAI real. `CF-002` permanece `NOT_COMPUTABLE`, las cuatro fixtures DOS/SC siguen inertes y `DAT-22` continúa siendo una referencia histórica, no rendimiento del candidato final. M08 documenta seis riesgos primarios sin recalcular la priorización ni aceptar riesgo. M09 acepta para el alcance actual la baseline local-first determinista, con autoridad fuera del modelo y evaluación separada del producto; no selecciona una tecnología futura ni acepta riesgo. PGS-06-M01 añade fichas descriptivas del sistema, los datos y `MOD-01`; no certifica el laboratorio, no acepta riesgo y mantiene explícito que el modelo es un doble determinista. PGS-06-M02 completa la evaluación de impacto del sistema actual: acota diez dimensiones, mantiene `RR-01` a `RR-06` pendientes y obliga a reevaluar antes de ampliar modelo, datos, interfaz, efectos o despliegue. PGS-06-M03 formaliza doce actividades RACI y un registro vivo de los seis riesgos; `ACT-02` conserva el accountability actual, `REV-01` sigue sin asignar y todas las decisiones continúan `PENDIENTE_HUMANA`. PGS-06-M04 separa obligaciones potenciales, estándares y guías voluntarias y decisiones internas sin atribuir conformidad o clasificación jurídica. PGS-06-M05 mantiene el runtime sin persistencia y fija el ciclo de vida de ocho clases observables. Todavía no existe proveedor, frontal web o despliegue cloud.
+> **Estado:** PGS-00-M01 a PGS-05-M09, PGS-06-M01 a PGS-06-M06, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 completadas; PGS-04 y el hito padre P01-M08 están cerrados. La baseline adversaria histórica permanece inmutable. El retest final M07 ejecutó una sola vez el candidato `77edd640` con el evaluador comprometido en `636e1db`: los 14 casos terminaron, la tasa de éxito pasó de 1/14 (7,14 %) a 0/14 (0 %), las operaciones no autorizadas aceptadas o ejecutadas de 1 a 0, `ADV-TOL-005` mejoró y no hubo regresiones. Los 12 casos benignos terminaron sin falsos rechazos, conservaron sus invariantes y las 84 cláusulas mapeadas por la rúbrica cerrada; por ello `SC-07` queda `DEMONSTRATED` dentro de ese contrato. La coincidencia literal sigue en 0/24 hallazgos y 0/36 acciones, y la evidencia declara que no evalúa equivalencia semántica general, afirmaciones prohibidas con semántica general ni un modelo GenAI real. `CF-002` permanece `NOT_COMPUTABLE`, las cuatro fixtures DOS/SC siguen inertes y `DAT-22` continúa siendo una referencia histórica, no rendimiento del candidato final. M08 documenta seis riesgos primarios sin recalcular la priorización ni aceptar riesgo. M09 acepta para el alcance actual la baseline local-first determinista, con autoridad fuera del modelo y evaluación separada del producto; no selecciona una tecnología futura ni acepta riesgo. PGS-06-M01 añade fichas descriptivas del sistema, los datos y `MOD-01`; no certifica el laboratorio, no acepta riesgo y mantiene explícito que el modelo es un doble determinista. PGS-06-M02 completa la evaluación de impacto del sistema actual: acota diez dimensiones, mantiene `RR-01` a `RR-06` pendientes y obliga a reevaluar antes de ampliar modelo, datos, interfaz, efectos o despliegue. PGS-06-M03 formaliza doce actividades RACI y un registro vivo de los seis riesgos; `ACT-02` conserva el accountability actual, `REV-01` sigue sin asignar y todas las decisiones continúan `PENDIENTE_HUMANA`. PGS-06-M04 separa obligaciones potenciales, estándares y guías voluntarias y decisiones internas sin atribuir conformidad o clasificación jurídica. PGS-06-M05 mantiene el runtime sin persistencia y fija el ciclo de vida de ocho clases observables. PGS-06-M06 añade respuesta humana por severidad y familia sin atribuir automatización. Todavía no existe proveedor, frontal web o despliegue cloud.
 
 La proyección revisada de `GSL-RETEST-ADVERSARIAL-001` está versionada en
 [`evaluations/adversarial-retest-v1/`](./evaluations/adversarial-retest-v1/)
@@ -863,6 +863,14 @@ retirada para ocho clases: runtime, `stdout`, temporales, evidencia, corpus,
 borradores, estado transaccional y registro humano. No inventa plazos legales
 ni promete purga de Git, memoria, terminales, copias externas o soportes.
 
+## Respuesta a incidentes de IA PGS-06-M06
+
+[`GSL-AI-IR-001`](./docs/ai-incident-response-runbook.md) define activación,
+cuatro severidades, ocho pasos y ocho playbooks para prompt injection,
+exfiltración, abuso de herramientas, sandbox, recursos, integridad, supply
+chain y datos indebidos. Una señal abre triage pero no demuestra ataque; el
+runbook no añade SIEM, automatización, SLA o comunicación externa.
+
 ## Crosswalk de amenazas
 
 [docs/threat-crosswalk.md](./docs/threat-crosswalk.md) fija
@@ -1387,8 +1395,10 @@ nunca para ocultar un resultado ni para reescribir la baseline histórica.
   obligaciones o certificaciones.
 - [x] Definir logs, redacción, conservación y eliminación según el soporte
   realmente controlado.
+- [x] Crear el runbook de respuesta a incidentes de IA con severidad,
+  contención, evidencia, recuperación y límites.
 
-**PGS-00-M01 a PGS-05-M09, PGS-06-M01 a PGS-06-M05, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **53 de 66 microtareas (80,3 %)**, con 13 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
+**PGS-00-M01 a PGS-05-M09, PGS-06-M01 a PGS-06-M06, PGS-07-M08, P01-M01 y P01-M04 a P01-M08 están completadas.** El avance interno es **54 de 66 microtareas (81,8 %)**, con 12 abiertas; PGS-04 y P01-M08 quedan cerradas. SEC-1 permanece abierto hasta producir la evidencia técnica posterior.
 
 ## Roadmap
 
@@ -1398,7 +1408,7 @@ El desglose completo de fases, microtareas, dependencias y trazabilidad está en
 
 La siguiente microtarea es:
 
-**PGS-06-M06 — crear el runbook de respuesta a incidentes de IA.**
+**PGS-06-M07 — crear el procedimiento de parada y recuperación.**
 
 ## Uso responsable
 

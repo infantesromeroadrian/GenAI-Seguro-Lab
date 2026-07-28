@@ -33,6 +33,10 @@ real.
   clasificadas como obligación potencial, estándar o guía voluntaria y
   decisión interna, con estado, evidencia, trigger y límites frente a
   conformidad, certificación o asesoramiento jurídico.
+- [Runbook de respuesta a incidentes de
+  IA](./ai-incident-response-runbook.md): activación, cuatro severidades, ocho
+  pasos, ocho playbooks, roles, evidencia, recuperación y límites sin
+  atribuir automatización o revisión independiente.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.

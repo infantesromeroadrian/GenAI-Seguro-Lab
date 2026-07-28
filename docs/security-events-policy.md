@@ -125,7 +125,8 @@ Quedan fuera de esta microtarea:
 - SIEM, métricas remotas, alertas, telemetría o exportación automática;
 - detección de anomalías mediante ML o cobertura universal de secretos y PII;
 - respuesta operativa general, comunicación, rollback de un final publicado o
-  retirada;
+  retirada en el runtime; el procedimiento humano se define en
+  [`GSL-AI-IR-001`](./ai-incident-response-runbook.md);
 - usar el journal como estado duradero o autoridad de recuperación;
 - acreditar un modelo GenAI real, proveedor, MCP o aislamiento de SO.
 
