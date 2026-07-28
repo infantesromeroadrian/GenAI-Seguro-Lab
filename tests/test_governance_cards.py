@@ -273,4 +273,3 @@ def test_documentation_and_roadmap_keep_stable_m01_references() -> None:
         assert link in readme
 
     assert "- [x] **PGS-06-M01**" in plan
-    assert "PGS-06-M01" in readme

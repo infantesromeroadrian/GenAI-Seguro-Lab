@@ -10,7 +10,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REVIEW = ROOT / "docs" / "phase-01-criteria-review.md"
 PLAN = ROOT / "plan-proyecto-GenAI-Seguro-Lab.md"
-README = ROOT / "README.md"
 
 
 def _table() -> str:
@@ -54,11 +53,13 @@ def test_review_links_resolve_and_contains_no_personal_route() -> None:
     assert re.search(r"/(?:Users|home)/[^/\s]+", document) is None
 
 
-def test_m09_is_closed_and_parent_result_is_visible() -> None:
+def test_m09_is_closed_and_parent_result_is_recorded_in_review() -> None:
     plan = PLAN.read_text(encoding="utf-8")
-    readme = README.read_text(encoding="utf-8")
-    normalized = " ".join(readme.split())
+    normalized = " ".join(REVIEW.read_text(encoding="utf-8").split())
 
     assert "- [x] **PGS-07-M09**" in plan
-    assert "P01-M04 a P01-M10 cumplen sus criterios revisados" in normalized
-    assert "P01-M11 permanece abierta" in normalized
+    assert (
+        "`P01-M01` y `P01-M04` a `P01-M10` pueden registrarse como "
+        "completadas por criterio"
+    ) in normalized
+    assert "`P01-M11` permanece abierta" in normalized

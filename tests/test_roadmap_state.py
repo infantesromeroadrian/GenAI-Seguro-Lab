@@ -1,4 +1,4 @@
-"""Único owner de los contadores y del siguiente paso mutable del roadmap."""
+"""El plan es el único owner de los contadores y del siguiente paso mutable."""
 
 import re
 from collections import Counter
@@ -15,13 +15,13 @@ def test_current_project_progress_and_next_microtask_are_consistent() -> None:
     plan = PLAN.read_text(encoding="utf-8")
 
     expected = "65 completadas + 1 omitida = 66/66 resueltas"
-    assert expected in readme
-    assert "0 abiertas" in readme
-    assert "No queda una siguiente microtarea interna." in readme
-
     assert expected in plan
     assert "0 abiertas" in plan
     assert "No quedan microtareas internas abiertas." in plan
+    assert "./plan-proyecto-GenAI-Seguro-Lab.md" in readme
+    assert expected not in readme
+    assert "No queda una siguiente microtarea interna." not in readme
+    assert re.search(r"\bPGS-\d{2}-M\d{2}\b", readme) is None
 
     rows = re.findall(
         r"^- \[([ x-])\] \*\*(PGS-\d{2}-M\d{2})\*\*", plan, re.MULTILINE

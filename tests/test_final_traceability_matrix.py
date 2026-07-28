@@ -21,8 +21,12 @@ def _matrix_body() -> str:
 
 
 def test_matrix_covers_every_rf_rs_ro_and_sc_once() -> None:
-    readme = README.read_text(encoding="utf-8")
-    expected = set(re.findall(r"^\| ((?:RF|RS|RO|SC)-\d{2}) \|", readme, re.MULTILINE))
+    expected = (
+        {f"RF-{number:02d}" for number in range(1, 5)}
+        | {f"RS-{number:02d}" for number in range(1, 7)}
+        | {f"RO-{number:02d}" for number in range(1, 3)}
+        | {f"SC-{number:02d}" for number in range(1, 14)}
+    )
     observed = re.findall(r"^\| `((?:RF|RS|RO|SC)-\d{2})` \|", _matrix_body(), re.MULTILINE)
 
     assert len(expected) == 25
