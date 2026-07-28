@@ -57,6 +57,10 @@ real.
   independiente](./independent-review-omission.md): decisión explícita que
   resuelve `PGS-07-M04` como omitida, conserva `REV-01` sin asignar y no
   equivale a revisión, aprobación, exención o aceptación de riesgo.
+- [Disposición de revisión y
+  discrepancias](./independent-review-disposition.md): registra cero
+  observaciones, cero correcciones y `D-REV-01` abierta porque la revisión fue
+  omitida; no inventa hallazgos ni acepta riesgo.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.

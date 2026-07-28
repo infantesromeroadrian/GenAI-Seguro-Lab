@@ -435,7 +435,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-07-M02** Ejecutar tests, corpus benigno y corpus adversario.
 - [x] **PGS-07-M03** Verificar que los logs y artefactos no contienen secretos ni datos reales.
 - [-] **PGS-07-M04** Pedir una revisión independiente del threat model y de una prueba. **Omitida por decisión de la persona responsable del roadmap; no completada.**
-- [ ] **PGS-07-M05** Incorporar correcciones justificadas y registrar discrepancias.
+- [x] **PGS-07-M05** Incorporar correcciones justificadas y registrar discrepancias. La disposición registra 0 observaciones, 0 correcciones y `D-REV-01` abierta por la omisión de M04.
 - [ ] **PGS-07-M06** Crear la matriz final requisito–evidencia–resultado–límite.
 - [ ] **PGS-07-M07** Preparar resumen técnico y resumen ejecutivo.
 - [x] **PGS-07-M08** Crear el repositorio público y publicar `main` tras una autorización separada.
@@ -629,6 +629,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-07-M05 — registrar la ausencia de hallazgos de revisión y la discrepancia resultante.**
+**PGS-07-M06 — crear la matriz final requisito–evidencia–resultado–límite.**
 
-**Progreso interno:** 60 completadas + 1 omitida = 61/66 resueltas; 5 abiertas.
+**Progreso interno:** 61 completadas + 1 omitida = 62/66 resueltas; 4 abiertas.

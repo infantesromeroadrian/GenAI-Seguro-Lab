@@ -217,3 +217,8 @@ impide que el paquete preparado se presente como una revisión real.
 `GSL-REV-OMISSION-001` registra M04 como omitida, mantiene `REV-01` sin
 asignar, conserva abiertos los criterios padre dependientes y no transforma la
 decisión en revisión, aprobación, exención o aceptación de riesgo.
+
+`test_independent_review_disposition.py` valida que
+`GSL-REV-DISPOSITION-001` registra cero observaciones y correcciones,
+conserva `D-REV-01` como discrepancia abierta y cierra solo M05 sin modificar
+la omisión de M04.
