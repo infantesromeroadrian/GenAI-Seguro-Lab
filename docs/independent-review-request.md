@@ -68,6 +68,8 @@ decisión separada y deberá conservar la discrepancia original.
 
 ## Estado de la microtarea
 
-El paquete está preparado, pero `PGS-07-M04` sigue abierta. Solo podrá cerrarse
-cuando una persona elegible acepte `REV-01` y devuelva la evidencia mínima.
-Hasta entonces no se atribuirá revisión independiente.
+El paquete quedó preparado sin realizar la revisión. El 2026-07-28 la persona
+responsable del roadmap decidió omitir `PGS-07-M04`; la
+[decisión versionada](./independent-review-omission.md) conserva sus
+consecuencias. `REV-01` no fue asignado y no se atribuirá revisión
+independiente.

@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "decision_id": "GSL-REV-OMISSION-001",
+  "microtask": "PGS-07-M04",
+  "status": "OMITTED_BY_OWNER",
+  "recorded_at": "2026-07-28",
+  "decision_source": "Active owner instruction in the current project session.",
+  "prepared_review_pack": "GSL-REV-PACK-001",
+  "reviewer": null,
+  "review_performed": false,
+  "findings_received": 0,
+  "implications": [
+    "PGS-07-M04 is resolved as omitted and is not counted as completed.",
+    "REV-01 remains unassigned.",
+    "DEL-10, SC-12 and the independent-reproduction part of SEC-1 remain not demonstrated.",
+    "P01-M11 cannot be completed from this project evidence.",
+    "Later closure artifacts must preserve this discrepancy."
+  ],
+  "not_claimed": {
+    "independent_review": true,
+    "approval": true,
+    "waiver": true,
+    "risk_acceptance": true,
+    "production_readiness": true
+  },
+  "dat25": {
+    "executed": false,
+    "changed": false,
+    "sha256": "05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d"
+  }
+}

@@ -211,5 +211,9 @@ sin valores, sin reescritura y sin presentar cero hallazgos como garantía.
 `test_independent_review_pack.py` valida que `GSL-REV-PACK-001` fija por hash
 el threat model y `ADV-TOL-005` del commit `1508cad`, exige una persona
 cualificada distinta de diseño e implementación y preserva `DAT-25`. También
-impide que el paquete preparado cierre M04 o cambie el contador antes de
-recibir una revisión real.
+impide que el paquete preparado se presente como una revisión real.
+
+`test_independent_review_omission.py` valida que
+`GSL-REV-OMISSION-001` registra M04 como omitida, mantiene `REV-01` sin
+asignar, conserva abiertos los criterios padre dependientes y no transforma la
+decisión en revisión, aprobación, exención o aceptación de riesgo.

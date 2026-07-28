@@ -434,7 +434,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-07-M01** Reconstruir el proyecto desde un entorno limpio.
 - [x] **PGS-07-M02** Ejecutar tests, corpus benigno y corpus adversario.
 - [x] **PGS-07-M03** Verificar que los logs y artefactos no contienen secretos ni datos reales.
-- [ ] **PGS-07-M04** Pedir una revisión independiente del threat model y de una prueba.
+- [-] **PGS-07-M04** Pedir una revisión independiente del threat model y de una prueba. **Omitida por decisión de la persona responsable del roadmap; no completada.**
 - [ ] **PGS-07-M05** Incorporar correcciones justificadas y registrar discrepancias.
 - [ ] **PGS-07-M06** Crear la matriz final requisito–evidencia–resultado–límite.
 - [ ] **PGS-07-M07** Preparar resumen técnico y resumen ejecutivo.
@@ -472,8 +472,9 @@ requiriendo una decisión separada.
   trigger, autoridad y ADR sucesor.
 - [`GSL-REV-PACK-001`](./reviews/independent-review-pack-v1.json) deja fijados
   el candidato, seis documentos, `ADV-TOL-005`, preguntas y formato de
-  respuesta. Sigue `READY_AWAITING_HUMAN_REVIEW`: no completa PGS-07-M04 ni
-  asigna `REV-01` hasta que una persona cualificada e independiente acepte.
+  respuesta. No se recibió una revisión. `GSL-REV-OMISSION-001` registra la
+  decisión de omitir PGS-07-M04 sin asignar `REV-01`, aceptar riesgo ni
+  demostrar los criterios padre dependientes.
 - El repositorio local en `main` sigue
   `origin/main` del remoto público
   [infantesromeroadrian/GenAI-Seguro-Lab](https://github.com/infantesromeroadrian/GenAI-Seguro-Lab).
@@ -628,6 +629,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-07-M04 — obtener una revisión humana independiente del threat model y de una prueba.**
+**PGS-07-M05 — registrar la ausencia de hallazgos de revisión y la discrepancia resultante.**
 
-**Progreso interno:** 60 de 66 microtareas completadas, 6 abiertas (**90,9 %**).
+**Progreso interno:** 60 completadas + 1 omitida = 61/66 resueltas; 5 abiertas.

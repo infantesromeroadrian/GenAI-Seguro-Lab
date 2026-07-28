@@ -12,16 +12,16 @@ def test_current_project_progress_and_next_microtask_are_consistent() -> None:
     readme = README.read_text(encoding="utf-8")
     plan = PLAN.read_text(encoding="utf-8")
 
-    assert "60 de 66 microtareas (90,9 %)" in readme
-    assert "con 6 abiertas" in readme
+    assert "60 completadas + 1 omitida = 61/66 resueltas" in readme
+    assert "5 abiertas" in readme
     assert (
-        "**PGS-07-M04 — obtener una revisión humana independiente del threat "
-        "model y de una prueba.**"
+        "**PGS-07-M05 — registrar la ausencia de hallazgos de revisión y la "
+        "discrepancia resultante.**"
     ) in readme
 
-    assert "60 de 66 microtareas completadas" in plan
-    assert "6 abiertas (**90,9 %**)" in plan
+    assert "60 completadas + 1 omitida = 61/66 resueltas" in plan
+    assert "5 abiertas" in plan
     assert (
-        "**PGS-07-M04 — obtener una revisión humana independiente del threat "
-        "model y de una prueba.**"
+        "**PGS-07-M05 — registrar la ausencia de hallazgos de revisión y la "
+        "discrepancia resultante.**"
     ) in plan

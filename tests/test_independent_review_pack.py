@@ -114,7 +114,7 @@ def test_response_contract_and_execution_limits_are_explicit() -> None:
     assert "does not by itself authorise a fix" in limits
 
 
-def test_pack_preserves_dat25_and_does_not_close_m04() -> None:
+def test_pack_preserves_dat25_and_does_not_claim_m04_review() -> None:
     pack = _load()
     request = REQUEST.read_text(encoding="utf-8")
     serialized = json.dumps(pack, ensure_ascii=False).casefold()
@@ -127,11 +127,11 @@ def test_pack_preserves_dat25_and_does_not_close_m04() -> None:
     assert sha256(DAT25.read_bytes()).hexdigest() == DAT25_SHA256
     assert re.search(r"/(?:users|home)/[^/\\s]+", serialized) is None
     assert "revisión realizada | no" in request.casefold()
-    assert "pgs-07-m04` sigue abierta" in request.casefold()
-    assert "- [ ] **PGS-07-M04**" in PLAN.read_text(encoding="utf-8")
+    assert "sin realizar la revisión" in request.casefold()
+    assert "- [-] **PGS-07-M04**" in PLAN.read_text(encoding="utf-8")
 
 
-def test_pack_is_linked_without_changing_the_roadmap_counter() -> None:
+def test_pack_is_linked_and_the_roadmap_separates_omission() -> None:
     assert "./independent-review-request.md" in DOCS_README.read_text(encoding="utf-8")
     assert "test_independent_review_pack.py" in TESTS_README.read_text(
         encoding="utf-8"
@@ -139,4 +139,6 @@ def test_pack_is_linked_without_changing_the_roadmap_counter() -> None:
     assert "./reviews/independent-review-pack-v1.json" in README.read_text(
         encoding="utf-8"
     )
-    assert "60 de 66 microtareas (90,9 %)" in README.read_text(encoding="utf-8")
+    readme = README.read_text(encoding="utf-8")
+    assert "60 completadas + 1 omitida" in readme
+    assert "5 abiertas" in readme
