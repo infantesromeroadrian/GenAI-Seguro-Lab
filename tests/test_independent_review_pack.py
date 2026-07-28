@@ -140,5 +140,5 @@ def test_pack_is_linked_and_the_roadmap_separates_omission() -> None:
         encoding="utf-8"
     )
     readme = README.read_text(encoding="utf-8")
-    assert "60 completadas + 1 omitida" in readme
-    assert "5 abiertas" in readme
+    assert "./reviews/independent-review-omission-v1.json" in readme
+    assert "omitida, no completada" in readme

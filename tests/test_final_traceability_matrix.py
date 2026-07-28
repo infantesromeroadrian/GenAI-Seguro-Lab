@@ -64,12 +64,9 @@ def test_matrix_preserves_review_risk_and_scope_limits() -> None:
     assert "no certifica el sistema ni acepta riesgos" in document
 
 
-def test_m06_closes_and_advances_to_m07() -> None:
+def test_m06_is_closed_and_the_matrix_is_linked() -> None:
     plan = PLAN.read_text(encoding="utf-8")
     readme = README.read_text(encoding="utf-8")
 
     assert "- [x] **PGS-07-M06**" in plan
-    assert "62 completadas + 1 omitida = 63/66 resueltas" in plan
-    assert "3 abiertas" in plan
-    assert "62 completadas + 1 omitida = 63/66 resueltas" in readme
-    assert "3 abiertas" in readme
+    assert "./docs/final-traceability-matrix.md" in readme

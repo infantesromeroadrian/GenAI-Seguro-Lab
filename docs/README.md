@@ -65,6 +65,11 @@ real.
   trazabilidad](./final-traceability-matrix.md): mapea los 25 requisitos
   `RF`, `RS`, `RO` y `SC` a versión, prueba, resultado, control, riesgo y
   límite; conserva `SC-12` como no demostrado.
+- [Resumen técnico](./technical-summary.md): localiza arquitectura, amenazas,
+  controles, evaluación, gobierno, uso admisible y límites del cierre.
+- [Resumen ejecutivo](./executive-summary.md): explica valor, resultado,
+  riesgos abiertos y uso correcto sin presentar el laboratorio como un
+  producto GenAI real o listo para producción.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.

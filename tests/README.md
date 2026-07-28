@@ -227,3 +227,8 @@ la omisión de M04.
 25 requisitos `RF`, `RS`, `RO` y `SC`, el vocabulario cerrado de resultados,
 la existencia de las referencias locales y la conservación de `SC-12`,
 `D-REV-01` y `RR-01` a `RR-06` como gaps no aceptados.
+
+`test_closure_summaries.py` valida que los resúmenes técnico y ejecutivo
+localizan la evidencia necesaria, conservan métricas acotadas, distinguen el
+doble determinista de un modelo real y no ocultan la revisión omitida, los
+riesgos abiertos o el estado de `SEC-1`.

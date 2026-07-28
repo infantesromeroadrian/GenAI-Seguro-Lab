@@ -23,13 +23,10 @@ def test_disposition_records_zero_findings_and_retains_the_discrepancy() -> None
     assert "no es una aceptación de riesgo" in document
 
 
-def test_disposition_closes_only_m05_and_advances_the_counter() -> None:
+def test_disposition_closes_only_m05_without_changing_m04() -> None:
     plan = PLAN.read_text(encoding="utf-8")
     readme = README.read_text(encoding="utf-8")
 
     assert "- [-] **PGS-07-M04**" in plan
     assert "- [x] **PGS-07-M05**" in plan
-    assert "61 completadas + 1 omitida = 62/66 resueltas" in plan
-    assert "4 abiertas" in plan
-    assert "61 completadas + 1 omitida = 62/66 resueltas" in readme
-    assert "4 abiertas" in readme
+    assert "./docs/independent-review-disposition.md" in readme
