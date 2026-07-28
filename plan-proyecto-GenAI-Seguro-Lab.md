@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-05-M09 y PGS-06-M01 a M08 completadas; PGS-04 y P01-M08
+- **Estado actual:** PGS-00-M01 a PGS-06-M09 completadas; PGS-04 y P01-M08
   quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
   repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
   1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no
@@ -93,6 +93,10 @@
   [`GSL-SUPPLY-CHAIN-001`](./docs/dependency-supply-chain-register.md):
   registra 11 distribuciones, toolchain, hashes, proceso de cambio y ocho gaps;
   `RR-03` sigue abierto y no se atribuye un escaneo no ejecutado.
+  PGS-06-M09 publica
+  [`GSL-MODEL-CHANGE-001`](./docs/model-change-reevaluation-policy.md):
+  clasifica nueve cambios y ocho paquetes de evaluación, conserva `DAT-25` y
+  separa trigger, evidencia, revisión y autoridad.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** el repositorio público y su `main`
@@ -401,7 +405,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-06-M06** Crear el runbook de respuesta a incidentes de IA.
 - [x] **PGS-06-M07** Crear el procedimiento de parada y recuperación.
 - [x] **PGS-06-M08** Registrar dependencias y riesgos de supply chain.
-- [ ] **PGS-06-M09** Documentar cambios de modelo y cuándo exigen repetir evaluaciones.
+- [x] **PGS-06-M09** Documentar cambios de modelo y cuándo exigen repetir evaluaciones.
 
 **Salida:** paquete mínimo de gobierno y operación consistente con el sistema real.
 
@@ -602,6 +606,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-06-M09 — documentar cambios de modelo y cuándo exigen repetir evaluaciones.**
+**PGS-07-M01 — reconstruir el proyecto desde un entorno limpio.**
 
-**Progreso interno:** 56 de 66 microtareas completadas, 10 abiertas (**84,8 %**).
+**Progreso interno:** 57 de 66 microtareas completadas, 9 abiertas (**86,4 %**).

@@ -185,4 +185,3 @@ def test_documentation_references_the_accepted_adr_and_completed_m09() -> None:
     assert "./docs/architecture-decision-record.md" in readme
     assert "./architecture-decision-record.md" in docs_readme
     assert "- [x] **PGS-05-M09**" in plan
-    assert "PGS-00-M01 a PGS-05-M09" in readme

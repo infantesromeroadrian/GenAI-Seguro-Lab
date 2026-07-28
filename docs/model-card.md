@@ -164,7 +164,8 @@ intercambios, exponer prompt libre, cambiar el esquema, incorporar un proveedor
 o modelo real, habilitar red, cambiar herramientas o ampliar usuarios y
 efectos.
 
-La política formal que decidirá qué cambios de modelo exigen repetir cada
-evaluación se redactará en `PGS-06-M09`. Hasta entonces, cualquier cambio en
-`MOD-01` o en su frontera debe tratarse como un disparador de revisión, no como
-una mejora automáticamente aceptada.
+La política
+[`GSL-MODEL-CHANGE-001`](./model-change-reevaluation-policy.md) completa
+`PGS-06-M09`: clasifica cambios de `MOD-01` y superficies futuras y asigna
+paquetes de reevaluación. Cualquier cambio en `MOD-01` o su frontera sigue
+siendo un disparador, no una mejora automáticamente aceptada.

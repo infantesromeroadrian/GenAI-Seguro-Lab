@@ -171,11 +171,14 @@ Revisar esta ficha si cambia cualquiera de estos elementos:
 - control, resultado de evaluación, riesgo residual o decisión
   arquitectónica.
 
+La [política de cambios
+`GSL-MODEL-CHANGE-001`](./model-change-reevaluation-policy.md) clasifica las
+reevaluaciones y la autoridad exigidas antes de modificar estas superficies.
 La [evaluación de impacto `GSL-AIA-001`](./ai-impact-assessment.md) completa
 `PGS-06-M02` para el alcance actual sin autorizar una ampliación ni aceptar
 riesgo. La [RACI `GSL-RACI-001`](./raci.md) y el
 [registro `GSL-RISK-REGISTER-001`](./risk-register.md) completan
 `PGS-06-M03`, mantienen las seis decisiones humanas pendientes y no atribuyen
-una revisión independiente inexistente. Todavía no existen el mapa de
-cumplimiento (`PGS-06-M04`) ni la política completa de cambios de modelo y
-reevaluación (`PGS-06-M09`).
+una revisión independiente inexistente. El
+[mapa de cumplimiento](./compliance-map.md) y la política de cambios no
+atribuyen conformidad, certificación o autorización de producción.

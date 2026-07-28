@@ -188,10 +188,10 @@ nueva o versionada, evidencia proporcional y la autoridad correspondiente.
 
 Siguientes entregas:
 
-- `PGS-06-M04`: mapa de cumplimiento y clasificación de obligaciones;
-- `PGS-06-M05` a M07: logs, respuesta, parada y recuperación;
-- `PGS-06-M08`: dependencias y supply chain;
-- `PGS-06-M09`: política de cambios de modelo y reevaluación.
+- PGS-06-M04 a M08 están documentadas en sus artefactos enlazados desde el
+  índice.
+- [`GSL-MODEL-CHANGE-001`](./model-change-reevaluation-policy.md) completa
+  PGS-06-M09 y decide qué paquetes repetir ante cada trigger.
 
 `PGS-06-M03` ya está completada mediante
 [`GSL-RACI-001`](./raci.md) y

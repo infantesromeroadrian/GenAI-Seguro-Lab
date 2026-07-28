@@ -45,6 +45,10 @@ real.
   chain](./dependency-supply-chain-register.md): 11 distribuciones, toolchain,
   fuentes y hashes del corte, proceso de cambio y ocho gaps explícitos sin
   afirmar ausencia de vulnerabilidades.
+- [Política de cambios de modelo y
+  reevaluación](./model-change-reevaluation-policy.md): nueve clases, ocho
+  paquetes de evaluación, triggers, autoridad, comparabilidad, revisión y
+  rollback sin modificar evidencia histórica.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.

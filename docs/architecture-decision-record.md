@@ -169,11 +169,12 @@ El rollback arquitectónico no es `CMP-12.stop()`, no es una señal de
 
 ## Revisión y supersesión
 
-Este ADR se revisa ante cualquier `ADR-TRG-*`, ante evidencia que contradiga
-sus hechos o al completar PGS-06-M09. Una revisión sin cambio conserva
-`ACEPTADA_ALCANCE_ACTUAL`. Una decisión distinta requiere un ADR sucesor y no
-autoriza automáticamente implementación, gasto, despliegue o aceptación de
-riesgo.
+Este ADR se revisa ante cualquier `ADR-TRG-*` o evidencia que contradiga sus
+hechos. [`GSL-MODEL-CHANGE-001`](./model-change-reevaluation-policy.md)
+completa PGS-06-M09 y asigna paquetes de evaluación a esos triggers. Una
+revisión sin cambio conserva `ACEPTADA_ALCANCE_ACTUAL`. Una decisión distinta
+requiere un ADR sucesor y no autoriza automáticamente implementación, gasto,
+despliegue o aceptación de riesgo.
 
 ## Relación con Tecture
 
