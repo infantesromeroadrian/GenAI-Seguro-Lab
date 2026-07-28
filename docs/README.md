@@ -70,6 +70,10 @@ real.
 - [Resumen ejecutivo](./executive-summary.md): explica valor, resultado,
   riesgos abiertos y uso correcto sin presentar el laboratorio como un
   producto GenAI real o listo para producción.
+- [Revisión de criterios de la fase
+  01](./phase-01-criteria-review.md): contrasta `P01-M01` y `P01-M04` a
+  `P01-M11` con la fuente padre vigente; satisface ocho criterios y conserva
+  `P01-M11` abierta.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.

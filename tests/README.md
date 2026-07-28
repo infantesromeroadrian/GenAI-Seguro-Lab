@@ -232,3 +232,8 @@ la existencia de las referencias locales y la conservación de `SC-12`,
 localizan la evidencia necesaria, conservan métricas acotadas, distinguen el
 doble determinista de un modelo real y no ocultan la revisión omitida, los
 riesgos abiertos o el estado de `SEC-1`.
+
+`test_phase_01_criteria_review.py` valida la cobertura exacta de
+`P01-M01` y `P01-M04` a `P01-M11`, ocho criterios satisfechos, la revisión
+independiente no satisfecha, referencias locales válidas y la separación de
+`P01-M02/M03`.

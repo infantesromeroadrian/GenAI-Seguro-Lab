@@ -6,7 +6,7 @@
 - **Nombre de carpeta confirmado:** `GenAI-Seguro-Lab`.
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
-- **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
+- **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M10; P01-M11 continúa abierta.
 - **Estado actual:** PGS-00-M01 a PGS-07-M03 completadas; PGS-04 y P01-M08
   quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
   repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
@@ -439,7 +439,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-07-M06** Crear la matriz final requisito–evidencia–resultado–límite.
 - [x] **PGS-07-M07** Preparar resumen técnico y resumen ejecutivo.
 - [x] **PGS-07-M08** Crear el repositorio público y publicar `main` tras una autorización separada.
-- [ ] **PGS-07-M09** Revisar P01-M01 y P01-M04–P01-M11 contra sus criterios.
+- [x] **PGS-07-M09** Revisar P01-M01 y P01-M04–P01-M11 contra sus criterios.
 - [ ] **PGS-07-M10** Registrar el estado de SEC-1 sin cerrarlo mientras BASE siga pendiente.
 
 **Salida:** proyecto reproducible, revisado y trazable; el código fuente y la
@@ -629,6 +629,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-07-M09 — revisar P01-M01 y P01-M04–P01-M11 contra sus criterios vigentes.**
+**PGS-07-M10 — registrar el estado real de SEC-1 sin cerrarlo.**
 
-**Progreso interno:** 63 completadas + 1 omitida = 64/66 resueltas; 2 abiertas.
+**Progreso interno:** 64 completadas + 1 omitida = 65/66 resueltas; 1 abierta.
