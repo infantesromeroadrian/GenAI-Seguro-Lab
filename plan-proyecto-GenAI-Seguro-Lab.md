@@ -436,7 +436,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 - [x] **PGS-07-M03** Verificar que los logs y artefactos no contienen secretos ni datos reales.
 - [-] **PGS-07-M04** Pedir una revisión independiente del threat model y de una prueba. **Omitida por decisión de la persona responsable del roadmap; no completada.**
 - [x] **PGS-07-M05** Incorporar correcciones justificadas y registrar discrepancias. La disposición registra 0 observaciones, 0 correcciones y `D-REV-01` abierta por la omisión de M04.
-- [ ] **PGS-07-M06** Crear la matriz final requisito–evidencia–resultado–límite.
+- [x] **PGS-07-M06** Crear la matriz final requisito–evidencia–resultado–límite.
 - [ ] **PGS-07-M07** Preparar resumen técnico y resumen ejecutivo.
 - [x] **PGS-07-M08** Crear el repositorio público y publicar `main` tras una autorización separada.
 - [ ] **PGS-07-M09** Revisar P01-M01 y P01-M04–P01-M11 contra sus criterios.
@@ -629,6 +629,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-07-M06 — crear la matriz final requisito–evidencia–resultado–límite.**
+**PGS-07-M07 — preparar los resúmenes técnico y ejecutivo.**
 
-**Progreso interno:** 61 completadas + 1 omitida = 62/66 resueltas; 4 abiertas.
+**Progreso interno:** 62 completadas + 1 omitida = 63/66 resueltas; 3 abiertas.

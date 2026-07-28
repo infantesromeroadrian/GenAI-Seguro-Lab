@@ -61,6 +61,10 @@ real.
   discrepancias](./independent-review-disposition.md): registra cero
   observaciones, cero correcciones y `D-REV-01` abierta porque la revisión fue
   omitida; no inventa hallazgos ni acepta riesgo.
+- [Matriz final de
+  trazabilidad](./final-traceability-matrix.md): mapea los 25 requisitos
+  `RF`, `RS`, `RO` y `SC` a versión, prueba, resultado, control, riesgo y
+  límite; conserva `SC-12` como no demostrado.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.

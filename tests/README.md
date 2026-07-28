@@ -222,3 +222,8 @@ decisión en revisión, aprobación, exención o aceptación de riesgo.
 `GSL-REV-DISPOSITION-001` registra cero observaciones y correcciones,
 conserva `D-REV-01` como discrepancia abierta y cierra solo M05 sin modificar
 la omisión de M04.
+
+`test_final_traceability_matrix.py` valida la cobertura exacta y única de los
+25 requisitos `RF`, `RS`, `RO` y `SC`, el vocabulario cerrado de resultados,
+la existencia de las referencias locales y la conservación de `SC-12`,
+`D-REV-01` y `RR-01` a `RR-06` como gaps no aceptados.

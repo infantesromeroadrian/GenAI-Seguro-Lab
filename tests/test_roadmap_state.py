@@ -12,16 +12,14 @@ def test_current_project_progress_and_next_microtask_are_consistent() -> None:
     readme = README.read_text(encoding="utf-8")
     plan = PLAN.read_text(encoding="utf-8")
 
-    assert "61 completadas + 1 omitida = 62/66 resueltas" in readme
-    assert "4 abiertas" in readme
+    assert "62 completadas + 1 omitida = 63/66 resueltas" in readme
+    assert "3 abiertas" in readme
     assert (
-        "**PGS-07-M06 — crear la matriz final "
-        "requisito–evidencia–resultado–límite.**"
+        "**PGS-07-M07 — preparar los resúmenes técnico y ejecutivo.**"
     ) in readme
 
-    assert "61 completadas + 1 omitida = 62/66 resueltas" in plan
-    assert "4 abiertas" in plan
+    assert "62 completadas + 1 omitida = 63/66 resueltas" in plan
+    assert "3 abiertas" in plan
     assert (
-        "**PGS-07-M06 — crear la matriz final "
-        "requisito–evidencia–resultado–límite.**"
+        "**PGS-07-M07 — preparar los resúmenes técnico y ejecutivo.**"
     ) in plan
