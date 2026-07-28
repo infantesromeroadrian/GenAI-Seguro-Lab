@@ -166,9 +166,17 @@ producto, harness, evaluadores o runners.
 `test_governance_cards.py` valida exclusivamente las tres fichas de
 PGS-06-M01: identidad y corte documental, seis trust boundaries, actores,
 componentes, `DAT-01` a `DAT-25`, manifiestos y hashes de ambos corpus,
-contrato real de `MOD-01`, métricas acotadas de `DAT-25`, riesgos pendientes y
-coherencia del progreso actual. No ejecuta producto, harness, evaluadores o
+contrato real de `MOD-01`, métricas acotadas de `DAT-25` y riesgos pendientes.
+No ejecuta producto, harness, evaluadores o runners.
+
+`test_ai_impact_assessment.py` valida exclusivamente `GSL-AIA-001` de
+PGS-06-M02: identidad y fuentes, cribado, diez impactos, los seis handoffs
+`PENDIENTE_HUMANA`, siete triggers, límites y métricas fijadas de `DAT-25`.
+Lee la evidencia inmutable, pero no ejecuta producto, harness, evaluadores o
 runners.
+
+`test_roadmap_state.py` es el único owner de los contadores y de la siguiente
+microtarea mutable que comparten el plan y el README.
 
 `test_control_traceability.py` comprueba exclusivamente el contrato documental
 de la matriz canónica: una fila por `CTL-01` a `CTL-13`, roles conocidos,

@@ -5,10 +5,10 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYSTEM-CARD-001` |
-| Versión | `1.0.0` |
+| Versión | `1.1.0` |
 | Fecha de corte | 2026-07-28 |
 | Estado | `DESCRIPTIVA_ALCANCE_ACTUAL` |
-| Corte de las fuentes del repositorio | commit `52e039f0c72f96671170e977a761691aa81c525e` |
+| Corte de las fuentes del repositorio | commit `a4ab56c3f706ae1073f9006b2f74e96d3c187b17` |
 | Candidato de producto evaluado | commit `77edd64037bb0e41edffa58cae2682ba7d2694d2`, árbol `bc09b78f7f3d85f94241f9955e79abb264bd89de` |
 | Evidencia final | `DAT-25`, SHA-256 `05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d` |
 | Ámbito | Laboratorio local, determinista y con datos exclusivamente sintéticos |
@@ -171,7 +171,8 @@ Revisar esta ficha si cambia cualquiera de estos elementos:
 - control, resultado de evaluación, riesgo residual o decisión
   arquitectónica.
 
-Hasta que las siguientes microtareas lo definan, no existe una evaluación de
-impacto formal (`PGS-06-M02`), RACI y registro formal de riesgos
-(`PGS-06-M03`), mapa de cumplimiento (`PGS-06-M04`) ni política completa de
-cambios de modelo y reevaluación (`PGS-06-M09`).
+La [evaluación de impacto `GSL-AIA-001`](./ai-impact-assessment.md) completa
+`PGS-06-M02` para el alcance actual sin autorizar una ampliación ni aceptar
+riesgo. Todavía no existen la RACI y el registro formal de riesgos
+(`PGS-06-M03`), el mapa de cumplimiento (`PGS-06-M04`) ni la política completa
+de cambios de modelo y reevaluación (`PGS-06-M09`).

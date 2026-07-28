@@ -21,15 +21,26 @@ ADVERSARIAL_MANIFEST = ROOT / "data" / "adversarial" / "manifest.json"
 MODEL_ADAPTER = ROOT / "src" / "genai_seguro_lab" / "model_adapter.py"
 DAT25 = ROOT / "evaluations" / "final-retest-v1.json"
 
-SOURCE_COMMIT = "52e039f0c72f96671170e977a761691aa81c525e"
 CANDIDATE_COMMIT = "77edd64037bb0e41edffa58cae2682ba7d2694d2"
 DAT25_SHA256 = "05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d"
 CARD_STATUS = "DESCRIPTIVA_ALCANCE_ACTUAL"
 
-EXPECTED_CARD_IDS = {
-    SYSTEM_CARD: "GSL-SYSTEM-CARD-001",
-    DATA_CARD: "GSL-DATA-CARD-001",
-    MODEL_CARD: "GSL-MODEL-CARD-001",
+EXPECTED_CARD_METADATA = {
+    SYSTEM_CARD: (
+        "GSL-SYSTEM-CARD-001",
+        "1.1.0",
+        "a4ab56c3f706ae1073f9006b2f74e96d3c187b17",
+    ),
+    DATA_CARD: (
+        "GSL-DATA-CARD-001",
+        "1.0.0",
+        "52e039f0c72f96671170e977a761691aa81c525e",
+    ),
+    MODEL_CARD: (
+        "GSL-MODEL-CARD-001",
+        "1.0.0",
+        "52e039f0c72f96671170e977a761691aa81c525e",
+    ),
 }
 EXPECTED_BOUNDARIES = {f"TB-{index:02d}" for index in range(1, 7)}
 EXPECTED_DATA_ASSETS = {f"DAT-{index:02d}" for index in range(1, 26)}
@@ -58,14 +69,14 @@ def _compact(document: str) -> str:
 
 
 def test_cards_pin_identity_scope_and_evidence_without_approval_claims() -> None:
-    for path, identifier in EXPECTED_CARD_IDS.items():
+    for path, (identifier, version, source_commit) in EXPECTED_CARD_METADATA.items():
         document = _read(path)
         for expected in (
             f"`{identifier}`",
-            "`1.0.0`",
+            f"`{version}`",
             "2026-07-28",
             f"`{CARD_STATUS}`",
-            f"`{SOURCE_COMMIT}`",
+            f"`{source_commit}`",
             f"`{CANDIDATE_COMMIT}`",
             f"`{DAT25_SHA256}`",
         ):
@@ -73,8 +84,7 @@ def test_cards_pin_identity_scope_and_evidence_without_approval_claims() -> None
 
         lowered = document.casefold()
         assert "no constituye" in lowered or "no es una" in lowered
-        assert "/users/" not in lowered
-        assert "adrianinfantes" not in lowered
+        assert re.search(r"/(?:users|home)/[^/\s]+", lowered) is None
 
 
 def test_system_card_covers_boundaries_actors_components_and_pending_risks() -> None:
@@ -247,7 +257,7 @@ def test_cards_report_dat25_metrics_without_rerunning_it() -> None:
             assert expected in compact
 
 
-def test_documentation_and_roadmap_reference_completed_m01() -> None:
+def test_documentation_and_roadmap_keep_stable_m01_references() -> None:
     docs_readme = _read(DOCS_README)
     readme = _read(README)
     plan = _read(PLAN)
@@ -262,11 +272,4 @@ def test_documentation_and_roadmap_reference_completed_m01() -> None:
         assert link in readme
 
     assert "- [x] **PGS-06-M01**" in plan
-    assert "49 de 66 microtareas completadas" in plan
-    assert "17 abiertas (**74,2 %**)" in plan
-    assert "**PGS-06-M02 — completar la evaluación de impacto de IA.**" in plan
-
     assert "PGS-06-M01" in readme
-    assert "49 de 66 microtareas (74,2 %)" in readme
-    assert "con 17 abiertas" in readme
-    assert "**PGS-06-M02 — completar la evaluación de impacto de IA.**" in readme

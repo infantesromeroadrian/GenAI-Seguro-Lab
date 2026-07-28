@@ -19,6 +19,10 @@ real.
   sintéticos y de la evidencia.
 - [Model card](./model-card.md): contrato y límites de `MOD-01`, identificado
   expresamente como doble determinista sin entrenamiento ni proveedor real.
+- [Evaluación de impacto de IA](./ai-impact-assessment.md): cribado del alcance
+  actual, partes afectadas, diez dimensiones de impacto, handoff de los seis
+  riesgos pendientes y triggers de reevaluación; no autoriza producción,
+  ampliaciones ni aceptación de riesgo.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.

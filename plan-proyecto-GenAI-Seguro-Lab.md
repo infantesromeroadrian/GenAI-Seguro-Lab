@@ -7,7 +7,7 @@
 - **Checkout:** repositorio Git del proyecto en la rama `main`.
 - **Roadmap padre:** fase 01 — Fundamentos de AI Security.
 - **Microtareas padre completadas:** P01-M01 y P01-M04 a P01-M08.
-- **Estado actual:** PGS-00-M01 a PGS-05-M09 y PGS-06-M01 completadas; PGS-04 y P01-M08
+- **Estado actual:** PGS-00-M01 a PGS-05-M09 y PGS-06-M01 a M02 completadas; PGS-04 y P01-M08
   quedan cerradas. La baseline adversaria histórica permanece inmutable; M01
   repitió sus 14 fixtures PI/JB/EX/TOL contra el commit endurecido y M02 fijó
   1/14 (7,14 %) → 0/14 (0 %) de éxito de ataque y 1 → 0 operaciones no
@@ -60,6 +60,12 @@
   evidencia y límites sin certificar el sistema ni aceptar los seis riesgos
   pendientes. `MOD-01` queda identificado expresamente como doble
   determinista sin entrenamiento ni proveedor real.
+  PGS-06-M02 fija
+  [`GSL-AIA-001`](./docs/ai-impact-assessment.md): completa el cribado del
+  alcance actual y diez dimensiones de impacto, conserva `RR-01` a `RR-06`
+  como `PENDIENTE_HUMANA` y exige reevaluar antes de ampliar modelo, datos,
+  interfaz, efectos o despliegue. No realiza clasificación jurídica, no crea
+  el registro formal de M03 ni autoriza producción.
 - **Línea seleccionada:** B — aplicación GenAI protegida frente a prompt injection, jailbreak y abuso de herramientas.
 - **Entorno previsto:** local-first, con un corpus operativo exclusivamente sintético.
 - **Publicación, cloud y gasto:** el repositorio público y su `main`
@@ -361,7 +367,7 @@ El contrato completo se encuentra en [README.md](./README.md#entregables-contrac
 **Objetivo:** hacer que la seguridad sea mantenible y explicable.
 
 - [x] **PGS-06-M01** Crear system card, data card y model card.
-- [ ] **PGS-06-M02** Completar la evaluación de impacto de IA.
+- [x] **PGS-06-M02** Completar la evaluación de impacto de IA.
 - [ ] **PGS-06-M03** Crear RACI y registro de riesgos.
 - [ ] **PGS-06-M04** Crear el mapa de cumplimiento, diferenciando obligación, guía y decisión voluntaria.
 - [ ] **PGS-06-M05** Definir política de logs, redacción, conservación y eliminación.
@@ -569,6 +575,6 @@ requiriendo una decisión separada.
 
 ## Próxima microtarea
 
-**PGS-06-M02 — completar la evaluación de impacto de IA.**
+**PGS-06-M03 — crear RACI y registro de riesgos.**
 
-**Progreso interno:** 49 de 66 microtareas completadas, 17 abiertas (**74,2 %**).
+**Progreso interno:** 50 de 66 microtareas completadas, 16 abiertas (**75,8 %**).
