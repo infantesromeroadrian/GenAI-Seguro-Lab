@@ -224,7 +224,10 @@ No hay SDK de proveedor de modelos, framework de agentes, framework web, ORM,
 cliente de base de datos, vector store, telemetría externa ni dependencia de
 Docker.
 `pyproject.toml` declara las dependencias directas y `uv.lock` es la fuente
-versionada para la resolución exacta.
+versionada para la resolución exacta. El registro detallado
+[`GSL-SUPPLY-CHAIN-001`](./dependency-supply-chain-register.md) completa
+PGS-06-M08 con cada distribución, toolchain, integridad, riesgos y gaps sin
+atribuir un escaneo de vulnerabilidades inexistente.
 
 ## Infraestructura e integraciones
 

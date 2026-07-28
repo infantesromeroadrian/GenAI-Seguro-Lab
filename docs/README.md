@@ -41,6 +41,10 @@ real.
   recuperación](./stop-recovery-procedure.md): cuatro niveles, ocho pasos,
   reconciliación, reanudación y rollback acotados sobre la implementación
   existente, sin handlers globales ni borrado manual de transacciones.
+- [Registro de dependencias y supply
+  chain](./dependency-supply-chain-register.md): 11 distribuciones, toolchain,
+  fuentes y hashes del corte, proceso de cambio y ocho gaps explícitos sin
+  afirmar ausencia de vulnerabilidades.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.
