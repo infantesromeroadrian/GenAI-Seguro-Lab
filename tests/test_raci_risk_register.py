@@ -203,7 +203,6 @@ def test_m03_is_integrated_without_duplicate_raci_or_architecture_claims() -> No
         assert link in readme
 
     assert "- [x] **PGS-06-M03**" in plan
-    assert "**PGS-06-M04 — crear el mapa de cumplimiento" in plan
     assert "arquitectura" not in _marked(_read(RACI), "raci-matrix").casefold()
 
 

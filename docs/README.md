@@ -29,6 +29,10 @@ real.
 - [Registro formal de riesgos](./risk-register.md): seguimiento vivo de
   `RR-01` a `RR-06`, owner, controles, brecha, respuesta propuesta, targets,
   triggers y seis decisiones `PENDIENTE_HUMANA`.
+- [Mapa de cumplimiento](./compliance-map.md): nueve fuentes y decisiones
+  clasificadas como obligación potencial, estándar o guía voluntaria y
+  decisión interna, con estado, evidencia, trigger y límites frente a
+  conformidad, certificación o asesoramiento jurídico.
 - [Mapa C4 de arquitectura](../architecture/manifest.json): contexto,
   contenedores locales, componentes, flujo de datos y seis trust boundaries
   sustentados por el inventario.
