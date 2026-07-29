@@ -11,7 +11,8 @@
 | Datos | Los 12 incidentes benignos sintéticos y proyecciones saneadas |
 | Runtime público | Archivos estáticos; sin Functions, API, POST o secretos |
 | URL de producción | `https://genai-seguro-lab.vercel.app` |
-| Deployment verificado | `dpl_AXzDDfADN3s5YjLbeNUYi949MTMW` |
+| Preview verificada | `dpl_CMgjChRAfFuxFjWknB2GtP38gAih` |
+| Producción promovida | `dpl_9ffPDMhPskoYu9m6sT5QTRZzbzVg` |
 
 ## Resultado y separación de perfiles
 
@@ -63,9 +64,11 @@ prompts, oráculos, `expected_result`, autorización o proveedor alojado.
 
 ## Evidencia de despliegue
 
-El 2026-07-29 se verificó el deployment
-`dpl_AXzDDfADN3s5YjLbeNUYi949MTMW` y su alias estable
-`https://genai-seguro-lab.vercel.app`:
+El 2026-07-29 se verificó la preview
+`dpl_CMgjChRAfFuxFjWknB2GtP38gAih` y se promovió ese candidato como producción
+`dpl_9ffPDMhPskoYu9m6sT5QTRZzbzVg` en el alias estable
+`https://genai-seguro-lab.vercel.app`. Tras la promoción se repitieron las
+comprobaciones:
 
 - HTML, JavaScript y snapshot respondieron `200`;
 - `/api/status` y `POST /api/analyze` respondieron `404`;

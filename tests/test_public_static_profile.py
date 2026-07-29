@@ -216,4 +216,5 @@ def test_public_profile_documentation_is_linked_and_honest() -> None:
     assert "./public-static-profile-spec.md" in docs_index
     assert "https://genai-seguro-lab.vercel.app" in readme
     assert "https://genai-seguro-lab.vercel.app" in combined
-    assert "dpl_AXzDDfADN3s5YjLbeNUYi949MTMW" in combined
+    assert "dpl_CMgjChRAfFuxFjWknB2GtP38gAih" in combined
+    assert "dpl_9ffPDMhPskoYu9m6sT5QTRZzbzVg" in combined

@@ -43,8 +43,9 @@ los assets con el frontal local.
 
 ## Riesgos residuales y evidencia
 
-- `https://genai-seguro-lab.vercel.app` y el deployment
-  `dpl_AXzDDfADN3s5YjLbeNUYi949MTMW` fueron verificados el 2026-07-29.
+- La preview `dpl_CMgjChRAfFuxFjWknB2GtP38gAih` y la producción promovida
+  `dpl_9ffPDMhPskoYu9m6sT5QTRZzbzVg` en
+  `https://genai-seguro-lab.vercel.app` fueron verificadas el 2026-07-29.
 - HSTS y el resto de cabeceras declaradas estuvieron presentes en la respuesta
   desplegada.
 - El snapshot es una demostración educativa, no una evaluación pública,
