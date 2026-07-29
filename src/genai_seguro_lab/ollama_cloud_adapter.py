@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import socket
 from collections.abc import Callable, Mapping
@@ -34,6 +35,8 @@ from .resource_control import (
 OLLAMA_CHAT_ENDPOINT: Final = "https://ollama.com/api/chat"
 OLLAMA_MODEL: Final = "gpt-oss:120b"
 OLLAMA_TIMEOUT_SECONDS: Final = 60.0
+OLLAMA_PUBLIC_TIMEOUT_SECONDS: Final = 25.0
+OLLAMA_NUM_PREDICT: Final = 512
 MAX_OLLAMA_RESPONSE_BYTES: Final = 16 * 1024
 MAX_OLLAMA_REQUEST_BYTES: Final = 16 * 1024
 
@@ -106,7 +109,10 @@ class UrllibOllamaCloudTransport:
         if (
             not isinstance(body, bytes)
             or isinstance(timeout_seconds, bool)
-            or timeout_seconds != OLLAMA_TIMEOUT_SECONDS
+            or not isinstance(timeout_seconds, (int, float))
+            or not math.isfinite(timeout_seconds)
+            or timeout_seconds <= 0
+            or timeout_seconds > OLLAMA_TIMEOUT_SECONDS
             or isinstance(max_response_bytes, bool)
             or max_response_bytes != MAX_OLLAMA_RESPONSE_BYTES
         ):
@@ -310,7 +316,10 @@ def _request_body(request: ModelRequest) -> bytes:
         "messages": messages,
         "stream": False,
         "think": "low",
-        "options": {"temperature": 0},
+        "options": {
+            "num_predict": OLLAMA_NUM_PREDICT,
+            "temperature": 0,
+        },
     }
     if tools is not None:
         document["tools"] = tools
@@ -408,19 +417,38 @@ class OllamaCloudAdapter:
         *,
         transport: OllamaCloudTransport | None = None,
         api_key_loader: Callable[[], str] = _load_api_key,
+        timeout_seconds: float = OLLAMA_TIMEOUT_SECONDS,
     ) -> None:
         selected_transport = transport or UrllibOllamaCloudTransport()
         if not isinstance(selected_transport, OllamaCloudTransport):
             raise TypeError("transport must implement OllamaCloudTransport")
         if not callable(api_key_loader):
             raise TypeError("api_key_loader must be callable")
+        if (
+            isinstance(timeout_seconds, bool)
+            or not isinstance(timeout_seconds, (int, float))
+        ):
+            raise TypeError("timeout_seconds must be a number")
+        if (
+            not math.isfinite(timeout_seconds)
+            or timeout_seconds <= 0
+            or timeout_seconds > OLLAMA_TIMEOUT_SECONDS
+        ):
+            raise ValueError(
+                "timeout_seconds must be greater than zero and at most 60"
+            )
         self._transport = selected_transport
         self._api_key_loader = api_key_loader
+        self._timeout_seconds = float(timeout_seconds)
         self._descriptor = HostedModelDescriptor()
 
     @property
     def descriptor(self) -> HostedModelDescriptor:
         return self._descriptor
+
+    @property
+    def timeout_seconds(self) -> float:
+        return self._timeout_seconds
 
     @property
     def is_configured(self) -> bool:
@@ -457,7 +485,7 @@ class OllamaCloudAdapter:
                     "Content-Type": "application/json",
                 },
                 body=body,
-                timeout_seconds=OLLAMA_TIMEOUT_SECONDS,
+                timeout_seconds=self._timeout_seconds,
                 max_response_bytes=MAX_OLLAMA_RESPONSE_BYTES,
             )
         except OllamaCloudError:

@@ -41,6 +41,7 @@ const state = {
   csrfToken: "",
   incidents: [],
   analyzeAvailable: false,
+  profile: "loading",
   publicSnapshot: null,
   running: false,
 };
@@ -227,10 +228,15 @@ function renderTimeline(report) {
 function renderAnalysis(payload) {
   const result = payload.result;
   const parsed = parseOutput(result.output_text);
+  const isSnapshot = state.profile === "public_snapshot";
+  const isHosted =
+    state.profile === "public_llm" || result.external_calls === true;
 
-  elements.analysisKicker.textContent = state.publicSnapshot
+  elements.analysisKicker.textContent = isSnapshot
     ? "Análisis precomputado"
-    : "Análisis completado";
+    : isHosted
+      ? "Análisis con LLM"
+      : "Análisis completado";
   elements.analysisTitle.textContent = parsed.title;
   clearElement(elements.analysisMetrics);
   elements.analysisMetrics.append(
@@ -247,14 +253,14 @@ function renderAnalysis(payload) {
   elements.analysisView.hidden = false;
   elements.baselineView.hidden = true;
   setRunState(
-    state.publicSnapshot ? "Snapshot mostrado" : "Completado",
+    isSnapshot ? "Snapshot mostrado" : "Completado",
     "complete",
   );
 }
 
 function renderBaseline(payload) {
   const result = payload.result;
-  elements.baselineKicker.textContent = state.publicSnapshot
+  elements.baselineKicker.textContent = state.profile.startsWith("public_")
     ? "Baseline precomputada"
     : "Baseline funcional";
   clearElement(elements.baselineMetrics);
@@ -280,7 +286,9 @@ function renderBaseline(payload) {
   elements.analysisView.hidden = true;
   elements.baselineView.hidden = false;
   setRunState(
-    state.publicSnapshot ? "Snapshot mostrado" : "Completado",
+    state.profile.startsWith("public_")
+      ? "Snapshot mostrado"
+      : "Completado",
     "complete",
   );
 }
@@ -325,6 +333,7 @@ function initializeLocal(payload) {
   state.csrfToken = payload.csrf_token;
   state.incidents = payload.incidents;
   state.analyzeAvailable = payload.capabilities.analyze;
+  state.profile = "local";
   state.publicSnapshot = null;
 
   const hosted = payload.app.provider === "ollama";
@@ -339,9 +348,11 @@ function initializeLocal(payload) {
     "GENAI SEGURO LAB · GSL-WEB-001";
   elements.runtimeLocation.textContent = "Loopback";
   elements.runtimeMode.textContent = hosted
-    ? "Ollama Cloud · experimental"
+    ? "LLM alojado · experimental"
     : "Determinista";
-  elements.runtimeModel.textContent = payload.app.model;
+  elements.runtimeModel.textContent = hosted
+    ? "LLM alojado"
+    : payload.app.model;
   elements.runtimeExternalCalls.textContent = hosted
     ? "2 por análisis"
     : "0";
@@ -351,10 +362,10 @@ function initializeLocal(payload) {
   elements.securityDescription.textContent =
     "Eventos saneados, encadenados y mantenidos únicamente durante esta operación.";
   elements.runtimeEffects.textContent = hosted
-    ? "Analyze realiza dos llamadas a Ollama Cloud; baseline permanece local y determinista. No se escriben ni persisten resultados."
+    ? "Analyze realiza dos llamadas al LLM alojado; baseline permanece local y determinista. No se escriben ni persisten resultados."
     : "Analyze y baseline son locales y deterministas. No se escriben archivos ni persisten resultados.";
   elements.analyzeButton.querySelector("span").textContent = hosted
-    ? "Analizar con Ollama Cloud"
+    ? "Análisis con LLM"
     : "Analizar incidente";
   elements.baselineButton.textContent =
     "Ejecutar baseline determinista de 12 casos";
@@ -364,7 +375,7 @@ function initializeLocal(payload) {
   loadIncidentOptions();
 }
 
-function initializePublic(snapshot) {
+function validatePublicSnapshot(snapshot) {
   if (
     snapshot?.profile !== "public_static_snapshot"
     || !Array.isArray(snapshot.incidents)
@@ -378,9 +389,14 @@ function initializePublic(snapshot) {
   ) {
     throw new Error("El snapshot público no cumple su contrato.");
   }
+}
+
+function initializePublicSnapshot(snapshot) {
+  validatePublicSnapshot(snapshot);
   state.csrfToken = "";
   state.incidents = snapshot.incidents;
   state.analyzeAvailable = true;
+  state.profile = "public_snapshot";
   state.publicSnapshot = snapshot;
 
   elements.brandContext.textContent = "LAB / PUBLIC SNAPSHOT";
@@ -411,13 +427,76 @@ function initializePublic(snapshot) {
   loadIncidentOptions();
 }
 
+function initializePublicLLM(payload, snapshot) {
+  validatePublicSnapshot(snapshot);
+  if (
+    payload?.app?.mode !== "public_llm"
+    || !Array.isArray(payload.incidents)
+    || payload.incidents.length !== 12
+    || typeof payload.csrf_token !== "string"
+    || typeof payload.capabilities?.analyze !== "boolean"
+    || payload.capabilities?.baseline !== true
+  ) {
+    throw new Error("El perfil público alojado no cumple su contrato.");
+  }
+
+  state.csrfToken = payload.csrf_token;
+  state.incidents = payload.incidents;
+  state.analyzeAvailable = payload.capabilities.analyze;
+  state.profile = "public_llm";
+  state.publicSnapshot = snapshot;
+
+  elements.brandContext.textContent = "LAB / PUBLIC LLM";
+  elements.heroLead.textContent =
+    "Una demostración pública para analizar un incidente sintético con un LLM alojado y contrastarlo con la baseline precomputada.";
+  elements.emptyDescription.textContent = state.analyzeAvailable
+    ? "Selecciona un caso para ejecutar Análisis con LLM o consultar la baseline precomputada."
+    : "El análisis alojado está deshabilitado; la baseline precomputada continúa disponible.";
+  elements.timelineEmpty.textContent =
+    "La cronología saneada aparecerá después de un análisis o al mostrar la baseline.";
+  elements.profileIdentifier.textContent =
+    "GENAI SEGURO LAB · GSL-PUBLIC-LLM-001";
+  elements.runtimeLocation.textContent = "Vercel Functions";
+  elements.runtimeMode.textContent = state.analyzeAvailable
+    ? "Análisis con LLM"
+    : "LLM deshabilitado";
+  elements.runtimeModel.textContent = "LLM alojado";
+  elements.runtimeExternalCalls.textContent = state.analyzeAvailable
+    ? "2 por análisis"
+    : "0 · kill switch";
+  elements.runtimeSurface.textContent = "Mismo origen · API cerrada";
+  elements.runtimeProfile.textContent =
+    "Público · sintético · sin persistencia";
+  elements.securityIndex.textContent = "03 / TELEMETRÍA EFÍMERA";
+  elements.securityDescription.textContent =
+    "Eventos saneados de la operación actual; no se muestran prompts, respuestas remotas ni huellas internas.";
+  elements.runtimeEffects.textContent = state.analyzeAvailable
+    ? "Análisis con LLM realiza dos llamadas alojadas; catálogo y baseline proceden del snapshot. No se persisten resultados."
+    : "El kill switch impide el análisis alojado. Catálogo y baseline precomputada permanecen disponibles.";
+  elements.analyzeButton.querySelector("span").textContent =
+    "Análisis con LLM";
+  elements.baselineButton.textContent = "Mostrar baseline precomputada";
+  elements.systemStatus.textContent = state.analyzeAvailable
+    ? "LLM habilitado"
+    : "Solo baseline";
+  loadIncidentOptions();
+}
+
 async function initialize() {
   try {
-    initializeLocal(await requestJson("/api/status"));
+    const status = await requestJson("/api/status");
+    if (status?.app?.mode === "public_llm") {
+      initializePublicLLM(
+        status,
+        await requestJson("/snapshots/public-profile-v1.json"),
+      );
+    } else {
+      initializeLocal(status);
+    }
     return;
   } catch {
     try {
-      initializePublic(
+      initializePublicSnapshot(
         await requestJson("/snapshots/public-profile-v1.json"),
       );
       return;
@@ -437,7 +516,7 @@ function showSelectedAnalysis() {
   if (!incident) {
     return;
   }
-  if (state.publicSnapshot) {
+  if (state.profile === "public_snapshot") {
     const payload = state.publicSnapshot.analyses[incident.id];
     if (!payload) {
       showError("El análisis precomputado no está disponible.");
@@ -456,7 +535,7 @@ function showSelectedAnalysis() {
 }
 
 function showBaseline() {
-  if (state.publicSnapshot) {
+  if (state.profile.startsWith("public_")) {
     hideError();
     elements.emptyState.hidden = true;
     renderBaseline(state.publicSnapshot.baseline);

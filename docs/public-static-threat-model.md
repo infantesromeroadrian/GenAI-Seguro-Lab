@@ -1,59 +1,56 @@
-# Threat model del perfil público estático
+# Threat model del perfil público
 
 ## Ficha
 
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-PUBLIC-THREAT-001` |
-| Versión | `1.0.0` |
+| Versión | `2.0.0` |
 | Fecha | 2026-07-29 |
-| Superficie | UI y snapshot determinista servidos como archivos estáticos |
-| Especificación | [`GSL-PUBLIC-STATIC-001`](./public-static-profile-spec.md) |
+| Superficie | UI y snapshot determinista más dos Python Functions cerradas |
+| Especificación | [`GSL-PUBLIC-STATIC-001` y `GSL-PUBLIC-LLM-001`](./public-static-profile-spec.md) |
 
 ## Límite y flujo permitido
 
-El visitante público recibe del despliegue autorizado únicamente HTML, CSS,
-JavaScript, favicon y un JSON versionado desde el CDN estático:
-
 ```text
+navegador same-origin
+  → GET /api/status
+  → cookie __Host-* + token double-submit
+  → POST /api/analyze {incident_id}
+  → run_cloud_incident (dos llamadas alojadas, máximo 25 s cada una)
+  → resultado y security_report proyectados
+
 navegador
-  → GET de assets same-origin
-  → GET /api/status sin backend
-  → fallback GET /snapshots/public-profile-v1.json
-  → selección local de un ID
-  → render de resultado e informe precomputados mediante textContent
+  → GET /snapshots/public-profile-v1.json
+  → catálogo y baseline precomputada
 ```
 
-No existe Function, API, POST, secreto, sesión, herramienta, modelo o egress
-de aplicación en este perfil. El intento GET de status solo permite compartir
-los assets con el frontal local.
+No existe prompt libre, upload, `/api/baseline`, persistencia, CORS, selección
+de proveedor/modelo, retry ni fallback de snapshot para un análisis vivo que
+falle. `PUBLIC_LLM_ENABLED=true` habilita la ruta; `OLLAMA_API_KEY` es el único
+secreto y nunca se entrega al navegador.
 
 ## Amenazas y tratamiento
 
 | ID | Amenaza | Control | Límite |
 |---|---|---|---|
-| `PUB-T-01` | Confundir snapshot con ejecución real | Etiquetas persistentes y botones “Mostrar … precomputado” | La interpretación humana no puede eliminarse por completo |
-| `PUB-T-02` | XSS desde resultado o incidente | `textContent`, CSP sin inline o terceros y snapshot sintético | Cambiar el renderer exige reevaluación |
-| `PUB-T-03` | Clickjacking o navegación filtrada | `frame-ancestors 'none'`, `DENY`, `no-referrer`, COOP/CORP | Depende del navegador y de que las cabeceras se apliquen |
-| `PUB-T-04` | Introducir Function, POST o secreto por deriva | Configuración cerrada y prueba estructural de `vercel.json` y assets | No sustituye revisión del estado real de Vercel |
-| `PUB-T-05` | Snapshot manipulado o desincronizado | Generador reproducible y comparación byte a byte | La publicación del artefacto sigue bajo autoridad de mantenimiento |
-| `PUB-T-06` | Falsa atribución de `DAT-25` | Perfil y documentación separan demo, baseline funcional y evidencia histórica | No demuestra robustez pública o de un LLM |
-| `PUB-T-07` | Carga o disponibilidad del CDN | No hay compute de aplicación que agotar | Disponibilidad y protección de plataforma no se han medido |
-| `PUB-T-08` | Metadatos operativos del proveedor de hosting | La aplicación no añade analytics, cookies o telemetría | Logs, cuenta, términos y tratamiento de Vercel quedan fuera de esta verificación |
+| `PUB-T-01` | Confundir snapshot con ejecución viva | Modos y copy separados; el error live no usa fallback | La interpretación humana no puede eliminarse por completo |
+| `PUB-T-02` | CSRF o llamada cross-site | Host/Origin HTTPS exactos, `Sec-Fetch-Site`, cookie `__Host-*` Strict y token double-submit | Una pestaña que renueve el token puede invalidar otro token abierto |
+| `PUB-T-03` | CORS o exfiltración desde navegador | Sin ACAO, CSP/CORP, misma procedencia y `no-referrer` | Depende de configuración y navegador |
+| `PUB-T-04` | Request smuggling o cuerpo ambiguo | Sin query, encoding o chunked; Content-Length exacto; JSON <=1 KiB | La plataforma HTTP sigue fuera del código de aplicación |
+| `PUB-T-05` | Prompt injection mediante datos sintéticos | Separación de autoridad y contenido; tool call ligada exactamente al incidente | No demuestra robustez general del LLM |
+| `PUB-T-06` | Exceso de alcance de herramienta | Nombre, query, IDs y limit exactos antes de ejecución; grant local | Un defecto futuro exige reevaluación |
+| `PUB-T-07` | Fuga de proveedor, modelo o cuerpo remoto | Proyección tipada, errores saneados y logging de requests desactivado | Vercel y Ollama pueden conservar telemetría propia |
+| `PUB-T-08` | Agotamiento o coste | Kill switch, dos llamadas, 25 s por llamada, `num_predict=512`, Function 60 s | No hay rate limit por usuario y el coste sigue desconocido |
+| `PUB-T-09` | Deriva del host de producción | Allowlist desde `VERCEL_URL` y `VERCEL_PROJECT_PRODUCTION_URL` | La corrección de variables depende de Vercel |
+| `PUB-T-10` | Exposición accidental del secreto | Solo entorno server-side; `.env.example` vacío; no se proyecta configuración | La custodia de variables del proyecto no se verificó |
+| `PUB-T-11` | Disponibilidad del proveedor | Fallo cerrado y error `503`; no retry ni snapshot disfrazado de live | Disponibilidad no demostrada |
+| `PUB-T-12` | Reinterpretar `DAT-25` | Snapshot, live LLM y evidencia histórica se separan | `DAT-25` no evalúa el perfil alojado |
 
-## Riesgos residuales y evidencia
+## Evidencia y riesgos residuales
 
-- La preview `dpl_CMgjChRAfFuxFjWknB2GtP38gAih` y la producción promovida
-  `dpl_9ffPDMhPskoYu9m6sT5QTRZzbzVg` en
-  `https://genai-seguro-lab.vercel.app` fueron verificadas el 2026-07-29.
-- HSTS y el resto de cabeceras declaradas estuvieron presentes en la respuesta
-  desplegada.
-- El snapshot es una demostración educativa, no una evaluación pública,
-  monitorización en vivo ni prueba de disponibilidad.
-- El escaneo temprano no mostró errores ni respuestas `5xx`; no demuestra
-  disponibilidad futura.
-- `tests/test_public_static_profile.py` verifica regeneración, 12 casos,
-  ausencia de compute/secretos, seguridad de assets y hash de `DAT-25`.
-
-Estos límites permanecen ligados a `RR-03` y `RR-06`; no cierran ni aceptan
-ningún riesgo.
+`tests/test_public_llm_profile.py` recorre status, cookie, POST, flujo alojado
+con transporte falso, proyección, kill switch y rechazos principales. No hubo
+despliegue ni llamada real en este cambio. Persisten `RR-01`, `RR-03` y
+`RR-06`, además del riesgo operativo de una superficie pública sin rate limit;
+ninguno queda aceptado o cerrado.

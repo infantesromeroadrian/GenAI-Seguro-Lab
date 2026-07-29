@@ -1,82 +1,81 @@
-# Especificación del perfil público estático
+# Especificación del perfil público
 
 ## Ficha
 
 | Campo | Valor |
 |---|---|
-| Identificador | `GSL-PUBLIC-STATIC-001` |
-| Versión | `1.0.0` |
+| Snapshot | `GSL-PUBLIC-STATIC-001`, determinista y reproducible |
+| Análisis alojado | `GSL-PUBLIC-LLM-001`, implementado y no desplegado en este cambio |
 | Fecha | 2026-07-29 |
-| Estado | Desplegado y verificado en Vercel |
-| Datos | Los 12 incidentes benignos sintéticos y proyecciones saneadas |
-| Runtime público | Archivos estáticos; sin Functions, API, POST o secretos |
-| URL de producción | `https://genai-seguro-lab.vercel.app` |
-| Preview verificada | `dpl_CMgjChRAfFuxFjWknB2GtP38gAih` |
-| Producción promovida | `dpl_9ffPDMhPskoYu9m6sT5QTRZzbzVg` |
+| Datos | Solo los 12 incidentes benignos sintéticos |
+| Catálogo y baseline | `/snapshots/public-profile-v1.json` |
+| Runtime de análisis | `GET /api/status` y `POST /api/analyze` en Vercel Python Functions |
+| URL del snapshot ya publicado | `https://genai-seguro-lab.vercel.app` |
 
-## Resultado y separación de perfiles
+## Un único perfil activo por capacidad
 
-El perfil público reutiliza la UI de `GSL-WEB-001`, pero no publica su proceso
-Python. Intenta primero `GET /api/status` para conservar el comportamiento
-local. Cuando esa ruta no existe, carga
-`/snapshots/public-profile-v1.json` y se identifica como
-**Demo pública · snapshot determinista**.
+El snapshot continúa siendo la única fuente pública del catálogo y la baseline.
+No se añade `/api/baseline`: esa ruta permanece ausente y debe responder `404`.
+Cuando `GET /api/status` declara `mode=public_llm`, la UI usa
+`POST /api/analyze` para el análisis vivo y el snapshot solo para la baseline.
+Un fallo del POST se muestra como error; nunca se sustituye por un análisis
+precomputado presentado como vivo.
 
-En ese modo, los botones muestran análisis y baseline precomputados. No
-afirman que el navegador ejecute un modelo, una herramienta o una evaluación.
-El perfil local conserva sus POST reales y su backend Ollama opt-in; ninguna
-de esas capacidades forma parte del perfil público.
+Si las Functions no están disponibles, la UI puede cargar el snapshot como
+perfil separado y se etiqueta explícitamente como precomputado. El frontal
+local `GSL-WEB-001` conserva su contrato, aunque la copia visible del backend
+alojado usa las etiquetas genéricas **Análisis con LLM** y **LLM alojado**.
 
-## Artefactos y generación
+## Contrato de las Functions
 
-- `vercel.json` sirve `src/genai_seguro_lab/web_assets` y no declara
-  `functions`, `builds` o rutas API.
-- `/assets/:path*` se reescribe a los cuatro assets existentes en la raíz
-  estática.
-- `scripts/generate_public_snapshot.py` llama a `run_incident` para los 12 IDs
-  y a `run_functional_baseline` con reloj e identificadores opacos
-  deterministas.
-- `snapshots/public-profile-v1.json` conserva resultados e informes de
-  seguridad saneados; declara `external_calls=false` y `cost_eur=0`.
+- `api/status.py` y `api/analyze.py` son handlers finos basados en
+  `BaseHTTPRequestHandler`; reutilizan el contrato de aplicación y
+  `run_cloud_incident`.
+- `PUBLIC_LLM_ENABLED=true` es un kill switch no secreto. Solo el valor literal
+  `true` habilita analyze; ausente o distinto devuelve `503` saneado y la UI
+  deshabilita el botón.
+- El único secreto de aplicación es `OLLAMA_API_KEY`. No se proyecta en status,
+  respuestas, errores o frontend; `.env.example` permanece vacío.
+- El request de analyze es un JSON cerrado de hasta 1 KiB con un único
+  `incident_id` que cumple `INC-BEN-NNN`.
+- Se rechazan query string, `Content-Encoding`, `Transfer-Encoding`/chunked,
+  Content-Type distinto del valor exacto `application/json`, claves duplicadas
+  y campos adicionales.
+- Host se compara de forma exacta contra `VERCEL_URL` y
+  `VERCEL_PROJECT_PRODUCTION_URL`; Origin debe ser el mismo host con HTTPS,
+  `X-Forwarded-Proto=https` y `Sec-Fetch-Site=same-origin`.
+- Status entrega un token aleatorio y una cookie double-submit
+  `__Host-gsl-csrf` con `HttpOnly`, `Secure`, `SameSite=Strict` y sin Domain.
+- No se emiten cabeceras CORS. Todas las respuestas API usan
+  `Cache-Control: no-store` y errores saneados.
 
-La regeneración local es:
+## Modelo, herramientas y proyección
 
-```bash
-uv run --frozen python scripts/generate_public_snapshot.py
-```
+El análisis público realiza exactamente dos llamadas sin retry ni streaming.
+Cada llamada tiene timeout máximo de 25 s dentro de una Function con
+`maxDuration=60`; el perfil local conserva 60 s por llamada. La generación fija
+`temperature=0` y `num_predict=512`.
 
-El generador no llama a Ollama, no consulta red y rechaza marcadores de
-prompts, oráculos, `expected_result`, autorización o proveedor alojado.
+La aplicación valida antes de ejecutar `knowledge_search` que:
 
-## Requisitos verificables
+1. `query` sea exactamente `incident.category`;
+2. `knowledge_ids` sea exactamente `incident.knowledge_refs`;
+3. `limit` sea exactamente `1`.
 
-| ID | Requisito | Criterio observable |
-|---|---|---|
-| `PUB-F-01` | Mostrar los 12 casos sin backend público | El snapshot contiene los 12 IDs, sus resultados y la baseline |
-| `PUB-F-02` | Conservar el frontal local | Si `/api/status` responde, la UI mantiene POST analyze/baseline y Ollama opt-in |
-| `PUB-F-03` | Etiquetar la demostración | UI, botones, estado y evidencia dicen snapshot o precomputado |
-| `PUB-S-01` | No crear compute público | `vercel.json` no contiene Functions, builds ni rewrites API |
-| `PUB-S-02` | No enviar datos desde la demo | El modo snapshot solo realiza GET same-origin de assets y del JSON |
-| `PUB-S-03` | Tratar el snapshot como datos | El renderer usa `textContent`, nunca `innerHTML` |
-| `PUB-S-04` | Aplicar cabeceras web cerradas | CSP, COOP, CORP, Permissions-Policy, Referrer-Policy, nosniff, anti-frame y HSTS |
-| `PUB-O-01` | Regenerar de forma reproducible | La prueba reconstruye en memoria y compara el JSON byte a byte |
-| `PUB-O-02` | No reinterpretar evidencia | `DAT-25` permanece inmutable y no se presenta como resultado del perfil público |
+La respuesta pública conserva resultado, contadores de invocaciones y
+herramientas, coste desconocido y un `security_report` reducido. Omite
+proveedor, modelo, fingerprints, correlation IDs, hashes internos, prompts,
+thinking y cuerpos remotos.
 
-## Evidencia de despliegue
+## Evidencia y límites
 
-El 2026-07-29 se verificó la preview
-`dpl_CMgjChRAfFuxFjWknB2GtP38gAih` y se promovió ese candidato como producción
-`dpl_9ffPDMhPskoYu9m6sT5QTRZzbzVg` en el alias estable
-`https://genai-seguro-lab.vercel.app`. Tras la promoción se repitieron las
-comprobaciones:
+El snapshot determinista se sigue regenerando sin red mediante
+`scripts/generate_public_snapshot.py` y `DAT-25` permanece inmutable. La
+preview histórica `dpl_CMgjChRAfFuxFjWknB2GtP38gAih` y la producción estática
+`dpl_9ffPDMhPskoYu9m6sT5QTRZzbzVg` verificaron únicamente
+`GSL-PUBLIC-STATIC-001`; no prueban ni publican `GSL-PUBLIC-LLM-001`.
 
-- HTML, JavaScript y snapshot respondieron `200`;
-- `/api/status` y `POST /api/analyze` respondieron `404`;
-- CSP, COOP, CORP, Permissions-Policy, Referrer-Policy, HSTS, `nosniff` y
-  anti-frame estuvieron presentes;
-- la UI mostró 12 incidentes, un análisis con 10 eventos y una baseline con
-  12 filas, sin errores de consola;
-- el escaneo temprano no devolvió errores ni respuestas `5xx`.
-
-Esta evidencia no convierte el sitio en un runtime de análisis ni valida los
-controles internos, términos, residencia o retención del proveedor.
+Las pruebas nuevas usan transporte falso y no contactan con Ollama o Vercel.
+Este cambio no despliega, no valida disponibilidad, coste, cuota, residencia o
+retención del proveedor y no convierte el laboratorio en un sistema preparado
+para producción.

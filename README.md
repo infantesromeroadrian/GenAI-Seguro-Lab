@@ -9,8 +9,10 @@ después del endurecimiento. Incluye CLI, frontal web local, threat model,
 controles, pruebas, métricas y evidencia versionada.
 
 > El runtime usa por defecto un doble determinista. Existe además un backend
-> experimental y explícito para Ollama Cloud que solo analiza un incidente
-> sintético; no participa en la baseline ni en la evidencia histórica.
+> LLM alojado que solo analiza un incidente sintético; la implementación
+> actual usa Ollama Cloud, pero la interfaz lo presenta de forma desacoplada
+> como «Análisis con LLM». No participa en la baseline ni en la evidencia
+> histórica.
 
 ## Qué demuestra
 
@@ -55,15 +57,21 @@ modelo de amenazas están en la
 [especificación web](./docs/web-interface-spec.md) y el
 [threat model del frontal](./docs/web-threat-model.md).
 
-## Demo pública estática
+## Demo pública
 
-El mismo frontal admite un perfil público de solo lectura basado en snapshots
-deterministas. No publica Python, Functions, API, POST, Ollama o secretos y
-etiqueta sus resultados como precomputados.
+El mismo frontal combina dos capacidades claramente separadas:
+
+- **Análisis con LLM:** analiza en vivo uno de los 12 incidentes sintéticos
+  enumerados mediante una Function server-side. La interfaz no expone la marca
+  del proveedor, el modelo, prompts, respuestas remotas ni credenciales.
+- **Baseline precomputada:** muestra el snapshot determinista versionado sin
+  ejecutar el modelo.
 
 **Demo verificada:** [genai-seguro-lab.vercel.app](https://genai-seguro-lab.vercel.app).
-Vercel sirve únicamente los assets y el snapshot versionado; el análisis real
-permanece en el runtime local.
+La versión de producción verificada actualmente sirve el perfil estático; la
+extensión alojada se promueve solo después de validar la preview y sus
+controles de abuso. La credencial del proveedor se configura únicamente como
+secreto sensible del runtime.
 
 Consulta la [especificación pública](./docs/public-static-profile-spec.md) y su
 [threat model](./docs/public-static-threat-model.md).
@@ -127,6 +135,12 @@ Doble determinista u Ollama opt-in ──► conocimiento y herramienta local
 Política de salida ──► resultado saneado
           │
           └──────────► journal de seguridad efímero
+
+Visitante público
+   └── Vercel UI ──► Function cerrada ──► LLM alojado
+          │                 │
+          └── baseline      └── resultado saneado sin identidad del proveedor
+              precomputada
 ```
 
 Todo se ejecuta en un único host con datos sintéticos. Los límites de confianza
@@ -181,7 +195,7 @@ final permanece inmutable y no se regenera durante una ejecución ordinaria.
 - [Rules of Engagement](./docs/rules-of-engagement.md)
 - [Decisión de arquitectura](./docs/architecture-decision-record.md)
 - [Backend experimental de Ollama Cloud](./docs/ollama-cloud-experimental.md)
-- [Perfil público estático](./docs/public-static-profile-spec.md)
+- [Perfil público: LLM alojado y baseline estática](./docs/public-static-profile-spec.md)
 - [Threat model público](./docs/public-static-threat-model.md)
 
 ### Gobierno y operación
@@ -222,11 +236,12 @@ presentarse como revisión independiente, certificación, conformidad legal
 integral ni sistema preparado para producción.
 
 Cuatro casos de disponibilidad y supply chain permanecen inertes, y el
-laboratorio no incorpora autenticación multiusuario, despliegue remoto, datos
-reales ni aislamiento kernel. El backend Ollama es experimental, probabilístico
-y se ha ejercitado una vez end-to-end con `INC-BEN-001` tras dos fallos
-cerrados previos. Esa evidencia acotada no demuestra disponibilidad,
-reproducibilidad, coste o comportamiento general del servicio real.
+laboratorio no incorpora autenticación multiusuario, datos reales ni
+aislamiento kernel. La demo pública solo admite IDs enumerados; no ofrece
+prompt libre, uploads, efectos o persistencia. El backend alojado es
+experimental y probabilístico. La evidencia acotada no demuestra
+disponibilidad, reproducibilidad, coste, resistencia general ni comportamiento
+universal del servicio real.
 
 El detalle del trabajo planificado y su trazabilidad se conserva en el
 [plan del proyecto](./plan-proyecto-GenAI-Seguro-Lab.md), separado de esta

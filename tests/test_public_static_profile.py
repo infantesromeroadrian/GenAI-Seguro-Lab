@@ -91,11 +91,12 @@ def test_snapshot_is_local_sanitized_and_contains_all_safe_results() -> None:
         assert forbidden not in normalized
 
 
-def test_vercel_profile_is_static_only_and_sets_security_headers() -> None:
+def test_vercel_profile_adds_only_two_bounded_functions() -> None:
     config = json.loads(VERCEL_CONFIG.read_text(encoding="utf-8"))
 
     assert set(config) == {
         "$schema",
+        "functions",
         "headers",
         "outputDirectory",
         "rewrites",
@@ -107,13 +108,21 @@ def test_vercel_profile_is_static_only_and_sets_security_headers() -> None:
             "source": "/assets/:path*",
         }
     ]
-    assert "functions" not in config
+    assert config["functions"] == {
+        "api/*.py": {
+            "includeFiles": "{data/**,src/genai_seguro_lab/**}",
+            "maxDuration": 60,
+        }
+    }
     assert "builds" not in config
-    assert "/api/" not in json.dumps(config)
+    assert not (ROOT / "api" / "baseline.py").exists()
+    assert {
+        path.name for path in (ROOT / "api").glob("*.py")
+    } == {"analyze.py", "status.py"}
 
     header_map = {
         item["key"]: item["value"]
-        for item in config["headers"][0]["headers"]
+        for item in config["headers"][1]["headers"]
     }
     assert set(header_map) == {
         "Content-Security-Policy",
@@ -132,9 +141,18 @@ def test_vercel_profile_is_static_only_and_sets_security_headers() -> None:
     assert header_map["X-Content-Type-Options"] == "nosniff"
     assert header_map["X-Frame-Options"] == "DENY"
     assert header_map["Strict-Transport-Security"].startswith("max-age=")
+    assert config["headers"][0] == {
+        "source": "/api/(.*)",
+        "headers": [
+            {
+                "key": "Cache-Control",
+                "value": "no-store",
+            }
+        ],
+    }
 
 
-def test_shared_assets_are_safe_and_describe_snapshot_not_execution() -> None:
+def test_shared_assets_are_safe_and_distinguish_live_from_snapshot() -> None:
     javascript = (ASSETS / "app.js").read_text(encoding="utf-8")
     html = (ASSETS / "index.html").read_text(encoding="utf-8")
     combined = f"{javascript}\n{html}"
@@ -142,9 +160,13 @@ def test_shared_assets_are_safe_and_describe_snapshot_not_execution() -> None:
     assert "innerHTML" not in javascript
     assert "/snapshots/public-profile-v1.json" in javascript
     assert "/api/status" in javascript
+    assert "/api/analyze" in javascript
     assert "Demo pública · snapshot determinista" in javascript
     assert "Mostrar análisis precomputado" in javascript
     assert "Mostrar baseline precomputada" in javascript
+    assert "Análisis con LLM" in javascript
+    assert "LLM alojado" in javascript
+    assert "Ollama Cloud" not in combined
     assert "publicSnapshot" in javascript
     assert "https://" not in combined
     assert "http://" not in combined
@@ -160,7 +182,7 @@ def test_public_copy_replaces_local_execution_language_only_in_snapshot() -> Non
         maxsplit=1,
     )[1].split("function initializePublic", maxsplit=1)[0]
     public_initializer = javascript.split(
-        "function initializePublic",
+        "function initializePublicSnapshot",
         maxsplit=1,
     )[1].split("async function initialize", maxsplit=1)[0]
 
@@ -205,9 +227,12 @@ def test_public_profile_documentation_is_linked_and_honest() -> None:
     for marker in (
         "`GSL-PUBLIC-STATIC-001`",
         "snapshot determinista",
-        "sin Functions",
+        "Functions",
+        "`GSL-PUBLIC-LLM-001`",
+        "`PUBLIC_LLM_ENABLED=true`",
+        "`OLLAMA_API_KEY`",
         "POST",
-        "secretos",
+        "secreto",
         "`DAT-25`",
         "URL",
     ):
