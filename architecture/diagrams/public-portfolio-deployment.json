@@ -1,0 +1,88 @@
+{
+  "name": "Despliegue público del portfolio",
+  "level": 2,
+  "meta": {
+    "direction": "LR"
+  },
+  "nodes": [
+    {
+      "id": "portfolio-browser",
+      "label": "Navegador del visitante",
+      "meta": {
+        "type": "frontend",
+        "technology": "web-browser",
+        "interface": "https-public"
+      }
+    },
+    {
+      "id": "vercel-public-boundary",
+      "label": "TB-09 · Vercel Static Delivery",
+      "meta": {
+        "type": "system",
+        "isContainer": true,
+        "trustBoundary": true,
+        "boundaryId": "TB-09",
+        "isolation": "managed-static-hosting"
+      }
+    },
+    {
+      "id": "vercel-static-site",
+      "label": "Demo pública estática",
+      "parentId": "vercel-public-boundary",
+      "path": "src/genai_seguro_lab/web_assets/",
+      "meta": {
+        "type": "frontend",
+        "technology": "html-css-javascript",
+        "runtimeApi": false,
+        "runtimeCompute": false,
+        "externalCalls": false
+      }
+    },
+    {
+      "id": "public-deterministic-snapshot",
+      "label": "Snapshot determinista público",
+      "parentId": "vercel-public-boundary",
+      "path": "src/genai_seguro_lab/web_assets/snapshots/",
+      "meta": {
+        "type": "storage",
+        "technology": "versioned-json",
+        "writeMode": "offline-generation",
+        "runtimeMutable": false,
+        "containsSecrets": false
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "portfolio-browser-requests-static-site",
+      "source": "portfolio-browser",
+      "target": "vercel-static-site",
+      "label": "GET HTTPS de HTML, CSS, JavaScript y favicon",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-09"
+      }
+    },
+    {
+      "id": "vercel-static-site-reads-public-snapshot",
+      "source": "vercel-static-site",
+      "target": "public-deterministic-snapshot",
+      "label": "GET local del JSON versionado; sin POST ni ejecución",
+      "meta": {
+        "type": "reads",
+        "runtimeApi": false
+      }
+    },
+    {
+      "id": "vercel-static-site-returns-public-view",
+      "source": "vercel-static-site",
+      "target": "portfolio-browser",
+      "label": "DOM con textContent y resultados precomputados",
+      "meta": {
+        "type": "data-flow",
+        "crossesBoundary": "TB-09",
+        "persistence": false
+      }
+    }
+  ]
+}

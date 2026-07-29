@@ -42,6 +42,17 @@
       }
     },
     {
+      "id": "portfolio-visitor",
+      "label": "ACT-04 · Visitante del portfolio",
+      "meta": {
+        "type": "person",
+        "inventoryIds": [
+          "ACT-04"
+        ],
+        "state": "public-read-only"
+      }
+    },
+    {
       "id": "genai-seguro-lab",
       "label": "GenAI Seguro Lab",
       "subDiagramId": "local-containers",
@@ -72,6 +83,19 @@
           "2026-07-29-instrumented-end-to-end-passed"
         ]
       }
+    },
+    {
+      "id": "public-portfolio-demo",
+      "label": "GenAI Seguro Lab · Demo pública",
+      "subDiagramId": "public-portfolio-deployment",
+      "meta": {
+        "type": "system",
+        "deployment": "vercel-static",
+        "state": "public-static-snapshot",
+        "runtimeApi": false,
+        "runtimeExternalIntegrations": 0,
+        "secrets": false
+      }
     }
   ],
   "edges": [
@@ -101,6 +125,27 @@
       "meta": {
         "type": "calls",
         "cliReachable": false
+      }
+    },
+    {
+      "id": "context-visitor-uses-public-demo",
+      "source": "portfolio-visitor",
+      "target": "public-portfolio-demo",
+      "label": "GET HTTPS de UI y snapshots deterministas versionados",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-09",
+        "readOnly": true
+      }
+    },
+    {
+      "id": "context-maintainer-publishes-public-demo",
+      "source": "lab-maintainer",
+      "target": "public-portfolio-demo",
+      "label": "Git + generación offline + despliegue estático Vercel",
+      "meta": {
+        "type": "publishes",
+        "runtimeDependency": false
       }
     },
     {
