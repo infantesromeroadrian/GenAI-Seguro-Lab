@@ -8,9 +8,9 @@ lo somete a casos adversarios autorizados y compara su comportamiento antes y
 después del endurecimiento. Incluye CLI, frontal web local, threat model,
 controles, pruebas, métricas y evidencia versionada.
 
-> El runtime usa un doble determinista, no un LLM real. Su objetivo es hacer
-> reproducibles las fronteras de seguridad sin credenciales, servicios externos
-> ni efectos fuera del laboratorio.
+> El runtime usa por defecto un doble determinista. Existe además un backend
+> experimental y explícito para Ollama Cloud que solo analiza un incidente
+> sintético; no participa en la baseline ni en la evidencia histórica.
 
 ## Qué demuestra
 
@@ -38,7 +38,19 @@ uv run --frozen python main.py web
 Después, abre [http://127.0.0.1:8765](http://127.0.0.1:8765).
 
 La interfaz está fijada a loopback y no incorpora prompt libre, cargas de
-archivos, persistencia, telemetría ni recursos de terceros. Su contrato y su
+archivos, persistencia ni telemetría externa. El backend queda fijado al
+arrancar; para activar el egress sintético experimental:
+
+```bash
+printf 'OLLAMA_API_KEY: ' >&2
+IFS= read -r -s OLLAMA_API_KEY
+printf '\n' >&2
+export OLLAMA_API_KEY
+uv run --frozen python main.py web --provider ollama
+unset OLLAMA_API_KEY
+```
+
+La baseline del frontal permanece siempre determinista. Su contrato y su
 modelo de amenazas están en la
 [especificación web](./docs/web-interface-spec.md) y el
 [threat model del frontal](./docs/web-threat-model.md).
@@ -59,6 +71,25 @@ uv run --frozen python main.py analyze \
   --security-report
 ```
 
+Analizar un único incidente con Ollama Cloud, de forma opt-in:
+
+```bash
+printf 'OLLAMA_API_KEY: ' >&2
+IFS= read -r -s OLLAMA_API_KEY
+printf '\n' >&2
+export OLLAMA_API_KEY
+uv run --frozen python main.py analyze \
+  --incident INC-BEN-001 \
+  --provider ollama
+unset OLLAMA_API_KEY
+```
+
+El endpoint y modelo están fijados, se realizan exactamente dos llamadas sin
+reintentos y el coste se declara desconocido. Consulta el
+[contrato experimental de Ollama Cloud](./docs/ollama-cloud-experimental.md)
+antes de habilitarlo. No introduzcas la clave en argumentos, ficheros
+versionados o salida.
+
 Ejecutar los 12 casos benignos:
 
 ```bash
@@ -77,7 +108,7 @@ Operador local
 Validación y contexto de ejecución
           │
           ▼
-Doble determinista ──► conocimiento y herramientas locales
+Doble determinista u Ollama opt-in ──► conocimiento y herramienta local
           │
           ▼
 Política de salida ──► resultado saneado
@@ -100,9 +131,10 @@ conceptual completo está en
 | Falsos rechazos benignos | 0 | 0 |
 | Llamadas y coste externos | 0 / 0 € | 0 / 0 € |
 
-Estos resultados pertenecen exclusivamente al candidato, corpus sintético y
-rúbrica versionados. No demuestran seguridad universal, resistencia frente a
-ataques desconocidos ni comportamiento de un modelo real.
+Estos resultados pertenecen exclusivamente al candidato determinista, corpus
+sintético y rúbrica versionados. Son anteriores a `GSL-OLLAMA-001` y no
+demuestran seguridad universal, resistencia frente a ataques desconocidos ni
+comportamiento de Ollama Cloud o `gpt-oss:120b`.
 
 La evidencia principal está en:
 
@@ -135,6 +167,7 @@ final permanece inmutable y no se regenera durante una ejecución ordinaria.
 - [Mapa de controles](./docs/control-responsibility-mapping.md)
 - [Rules of Engagement](./docs/rules-of-engagement.md)
 - [Decisión de arquitectura](./docs/architecture-decision-record.md)
+- [Backend experimental de Ollama Cloud](./docs/ollama-cloud-experimental.md)
 
 ### Gobierno y operación
 
@@ -175,7 +208,10 @@ integral ni sistema preparado para producción.
 
 Cuatro casos de disponibilidad y supply chain permanecen inertes, y el
 laboratorio no incorpora autenticación multiusuario, despliegue remoto, datos
-reales, modelo de proveedor ni aislamiento kernel.
+reales ni aislamiento kernel. El backend Ollama es experimental, probabilístico
+y se ha ejercitado una vez end-to-end con `INC-BEN-001` tras dos fallos
+cerrados previos. Esa evidencia acotada no demuestra disponibilidad,
+reproducibilidad, coste o comportamiento general del servicio real.
 
 El detalle del trabajo planificado y su trazabilidad se conserva en el
 [plan del proyecto](./plan-proyecto-GenAI-Seguro-Lab.md), separado de esta

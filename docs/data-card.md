@@ -102,6 +102,21 @@ observación. Las cuatro fixtures `AC-DOS-01`, `AC-DOS-02`, `AC-DOS-03` y
 - Los eventos y resultados persistidos excluyen payloads, salida bruta,
   credenciales y rutas personales según su contrato.
 
+### Egress sintético opt-in
+
+`GSL-OLLAMA-001` no crea un nuevo dataset ni modifica `DAT-01` a `DAT-25`.
+Cuando el operador selecciona Ollama, se envían al endpoint fijo únicamente la
+tarea enumerada, un incidente benigno sintético validado y el resultado
+sintético de las referencias autorizadas de `DAT-02`. No se envían
+`expected_result`, `DAT-08`, `DAT-24`, corpus adversario, datos reales o rutas
+locales.
+
+La clave Bearer procede de `OLLAMA_API_KEY`, no de los activos de datos, y no
+se incorpora al prompt, resultado, journal o evidencia. Las pruebas
+automatizadas usan transporte falso y un smoke instrumentado completó el flujo
+con `INC-BEN-001`; retención, residencia y tratamiento del proveedor siguen
+sin verificar y cualquier nueva prueba real requiere revisión previa.
+
 La etiqueta sintética no elimina la necesidad de controles. Un cambio de
 origen, contenido o sensibilidad obliga a detener la incorporación, revisar
 privacidad y actualizar la evaluación antes de usar el activo.
@@ -145,6 +160,7 @@ Limitaciones:
 | Corpus y manifiestos | Permanecen versionados en Git. Un cambio exige nueva versión, hashes y pruebas coherentes. |
 | Evidencia | Se conserva como historial inmutable y saneado; un nuevo run usa otro identificador y artefacto. `DAT-25` no se regenera. |
 | Salida y eventos de runtime | Son efímeros por `stdout` o memoria; no hay persistencia automática. |
+| Intercambio Ollama opt-in | Prompt y respuesta existen solo durante dos llamadas; la aplicación proyecta únicamente el resultado validado y no registra thinking, cuerpo remoto o respuesta cruda. La conservación del proveedor no está verificada. |
 | Sandbox | Borradores y estado transaccional permanecen locales, ignorados por Git y sometidos a publicación create-only y recuperación acotada. |
 
 La [política formal de logs y ciclo de vida](./security-events-policy.md)

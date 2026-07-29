@@ -5,7 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYS-INV-001` |
-| Versión | `2.11.0` |
+| Versión | `2.12.0` |
 | Fecha de corte | 2026-07-28 |
 | Baseline adversaria histórica | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Control vigente | Extensión post-roadmap `GSL-WEB-001`; DAT-25 permanece fijado |
@@ -142,8 +142,9 @@ descriptor no materializado que conserva
 | `CMP-01` | Punto de entrada y CLI local | Expuesto | `main.py` ofrece `analyze`, `baseline` y `web`; las dos operaciones históricas conservan su salida y `web` solo inicia `CMP-19` en loopback. Mantiene durante cada análisis el lock advisory exclusivo y no bloqueante de `CMP-10` sobre `DAT-03` | `main.py`, `src/genai_seguro_lab/cli.py`, `tests/test_cli_smoke.py` |
 | `CMP-19` | Frontal y gateway HTTP local | Expuesto en loopback | Sirve cuatro assets allowlisted y tres rutas API sobre `127.0.0.1`; valida Host, Origin, token CSRF, Content-Type, 1 KiB y esquema antes de reutilizar el flujo benigno. Aplica CSP/cabeceras cerradas, no CORS, no logs raw, no persistencia y no expone prompts, rutas, uploads o borradores | `src/genai_seguro_lab/web.py`, `src/genai_seguro_lab/web_assets/`, `tests/test_web_interface.py` |
 | `CMP-02` | Contrato y cargador de datos | Expuesto para benigno; interno para adversario | `load_dataset()` obtiene mediante `CMP-10` un único snapshot benigno acotado a 64 KiB, 8 KiB por registro y 32+32 registros antes de parsear o hashear; `load_adversarial_corpus()` conserva su contrato separado y no interpreta ni ejecuta fixtures | `src/genai_seguro_lab/data_contract.py`, `tests/test_adversarial_corpus.py`, `tests/test_resource_control.py` |
-| `CMP-03` | Flujo benigno | Expuesto | Coordina exactamente dos invocaciones de modelo, una petición y una ejecución de herramienta y una respuesta final; consume el perfil `analyze` o el presupuesto agregado recibido de `baseline`, y aplica `CMP-09` antes de devolver una proyección segura | `src/genai_seguro_lab/benign_flow.py`, `tests/test_resource_control.py` |
+| `CMP-03` | Flujo benigno | Expuesto | Coordina exactamente dos invocaciones de modelo, una petición y una ejecución de herramienta y una respuesta final; consume el perfil `analyze`, `cloud_analyze` o el presupuesto agregado recibido de `baseline`, y aplica `CMP-09` antes de devolver una proyección segura | `src/genai_seguro_lab/benign_flow.py`, `tests/test_resource_control.py` |
 | `MOD-01` | `DeterministicModelAdapter` | Expuesto | Doble `deterministic/scripted-v1` en el mismo proceso; responde solo a peticiones guionizadas, falla cerrado, hace 0 llamadas externas y registra 0 € | `src/genai_seguro_lab/model_adapter.py` |
+| `MOD-02` | Ollama Cloud `gpt-oss:120b` | Expuesto solo por opt-in | Modelo alojado probabilístico para un único `analyze`; `deterministic=false`, dos llamadas externas y coste desconocido. No interviene en baseline, evaluaciones o `DAT-25`; un smoke instrumentado completó el flujo tras dos fallos cerrados, sin demostrar disponibilidad o reproducibilidad | `src/genai_seguro_lab/ollama_cloud_adapter.py`, `docs/ollama-cloud-experimental.md` |
 | `TOL-01` | `KnowledgeSearchTool` | Expuesto | Se crea desde `KnowledgeCatalog` con la vista física exacta del incidente y un grant opaco de una sola herramienta ligado a principal, scope e instancia; no usa red ni filesystem | `src/genai_seguro_lab/local_tools.py` |
 | `TOL-02` | `DraftWriterTool` y `DraftApprovalAuthority` | Interno | Aplica `CMP-09` antes de propuesta y huella; `CMP-10` limita cada sesión a una propuesta, un challenge, tres autenticaciones, un grant, un archivo y 16 KiB de Markdown. Challenge, aprobación y grant son efímeros, de un solo uso y ligados al contexto exacto; delega publicación y reconciliación create-only en `CMP-12` | `src/genai_seguro_lab/local_tools.py`, `tests/test_local_tools.py`, `tests/test_resource_control.py`, `tests/test_sandbox_recovery.py` |
 | `CMP-04` | Constructor de escenarios deterministas | Expuesto | Construye los intercambios guionizados para los incidentes benignos; no es un proveedor GenAI | `src/genai_seguro_lab/baseline.py` |
@@ -152,8 +153,8 @@ descriptor no materializado que conserva
 | `CMP-07` | Harness adversario acotado | Interno de test | Selecciona exactamente 14 fixtures PI/JB/EX/TOL; combina copias y sandboxes `$TMP`, grants lógicos, dobles deterministas, guardas de `CMP-03`, rechazos de `TOL-01`, pruebas confinadas de `TOL-02` y un subproceso con tres variables ambientales permitidas. En el checkout actual `AC-TOL-05` rechaza la confirmación literal y crea cero archivos | `src/genai_seguro_lab/evaluation_harness.py`, `tests/test_prompt_injection_evaluation.py`, `tests/test_jailbreak_disclosure_evaluation.py`, `tests/test_tool_abuse_evaluation.py` |
 | `CMP-08` | Runner de baseline adversaria histórica | Soporte interno | Reproduce exclusivamente el candidato histórico `93aefa45eac687d219bfed32f03be4e60e4a13ed`; verifica commit, rama y limpieza, impone la autorización y presupuestos y escribe evidencia bruta solo bajo `$TMP`. Rechaza otro candidato para no atribuir el oráculo histórico al código endurecido | `src/genai_seguro_lab/adversarial_baseline.py`, `evaluations/run_adversarial_baseline.py`, `tests/test_adversarial_baseline.py` |
 | `CMP-09` | `OutputPolicy` | Control de aplicación | Dependencia obligatoria y sin autoridad de modelo, red o filesystem. Rechaza categorías explícitas, redacta correo y rutas locales, emite sellos ligados a instancia/canal y no conserva valores en su evidencia | `src/genai_seguro_lab/output_policy.py`, `tests/test_output_policy.py` |
-| `CMP-10` | `ProductResourceControl` | Control de aplicación | Política obligatoria y fail-closed `GSL-RESOURCE-POLICY-001`: preflight acotado del corpus; límites UTF-8 de modelo, herramienta, resumen y borrador; perfiles `analyze`, `baseline` y `draft`; checkpoints cooperativos y lock advisory de CLI. No cancela llamadas síncronas bloqueadas ni limita invocaciones directas de la API entre procesos | `src/genai_seguro_lab/resource_control.py`, `tests/test_resource_control.py`, `docs/resource-limits-policy.md` |
-| `CMP-11` | `SecurityEventJournal` | Control de aplicación | Política `GSL-SECURITY-EVENTS-001`: eventos cerrados de hasta 2 KiB, perfiles en memoria de 32/32 KiB, 256/256 KiB y 32/32 KiB, secuencia global, correlación primaria e hija por caso de baseline, cadena SHA-256 y diez señales deterministas. No persiste, exporta, firma ni responde | `src/genai_seguro_lab/security_events.py`, `tests/test_security_events.py`, `docs/security-events-policy.md` |
+| `CMP-10` | `ProductResourceControl` | Control de aplicación | Política obligatoria y fail-closed `GSL-RESOURCE-POLICY-001`: preflight acotado del corpus; límites UTF-8 de modelo, herramienta, resumen y borrador; perfiles `analyze`, `cloud_analyze`, `baseline` y `draft`; checkpoints cooperativos y lock advisory de CLI. No cancela llamadas síncronas bloqueadas ni limita invocaciones directas de la API entre procesos | `src/genai_seguro_lab/resource_control.py`, `tests/test_resource_control.py`, `docs/resource-limits-policy.md` |
+| `CMP-11` | `SecurityEventJournal` | Control de aplicación | Política `GSL-SECURITY-EVENTS-001`: eventos cerrados de hasta 2 KiB; perfiles `analyze`, `cloud_analyze` y `draft` de 32 eventos/32 KiB y `baseline` de 256/256 KiB; secuencia global, correlación primaria e hija por caso de baseline, cadena SHA-256 y once señales deterministas, incluida `provider_error`. No persiste, exporta, firma ni responde | `src/genai_seguro_lab/security_events.py`, `tests/test_security_events.py`, `docs/security-events-policy.md` |
 | `CMP-12` | `SandboxTransactionController` | Control de aplicación interno | Política `GSL-SANDBOX-RECOVERY-001`: marker/staging `0600`, hard link atómico create-only, `fsync`, lock no bloqueante, una reconciliación antes de registrar autoridad y reporte saneado. Preserva un final publicado, nunca republica staging y falla cerrado ante estado ambiguo | `src/genai_seguro_lab/sandbox_recovery.py`, `tests/test_sandbox_recovery.py`, `docs/sandbox-recovery-policy.md` |
 | `CMP-13` | Runner neutral de retest adversario | Soporte interno | Reutiliza la ejecución de `CMP-07` sin duplicar el harness; exige candidato endurecido exacto y limpio, verifica la baseline histórica y la comparabilidad del corpus, y proyecta bajo `$TMP` solo identidad, cardinalidad, ejecución, integridad y observaciones neutrales. No calcula eficacia ni métricas de PGS-05-M02 | `src/genai_seguro_lab/adversarial_retest.py`, `evaluations/run_adversarial_retest.py`, `tests/test_adversarial_retest.py` |
 | `CMP-14` | Analizador offline de métricas adversarias | Soporte interno | Verifica por SHA-256 los dos manifiestos y todos sus ficheros, exige 14 pares evaluables, aplica una política cerrada al triple observado y emite JSON canónico por `stdout`. No ejecuta runners, target, harness o herramientas y falla cerrado ante deriva o estados desconocidos | `src/genai_seguro_lab/adversarial_metrics.py`, `evaluations/run_adversarial_metrics.py`, `tests/test_adversarial_metrics.py` |
@@ -161,6 +162,8 @@ descriptor no materializado que conserva
 | `CMP-16` | Evaluador offline de métricas operativas | Soporte interno | Materializa bajo `$TMP` los commits benignos pre/post fijados, verifica corpus, entrada y lock byte a byte y ejecuta 3 pares de calentamiento y 30 pares AB/BA con procesos nuevos. Mide pared, CPU y RSS, valida y hashea la salida y emite JSON por `stdout`; no cambia el checkout, instala dependencias, conserva salida bruta o aplica un umbral universal | `src/genai_seguro_lab/operational_metrics.py`, `evaluations/run_operational_metrics.py`, `tests/test_operational_metrics.py` |
 | `CMP-17` | Verificador offline del registro de hallazgos | Soporte interno | Lee `DAT-20/21/22/23`, exige fuentes fijadas, esquema cerrado, referencias resolubles y resumen derivado y emite solo un informe efímero por `stdout`. No contiene generador, ejecuta targets, llama a modelos o herramientas, escribe evidencia, decide M06, acepta riesgo o cambia `final_retest` | `src/genai_seguro_lab/control_findings.py`, `evaluations/verify_control_findings.py`, `tests/test_control_findings.py` |
 | `CMP-18` | Evaluador offline del retest final | Soporte interno; run canónico completado | Verifica el candidato, el evaluador, `DAT-24` y 15 artefactos históricos; materializa `77edd640` mediante `git archive` bajo `$TMP`, bloquea red y credenciales, ejecuta 14 casos adversarios y 12 benignos más dos probes y evalúa después sus observaciones. El runner no acepta argumentos ni escribe evidencia; el único run emitió `DAT-25` por `stdout` con `final_retest: true` | `src/genai_seguro_lab/final_retest.py`, `evaluations/run_final_retest.py`, `evaluations/final-retest-rubric-v1.json`, `evaluations/final-retest-v1.json`, `tests/test_final_retest.py` |
+| `CMP-20` | `OllamaCloudAdapter` y transporte HTTPS | Producto opt-in | Traduce el contrato tipado a `POST https://ollama.com/api/chat`, fija modelo/opciones, rechaza redirects, acota cuerpo y proyecta sin thinking ni contenido remoto auxiliar. Transporte inyectable, timeout 60 s y cero retries | `src/genai_seguro_lab/ollama_cloud_adapter.py`, `tests/test_ollama_cloud_adapter.py` |
+| `CMP-21` | Runner `cloud_analyze` | Producto opt-in | Reutiliza `CMP-03`, `TOL-01`, grants, `CMP-09`, `CMP-10` y `CMP-11` para un único incidente. Exige dos invocaciones, una búsqueda y salida JSON validada localmente; no alcanza baseline/evaluaciones | `src/genai_seguro_lab/cloud_analysis.py`, `tests/test_cloud_analysis.py` |
 
 `CMP-13` no abre una interfaz de producto y mantiene separado el contrato
 histórico de `CMP-08`. El run `GSL-ADV-RT-20260726-001` produjo `DAT-16` a
@@ -179,8 +182,11 @@ persistirlo por sí mismo.
 La dependencia del objeto Git histórico es deliberadamente fail-closed: un
 archivo o clon sin ese objeto no puede regenerar la comparación.
 
-`MOD-01` es el único modelo activo, pero no es un modelo GenAI real. Tampoco
-hay un agente autónomo: `CMP-03` es un flujo acotado y determinista con una sola
+`MOD-01` sigue siendo el único modelo por defecto y el único usado por baseline
+y evaluaciones. `MOD-02` solo queda activo tras `--provider ollama` para
+`analyze`; su contrato se ha probado con transporte falso y un smoke
+instrumentado completó el flujo real de `INC-BEN-001` tras dos fallos cerrados.
+Tampoco hay un agente autónomo: `CMP-03` es un flujo acotado con una sola
 herramienta disponible por incidente. `CMP-06` anuncia dos herramientas en el
 objeto de petición, pero no contiene un adaptador ni un dispatcher.
 `CMP-07` conduce únicamente dobles deterministas. Cada operación recibe un
@@ -204,7 +210,7 @@ saneada.
 | ID | Identidad o control | Estado real |
 |---|---|---|
 | `IDN-01` | Identidad del proceso local | Es la cuenta de macOS que ejecuta Python. Sus permisos de filesystem son el límite efectivo de infraestructura; la aplicación no los reduce mediante una identidad propia. |
-| `IDN-02` | Identidad de aplicación o servicio | Ausente. No hay cuenta interna, token de servicio, IAM role, OAuth, API key ni credencial de proveedor. |
+| `IDN-02` | Credencial de proveedor opt-in | `OLLAMA_API_KEY` se obtiene solo del entorno para `MOD-02`, se envía como Bearer al endpoint fijo y no entra en prompts, resultados, journal o errores. No existe service account, OAuth, IAM role o almacenamiento de secretos en la aplicación. |
 | `IDN-03` | Principal sintético de confirmación | Autenticado localmente mediante una identidad configurada y una credencial verificada con PBKDF2-HMAC-SHA256. La credencial no entra en los modelos ni en la evidencia. Este control acredita el principal sintético, no presencia ni identidad de una persona real. |
 | `IDN-04` | Autoridad del modelo | El modelo solo puede emitir datos tipados. La aplicación valida y ejecuta `TOL-01`; el adaptador no autoriza ni ejecuta herramientas. |
 | `IDN-05` | Principal lógico de operación | Presente como control de aplicación. Liga un grant a principal, scope, herramienta e instancia; no es login, credencial, usuario de SO ni aislamiento frente a Python arbitrario. |
@@ -222,7 +228,7 @@ partida de la matriz de autoridad de PGS-02-M04.
 | `DEP-04` | pytest | Única dependencia directa de desarrollo | `9.1.1` |
 | `DEP-05` | Dependencias transitivas de Pydantic | Runtime | `annotated-types 0.8.0`, `pydantic-core 2.46.4`, `typing-extensions 4.16.0`, `typing-inspection 0.4.2` |
 | `DEP-06` | Dependencias transitivas de pytest | Desarrollo | `iniconfig 2.3.0`, `packaging 26.2`, `pluggy 1.6.0`, `pygments 2.20.0` |
-| `DEP-07` | Librería estándar de Python | CLI, rutas, JSON, hashing y estructuras | incluida en el runtime de `DEP-01` |
+| `DEP-07` | Librería estándar de Python | CLI, rutas, JSON, hashing, estructuras y HTTPS de `CMP-20` | incluida en el runtime de `DEP-01` |
 
 No hay SDK de proveedor de modelos, framework de agentes, framework web, ORM,
 cliente de base de datos, vector store, telemetría externa ni dependencia de
@@ -243,7 +249,7 @@ atribuir un escaneo de vulnerabilidades inexistente.
 | `INF-04` | Filesystem del checkout | Conserva corpus, snapshot y sandbox; solo `TOL-02` implementa escritura de producto, confinada a borradores y publicada/reconciliada por `CMP-12` |
 | `INT-01` | Entrada de proceso | Argumentos de la CLI local; no existe endpoint HTTP, UI o cola |
 | `INT-02` | Salida de proceso | `stdout`/`stderr`; `--security-report` puede incluir `DAT-14` en el mismo `stdout`, pero no existe exportación automática, callback, correo, webhook o telemetría |
-| `INT-03` | Integraciones externas de runtime | Ninguna activa; la baseline registra 0 llamadas externas |
+| `INT-03` | Integraciones externas de runtime | Ninguna en el modo por defecto o baseline. `analyze --provider ollama` permite hasta dos POST al endpoint fijo; coste desconocido, un smoke end-to-end acotado y dos fallos cerrados previos |
 | `INT-04` | Repositorio GitHub público | Integración manual de desarrollo y distribución de código; no es alcanzable por `CMP-01` ni por el runtime |
 
 Obsidian registra la continuidad humana del proyecto, pero no se importa ni se
@@ -257,17 +263,18 @@ consulta durante la ejecución y, por tanto, no es una dependencia del sistema.
 2. Para `baseline`, `CMP-05` abre primero el presupuesto agregado de `CMP-10`.
    Después `CMP-10` obtiene snapshots acotados de `DAT-01/02`; `CMP-02` parsea,
    calcula hashes sobre esos mismos bytes y valida el bundle completo.
-3. `CMP-04` prepara los intercambios exactos de `MOD-01`. En `analyze`,
-   `run_incident()` abre entonces su perfil `CMP-10` sobre el bundle validado.
-4. `CMP-03` consume caso e invocación y solicita a `MOD-01` una decisión
-   inicial. En `baseline`, `CMP-11` usa una correlación hija opaca distinta
-   para cada caso.
+3. Por defecto, `CMP-04` prepara los intercambios exactos de `MOD-01`. Solo con
+   `--provider ollama`, `CMP-21` selecciona `MOD-02` y el perfil
+   `cloud_analyze`; baseline no admite esa opción.
+4. `CMP-03` consume caso e invocación y solicita al modelo seleccionado una
+   decisión inicial. En `baseline`, `CMP-11` usa una correlación hija opaca
+   distinta para cada caso.
 5. La aplicación crea una vista de `TOL-01` con solo las referencias del
    incidente y emite un grant `IDN-05` independiente del catálogo anunciado.
 6. `CMP-10` consume solicitud y ejecución; `TOL-01` acepta una única consulta
    con ese principal, scope e instancia, y su resultado queda acotado.
-7. `CMP-03` consume la segunda invocación, devuelve ese resultado a `MOD-01` y
-   exige una respuesta final acotada.
+7. `CMP-03` consume la segunda invocación, devuelve ese resultado al modelo
+   seleccionado sin anunciar herramientas y exige una respuesta final acotada.
 8. `CMP-03` valida consistencia, acota el resumen, aplica `CMP-09` y conserva
    solo una proyección segura de las invocaciones; `CMP-11` registra decisiones
    y señales sin conservar esos contenidos.
@@ -316,7 +323,7 @@ desde la CLI ordinaria.
 
 | ID | Elemento ausente | Situación prevista |
 |---|---|---|
-| `GAP-01` | Modelo GenAI real y proveedor | Opcional y desactivado hasta una autorización específica |
+| `GAP-01` | Evidencia general del modelo alojado | `MOD-02` existe opt-in y un smoke real completó `INC-BEN-001` tras dos fallos cerrados; disponibilidad, reproducibilidad, coste, términos, retención, residencia, calidad y comportamiento general siguen no demostrados |
 | `GAP-02` | API pública, acceso remoto o servicio web externo | No implementados; `CMP-19` existe solo en loopback |
 | `GAP-03` | Docker, contenedor o Docker Model Runner | Solo candidato documentado; no forma parte del runtime |
 | `GAP-04` | Cloud, base de datos, vector store, cola o almacenamiento remoto | Fuera de alcance |
@@ -372,8 +379,10 @@ reclasifica aquí como un requisito pendiente.
   `flock` es cooperativo y sus validaciones no protegen frente a código Python
   hostil con los mismos permisos de `IDN-01`; no instala handlers de señales
   ni implementa el procedimiento operativo de `PGS-06-M07`.
-- La ausencia de red y proveedor elimina esas superficies del sistema actual,
-  pero deberán inventariarse de nuevo si se incorporan.
+- El modo determinista y baseline mantienen ausencia de red. El opt-in Ollama
+  añade egress, credencial, disponibilidad y coste desconocido; sus controles
+  de integración se prueban con transporte falso y un smoke real acotado, no
+  con un benchmark de disponibilidad, coste o comportamiento general.
 - La baseline adversaria solo acredita las observaciones de las 14 variantes
   fijadas contra el candidato exacto; no acredita seguridad general, robustez
   frente a ataques desconocidos ni utilidad semántica.

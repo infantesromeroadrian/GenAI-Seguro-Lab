@@ -122,6 +122,25 @@
       }
     },
     {
+      "id": "cloud-analysis-runner",
+      "label": "CMP-21 · Runner cloud acotado",
+      "parentId": "application-control-boundary",
+      "path": "src/genai_seguro_lab/cloud_analysis.py",
+      "meta": {
+        "type": "service",
+        "technology": "pydantic-python",
+        "inventoryIds": [
+          "CMP-21"
+        ],
+        "state": "opt-in-experimental",
+        "provider": "ollama",
+        "canonicalEvidence": false,
+        "baselineReachable": false,
+        "maxModelInvocations": 2,
+        "maxToolExecutions": 1
+      }
+    },
+    {
       "id": "vulnerable-evaluation-profile",
       "label": "CMP-06 · Perfil vulnerable aislado",
       "parentId": "application-control-boundary",
@@ -468,6 +487,33 @@
       }
     },
     {
+      "id": "ollama-cloud-adapter",
+      "label": "CMP-20 / MOD-02 · Adaptador Ollama Cloud",
+      "parentId": "model-output-boundary",
+      "path": "src/genai_seguro_lab/ollama_cloud_adapter.py",
+      "meta": {
+        "type": "service",
+        "technology": "python-stdlib-https",
+        "inventoryIds": [
+          "CMP-20",
+          "MOD-02"
+        ],
+        "state": "opt-in-experimental",
+        "externalCalls": true,
+        "endpointFixed": true,
+        "retries": 0,
+        "thinkingRetained": false,
+        "realServiceTested": true,
+        "liveSmokeStatus": "passed-bounded",
+        "liveSmokeFinding": "end-to-end-completed-after-prior-failures",
+        "liveSmokeHistory": [
+          "2026-07-28-empty-query-rejected",
+          "2026-07-29-sanitized-stage-unobserved",
+          "2026-07-29-instrumented-end-to-end-passed"
+        ]
+      }
+    },
+    {
       "id": "knowledge-search",
       "label": "TOL-01 · Búsqueda autorizada",
       "parentId": "tool-authority-boundary",
@@ -750,6 +796,26 @@
       }
     },
     {
+      "id": "components-cli-starts-cloud-analysis",
+      "source": "cli-dispatcher",
+      "target": "cloud-analysis-runner",
+      "label": "run_cloud_incident() solo con --provider ollama",
+      "meta": {
+        "type": "calls",
+        "baselineReachable": false
+      }
+    },
+    {
+      "id": "components-cloud-runner-runs-flow",
+      "source": "cloud-analysis-runner",
+      "target": "benign-flow",
+      "label": "analyze(): un incidente sintético validado",
+      "meta": {
+        "type": "calls",
+        "resourceProfile": "cloud_analyze"
+      }
+    },
+    {
       "id": "components-baseline-loads-data",
       "source": "baseline-engine",
       "target": "dataset-loader",
@@ -829,6 +895,28 @@
       }
     },
     {
+      "id": "components-flow-calls-ollama-adapter",
+      "source": "benign-flow",
+      "target": "ollama-cloud-adapter",
+      "label": "2 generate(): petición inicial y contexto de herramienta",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-03",
+        "maxModelInvocations": 2
+      }
+    },
+    {
+      "id": "components-ollama-adapter-returns-untrusted-output",
+      "source": "ollama-cloud-adapter",
+      "target": "benign-flow",
+      "label": "ModelToolRequest y ModelResponse tipadas, no confiables",
+      "meta": {
+        "type": "data-flow",
+        "crossesBoundary": "TB-03",
+        "rawContentPersisted": false
+      }
+    },
+    {
       "id": "components-flow-checks-output-policy",
       "source": "benign-flow",
       "target": "output-safety-policy",
@@ -846,6 +934,16 @@
       "label": "BenignAnalysisResult: resumen controlado + métricas seguras",
       "meta": {
         "type": "data-flow"
+      }
+    },
+    {
+      "id": "components-flow-returns-cloud-analysis",
+      "source": "benign-flow",
+      "target": "cloud-analysis-runner",
+      "label": "BenignAnalysisResult → CloudAnalysisResult saneado",
+      "meta": {
+        "type": "data-flow",
+        "canonicalEvidence": false
       }
     },
     {

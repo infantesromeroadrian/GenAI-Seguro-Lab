@@ -15,8 +15,8 @@
 | Evaluador de `DAT-25` | commit `636e1dbb8cac21c8c7bfc0709bf1d88b4b56304e` |
 | Evidencia final | `DAT-25`, SHA-256 `05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d` |
 
-Esta evaluación responde a `PGS-06-M02` y fue reevaluada para la extensión
-local `GSL-WEB-001`. Examina el sistema completo que existe hoy. `MOD-01`
+Esta evaluación responde a `PGS-06-M02` y fue reevaluada para las extensiones
+`GSL-WEB-001` y `GSL-OLLAMA-001`. `MOD-01`
 forma parte de ese sistema, pero es un doble determinista:
 no es un modelo de machine learning ni un modelo GenAI real. El documento no
 es una evaluación jurídica, una DPIA, una clasificación bajo una regulación,
@@ -25,11 +25,12 @@ riesgo.
 
 ## Decisión y jerarquía de fuentes
 
-La decisión habilitada es continuar aprendiendo, desarrollando y verificando el
-laboratorio dentro de su alcance local, sintético, determinista y sin red
-externa. Incluye el frontal fijado a `127.0.0.1`; no habilita datos reales,
-usuarios externos, prompt libre, un modelo real, una interfaz remota, nuevos
-efectos ni un despliegue.
+La decisión histórica habilitada es continuar con el laboratorio local,
+sintético, determinista y sin red externa. `GSL-OLLAMA-001` añade únicamente un
+`analyze` alojado explícito con egress sintético; no hereda las conclusiones de
+`DAT-25` ni habilita datos reales, usuarios externos, prompt libre, una
+interfaz remota, nuevos efectos, evaluaciones cloud o un despliegue.
+En particular, la extensión no habilita datos reales.
 
 En caso de discrepancia, prevalecen las fuentes especializadas:
 
@@ -60,16 +61,16 @@ Las clasificaciones de esta evaluación no son puntuaciones de riesgo:
 <!-- aia-screening:start -->
 | Pregunta | Respuesta observada | Consecuencia para esta evaluación |
 |---|---|---|
-| ¿Qué capacidad se evalúa? | CLI y frontal de loopback para analizar 12 incidentes ficticios con `MOD-01` `deterministic/scripted-v1` | Se evalúa el sistema socio-técnico del laboratorio, no se presume una capacidad de IA aprendida |
+| ¿Qué capacidad se evalúa? | CLI y frontal de loopback para analizar 12 incidentes ficticios con `MOD-01` `deterministic/scripted-v1`; un `analyze` puede seleccionar `MOD-02` `ollama/gpt-oss:120b` | `MOD-02` es experimental y no hereda la evaluación del candidato determinista |
 | ¿Quién lo usa hoy? | `ACT-01` opera la CLI o el navegador local; `ACT-02` mantiene y prueba; `ACT-03` representa un principal sintético en un flujo interno | Son las únicas partes directamente relacionadas con el alcance actual |
 | ¿Hay usuarios externos o público afectado? | No | Cualquier incorporación exige reevaluación previa |
 | ¿Toma decisiones automatizadas sobre personas? | No | No se permite usar sus salidas para decisiones médicas, legales, laborales, financieras o de seguridad física |
 | ¿Usa datos personales, reales, secretos o corporativos? | No; `DAT-01` a `DAT-25` son sintéticos o derivados de ejecuciones sintéticas | Los datos reales están fuera de alcance, no implícitamente autorizados |
 | ¿Entrena o ajusta un modelo? | No hay entrenamiento, fine-tuning, pesos ni parámetros aprendidos | No se evalúan impactos propios de un dataset de entrenamiento real |
 | ¿Expone prompt libre, UI, API o listener? | Expone `CMP-19`, una UI con listener fijo en `127.0.0.1`; no expone prompt libre, API pública o bind remoto | La entrada está enumerada, validada y limitada a `analyze` o `baseline`; la salida es JSON efímero por `stdout` o HTTP de loopback |
-| ¿Realiza efectos externos? | No | La ruta expuesta solo consulta conocimiento local; `TOL-02` es interno y create-only |
+| ¿Realiza efectos externos? | Solo `analyze --provider ollama`: dos POST con datos sintéticos; el modo por defecto y baseline no | La herramienta sigue siendo local; `TOL-02` es interno y create-only |
 | ¿Existe presencia humana verificada? | No | `IDN-03` es una identidad sintética y no equivale a una persona presente |
-| ¿Hay red, proveedor, cloud, base de datos o telemetría externa? | No | No se extrapolan garantías a una arquitectura distribuida o alojada |
+| ¿Hay red, proveedor, cloud, base de datos o telemetría externa? | Ollama Cloud solo por opt-in; no hay base de datos ni telemetría externa | Endpoint/modelo fijos, coste desconocido, un smoke end-to-end acotado y dos fallos cerrados previos; no se extrapolan garantías |
 | ¿Cuál es el efecto máximo actual? | Lectura local confinada en producto y creación interna de un borrador ficticio en sandbox | El host y la cuenta macOS siguen siendo la frontera efectiva |
 | ¿Se ha realizado una clasificación jurídica o regulatoria? | No | Corresponde a `PGS-06-M04` distinguir obligación, guía y decisión voluntaria |
 <!-- aia-screening:end -->
@@ -91,6 +92,27 @@ El [threat model del frontal](./web-threat-model.md) documenta `TB-07` y los
 riesgos residuales específicos. Esta reevaluación no modifica el mapa de
 impactos, la clasificación jurídica, las decisiones humanas pendientes ni la
 evidencia histórica `DAT-25`.
+
+## Reevaluación de la extensión `GSL-OLLAMA-001`
+
+`AIA-TRG-01` y `AIA-TRG-04` se activaron al incorporar un modelo alojado,
+credencial y egress. La extensión queda limitada porque:
+
+- requiere selección explícita, acepta solo un ID benigno y nunca entra en
+  baseline, evaluaciones, corpus adversario o `DAT-25`;
+- envía únicamente tarea, incidente y conocimiento sintéticos validados al
+  endpoint/modelo fijos, con dos llamadas y cero retries;
+- conserva grants, scope, allowlist, esquema final, límites y política de
+  salida en la aplicación;
+- no registra thinking, prompt, cuerpo remoto, respuesta cruda o secreto;
+- declara `deterministic=false`, `external_calls=true` y coste desconocido.
+
+La evidencia automatizada usa transporte falso y un smoke instrumentado real
+completó el flujo acotado de `INC-BEN-001` tras dos fallos cerrados. No permite
+concluir disponibilidad, reproducibilidad, calidad, robustez, privacidad
+contractual, residencia, retención, coste o comportamiento general del
+proveedor. Cualquier nueva prueba real requiere autoridad raíz, revisión de
+egress/términos y evidencia separada.
 
 ## Partes interesadas y potencialmente afectadas
 
@@ -132,11 +154,11 @@ trigger que impide extrapolarla. No sustituye el
 | ID | Dimensión y partes afectadas | Evidencia y salvaguardas actuales | Impacto o incertidumbre no resueltos | Trigger y tratamiento previo | Clasificación actual |
 |---|---|---|---|---|---|
 | `AIA-IMP-01` | Autonomía y supervisión humana; `ACT-01`, `ACT-03` | La aplicación conserva la autoridad; el modelo no concede grants ni ejecuta herramientas; `CTL-06` y `CTL-07` | La aprobación sintética no demuestra presencia, comprensión, accesibilidad ni control humano real | Antes de exponer `TOL-02` o añadir autenticador, diseñar confirmación humana, revocación y contestabilidad | `ACOTADO_ALCANCE_ACTUAL` |
-| `AIA-IMP-02` | Privacidad y protección de datos; futuros titulares de datos | Corpus `synthetic_internal`, esquemas, hashes, redacción y ausencia de red; `CTL-03`, `CTL-09` y `CTL-11` | No existe política para datos reales ni se ha evaluado reidentificación, retención o derechos | Antes de introducir datos reales o proveedor, definir finalidad, minimización, acceso, ciclo de vida y base aplicable | `ACOTADO_ALCANCE_ACTUAL` |
+| `AIA-IMP-02` | Privacidad y protección de datos; futuros titulares de datos | Corpus `synthetic_internal`, esquemas, hashes, redacción y egress Ollama limitado a datos sintéticos; `CTL-03`, `CTL-09` y `CTL-11` | No existe política para datos reales ni se han verificado retención, residencia, reidentificación o derechos del proveedor | Antes de introducir datos reales o ampliar proveedor, definir finalidad, minimización, acceso, ciclo de vida y base aplicable | `ACOTADO_ALCANCE_ACTUAL` |
 | `AIA-IMP-03` | Equidad, no discriminación e inclusión; futuras personas afectadas | No hay personas, atributos protegidos ni decisiones reales en el corpus actual | No existe medición de sesgo, representatividad, accesibilidad o diferencias entre grupos | Antes de una decisión sobre personas, identificar grupos, métricas, muestras y vías de reparación | `NO_APLICA_ALCANCE_ACTUAL` |
-| `AIA-IMP-04` | Transparencia, explicabilidad y riesgo de representación engañosa; `ACT-01`, lectores del repositorio | Fichas, inventario, ADR, salidas estructuradas y límites públicos; `CTL-02`, `CTL-04` y `CTL-09` | El doble determinista no representa razonamiento ni explicabilidad de un modelo real | Mantener visible la naturaleza del doble y reevaluar antes de cambiar modelo o interfaz | `ACOTADO_ALCANCE_ACTUAL` |
-| `AIA-IMP-05` | Ciberseguridad, confidencialidad e integridad; `ACT-01`, `ACT-02`, host local | Validación cerrada, allowlists, mínimo privilegio lógico, salida saneada y 14/14 casos finales; `CTL-04` a `CTL-06`, `CTL-08`, `CTL-09` y `CTL-12` | No hay aislamiento de SO, ataques desconocidos, prompt libre, modelo real o prueba de supply chain | Ante nueva superficie o deriva, contener, ampliar threat model y producir evidencia separada | `ACOTADO_ALCANCE_ACTUAL` |
-| `AIA-IMP-06` | Fiabilidad, robustez y calidad; `ACT-01` | `DAT-25` conserva 12/12 casos benignos, 0 falsos rechazos y 84/84 reglas cerradas; `CTL-05`, `CTL-09` y `CTL-12` | No demuestra equivalencia semántica general, otras distribuciones, idiomas ni comportamiento probabilístico | Fijar modelo, corpus, criterios y presupuesto antes de afirmar utilidad o robustez adicional | `ACOTADO_ALCANCE_ACTUAL` |
+| `AIA-IMP-04` | Transparencia, explicabilidad y riesgo de representación engañosa; `ACT-01`, lectores del repositorio | Fichas, inventario, status dinámico, salidas estructuradas y límites públicos; `CTL-02`, `CTL-04` y `CTL-09` | El doble no representa razonamiento y el thinking alojado se descarta, no se ofrece como explicación | Mantener visible qué backend opera y reevaluar antes de cambiar modelo o interfaz | `ACOTADO_ALCANCE_ACTUAL` |
+| `AIA-IMP-05` | Ciberseguridad, confidencialidad e integridad; `ACT-01`, `ACT-02`, host local | Validación cerrada, allowlists, mínimo privilegio lógico, salida saneada y 14/14 casos finales deterministas; `CTL-04` a `CTL-06`, `CTL-08`, `CTL-09` y `CTL-12` | No hay aislamiento de SO, ataques desconocidos, prompt libre ni evaluación adversaria de `MOD-02` | Ante nueva superficie o deriva, contener, ampliar threat model y producir evidencia separada | `ACOTADO_ALCANCE_ACTUAL` |
+| `AIA-IMP-06` | Fiabilidad, robustez y calidad; `ACT-01` | `DAT-25` conserva 12/12 casos benignos, 0 falsos rechazos y 84/84 reglas cerradas para `MOD-01`; `CTL-05`, `CTL-09` y `CTL-12` | No demuestra equivalencia semántica general, otras distribuciones, idiomas ni calidad de `MOD-02` | Producir evidencia nueva del modelo alojado antes de afirmar utilidad o robustez adicional | `ACOTADO_ALCANCE_ACTUAL` |
 | `AIA-IMP-07` | Seguridad física y decisiones de alto impacto; futuras personas afectadas | No hay actuador físico ni uso médico, legal, laboral, financiero o de infraestructura crítica | No se han definido severidad, tolerancia, fallback o responsabilidad para esos usos | Un uso de alto impacto exige evaluación nueva y autorización distinta antes de diseñarlo | `NO_APLICA_ALCANCE_ACTUAL` |
 | `AIA-IMP-08` | Disponibilidad, recursos e impacto operativo; `ACT-01`, `ACT-02`, host local | Presupuestos cooperativos, preflight, checkpoints y lock advisory; `CTL-10` y `CTL-13` | `RR-01` y `RR-02` conservan DOS/corpus inertes; no hay carga, concurrencia, RSS bajo ataque, energía ni recuperación medida | Solo ejecutar pruebas DOS bajo RoE, topes, parada, recuperación y autorización nuevas | `NO_DEMOSTRADO` |
 | `AIA-IMP-09` | Supply chain, propiedad intelectual y terceros; `ACT-02`, mantenedores futuros | Git, `uv.lock`, manifiestos y SHA-256 detectan parte del drift; `CTL-03` y `CTL-11` | `RR-03`: no hay firma, SBOM, CI, release policy, separación de funciones o ataque ejercitado | Inventariar dependencias, procedencia y proceso de release antes de otra distribución o integración | `NO_DEMOSTRADO` |
@@ -168,7 +190,8 @@ repriorizar, cerrar o duplicar los riesgos.
   y cero regresiones;
 - 12/12 casos benignos completados, cero falsos rechazos, 24/24 hallazgos,
   36/36 acciones y 24/24 prohibiciones preservados bajo una rúbrica cerrada;
-- cero red o credenciales de proveedor y cuatro fixtures DOS/SC inertes.
+- cero red o credenciales de proveedor en aquel candidato y cuatro fixtures
+  DOS/SC inertes.
 
 La evidencia no demuestra equivalencia semántica general, un juez LLM, ataques
 desconocidos, comportamiento de un modelo GenAI real, aislamiento de sistema
@@ -194,11 +217,12 @@ lo autoriza por sí mismo.
 
 ## Resultado y condiciones de continuidad
 
-La evaluación queda `COMPLETADA_ALCANCE_ACTUAL`. El impacto directo actual es
-acotado porque el producto es local, sintético, enumerado, sin red, sin
-usuarios externos y sin decisiones de alto impacto. Esto no convierte en
-aceptables las incertidumbres: disponibilidad, supply chain, presencia humana,
-aislamiento, generalización y gobierno operativo continúan abiertas.
+La evaluación queda `COMPLETADA_ALCANCE_ACTUAL`. El impacto directo permanece
+acotado por datos sintéticos, entrada enumerada, ausencia de usuarios externos
+y ausencia de decisiones de alto impacto. El modo determinista no usa red; el
+opt-in Ollama sí realiza egress declarado y conserva incertidumbres de
+proveedor, disponibilidad, coste, privacidad, supply chain, generalización y
+gobierno operativo.
 
 Se permite continuar únicamente con el laboratorio ya descrito. Debe
 detenerse una ampliación antes de implementarla si introduce cualquier trigger
@@ -220,6 +244,8 @@ atribuir revisión independiente.
 
 ## Relación con Tecture
 
-La evaluación describe componentes, datos, límites e interfaces ya presentes
-en `architecture/manifest.json`. No añade servicios, almacenes, integraciones,
-despliegues, flujos o trust boundaries, por lo que no modifica el mapa.
+El mapa `architecture/manifest.json` está sincronizado con
+`GSL-OLLAMA-001`: representa `MOD-02`, `CMP-20`, `CMP-21` y el límite de
+confianza `TB-08` para el egress fijo hacia Ollama Cloud. Esta sincronización
+documenta la arquitectura observada; no invalida el código ni amplía la
+autoridad.

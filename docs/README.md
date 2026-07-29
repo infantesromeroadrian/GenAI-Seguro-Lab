@@ -26,6 +26,11 @@ real.
   sintéticos y de la evidencia.
 - [Model card](./model-card.md): contrato y límites de `MOD-01`, identificado
   expresamente como doble determinista sin entrenamiento ni proveedor real.
+- [Ollama Cloud experimental](./ollama-cloud-experimental.md): backend opt-in
+  `MOD-02`, egress sintético, secreto por entorno, dos llamadas, validación
+  local y un smoke real end-to-end acotado tras dos fallos cerrados.
+- [ADR de Ollama Cloud](./ollama-cloud-adr.md): decisión experimental posterior
+  que conserva la baseline determinista y fija límites y rollback.
 - [Evaluación de impacto de IA](./ai-impact-assessment.md): cribado del alcance
   actual, partes afectadas, diez dimensiones de impacto, handoff de los seis
   riesgos pendientes y triggers de reevaluación; no autoriza producción,

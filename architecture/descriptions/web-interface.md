@@ -10,6 +10,10 @@ existentes.
   esquema antes de entrar en el flujo benigno.
 - Reutilizar el lock, los límites, la política de salida y el journal del
   producto.
+- Fijar al arrancar el proveedor de `analyze`; `baseline` permanece
+  determinista.
+- Mostrar proveedor, modelo, determinismo, egress, coste y disponibilidad sin
+  entregar la credencial al navegador.
 - Emitir errores saneados sin conservar cuerpos, rutas o cabeceras.
 
 ## Autoridad
@@ -21,7 +25,9 @@ existentes.
 ## Exclusiones
 
 - Sin bind externo, TLS, CORS, cookies, sesiones persistentes o logging raw.
-- Sin prompt, upload, filesystem, `TOL-02`, harnesses, red externa o proveedor.
+- Sin prompt, upload, filesystem, `TOL-02` o harnesses.
+- La única red externa opcional es la ruta fija de `CMP-20` hacia Ollama
+  Cloud; no está disponible para baseline.
 
 ## Inventario
 

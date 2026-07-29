@@ -44,12 +44,25 @@ registrada con fecha, alcance y evidencia. La
 | `RR-03` — `AC-SC-01` | Compromiso de supply chain o abuso de mantenimiento sobre código, dependencias, corpus y evidencia | `ACT-02` | `ABIERTO`; fixture `INERT`; `DAT-25` fija hashes y no ejercita compromiso o recuperación; [`GSL-SUPPLY-CHAIN-001`](./dependency-supply-chain-register.md) inventaría el corte sin escanear advisories | Git, `uv.lock`, manifiestos y SHA-256 detectan drift cubierto | Sin firma, CI, SBOM, política de release, separación de funciones, revisión de licencias/vulnerabilidades ni revisión independiente ejercida | `PROPUESTO_NO_APROBADO`: reconstruir desde limpio y revisar independientemente un cambio y una prueba | `PGS-07-M01`, `PGS-07-M04` | `PENDIENTE_HUMANA` | Nueva dependencia, cambio de fuente, release, alerta de vulnerabilidad o asignación de `REV-01` |
 | `RR-04` — `AC-TOL-05` | Aprobación sin presencia humana real sobre la creación confinada de borradores | `ACT-02` | `ABIERTO`; `DAT-25` observa rechazo y cero efecto no autorizado para la variante fijada | Identidad sintética, challenge ligado, TTL y grant de un solo uso consumido antes de I/O | No demuestra presencia, comprensión, accesibilidad ni control humano real | `PROPUESTO_NO_APROBADO`: conservar solo el flujo sintético o exigir autenticador e interfaz humana antes de ampliar capacidades | `PGS-07-M04` | `PENDIENTE_HUMANA` | Exponer `TOL-02`, añadir interfaz o autenticador, cambiar efecto o decidir equivalencia humana |
 | `RR-05` — `AC-TOL-03`, `AC-TOL-04` | Bypass del host, replay o escape de filesystem sobre sandbox y archivos del usuario | `ACT-02` | `ABIERTO`; `DAT-25` completa las dos variantes fijadas sin regresión observada | Binding y consumo único, ruta validada, no-follow, modo `0600` y publicación create-only | Misma cuenta macOS, sin aislamiento de SO, prueba multiusuario ni otras carreras o rutas | `PROPUESTO_NO_APROBADO`: reconstruir, repetir pruebas autorizadas y verificar parada y recuperación antes de ampliar efectos | `PGS-06-M07`, `PGS-07-M01`, `PGS-07-M02` | `PENDIENTE_HUMANA` | Nuevo efecto, ruta, principal, usuario, host, aislamiento o fallo de recuperación |
-| `RR-06` — `AC-PI-01`, `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-JB-02`, `AC-EX-01`, `AC-EX-02`, `AC-EX-03`, `AC-TOL-01`, `AC-TOL-02` | Generalización no demostrada de límites de instrucciones, conocimiento, salida y autoridad | `ACT-02` | `ABIERTO`; `DAT-25` completa diez variantes dentro de una rúbrica cerrada; [`GSL-MODEL-CHANGE-001`](./model-change-reevaluation-policy.md) exige nueva evidencia ante cambios | Dominios de confianza, esquemas, allowlists, mínimo privilegio, política de salida, presupuestos y oráculos separados | Sin prompt libre, modelo real, semántica general, idiomas alternativos, ataques desconocidos o entrada remota | `PROPUESTO_NO_APROBADO`: aplicar la reevaluación antes de cambiar modelo o interfaz, ampliar corpus autorizado y revisar una prueba independientemente | `PGS-07-M02`, `PGS-07-M04`, `PGS-07-M06` | `PENDIENTE_HUMANA` | Cambiar modelo, prompt, idioma, interfaz, herramienta, proveedor, distribución o afirmación de robustez |
+| `RR-06` — `AC-PI-01`, `AC-PI-02`, `AC-PI-03`, `AC-JB-01`, `AC-JB-02`, `AC-EX-01`, `AC-EX-02`, `AC-EX-03`, `AC-TOL-01`, `AC-TOL-02` | Generalización no demostrada de límites de instrucciones, conocimiento, salida y autoridad | `ACT-02` | `ABIERTO`; `DAT-25` completa diez variantes del candidato determinista; `GSL-OLLAMA-001` prueba el contrato con transporte falso y un smoke end-to-end acotado tras dos fallos cerrados | Dominios de confianza, esquemas, allowlists, mínimo privilegio, política de salida, presupuestos y oráculos separados; endpoint/modelo fijos y cero retries en el opt-in | Sin prompt libre, semántica general, idiomas alternativos, ataques desconocidos ni evidencia general del comportamiento, privacidad, disponibilidad o coste real de `MOD-02` | `PROPUESTO_NO_APROBADO`: mantener Ollama experimental y producir evaluación separada antes de ampliar cualquier afirmación | `PGS-07-M02`, `PGS-07-M04`, `PGS-07-M06` | `PENDIENTE_HUMANA` | Cambiar modelo, prompt, idioma, interfaz, herramienta, proveedor, distribución o afirmación de robustez |
 <!-- formal-risk-register:end -->
 
 Los 17 abuse cases aparecen exactamente una vez en el registro. Los resultados
 de `DAT-20` a `DAT-23` son históricos; `DAT-25` sigue siendo el único retest
 final y no se regenera ni se reejecuta para mantener este documento.
+
+### Extensión alojada
+
+`GSL-OLLAMA-001` materializa el trigger de proveedor/red sin cerrar ni aceptar
+ningún riesgo. El egress se limita a datos sintéticos, la credencial no se
+proyecta y los errores son saneados. Un smoke instrumentado completó el flujo
+de `INC-BEN-001` tras dos fallos cerrados; permanecen desconocidos el
+comportamiento general del modelo alojado, retención y residencia del
+proveedor, coste, disponibilidad y respuesta ante ataques. Cualquier nueva
+prueba real requiere decisión y evidencia nuevas, nunca una reinterpretación
+de `DAT-25`.
+La [política de cambios de modelo](./model-change-reevaluation-policy.md)
+mantiene el paquete de reevaluación aplicable.
 
 ## Cola de decisiones humanas
 

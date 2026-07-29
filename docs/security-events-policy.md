@@ -6,9 +6,9 @@
 - **Versión:** `1.1.0`
 - **Microtareas:** `PGS-04-M07` y `PGS-06-M05`
 - **Propietario:** `ACT-02`, mantenedor del laboratorio
-- **Ámbito:** operaciones `analyze` y `baseline`, flujo benigno, búsqueda
-  autorizada, política de salida, límites de recursos y sesión interna de
-  borradores
+- **Ámbito:** operaciones `analyze`, `cloud_analyze` y `baseline`, flujo
+  benigno, búsqueda autorizada, política de salida, límites de recursos y
+  sesión interna de borradores
 
 Esta política añade observabilidad de producto sin crear una nueva autoridad
 ni un canal de telemetría. El journal vive únicamente en memoria durante una
@@ -38,7 +38,7 @@ mensajes de excepción y tracebacks. Cada evento ocupa como máximo 2 KiB.
 
 1. El journal crea una correlación primaria opaca y registra
    `operation_started`.
-2. `analyze` usa esa correlación durante todo el caso.
+2. `analyze` y `cloud_analyze` usan esa correlación durante todo el caso.
 3. `baseline` mantiene la correlación primaria para el inicio y el cierre, y
    crea una correlación hija opaca distinta para cada uno de sus 12 casos. El
    ID del incidente no entra en el evento.
@@ -57,6 +57,7 @@ prueba de identidad.
 | Perfil | Eventos máximos | Bytes acumulados máximos | Uso |
 |---|---:|---:|---|
 | `analyze` | 32 | 32 KiB | Un incidente benigno |
+| `cloud_analyze` | 32 | 32 KiB | Un incidente sintético con proveedor alojado |
 | `baseline` | 256 | 256 KiB | Doce casos en una operación |
 | `draft` | 32 | 32 KiB | Una sesión interna de borrador |
 
@@ -83,6 +84,7 @@ contadores de `GSL-RESOURCE-POLICY-001`.
 | `authorization_replay_or_context_mismatch` | Token reutilizado, caducado, ajeno o ligado a otro contexto |
 | `sandbox_violation` | Raíz, destino o condición no-follow del borrador rechazada |
 | `data_integrity_violation` | Corpus benigno no disponible, malformado o incoherente |
+| `provider_error` | El proveedor alojado no está configurado, no responde o devuelve un contrato rechazado |
 
 Son reglas deterministas sobre decisiones ya tomadas por la aplicación. Una
 señal no demuestra un ataque, compromiso, autoría o anomalía universal, y no
@@ -96,6 +98,7 @@ El comportamiento predeterminado permanece byte a byte compatible:
 
 ```bash
 uv run --frozen python main.py analyze --incident INC-BEN-001
+uv run --frozen python main.py analyze --incident INC-BEN-001 --provider ollama
 uv run --frozen python main.py baseline
 ```
 
@@ -104,6 +107,7 @@ con dos claves: `result` y `security_report`.
 
 ```bash
 uv run --frozen python main.py analyze --incident INC-BEN-001 --security-report
+uv run --frozen python main.py analyze --incident INC-BEN-001 --provider ollama --security-report
 uv run --frozen python main.py baseline --security-report
 ```
 

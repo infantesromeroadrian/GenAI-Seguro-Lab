@@ -5,12 +5,12 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-WEB-001` |
-| Versión | `1.0.0` |
+| Versión | `1.1.0` |
 | Fecha | 2026-07-28 |
 | Estado | Implementado como extensión posterior al roadmap interno 66/66 |
 | Usuario | `ACT-01` — operador local |
 | Datos | Los 12 incidentes benignos y sintéticos de `DAT-01` |
-| Runtime | Un proceso Python, un navegador local y HTTP sobre loopback |
+| Runtime | Un proceso Python, un navegador local, HTTP sobre loopback y egress Ollama solo por opt-in |
 
 ## Problema y resultado
 
@@ -29,12 +29,14 @@ El resultado esperado es una interfaz local desde la que `ACT-01` puede:
 
 ## Alcance
 
-- `main.py web --port <puerto>` inicia el listener.
+- `main.py web --port <puerto> --provider deterministic|ollama` inicia el
+  listener y fija el backend; el default es `deterministic`.
 - El listener siempre se vincula a `127.0.0.1`; no existe parámetro `host`.
 - HTML, CSS, JavaScript y favicon se sirven desde una allowlist fija.
 - `GET /api/status` enumera capacidades e incidentes validados.
 - `POST /api/analyze` acepta solo `incident_id`.
 - `POST /api/baseline` acepta únicamente el objeto vacío.
+- Baseline usa siempre `MOD-01`; Ollama solo puede atender `POST /api/analyze`.
 - Ambas operaciones reutilizan `CMP-02`, `CMP-03`, `CMP-04/05`, `CMP-09`,
   `CMP-10` y `CMP-11`.
 - El navegador recibe el resultado y el informe de seguridad saneados como
@@ -44,7 +46,8 @@ El resultado esperado es una interfaz local desde la que `ACT-01` puede:
 
 - Prompt libre, chat, RAG abierto, uploads, rutas o texto aportado por usuario.
 - Datos reales, secretos, incidentes corporativos o contenido personal.
-- Modelo GenAI real, proveedor, credenciales o llamadas externas.
+- Otro proveedor/modelo, endpoint configurable, credenciales en UI o cloud
+  para baseline/evaluaciones. Ollama se limita al contrato experimental.
 - Borradores, escritura, acciones de contención o nuevas herramientas.
 - Autenticación, acceso multiusuario, TLS, proxy, túnel o despliegue público.
 - Persistencia, telemetría, analytics, service worker o recursos de terceros.
@@ -55,7 +58,7 @@ El resultado esperado es una interfaz local desde la que `ACT-01` puede:
 | ID | Requisito | Criterio de aceptación |
 |---|---|---|
 | `WEB-F-01` | El operador puede descubrir el corpus permitido | `GET /api/status` devuelve 12 IDs `INC-BEN-NNN` y ninguna entrada libre |
-| `WEB-F-02` | El operador puede analizar un caso | Un POST válido devuelve el mismo `FunctionalCaseResult` que el motor y un `SecurityEventReport` |
+| `WEB-F-02` | El operador puede analizar un caso | Un POST válido devuelve `FunctionalCaseResult` determinista o `CloudAnalysisResult` alojado y su `SecurityEventReport` |
 | `WEB-F-03` | El operador puede ejecutar la baseline | Un POST con `{}` devuelve 12/12 casos superados, 0 llamadas externas y 0 € |
 | `WEB-F-04` | La interfaz explica resultado y controles | La UI presenta métricas, secciones de salida y cronología sin interpretar HTML del resultado |
 | `WEB-C-01` | La CLI anterior se conserva | Los smoke tests de `analyze` y `baseline` siguen pasando sin cambiar sus sobres |
@@ -67,6 +70,7 @@ El resultado esperado es una interfaz local desde la que `ACT-01` puede:
 | `WEB-S-06` | No aparecen efectos o conservación nuevos | Tests verifican cero borradores; `Cache-Control: no-store`, sin logs raw ni persistencia |
 | `WEB-A-01` | La interfaz es operable con teclado y tecnologías de apoyo | Estructura semántica, labels, estados live, foco visible, enlace de salto y reduced-motion |
 | `WEB-O-01` | Los fallos son acotados | Timeout de conexión de 5 s; errores JSON genéricos sin traceback y estados 400/403/404/405/409/413/421/503 según la frontera |
+| `WEB-O-02` | El backend es observable y fijo | Status y UI declaran proveedor, modelo, determinismo, egress, coste y configuración; sin clave, analyze se deshabilita y baseline sigue disponible |
 
 ## Criterio de éxito
 
@@ -74,8 +78,9 @@ El frontal queda utilizable cuando:
 
 - las pruebas de `test_web_interface.py` y `test_cli_smoke.py` pasan;
 - la suite completa no muestra regresiones;
-- una comprobación real en navegador permite analizar un caso y ejecutar la
-  baseline;
+- una comprobación real en navegador permite analizar un caso determinista y
+  ejecutar la baseline; el runner Ollama completó un smoke end-to-end
+  instrumentado, pero la ruta Ollama no se probó desde el navegador;
 - las cabeceras, el DOM y los límites observados coinciden con esta
   especificación;
 - las Rules of Engagement, el threat model, el inventario y el mapa C4

@@ -169,3 +169,33 @@ La política
 `PGS-06-M09`: clasifica cambios de `MOD-01` y superficies futuras y asigna
 paquetes de reevaluación. Cualquier cambio en `MOD-01` o su frontera sigue
 siendo un disparador, no una mejora automáticamente aceptada.
+
+## Anexo posterior — `MOD-02`
+
+`GSL-OLLAMA-001` no sustituye ni modifica `MOD-01`: añade
+`HostedModelDescriptor` y `OllamaCloudAdapter` como backend experimental
+seleccionable solo para `analyze`, con `deterministic=false` y
+`external_calls=true`.
+
+| Propiedad | Valor declarado y evidencia acotada |
+|---|---|
+| Proveedor | `ollama` |
+| Modelo | `gpt-oss:120b` |
+| Determinista | `false`, incluso con `temperature=0` |
+| Llamadas externas | `true`; exactamente dos por operación |
+| Coste | desconocido |
+| Herramienta | solo `knowledge_search` en la primera llamada; ninguna anunciada en la segunda |
+| Salida | JSON solicitado por prompt y validado localmente con fallo cerrado |
+| Evidencia actual | 408 tests con transporte falso; un smoke instrumentado end-to-end tras dos fallos cerrados |
+
+El endpoint, modelo, `stream=false`, `think=low`, timeout de 60 s y cero
+reintentos están fijados. La aplicación ignora y no proyecta `thinking`, trata
+tool calls y contenido remoto como no confiables y conserva la autoridad en
+los grants y esquemas locales. Prompt, cuerpo remoto, respuesta cruda y
+`OLLAMA_API_KEY` no forman parte del resultado, journal o error.
+
+`MOD-02` no ha sido benchmarkeado ni evaluado de forma general para calidad,
+factualidad, robustez, sesgo, privacidad contractual, disponibilidad, latencia
+o coste. El único éxito real acredita el flujo acotado, no esas propiedades.
+No participa en baseline, corpus adversario, evaluadores o `DAT-25`; sus
+métricas históricas no pueden atribuirse al modelo alojado.

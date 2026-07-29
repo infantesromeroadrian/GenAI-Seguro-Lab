@@ -5,11 +5,11 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-WEB-THREAT-001` |
-| Versión | `1.0.0` |
+| Versión | `1.1.0` |
 | Fecha | 2026-07-28 |
 | Superficie | `CMP-19` — navegador y gateway HTTP de loopback |
 | Fuente de requisitos | [`GSL-WEB-001`](./web-interface-spec.md) |
-| Rules of Engagement | [`GSL-ROE-001` 2.7.0](./rules-of-engagement.md) |
+| Rules of Engagement | [`GSL-ROE-001` 2.8.0](./rules-of-engagement.md) |
 
 ## Activos y límites
 
@@ -19,6 +19,7 @@ Activos protegidos:
 - confidencialidad de la memoria del proceso y de los eventos saneados;
 - autoridad cerrada de `CMP-03`, `TOL-01` y el flujo de borradores no expuesto;
 - disponibilidad local razonable del proceso;
+- confidencialidad de `OLLAMA_API_KEY` y minimización del egress opt-in;
 - interpretación correcta: propuestas no son acciones y el doble no es un
   modelo GenAI real.
 
@@ -36,12 +37,14 @@ navegador local
   → POST JSON same-origin + token efímero
   → gateway valida frontera
   → motor benigno adquiere lock y ejecuta controles
+  → opcional: dos POST a Ollama, herramienta local y JSON validado
   → JSON saneado + journal efímero
   → DOM mediante textContent
 ```
 
-No hay ruta desde `CMP-19` a `TOL-02`, al harness adversario, a un proveedor, a
-datos reales o a una escritura.
+No hay ruta desde `CMP-19` a `TOL-02`, al harness adversario, a datos reales o
+a una escritura. Solo `--provider ollama` crea la ruta fija al endpoint
+documentado; baseline nunca la usa.
 
 ## Amenazas y tratamiento
 
@@ -56,9 +59,10 @@ datos reales o a una escritura.
 | `WEB-T-07` | Traversal o lectura de archivos arbitrarios | Mapa estático literal de cuatro assets; no se transforma una ruta del usuario | Mitigada por ausencia de resolución dinámica |
 | `WEB-T-08` | Ejecuciones concurrentes, conexiones lentas o abuso de baseline | Lock advisory no bloqueante, cola HTTP pequeña, timeout de conexión de 5 s y rechazo cerrado de métodos no allowlisted | Parcial: no hay rate limiting persistente, stress test ni aislamiento del SO |
 | `WEB-T-09` | Divulgación en caché, logs o almacenamiento | `no-store`, journal en memoria, `log_message` vacío, sin cookies, local storage o analytics | Mitigada para la implementación; el navegador y el SO siguen bajo `IDN-01` |
-| `WEB-T-10` | Ampliación de autoridad del modelo | No hay prompt libre; solo ID validado; el motor conserva grant y vista exactos | Mitigada dentro del corpus cerrado, no generalizable a un LLM |
+| `WEB-T-10` | Ampliación de autoridad del modelo | No hay prompt libre; solo ID validado; el motor conserva grant y vista exactos; una tool distinta se rechaza antes de la vista | Mitigada dentro del corpus cerrado, no generalizable al comportamiento real del LLM |
 | `WEB-T-11` | Dependencia web comprometida | No se añaden paquetes, CDN, fuentes, scripts o imágenes de terceros | Superficie de supply chain no ampliada por dependencias, aunque Git y la autoridad de mantenimiento permanecen |
-| `WEB-T-12` | Confundir visualización con acción o seguridad total | UI etiqueta entorno local/sintético/determinista y muestra límites | Riesgo de interpretación reducido, no eliminado |
+| `WEB-T-12` | Confundir visualización con acción o seguridad total | UI etiqueta backend, determinismo, egress y coste y muestra límites | Riesgo de interpretación reducido, no eliminado |
+| `WEB-T-13` | Fuga de clave, prompt, thinking o cuerpo remoto; redirect o retry | Clave solo en cabecera, endpoint fijo, redirects rechazados, cero retries, proyección cerrada y logs vacíos | Contrato probado con transporte falso y smoke real acotado; la retención del proveedor no está verificada |
 
 ## Riesgos residuales
 
@@ -67,7 +71,8 @@ datos reales o a una escritura.
 | `WEB-RR-01` | Un proceso malicioso bajo la misma cuenta puede leer el token desde `/api/status` y llamar al servicio | `ABIERTO`; el token protege el navegador frente a CSRF, no autentica procesos locales |
 | `WEB-RR-02` | No se ha medido resistencia a carga, conexiones lentas o agotamiento deliberado | `ABIERTO`; no ejecutar stress, soak o fixtures DOS sin nueva autorización |
 | `WEB-RR-03` | HTTP sin TLS sería inadecuado fuera de loopback | `EVITADO`; la exposición externa, proxy y túnel están prohibidos |
-| `WEB-RR-04` | El comportamiento con un modelo real, prompt libre o datos reales no está evaluado | `ABIERTO`; esos elementos no existen en esta interfaz |
+| `WEB-RR-04` | El comportamiento general de `gpt-oss:120b` real, prompt libre o datos reales no está evaluado | `ABIERTO`; solo el primer elemento existe opt-in; un incidente completó el flujo tras dos fallos cerrados, sin demostrar disponibilidad o generalización |
+| `WEB-RR-05` | Disponibilidad, coste, términos, residencia y retención de Ollama son desconocidos | `ABIERTO`; revisar antes de una nueva prueba real y no introducir datos reales |
 
 Estos riesgos no están aceptados por la implementación ni alteran `RR-01` a
 `RR-06`. Deben reevaluarse antes de cambiar binding, rutas, entrada, modelo,
@@ -80,4 +85,8 @@ datos, identidad, herramientas, efectos o despliegue.
 - La comprobación en navegador demuestra el flujo visible actual, no una
   evaluación adversaria independiente.
 - `DAT-25` permanece inmutable y no cubre `CMP-19` o `TB-07`.
+- Las pruebas Ollama con transporte falso acreditan status, dos llamadas,
+  herramienta, límites y errores saneados. Un smoke instrumentado acredita el
+  flujo end-to-end de `INC-BEN-001`; no acredita disponibilidad,
+  reproducibilidad o comportamiento general del proveedor.
 - Las cuatro fixtures DOS/SC continúan inertes.

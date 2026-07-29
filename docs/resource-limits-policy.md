@@ -6,9 +6,9 @@
 - **Versión:** `1.0.0`
 - **Microtarea:** `PGS-04-M06`
 - **Propietario:** `ACT-02`, mantenedor del laboratorio
-- **Ámbito:** corpus benigno, operaciones `analyze` y `baseline`, fronteras de
-  modelo y herramienta, creación interna de borradores y procesos cooperantes
-  de la CLI
+- **Ámbito:** corpus benigno, operaciones `analyze`, `cloud_analyze` y
+  `baseline`, fronteras de modelo y herramienta, creación interna de
+  borradores y procesos cooperantes de la CLI
 
 Esta política es un control preventivo del producto endurecido. No reutiliza ni
 amplía `GSL-ROE-001`: las Rules of Engagement autorizan y acotan evaluaciones
@@ -37,6 +37,7 @@ restauran el archivo ya consumido por `CMP-10`.
 | `RL-07` | La CLI rechaza sin espera un segundo proceso cooperante; no crea lockfiles, reintentos ni procesos en segundo plano |
 | `RL-08` | Todo contador se consume antes de la operación protegida y todo plazo se comprueba antes y después de una frontera síncrona |
 | `RL-09` | Un exceso falla cerrado, no produce salida parcial y no revela el valor, contenido o límite que provocó el rechazo |
+| `RL-10` | `cloud_analyze` conserva un caso, dos invocaciones, una solicitud y una ejecución de herramienta; añade un plazo cooperativo de 125 segundos para albergar dos timeouts de transporte de 60 segundos sin convertirlos en reintentos |
 
 ## Umbrales y fundamento
 
@@ -51,6 +52,7 @@ restauran el archivo ya consumido por `CMP-10`.
 | Resumen final | 4.096 B | Menor que 1 KiB en los 12 casos | Más de 4× |
 | Markdown de borrador | 16.384 B | No conectado a la CLI | Cota explícita por efecto |
 | `analyze` | 1 s | Flujo local determinista | Plazo cooperativo |
+| `cloud_analyze` | 125 s | No medido contra el proveedor real | Dos fronteras de 60 s y 5 s de margen cooperativo |
 | `baseline` | 5 s | 12 casos locales deterministas | Plazo cooperativo |
 
 Los límites se expresan en bytes UTF-8 y no en caracteres o tokens. Los bytes
@@ -118,8 +120,10 @@ GenAI real.
 - El plazo es cooperativo. `ModelAdapter.generate()` es síncrono y no ofrece
   cancelación, por lo que el control detecta un retorno tardío, pero no puede
   interrumpir una dependencia bloqueada.
-- Un futuro proveedor real deberá implementar timeout nativo o aislamiento de
-  proceso; no puede heredar esta garantía por analogía.
+- `CMP-20` configura 60 segundos de timeout nativo por llamada HTTPS. El plazo
+  cooperativo de 125 segundos detecta además un retorno tardío, pero ninguno de
+  los dos controles acredita cancelación inmediata ante todos los bloqueos del
+  sistema o de la librería estándar.
 - El lock de CLI es advisory: coordina procesos que usan la entrada oficial,
   pero el mismo usuario puede omitirlo al invocar directamente la API Python.
 - El lock de `CMP-12` es también advisory y no bloqueante, pero sí cubre la

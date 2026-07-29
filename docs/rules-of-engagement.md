@@ -5,14 +5,14 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `2.7.0` |
+| Versión | `2.8.0` |
 | Fecha de entrada en vigor | 2026-07-28 |
 | Baseline técnica de origen | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
 | Operador | `ACT-01` — operador local |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Priorización de origen | [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) |
-| Ámbito | checkout local propio, datos sintéticos, procesos aislados de evaluación y frontal HTTP exclusivo de loopback |
+| Ámbito | checkout local propio, datos sintéticos, procesos aislados de evaluación, frontal HTTP exclusivo de loopback y egress opt-in exacto de `GSL-OLLAMA-001` |
 
 Estas Rules of Engagement (RoE) delimitan cómo se podrán preparar y ejecutar
 las evaluaciones adversarias de GenAI Seguro Lab. No son una autorización
@@ -33,6 +33,16 @@ interno 66/66. Autoriza únicamente el listener de producto en `127.0.0.1`, sus
 assets locales y las rutas benignas cerradas descritas en
 [`GSL-WEB-THREAT-001`](./web-threat-model.md). No autoriza pruebas adversarias
 nuevas, exposición externa, proxy, túnel, datos reales o un modelo real.
+
+La versión 2.8.0 incorpora `GSL-OLLAMA-001` sin reabrir el alcance evaluado.
+Autoriza exclusivamente `analyze --provider ollama` o
+`web --provider ollama` para un incidente benigno sintético, dos POST directos
+a `https://ollama.com/api/chat`, modelo `gpt-oss:120b` y secreto obtenido de
+`OLLAMA_API_KEY`. No autoriza cloud para baseline, evaluaciones, corpus
+adversario o `DAT-25`, ni un endpoint, modelo, herramienta o retry distintos.
+La autorización raíz permitió los smokes de `INC-BEN-001`; la ejecución
+instrumentada completó el flujo tras dos fallos cerrados y la suite usa
+transporte falso. Cualquier nueva llamada real requiere otra autorización raíz.
 
 ## Objetivo y resultado permitido
 
@@ -88,6 +98,10 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
   límites de este documento.
 - `CMP-19`, sus cuatro assets estáticos y el listener HTTP fijado a
   `127.0.0.1`, solo durante una ejecución vigente de `main.py web`.
+- `MOD-02`, `CMP-20` y `CMP-21`: modelo alojado, adaptador y runner opt-in,
+  únicamente con datos benignos sintéticos y `knowledge_search` local.
+- El endpoint exacto `https://ollama.com/api/chat` solo durante una operación
+  Ollama explícita y autorizada.
 
 ### Activos excluidos
 
@@ -98,8 +112,9 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
   temporal específico de la ejecución.
 - Datos personales, corporativos, confidenciales, credenciales, secretos,
   incidentes reales o material de procedencia no verificada.
-- GitHub, remotos Git, CI/CD, cloud, Docker, proveedores GenAI y cualquier
-  endpoint de red distinto del listener exacto de `CMP-19` en loopback.
+- GitHub, remotos Git, CI/CD, Docker, cualquier proveedor GenAI distinto de
+  Ollama y cualquier endpoint de red distinto del listener exacto de `CMP-19`
+  o del endpoint exacto autorizado de `GSL-OLLAMA-001`.
 - Proxy, túnel, redirección, binding distinto de `127.0.0.1`, acceso desde otro
   equipo y cualquier publicación del frontal.
 - El host macOS como objetivo: sus controles, permisos, procesos ajenos,
@@ -112,6 +127,9 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
 - Iniciar `main.py web` en `127.0.0.1`, cargar sus assets allowlisted y usar
   `GET /api/status`, `POST /api/analyze` y `POST /api/baseline` desde un
   navegador same-origin.
+- Seleccionar Ollama explícitamente para analizar un solo ID benigno; enviar
+  únicamente la tarea, el incidente y el resultado sintéticos validados; hacer
+  exactamente dos llamadas sin redirect, retry, streaming ni persistencia.
 - Sustituir respuestas del modelo mediante dobles deterministas dentro del
   proceso de test.
 - Preparar entradas adversarias no ejecutables y observar las decisiones,
@@ -125,7 +143,9 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
 
 ## Acciones prohibidas
 
-- Conectar a red, proveedor, servicio externo o endpoint no autorizado.
+- Conectar a red, proveedor, servicio externo o endpoint no autorizado; en
+  Ollama, seguir redirects, superar dos llamadas o usar cloud para
+  baseline/evaluaciones también está prohibido.
 - Cambiar el binding, exponer el listener, añadir una ruta, desactivar
   Host/Origin/CSRF/CSP, aceptar prompt libre, uploads o campos adicionales.
 - Usar datos reales, secretos o malware; ejecutar payloads, shell, código
@@ -226,7 +246,9 @@ prueba puede elevar estos topes por analogía.
 `ACT-01` debe detener inmediatamente los procesos objetivo si ocurre cualquiera
 de estas condiciones:
 
-- aparece tráfico de red o un intento de resolver o conectar a un endpoint;
+- aparece tráfico de red fuera del endpoint Ollama exacto en una operación
+  opt-in, un redirect o más de dos intentos; para el backend determinista,
+  cualquier tráfico de red sigue siendo condición de parada;
 - se detectan datos no sintéticos, secretos o una ruta fuera de alcance;
 - existe una escritura fuera del sandbox temporal o cambia el checkout
   canónico de forma inesperada;
@@ -375,7 +397,7 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-06` | Ninguna salida del modelo puede ampliar autoridad | Cada herramienta ejecutada tiene autorización de aplicación independiente |
 | `ROE-07` | La evidencia debe ser reproducible y saneada | Incluye commit, hashes, métricas, resultado y rutas `$REPO`/`$TMP` |
 | `ROE-08` | Los 17 casos deben tener vehículo y restricción propios | La tabla contiene una fila única por cada ID de `GSL-ABUSE-CASES-001` |
-| `ROE-09` | Cambios de superficie deben invalidar la versión vigente | Se revisan las RoE antes de ampliar el listener local o usar proveedor, Docker, cloud o datos reales |
+| `ROE-09` | Cambios de superficie deben invalidar la versión vigente | Se revisan las RoE antes de ampliar el listener local, cambiar `GSL-OLLAMA-001`, usar otro proveedor, Docker, cloud adicional o datos reales |
 | `ROE-10` | PGS-03-M01 no debe ejecutar ataques | El commit solo contiene documentación y verificaciones ordinarias |
 | `ROE-11` | PGS-03-M02 no debe crear una ruta de ejecución | El perfil exige autorización exacta y `$TMP`, no está en la CLI y termina al devolver una `ModelRequest` |
 | `ROE-12` | PGS-03-M03 no debe ejecutar ni conectar las fixtures durante su creación | La versión 1.0.0 del corpus en el commit `e8cf8699` declaró 0 conexiones y 0 ejecuciones |
@@ -395,12 +417,14 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-26` | PGS-05-M05 debe consolidar evidencia existente sin ejecutar ni reinterpretar expansivamente | `CMP-17` verifica `DAT-20/21/22/23`, sus hashes, esquemas, 44 referencias escalares y el resumen; no genera clasificaciones, ejecuta componentes, escribe evidencia, decide M06, acepta riesgo o cambia `final_retest` |
 | `ROE-27` | PGS-05-M07 debe ejecutar una sola vez el candidato final fijado sin contaminarlo con rúbrica u oráculos | `CMP-18` exige el commit/árbol `77edd640`/`bc09b78f`, materializa el target mediante `git archive` bajo `$TMP`, bloquea red y credenciales, ejecuta 14 casos adversarios y 12 benignos más dos probes de frontera, deja cuatro casos inertes, verifica 15 artefactos históricos y emite solo una proyección saneada por `stdout`; el run canónico requiere evaluador comprometido, no escribe evidencia por sí mismo y no afirma seguridad general, equivalencia semántica general ni evaluación con un modelo GenAI real |
 | `ROE-28` | El frontal local no debe ampliar datos, autoridad o efectos | `CMP-19` se fija a `127.0.0.1`, rutas y assets allowlisted, entrada JSON estricta de 1 KiB, Host/Origin/CSRF y cabeceras cerradas; reutiliza el flujo benigno y crea cero borradores |
+| `ROE-29` | Ollama solo puede ampliar fidelidad de analyze, no autoridad ni evidencia histórica | `MOD-02` usa endpoint/modelo fijos, dos llamadas, solo `knowledge_search`, JSON validado localmente, cero retries y transporte falso en tests; baseline, evaluaciones y `DAT-25` no lo alcanzan |
 
 ## Disparadores de revisión
 
 Estas reglas deben revisarse y versionarse antes de:
 
-- conectar un modelo real, Docker, red externa, API pública, cloud o proveedor;
+- conectar otro modelo, endpoint, proveedor, Docker, red externa, API pública
+  o cloud, o ampliar `GSL-OLLAMA-001`;
 - cambiar el binding, ruta, método, asset, esquema, origen o controles de
   `CMP-19`;
 - añadir otra herramienta, identidad, interfaz, servicio o efecto;

@@ -47,10 +47,30 @@
       "subDiagramId": "local-containers",
       "meta": {
         "type": "system",
-        "deployment": "local-only",
+        "deployment": "local-with-optional-cloud-egress",
         "mandatoryOutputPolicy": true,
-        "runtimeExternalIntegrations": 0,
+        "runtimeExternalIntegrations": 1,
         "developmentIntegrations": 1
+      }
+    },
+    {
+      "id": "ollama-cloud-provider",
+      "label": "Ollama Cloud · gpt-oss:120b",
+      "meta": {
+        "type": "system",
+        "inventoryIds": [
+          "MOD-02"
+        ],
+        "state": "opt-in-experimental",
+        "endpoint": "https://ollama.com/api/chat",
+        "realServiceTested": true,
+        "liveSmokeStatus": "passed-bounded",
+        "liveSmokeFinding": "end-to-end-completed-after-prior-failures",
+        "liveSmokeHistory": [
+          "2026-07-28-empty-query-rejected",
+          "2026-07-29-sanitized-stage-unobserved",
+          "2026-07-29-instrumented-end-to-end-passed"
+        ]
       }
     }
   ],
@@ -81,6 +101,29 @@
       "meta": {
         "type": "calls",
         "cliReachable": false
+      }
+    },
+    {
+      "id": "context-lab-calls-ollama-cloud",
+      "source": "genai-seguro-lab",
+      "target": "ollama-cloud-provider",
+      "label": "Opt-in: 2 POST HTTPS con incidente y conocimiento sintéticos",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-08",
+        "baselineReachable": false,
+        "retries": 0
+      }
+    },
+    {
+      "id": "context-ollama-returns-model-output",
+      "source": "ollama-cloud-provider",
+      "target": "genai-seguro-lab",
+      "label": "Tool call y JSON no confiables → validación local",
+      "meta": {
+        "type": "data-flow",
+        "crossesBoundary": "TB-08",
+        "rawContentPersisted": false
       }
     }
   ]

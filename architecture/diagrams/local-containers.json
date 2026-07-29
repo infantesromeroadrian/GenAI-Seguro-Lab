@@ -69,7 +69,10 @@
           "CMP-17",
           "CMP-18",
           "CMP-19",
+          "CMP-20",
+          "CMP-21",
           "MOD-01",
+          "MOD-02",
           "TOL-01",
           "TOL-02"
         ],
@@ -79,6 +82,30 @@
         "osIdentityIsolation": false,
         "syntheticApprovalIdentity": true,
         "humanInteractionVerified": false
+      }
+    },
+    {
+      "id": "ollama-cloud-service",
+      "label": "TB-08 · Ollama Cloud",
+      "meta": {
+        "type": "system",
+        "technology": "ollama-chat-api",
+        "trustBoundary": true,
+        "boundaryId": "TB-08",
+        "inventoryIds": [
+          "MOD-02"
+        ],
+        "endpoint": "https://ollama.com/api/chat",
+        "model": "gpt-oss:120b",
+        "state": "opt-in-experimental",
+        "realServiceTested": true,
+        "liveSmokeStatus": "passed-bounded",
+        "liveSmokeFinding": "end-to-end-completed-after-prior-failures",
+        "liveSmokeHistory": [
+          "2026-07-28-empty-query-rejected",
+          "2026-07-29-sanitized-stage-unobserved",
+          "2026-07-29-instrumented-end-to-end-passed"
+        ]
       }
     },
     {
@@ -246,6 +273,31 @@
         "directoryDescriptorAnchored": true,
         "recoveryBeforeAuthority": true,
         "restoresAuthority": false
+      }
+    },
+    {
+      "id": "containers-process-calls-ollama-cloud",
+      "source": "python-application-process",
+      "target": "ollama-cloud-service",
+      "label": "POST /api/chat · Bearer desde entorno · 60 s · sin redirects/retries",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-08",
+        "provider": "ollama",
+        "baselineReachable": false,
+        "syntheticDataOnly": true
+      }
+    },
+    {
+      "id": "containers-ollama-returns-untrusted-output",
+      "source": "ollama-cloud-service",
+      "target": "python-application-process",
+      "label": "Respuesta acotada → esquema, grants y política locales",
+      "meta": {
+        "type": "data-flow",
+        "crossesBoundary": "TB-08",
+        "thinkingRetained": false,
+        "rawContentPersisted": false
       }
     }
   ]

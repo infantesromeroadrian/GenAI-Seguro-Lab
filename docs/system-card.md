@@ -11,8 +11,8 @@
 | Corte de las fuentes del repositorio | commit `648dd9afe9ef696388257ebf8dda4b59ece1aeb5` |
 | Candidato de producto evaluado | commit `77edd64037bb0e41edffa58cae2682ba7d2694d2`, árbol `bc09b78f7f3d85f94241f9955e79abb264bd89de` |
 | Evidencia final | `DAT-25`, SHA-256 `05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d` |
-| Extensión actual | `GSL-WEB-001` — frontal HTTP exclusivo de loopback, posterior a `DAT-25` |
-| Ámbito | Laboratorio local, determinista y con datos exclusivamente sintéticos |
+| Extensión actual | `GSL-WEB-001` y `GSL-OLLAMA-001`, posteriores a `DAT-25` |
+| Ámbito | Laboratorio con datos exclusivamente sintéticos; determinista por defecto y Ollama Cloud experimental solo por opt-in |
 
 Esta ficha resume el sistema observado. No sustituye el
 [inventario](./system-inventory.md), el
@@ -63,9 +63,11 @@ Usos no previstos o prohibidos:
 
 El runtime observado es un solo proceso Python local. `CMP-19` añade un
 listener HTTP fijo en `127.0.0.1` y una interfaz gráfica servida con assets
-propios. No hay proveedor, conexión externa, API pública, base de datos, vector
-store, cloud, Docker, cuenta de servicio ni telemetría externa. La cuenta
-macOS que inicia el proceso conserva la autoridad efectiva del host.
+propios. En el alcance evaluado de `DAT-25` no hay proveedor ni conexión
+externa. Posteriormente, `GSL-OLLAMA-001` permite dos llamadas a Ollama Cloud
+solo para un `analyze` explícito; no añade API pública, base de datos, vector
+store, Docker, cuenta de servicio ni telemetría externa. La cuenta macOS que
+inicia el proceso conserva la autoridad efectiva del host.
 
 <!-- system-boundaries:start -->
 | Frontera | Función | Aislamiento observado |
@@ -84,6 +86,7 @@ macOS que inicia el proceso conserva la autoridad efectiva del host.
 | Grupo | Elementos | Papel |
 |---|---|---|
 | Ruta de producto | `CMP-01`, `CMP-02`, `CMP-03`, `CMP-04`, `CMP-05`, `CMP-09`, `CMP-10`, `CMP-11`, `CMP-19`, `MOD-01`, `TOL-01` | CLI y frontal de loopback, carga validada, flujo benigno, baseline, políticas, eventos efímeros, doble determinista y consulta de conocimiento de solo lectura. |
+| Extensión alojada opt-in | `CMP-20`, `CMP-21`, `MOD-02`, `IDN-02` | Adaptador/runner Ollama para un incidente sintético, secreto por entorno, dos llamadas y coste desconocido; no alcanza baseline ni evaluaciones. |
 | Efecto interno no expuesto | `TOL-02`, `CMP-12`, `IDN-03` | Propuesta, aprobación sintética y creación confinada de un borrador; no hay ruta desde `CMP-01`. |
 | Evaluación y soporte | `CMP-06`, `CMP-07`, `CMP-08`, `CMP-13`, `CMP-14`, `CMP-15`, `CMP-16`, `CMP-17`, `CMP-18` | Perfil vulnerable, harness y analizadores separados de la ruta de producto. |
 | Identidad efectiva | `IDN-01`, `IDN-04`, `IDN-05` | Cuenta local del proceso, ausencia de autoridad en el modelo y grants lógicos por operación. |
@@ -93,8 +96,9 @@ Flujo de producto:
 1. `ACT-01` selecciona un incidente mediante `CMP-01` o `CMP-19`; la ruta web
    valida Host, Origin, CSRF, tamaño y esquema antes de continuar.
 2. `CMP-10` acota el snapshot y `CMP-02` valida manifiesto, registros y hashes.
-3. `CMP-03` entrega a `MOD-01` una petición con instrucción, datos de usuario y
-   contenido no confiable separados.
+3. `CMP-03` entrega al modelo seleccionado una petición con instrucción, datos
+   de usuario y contenido no confiable separados. `MOD-01` sigue siendo el
+   default; `MOD-02` requiere `--provider ollama`.
 4. La aplicación emite un grant de una sola `knowledge_search`; `TOL-01`
    consulta únicamente las referencias del incidente.
 5. `CMP-03` valida la segunda respuesta, aplica `CMP-09`, registra solo eventos
@@ -116,6 +120,9 @@ esta extensión y no evalúa `CMP-19` o `TB-07`.
 - La [model card](./model-card.md) documenta `MOD-01`: un
   `DeterministicModelAdapter` `deterministic/scripted-v1`, sin entrenamiento,
   pesos, proveedor ni llamadas externas.
+- El [anexo Ollama](./ollama-cloud-experimental.md) documenta `MOD-02`:
+  `gpt-oss:120b`, probabilístico, con egress sintético, coste desconocido, un
+  smoke real end-to-end acotado y dos fallos cerrados previos.
 - `TOL-01` solo lee un catálogo físico reducido al incidente.
 - `TOL-02` puede crear como máximo un borrador Markdown local cuando recibe
   autoridad interna válida; la CLI y el flujo benigno no lo alcanzan.
@@ -151,7 +158,9 @@ un proceso con ejecución arbitraria de Python bajo `IDN-01`.
 Estos resultados pertenecen al candidato, corpus, oráculos e invariantes
 fijados. No demuestran equivalencia semántica general, robustez frente a
 ataques desconocidos, comportamiento de un LLM real ni adecuación para
-producción.
+producción. `DAT-25` no cubre `MOD-02`; las pruebas de esa extensión demuestran
+el contrato con transporte falso y un smoke end-to-end acotado tras dos fallos
+cerrados, sin generalizar comportamiento o disponibilidad.
 
 ## Riesgos y decisiones pendientes
 

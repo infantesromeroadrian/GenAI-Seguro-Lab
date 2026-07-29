@@ -192,3 +192,11 @@ trigger materializado sí exige actualizar únicamente el área afectada.
 - [`DAT-25`](../evaluations/final-retest-v1.json)
 - [Mapa Tecture](../architecture/manifest.json)
 - [Plan del proyecto](../plan-proyecto-GenAI-Seguro-Lab.md)
+
+## Extensión posterior
+
+[`GSL-ADR-002`](./ollama-cloud-adr.md) acepta de forma experimental el backend
+Ollama opt-in después de `DAT-25`. No reescribe esta decisión ni cambia el
+estado histórico de sus alternativas: conserva `MOD-01` como default y único
+backend de baseline/evaluaciones, mientras limita `MOD-02` a un incidente
+sintético, dos llamadas, una herramienta local y transporte falso en tests.
