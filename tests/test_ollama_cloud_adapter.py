@@ -20,6 +20,8 @@ from genai_seguro_lab.ollama_cloud_adapter import (
     MAX_OLLAMA_RESPONSE_BYTES,
     OLLAMA_CHAT_ENDPOINT,
     OLLAMA_MODEL,
+    OLLAMA_NUM_PREDICT,
+    OLLAMA_PUBLIC_TIMEOUT_SECONDS,
     OLLAMA_TIMEOUT_SECONDS,
     OllamaCloudAdapter,
     OllamaCloudConfigurationError,
@@ -259,7 +261,10 @@ def test_two_call_protocol_uses_fixed_cloud_contract_without_oracles() -> None:
         assert document["model"] == OLLAMA_MODEL
         assert document["stream"] is False
         assert document["think"] == "low"
-        assert document["options"] == {"temperature": 0}
+        assert document["options"] == {
+            "num_predict": OLLAMA_NUM_PREDICT,
+            "temperature": 0,
+        }
         serialized = json.dumps(document, sort_keys=True).casefold()
         assert "expected_result" not in serialized
         assert "oracle" not in serialized
@@ -290,6 +295,33 @@ def test_two_call_protocol_uses_fixed_cloud_contract_without_oracles() -> None:
     assert "REMOTE_BODY_MUST_NOT_SURVIVE" not in repr(second)
     assert _TEST_KEY not in repr(first)
     assert _TEST_KEY not in repr(second)
+
+
+def test_timeout_is_parametrized_without_changing_the_local_default() -> None:
+    default_transport = FakeTransport((_first_remote_response(),))
+    public_transport = FakeTransport((_first_remote_response(),))
+
+    _adapter(default_transport).generate(_initial_request())
+    OllamaCloudAdapter(
+        transport=public_transport,
+        api_key_loader=lambda: _TEST_KEY,
+        timeout_seconds=OLLAMA_PUBLIC_TIMEOUT_SECONDS,
+    ).generate(_initial_request())
+
+    assert default_transport.calls[0].timeout_seconds == 60.0
+    assert public_transport.calls[0].timeout_seconds == 25.0
+
+
+@pytest.mark.parametrize("timeout", (0, -1, 60.1, float("inf")))
+def test_timeout_rejects_values_outside_the_bounded_contract(
+    timeout: float,
+) -> None:
+    with pytest.raises(ValueError):
+        OllamaCloudAdapter(
+            transport=FakeTransport(()),
+            api_key_loader=lambda: _TEST_KEY,
+            timeout_seconds=timeout,
+        )
 
 
 def test_initial_contract_maps_incident_fields_to_bounded_tool_arguments() -> None:

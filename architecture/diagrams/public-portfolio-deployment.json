@@ -1,0 +1,215 @@
+{
+  "name": "Despliegue público del portfolio",
+  "level": 2,
+  "meta": {
+    "direction": "LR"
+  },
+  "nodes": [
+    {
+      "id": "portfolio-browser",
+      "label": "Navegador del visitante",
+      "meta": {
+        "type": "frontend",
+        "technology": "web-browser",
+        "interface": "https-public"
+      }
+    },
+    {
+      "id": "vercel-public-boundary",
+      "label": "TB-09 · Despliegue público Vercel",
+      "meta": {
+        "type": "system",
+        "isContainer": true,
+        "trustBoundary": true,
+        "boundaryId": "TB-09",
+        "isolation": "managed-static-and-function-runtime"
+      }
+    },
+    {
+      "id": "vercel-edge-controls",
+      "label": "Controles edge y mismo origen",
+      "parentId": "vercel-public-boundary",
+      "path": "vercel.json",
+      "meta": {
+        "type": "gateway",
+        "technology": "vercel-edge",
+        "httpsOnly": true,
+        "cors": false
+      }
+    },
+    {
+      "id": "vercel-static-site",
+      "label": "Demo pública estática",
+      "parentId": "vercel-public-boundary",
+      "path": "src/genai_seguro_lab/web_assets/",
+      "meta": {
+        "type": "frontend",
+        "technology": "html-css-javascript",
+        "runtimeApi": true,
+        "runtimeCompute": false,
+        "providerVisible": false
+      }
+    },
+    {
+      "id": "public-deterministic-snapshot",
+      "label": "Snapshot determinista público",
+      "parentId": "vercel-public-boundary",
+      "path": "src/genai_seguro_lab/web_assets/snapshots/",
+      "meta": {
+        "type": "storage",
+        "technology": "versioned-json",
+        "writeMode": "offline-generation",
+        "runtimeMutable": false,
+        "containsSecrets": false
+      }
+    },
+    {
+      "id": "public-synthetic-data",
+      "label": "Datos sintéticos validados",
+      "parentId": "vercel-public-boundary",
+      "path": "data/",
+      "meta": {
+        "type": "storage",
+        "technology": "versioned-json",
+        "runtimeMutable": false,
+        "containsRealData": false,
+        "containsSecrets": false
+      }
+    },
+    {
+      "id": "vercel-public-function",
+      "label": "Function de análisis con LLM",
+      "parentId": "vercel-public-boundary",
+      "path": "api/",
+      "meta": {
+        "type": "service",
+        "technology": "vercel-python-function",
+        "acceptedInput": "enumerated-incident-id",
+        "freePrompt": false,
+        "persistence": false
+      }
+    },
+    {
+      "id": "public-runtime-secret",
+      "label": "Credencial LLM de runtime",
+      "parentId": "vercel-public-boundary",
+      "meta": {
+        "type": "storage",
+        "technology": "vercel-sensitive-environment-variable",
+        "browserReachable": false,
+        "repositoryPersisted": false
+      }
+    },
+    {
+      "id": "public-hosted-llm-service",
+      "label": "Proveedor LLM alojado",
+      "meta": {
+        "type": "external",
+        "technology": "ollama-cloud-current-provider",
+        "interface": "https-chat-api",
+        "replaceableProvider": true
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "portfolio-browser-enters-edge",
+      "source": "portfolio-browser",
+      "target": "vercel-edge-controls",
+      "label": "GET de UI/estado y POST de un ID enumerado",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-09"
+      }
+    },
+    {
+      "id": "vercel-edge-serves-static-site",
+      "source": "vercel-edge-controls",
+      "target": "vercel-static-site",
+      "label": "GET de HTML, CSS, JavaScript y favicon",
+      "meta": {
+        "type": "calls"
+      }
+    },
+    {
+      "id": "vercel-edge-serves-public-snapshot",
+      "source": "vercel-edge-controls",
+      "target": "public-deterministic-snapshot",
+      "label": "GET del catálogo y la baseline versionados",
+      "meta": {
+        "type": "reads"
+      }
+    },
+    {
+      "id": "vercel-edge-calls-public-function",
+      "source": "vercel-edge-controls",
+      "target": "vercel-public-function",
+      "label": "GET /api/status o POST /api/analyze con mismo origen",
+      "meta": {
+        "type": "calls"
+      }
+    },
+    {
+      "id": "public-function-reads-snapshot",
+      "source": "vercel-public-function",
+      "target": "public-deterministic-snapshot",
+      "label": "Valida el catálogo público al emitir estado",
+      "meta": {
+        "type": "reads"
+      }
+    },
+    {
+      "id": "public-function-reads-synthetic-data",
+      "source": "vercel-public-function",
+      "target": "public-synthetic-data",
+      "label": "Carga solo el incidente y conocimiento sintéticos",
+      "meta": {
+        "type": "reads"
+      }
+    },
+    {
+      "id": "public-function-reads-runtime-secret",
+      "source": "vercel-public-function",
+      "target": "public-runtime-secret",
+      "label": "Lee la credencial únicamente en servidor",
+      "meta": {
+        "type": "reads"
+      }
+    },
+    {
+      "id": "public-function-calls-hosted-llm",
+      "source": "vercel-public-function",
+      "target": "public-hosted-llm-service",
+      "label": "2 POST HTTPS como máximo; sin retry",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-09",
+        "toolAllowlist": [
+          "knowledge_search"
+        ]
+      }
+    },
+    {
+      "id": "hosted-llm-returns-untrusted-output",
+      "source": "public-hosted-llm-service",
+      "target": "vercel-public-function",
+      "label": "Tool call y JSON no confiables",
+      "meta": {
+        "type": "data-flow",
+        "crossesBoundary": "TB-09",
+        "validatedBeforeResponse": true
+      }
+    },
+    {
+      "id": "public-function-returns-sanitized-analysis",
+      "source": "vercel-public-function",
+      "target": "portfolio-browser",
+      "label": "JSON saneado sin proveedor, modelo, prompt ni secreto",
+      "meta": {
+        "type": "data-flow",
+        "crossesBoundary": "TB-09",
+        "persistence": false
+      }
+    }
+  ]
+}

@@ -16,10 +16,10 @@ def _read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def test_example_environment_contains_only_empty_placeholder() -> None:
+def test_example_environment_is_intentionally_empty() -> None:
     example = _read(ROOT / ".env.example")
 
-    assert example == "OLLAMA_API_KEY=\n"
+    assert example == ""
 
 
 def test_experimental_contract_is_linked_and_declares_honest_limits() -> None:
@@ -63,7 +63,7 @@ def test_experimental_contract_is_linked_and_declares_honest_limits() -> None:
 def test_governance_surfaces_distinguish_extension_from_historical_evidence() -> None:
     expected_by_path = {
         ROOT / "docs" / "rules-of-engagement.md": (
-            "`2.8.0`",
+            "`3.0.0`",
             "`GSL-OLLAMA-001`",
             "baseline/evaluaciones",
         ),

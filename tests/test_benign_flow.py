@@ -239,7 +239,7 @@ def test_flow_denies_a_non_knowledge_tool(
         flow.analyze(incident)
 
 
-def test_flow_fails_closed_when_search_has_no_hits(
+def test_flow_denies_a_query_not_bound_to_the_incident(
     incident: IncidentRecord,
     knowledge_catalog: KnowledgeCatalog,
 ) -> None:
@@ -274,7 +274,10 @@ def test_flow_fails_closed_when_search_has_no_hits(
         output_policy=OutputPolicy(),
     )
 
-    with pytest.raises(BenignFlowError, match="no authorized hits"):
+    with pytest.raises(
+        ToolDeniedError,
+        match="does not match the validated incident",
+    ):
         flow.analyze(incident)
 
 

@@ -5,14 +5,14 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-ROE-001` |
-| Versión | `2.8.0` |
-| Fecha de entrada en vigor | 2026-07-28 |
+| Versión | `3.0.0` |
+| Fecha de entrada en vigor | 2026-07-29 |
 | Baseline técnica de origen | commit evaluado `93aefa45eac687d219bfed32f03be4e60e4a13ed` + evidencia PGS-03-M07 |
 | Propietario | `ACT-02` — mantenedor y ejecutor de pruebas |
 | Operador | `ACT-01` — operador local |
 | Catálogo de origen | [`GSL-ABUSE-CASES-001`](./abuse-cases.md) |
 | Priorización de origen | [`GSL-RISK-PRIORITY-001`](./risk-prioritization.md) |
-| Ámbito | checkout local propio, datos sintéticos, procesos aislados de evaluación, frontal HTTP exclusivo de loopback y egress opt-in exacto de `GSL-OLLAMA-001` |
+| Ámbito | checkout propio, datos sintéticos, procesos aislados de evaluación, frontal HTTP de loopback, egress exacto de `GSL-OLLAMA-001` y perfil `GSL-PUBLIC-LLM-001` con entrada pública enumerada |
 
 Estas Rules of Engagement (RoE) delimitan cómo se podrán preparar y ejecutar
 las evaluaciones adversarias de GenAI Seguro Lab. No son una autorización
@@ -43,6 +43,20 @@ adversario o `DAT-25`, ni un endpoint, modelo, herramienta o retry distintos.
 La autorización raíz permitió los smokes de `INC-BEN-001`; la ejecución
 instrumentada completó el flujo tras dos fallos cerrados y la suite usa
 transporte falso. Cualquier nueva llamada real requiere otra autorización raíz.
+
+La versión 2.9.0 incorpora `GSL-PUBLIC-STATIC-001`. Autoriza preparar y probar
+la UI y el snapshot sintético como archivos estáticos sin Functions, API,
+POST, secretos u Ollama. No autoriza por sí misma crear o mutar un proyecto,
+dominio o despliegue Vercel ni publicar el listener local.
+
+La versión 3.0.0 incorpora `GSL-PUBLIC-LLM-001` bajo la autoridad vigente de
+publicación. Autoriza una Function Python en el proyecto Vercel existente para
+`GET /api/status` y `POST /api/analyze`, únicamente con uno de los doce IDs
+benignos enumerados. El backend actual puede realizar exactamente dos POST al
+endpoint Ollama ya autorizado, con timeout de 25 segundos por llamada, cero
+retry, `knowledge_search` exacta y secreto solo server-side. La interfaz debe
+presentar la capacidad como **Análisis con LLM**; la marca y el modelo siguen
+documentados técnicamente, pero no forman parte de la proyección pública.
 
 ## Objetivo y resultado permitido
 
@@ -102,6 +116,13 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
   únicamente con datos benignos sintéticos y `knowledge_search` local.
 - El endpoint exacto `https://ollama.com/api/chat` solo durante una operación
   Ollama explícita y autorizada.
+- El generador, `vercel.json`, los assets y el snapshot de
+  `GSL-PUBLIC-STATIC-001`.
+- `api/status.py`, `api/analyze.py` y el contrato server-side de
+  `GSL-PUBLIC-LLM-001`, con secreto sensible de runtime, kill switch y datos
+  exclusivamente sintéticos.
+- El proyecto y dominio Vercel existentes, solo para desplegar, verificar y
+  promover el candidato exacto autorizado.
 
 ### Activos excluidos
 
@@ -115,8 +136,9 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
 - GitHub, remotos Git, CI/CD, Docker, cualquier proveedor GenAI distinto de
   Ollama y cualquier endpoint de red distinto del listener exacto de `CMP-19`
   o del endpoint exacto autorizado de `GSL-OLLAMA-001`.
-- Proxy, túnel, redirección, binding distinto de `127.0.0.1`, acceso desde otro
-  equipo y cualquier publicación del frontal.
+- Proxy, túnel, redirección, binding distinto de `127.0.0.1` y publicación del
+  listener. El despliegue de archivos estáticos requiere autoridad externa
+  específica; esta versión no concede esa autoridad.
 - El host macOS como objetivo: sus controles, permisos, procesos ajenos,
   persistencia, llavero, configuración y disponibilidad global quedan fuera.
 
@@ -140,6 +162,14 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
 - Crear como máximo los borradores sintéticos permitidos por el presupuesto,
   siempre en un sandbox temporal propio de la ejecución.
 - Registrar métricas, hashes, resultados y logs saneados.
+- Regenerar y comparar el snapshot público mediante el flujo determinista, sin
+  red, proveedor, evaluación adversaria o modificación de evidencia.
+- Desplegar una preview protegida de `GSL-PUBLIC-LLM-001`, verificar sus
+  rechazos y ejecutar un único análisis benigno real antes de promover el mismo
+  artefacto.
+- En producción, aceptar únicamente un POST same-origin con un ID enumerado y
+  devolver la proyección saneada sin identidad de proveedor, modelo, prompt,
+  cuerpo remoto o secreto.
 
 ## Acciones prohibidas
 
@@ -154,7 +184,8 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
 - Probar contra terceros o usar el laboratorio para phishing, fraude,
   vigilancia, desinformación o decisiones reales.
 - Escribir, sobrescribir o borrar fuera del sandbox temporal; modificar de
-  forma adversaria el checkout canónico; reescribir historial Git o publicar.
+  forma adversaria el checkout canónico; reescribir historial Git o publicar
+  sin autorización específica.
 - Seguir enlaces simbólicos fuera del directorio temporal, montar volúmenes o
   conceder permisos adicionales al proceso.
 - Ejecutar fuzzing, stress, soak o carga sin un plan y unos límites nuevos
@@ -397,7 +428,7 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-06` | Ninguna salida del modelo puede ampliar autoridad | Cada herramienta ejecutada tiene autorización de aplicación independiente |
 | `ROE-07` | La evidencia debe ser reproducible y saneada | Incluye commit, hashes, métricas, resultado y rutas `$REPO`/`$TMP` |
 | `ROE-08` | Los 17 casos deben tener vehículo y restricción propios | La tabla contiene una fila única por cada ID de `GSL-ABUSE-CASES-001` |
-| `ROE-09` | Cambios de superficie deben invalidar la versión vigente | Se revisan las RoE antes de ampliar el listener local, cambiar `GSL-OLLAMA-001`, usar otro proveedor, Docker, cloud adicional o datos reales |
+| `ROE-09` | Cambios de superficie deben invalidar la versión vigente | Se revisan las RoE antes de ampliar el listener local o `GSL-PUBLIC-LLM-001`, cambiar proveedor, Function, rutas, entrada, Docker, cloud adicional o datos reales |
 | `ROE-10` | PGS-03-M01 no debe ejecutar ataques | El commit solo contiene documentación y verificaciones ordinarias |
 | `ROE-11` | PGS-03-M02 no debe crear una ruta de ejecución | El perfil exige autorización exacta y `$TMP`, no está en la CLI y termina al devolver una `ModelRequest` |
 | `ROE-12` | PGS-03-M03 no debe ejecutar ni conectar las fixtures durante su creación | La versión 1.0.0 del corpus en el commit `e8cf8699` declaró 0 conexiones y 0 ejecuciones |
@@ -418,6 +449,8 @@ las 14 fixtures PI, JB, EX y TOL.
 | `ROE-27` | PGS-05-M07 debe ejecutar una sola vez el candidato final fijado sin contaminarlo con rúbrica u oráculos | `CMP-18` exige el commit/árbol `77edd640`/`bc09b78f`, materializa el target mediante `git archive` bajo `$TMP`, bloquea red y credenciales, ejecuta 14 casos adversarios y 12 benignos más dos probes de frontera, deja cuatro casos inertes, verifica 15 artefactos históricos y emite solo una proyección saneada por `stdout`; el run canónico requiere evaluador comprometido, no escribe evidencia por sí mismo y no afirma seguridad general, equivalencia semántica general ni evaluación con un modelo GenAI real |
 | `ROE-28` | El frontal local no debe ampliar datos, autoridad o efectos | `CMP-19` se fija a `127.0.0.1`, rutas y assets allowlisted, entrada JSON estricta de 1 KiB, Host/Origin/CSRF y cabeceras cerradas; reutiliza el flujo benigno y crea cero borradores |
 | `ROE-29` | Ollama solo puede ampliar fidelidad de analyze, no autoridad ni evidencia histórica | `MOD-02` usa endpoint/modelo fijos, dos llamadas, solo `knowledge_search`, JSON validado localmente, cero retries y transporte falso en tests; baseline, evaluaciones y `DAT-25` no lo alcanzan |
+| `ROE-30` | El perfil público separa ejecución viva y evidencia determinista | «Análisis con LLM» usa una Function cerrada y no determinista; catálogo y baseline proceden del snapshot y se etiquetan como precomputados; `DAT-25` no se regenera ni se atribuye al LLM |
+| `ROE-31` | La entrada pública no puede ampliar la autoridad del modelo | Analyze acepta solo un ID enumerado, exige mismo origen y CSRF, liga exactamente query, IDs y limit a ese incidente y devuelve una proyección sin proveedor, modelo, prompts o secretos |
 
 ## Disparadores de revisión
 
@@ -427,6 +460,8 @@ Estas reglas deben revisarse y versionarse antes de:
   o cloud, o ampliar `GSL-OLLAMA-001`;
 - cambiar el binding, ruta, método, asset, esquema, origen o controles de
   `CMP-19`;
+- añadir otra Function, ruta, método, secreto, analytics, campo de entrada,
+  proveedor o modelo seleccionable al perfil público;
 - añadir otra herramienta, identidad, interfaz, servicio o efecto;
 - usar datos que no sean los sintéticos aprobados;
 - cambiar los límites del host, del corpus, del sandbox o del harness;
