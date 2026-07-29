@@ -59,9 +59,11 @@ modelo de amenazas están en la
 
 El mismo frontal admite un perfil público de solo lectura basado en snapshots
 deterministas. No publica Python, Functions, API, POST, Ollama o secretos y
-etiqueta sus resultados como precomputados. El checkout contiene la
-configuración y el artefacto reproducible, pero no se declara aquí una URL o
-un despliegue verificado.
+etiqueta sus resultados como precomputados.
+
+**Demo verificada:** [genai-seguro-lab.vercel.app](https://genai-seguro-lab.vercel.app).
+Vercel sirve únicamente los assets y el snapshot versionado; el análisis real
+permanece en el runtime local.
 
 Consulta la [especificación pública](./docs/public-static-profile-spec.md) y su
 [threat model](./docs/public-static-threat-model.md).

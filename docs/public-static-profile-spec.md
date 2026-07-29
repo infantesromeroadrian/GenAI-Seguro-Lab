@@ -7,9 +7,11 @@
 | Identificador | `GSL-PUBLIC-STATIC-001` |
 | Versión | `1.0.0` |
 | Fecha | 2026-07-29 |
-| Estado | Implementado en el checkout; despliegue externo no verificado |
+| Estado | Desplegado y verificado en Vercel |
 | Datos | Los 12 incidentes benignos sintéticos y proyecciones saneadas |
 | Runtime público | Archivos estáticos; sin Functions, API, POST o secretos |
+| URL de producción | `https://genai-seguro-lab.vercel.app` |
+| Deployment verificado | `dpl_AXzDDfADN3s5YjLbeNUYi949MTMW` |
 
 ## Resultado y separación de perfiles
 
@@ -59,5 +61,19 @@ prompts, oráculos, `expected_result`, autorización o proveedor alojado.
 | `PUB-O-01` | Regenerar de forma reproducible | La prueba reconstruye en memoria y compara el JSON byte a byte |
 | `PUB-O-02` | No reinterpretar evidencia | `DAT-25` permanece inmutable y no se presenta como resultado del perfil público |
 
-No se fija ni inventa una URL. Un despliegue, dominio, cuenta o configuración
-real de Vercel requiere verificación y autoridad externas separadas.
+## Evidencia de despliegue
+
+El 2026-07-29 se verificó el deployment
+`dpl_AXzDDfADN3s5YjLbeNUYi949MTMW` y su alias estable
+`https://genai-seguro-lab.vercel.app`:
+
+- HTML, JavaScript y snapshot respondieron `200`;
+- `/api/status` y `POST /api/analyze` respondieron `404`;
+- CSP, COOP, CORP, Permissions-Policy, Referrer-Policy, HSTS, `nosniff` y
+  anti-frame estuvieron presentes;
+- la UI mostró 12 incidentes, un análisis con 10 eventos y una baseline con
+  12 filas, sin errores de consola;
+- el escaneo temprano no devolvió errores ni respuestas `5xx`.
+
+Esta evidencia no convierte el sitio en un runtime de análisis ni valida los
+controles internos, términos, residencia o retención del proveedor.

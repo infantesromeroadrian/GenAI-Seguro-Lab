@@ -70,9 +70,11 @@ mantiene el paquete de reevaluación aplicable.
 el riesgo de representación de `RR-06`; no crea otro registro. La demo no
 ejecuta modelos o herramientas y se etiqueta como snapshot precomputado.
 Persisten la posible manipulación u obsolescencia del artefacto, su confusión
-con una ejecución y las incertidumbres del hosting real. La regeneración
-reproducible y las cabeceras no aceptan ni cierran esos riesgos y no
-reinterpretan `DAT-25`.
+con una ejecución y las incertidumbres operativas del proveedor. La URL,
+cabeceras y ausencia temprana de errores o `5xx` se verificaron, pero no
+demuestran disponibilidad futura, residencia, retención o controles internos.
+La regeneración reproducible y las cabeceras no aceptan ni cierran esos riesgos
+y no reinterpretan `DAT-25`.
 
 ## Cola de decisiones humanas
 

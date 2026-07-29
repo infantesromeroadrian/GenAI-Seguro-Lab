@@ -12,8 +12,8 @@
 
 ## Límite y flujo permitido
 
-El visitante público, si existe un despliegue autorizado, recibe únicamente
-HTML, CSS, JavaScript, favicon y un JSON versionado desde el CDN estático:
+El visitante público recibe del despliegue autorizado únicamente HTML, CSS,
+JavaScript, favicon y un JSON versionado desde el CDN estático:
 
 ```text
 navegador
@@ -43,12 +43,14 @@ los assets con el frontal local.
 
 ## Riesgos residuales y evidencia
 
-- No se ha inspeccionado ni desplegado un proyecto Vercel y no existe URL
-  verificada.
-- HSTS y el resto de cabeceras están declarados, pero su presencia real exige
-  comprobar una respuesta desplegada.
+- `https://genai-seguro-lab.vercel.app` y el deployment
+  `dpl_AXzDDfADN3s5YjLbeNUYi949MTMW` fueron verificados el 2026-07-29.
+- HSTS y el resto de cabeceras declaradas estuvieron presentes en la respuesta
+  desplegada.
 - El snapshot es una demostración educativa, no una evaluación pública,
   monitorización en vivo ni prueba de disponibilidad.
+- El escaneo temprano no mostró errores ni respuestas `5xx`; no demuestra
+  disponibilidad futura.
 - `tests/test_public_static_profile.py` verifica regeneración, 12 casos,
   ausencia de compute/secretos, seguridad de assets y hash de `DAT-25`.
 

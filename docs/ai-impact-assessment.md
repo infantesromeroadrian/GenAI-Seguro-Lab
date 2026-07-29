@@ -126,9 +126,11 @@ consecuencia al servir solo assets y resultados sintéticos precomputados:
 - regenera el snapshot desde los 12 análisis y la baseline deterministas;
 - no reejecuta ni reinterpreta `DAT-25`.
 
-La configuración y el artefacto existen en el checkout. No se ha verificado
-una URL, respuesta desplegada, cuenta, dominio, logs o tratamiento operativo
-de Vercel; esas propiedades requieren evidencia y autoridad separadas.
+El despliegue autorizado posterior se verificó en
+`https://genai-seguro-lab.vercel.app`: assets y snapshot respondieron `200`,
+las rutas API y el POST respondieron `404`, y el flujo completo no produjo
+errores de consola. El tratamiento contractual, la residencia, la retención y
+los controles internos de Vercel permanecen fuera de esta evaluación.
 
 ## Partes interesadas y potencialmente afectadas
 

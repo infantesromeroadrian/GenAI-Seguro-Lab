@@ -124,7 +124,7 @@ del modelo o el estado de una nota no reanudan ni amplían esa autoridad.
   o del endpoint exacto autorizado de `GSL-OLLAMA-001`.
 - Proxy, túnel, redirección, binding distinto de `127.0.0.1` y publicación del
   listener. El despliegue de archivos estáticos requiere autoridad externa
-  específica y no queda ejecutado por esta versión.
+  específica; esta versión no concede esa autoridad.
 - El host macOS como objetivo: sus controles, permisos, procesos ajenos,
   persistencia, llavero, configuración y disponibilidad global quedan fuera.
 

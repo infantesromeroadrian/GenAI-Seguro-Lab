@@ -214,4 +214,6 @@ def test_public_profile_documentation_is_linked_and_honest() -> None:
         assert marker.casefold() in combined.casefold()
     assert "./docs/public-static-profile-spec.md" in readme
     assert "./public-static-profile-spec.md" in docs_index
-    assert "vercel.app" not in combined
+    assert "https://genai-seguro-lab.vercel.app" in readme
+    assert "https://genai-seguro-lab.vercel.app" in combined
+    assert "dpl_AXzDDfADN3s5YjLbeNUYi949MTMW" in combined
