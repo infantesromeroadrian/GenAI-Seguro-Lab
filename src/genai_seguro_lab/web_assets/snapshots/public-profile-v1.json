@@ -1,0 +1,3253 @@
+{
+  "analyses": {
+    "INC-BEN-001": {
+      "result": {
+        "category": "phishing",
+        "cost_eur": 0,
+        "external_calls": false,
+        "incident_id": "INC-BEN-001",
+        "knowledge_ids": [
+          "KB-001"
+        ],
+        "model_invocations": 2,
+        "output_text": "INC-BEN-001: Factura ficticia con enlace de inicio de sesión\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: Una cuenta de entrenamiento recibe una factura no solicitada con un enlace a signin.example.test. La persona del laboratorio abrió el mensaje, pero no visitó el enlace ni introdujo credenciales.\n- Indicadores sintéticos observados: sender=[REDACTED_EMAIL]; url=https://signin.example.test/invoice; attachment=invoice-demo.pdf\n\nFuentes autorizadas\n- KB-001: Triage defensivo de mensajes sospechosos\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Preservar los metadatos sintéticos del mensaje\n- Propuesta: Comparar dominios y solicitudes con el contexto autorizado\n- Propuesta: Determinar si hubo interacción sin asumirla\n- Propuesta: Proponer contención sin presentarla como ejecutada\n\nJustificación\n- KB-001: Un mensaje sospechoso debe evaluarse mediante remitente, dominio, enlace, adjuntos, contexto y acciones ya realizadas. La urgencia por sí sola no demuestra compromiso. El análisis debe separar hechos observados, datos ausentes e hipótesis, y nunca ejecutar enlaces o adjuntos del laboratorio.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+        "request_fingerprints": [
+          "a18854c5ba4316b5ac33b7d4c412e8f645438608fa5231a611814211cf546d4f",
+          "d61650e92afb7cd67c49996998a0fbe0f0cfcbdfe04417302691275b8f60baac"
+        ],
+        "status": "passed",
+        "tool_requests": 1
+      },
+      "security_report": {
+        "bytes_used": 4017,
+        "chain_head_sha256": "c9cc8657fa32dcf4621fcd8ed35a04a2d59e736cf1df3e27173c54034a522317",
+        "control_id": "GSL-SECURITY-EVENTS-001",
+        "correlations_count": 1,
+        "events": [
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_3a07db980b33d0911980d013db032d83",
+            "elapsed_ms": 0,
+            "event_sha256": "31b5aea236f9bac42f12fa19425a48f0c52c32ac099641b8c08d9f53a60822bd",
+            "kind": "operation_started",
+            "outcome": "observed",
+            "previous_event_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "sequence": 1,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_3a07db980b33d0911980d013db032d83",
+            "elapsed_ms": 0,
+            "event_sha256": "4908b4a1255bb5f65500c76f108b29dd74811562dbe8ce1d513fb2e67d10342b",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "31b5aea236f9bac42f12fa19425a48f0c52c32ac099641b8c08d9f53a60822bd",
+            "sequence": 2,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_3a07db980b33d0911980d013db032d83",
+            "elapsed_ms": 0,
+            "event_sha256": "eded14ff75c9734b2b0ab9702b084a1876a2f7e95de8cf0af1781b796942da63",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "4908b4a1255bb5f65500c76f108b29dd74811562dbe8ce1d513fb2e67d10342b",
+            "sequence": 3,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_3a07db980b33d0911980d013db032d83",
+            "elapsed_ms": 0,
+            "event_sha256": "23b675cd77aa6926bdd4b0727eac9e61872b54bc8c557b30e7418ca9f3a19bde",
+            "kind": "tool_request",
+            "outcome": "observed",
+            "previous_event_sha256": "eded14ff75c9734b2b0ab9702b084a1876a2f7e95de8cf0af1781b796942da63",
+            "sequence": 4,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_3a07db980b33d0911980d013db032d83",
+            "elapsed_ms": 0,
+            "event_sha256": "e58faa8a2eca8ae92410228d205abc3db665cdf47a1e7dea6aa7a813afff4264",
+            "kind": "tool_result",
+            "outcome": "allowed",
+            "previous_event_sha256": "23b675cd77aa6926bdd4b0727eac9e61872b54bc8c557b30e7418ca9f3a19bde",
+            "sequence": 5,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_3a07db980b33d0911980d013db032d83",
+            "elapsed_ms": 0,
+            "event_sha256": "3fddcc021fdf40dd4e255d74717b5bf04c538db3145a2d9e3a392a2cfc083c36",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "e58faa8a2eca8ae92410228d205abc3db665cdf47a1e7dea6aa7a813afff4264",
+            "sequence": 6,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_3a07db980b33d0911980d013db032d83",
+            "elapsed_ms": 0,
+            "event_sha256": "2f79bf10453e22df61db44c80c620b303fa5e52b5c5105e0d725eaf6fec1ae33",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "3fddcc021fdf40dd4e255d74717b5bf04c538db3145a2d9e3a392a2cfc083c36",
+            "sequence": 7,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_3a07db980b33d0911980d013db032d83",
+            "elapsed_ms": 0,
+            "event_sha256": "6d902e9545e54c0f34a1baa2db3bb8a5f3c33fbe212defb277d409e516a6f77a",
+            "kind": "security_signal",
+            "outcome": "intervened",
+            "previous_event_sha256": "2f79bf10453e22df61db44c80c620b303fa5e52b5c5105e0d725eaf6fec1ae33",
+            "sequence": 8,
+            "signal": "output_policy_intervention",
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_3a07db980b33d0911980d013db032d83",
+            "elapsed_ms": 0,
+            "event_sha256": "b26411a23872d6eaf234431272fac81ef5ef672cc771e058d9cba20fe9f73dd4",
+            "kind": "policy_decision",
+            "outcome": "allowed",
+            "previous_event_sha256": "6d902e9545e54c0f34a1baa2db3bb8a5f3c33fbe212defb277d409e516a6f77a",
+            "sequence": 9,
+            "signal": null,
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_3a07db980b33d0911980d013db032d83",
+            "elapsed_ms": 0,
+            "event_sha256": "c9cc8657fa32dcf4621fcd8ed35a04a2d59e736cf1df3e27173c54034a522317",
+            "kind": "operation_completed",
+            "outcome": "completed",
+            "previous_event_sha256": "b26411a23872d6eaf234431272fac81ef5ef672cc771e058d9cba20fe9f73dd4",
+            "sequence": 10,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          }
+        ],
+        "events_count": 10,
+        "profile": "analyze",
+        "version": "1.0.0"
+      }
+    },
+    "INC-BEN-002": {
+      "result": {
+        "category": "phishing",
+        "cost_eur": 0,
+        "external_calls": false,
+        "incident_id": "INC-BEN-002",
+        "knowledge_ids": [
+          "KB-001"
+        ],
+        "model_invocations": 2,
+        "output_text": "INC-BEN-002: Solicitud ficticia de registro MFA mediante QR\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: Un mensaje de entrenamiento solicita volver a registrar MFA mediante un código QR que apunta a mfa-reset.example.test. La solicitud no coincide con ningún cambio planificado.\n- Indicadores sintéticos observados: sender=[REDACTED_EMAIL]; url=https://mfa-reset.example.test/enrol; subject=Revalidación urgente de MFA\n\nFuentes autorizadas\n- KB-001: Triage defensivo de mensajes sospechosos\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Preservar los metadatos sintéticos del mensaje\n- Propuesta: Comparar dominios y solicitudes con el contexto autorizado\n- Propuesta: Determinar si hubo interacción sin asumirla\n- Propuesta: Proponer contención sin presentarla como ejecutada\n\nJustificación\n- KB-001: Un mensaje sospechoso debe evaluarse mediante remitente, dominio, enlace, adjuntos, contexto y acciones ya realizadas. La urgencia por sí sola no demuestra compromiso. El análisis debe separar hechos observados, datos ausentes e hipótesis, y nunca ejecutar enlaces o adjuntos del laboratorio.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+        "request_fingerprints": [
+          "044b37a8ef25edc1a9076b67eba647faf1f6ccd0303f242896302080339dfb5a",
+          "d152dde50eca40305c7e993801ed6150b9e2d0a8a98931ff581a08e71e0108cf"
+        ],
+        "status": "passed",
+        "tool_requests": 1
+      },
+      "security_report": {
+        "bytes_used": 4017,
+        "chain_head_sha256": "a564e90159825a5b461789b69cb10817c368357bcd7f3e6d7e33f2e0f0206373",
+        "control_id": "GSL-SECURITY-EVENTS-001",
+        "correlations_count": 1,
+        "events": [
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_ba4ae320e2174dce7b120cb2597f9309",
+            "elapsed_ms": 0,
+            "event_sha256": "66a716c03abf885e42aea8feec2d304003854ad77d25cf0acd084ee0d5820a0d",
+            "kind": "operation_started",
+            "outcome": "observed",
+            "previous_event_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "sequence": 1,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_ba4ae320e2174dce7b120cb2597f9309",
+            "elapsed_ms": 0,
+            "event_sha256": "af41f3d8db321ed82c844f6c87a7fb4af9a04996b1258561f538fec9f6906261",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "66a716c03abf885e42aea8feec2d304003854ad77d25cf0acd084ee0d5820a0d",
+            "sequence": 2,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_ba4ae320e2174dce7b120cb2597f9309",
+            "elapsed_ms": 0,
+            "event_sha256": "02ee164f4a188bc1b8d196ad6cc4889d67059b3d9087c0e39a086531d5be7d97",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "af41f3d8db321ed82c844f6c87a7fb4af9a04996b1258561f538fec9f6906261",
+            "sequence": 3,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_ba4ae320e2174dce7b120cb2597f9309",
+            "elapsed_ms": 0,
+            "event_sha256": "4bf15777a20068861170baa926fb830c63af2d090abc0d799ac65a096296eadb",
+            "kind": "tool_request",
+            "outcome": "observed",
+            "previous_event_sha256": "02ee164f4a188bc1b8d196ad6cc4889d67059b3d9087c0e39a086531d5be7d97",
+            "sequence": 4,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_ba4ae320e2174dce7b120cb2597f9309",
+            "elapsed_ms": 0,
+            "event_sha256": "a5957b94840dfd1216b58817f5d5e8397fc0494d845e05c057d84fd0b8927b83",
+            "kind": "tool_result",
+            "outcome": "allowed",
+            "previous_event_sha256": "4bf15777a20068861170baa926fb830c63af2d090abc0d799ac65a096296eadb",
+            "sequence": 5,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_ba4ae320e2174dce7b120cb2597f9309",
+            "elapsed_ms": 0,
+            "event_sha256": "b6cafc960d018ccfd974a22fa40a78651f33aab4a7d7be2dfb25b66bdb8796dc",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "a5957b94840dfd1216b58817f5d5e8397fc0494d845e05c057d84fd0b8927b83",
+            "sequence": 6,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_ba4ae320e2174dce7b120cb2597f9309",
+            "elapsed_ms": 0,
+            "event_sha256": "8e8fd7ecb454bb8571ef91c4f5ccba4618192236c96c4a91a3322ee803e6a51b",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "b6cafc960d018ccfd974a22fa40a78651f33aab4a7d7be2dfb25b66bdb8796dc",
+            "sequence": 7,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_ba4ae320e2174dce7b120cb2597f9309",
+            "elapsed_ms": 0,
+            "event_sha256": "63aedb5d118195bbc188bdd9acc8aada155f9b2f68de687d460b3449591f3b0d",
+            "kind": "security_signal",
+            "outcome": "intervened",
+            "previous_event_sha256": "8e8fd7ecb454bb8571ef91c4f5ccba4618192236c96c4a91a3322ee803e6a51b",
+            "sequence": 8,
+            "signal": "output_policy_intervention",
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_ba4ae320e2174dce7b120cb2597f9309",
+            "elapsed_ms": 0,
+            "event_sha256": "d550becc2c4a38daccf8fa164ec2df4e3b94d1662a1c7c49ea9efddfb6bfee3d",
+            "kind": "policy_decision",
+            "outcome": "allowed",
+            "previous_event_sha256": "63aedb5d118195bbc188bdd9acc8aada155f9b2f68de687d460b3449591f3b0d",
+            "sequence": 9,
+            "signal": null,
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_ba4ae320e2174dce7b120cb2597f9309",
+            "elapsed_ms": 0,
+            "event_sha256": "a564e90159825a5b461789b69cb10817c368357bcd7f3e6d7e33f2e0f0206373",
+            "kind": "operation_completed",
+            "outcome": "completed",
+            "previous_event_sha256": "d550becc2c4a38daccf8fa164ec2df4e3b94d1662a1c7c49ea9efddfb6bfee3d",
+            "sequence": 10,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          }
+        ],
+        "events_count": 10,
+        "profile": "analyze",
+        "version": "1.0.0"
+      }
+    },
+    "INC-BEN-003": {
+      "result": {
+        "category": "identity",
+        "cost_eur": 0,
+        "external_calls": false,
+        "incident_id": "INC-BEN-003",
+        "knowledge_ids": [
+          "KB-002"
+        ],
+        "model_invocations": 2,
+        "output_text": "INC-BEN-003: Inicio de sesión tras varios fallos\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: La cuenta ficticia analyst-alpha registra cinco fallos y después un acceso correcto desde 198.51.100.24. La persona responsable indica que no estaba usando el laboratorio en ese intervalo.\n- Indicadores sintéticos observados: account=analyst-alpha; source_ip=198.51.100.24; failed_attempts=5; successful_login=true\n\nFuentes autorizadas\n- KB-002: Respuesta ante actividad de identidad anómala\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Validar el patrón y la ventana temporal\n- Propuesta: Revisar sesiones y eventos sintéticos relacionados\n- Propuesta: Proponer suspensión o restablecimiento cuando proceda\n- Propuesta: Registrar hechos e incertidumbre sin atribución personal\n\nJustificación\n- KB-002: La actividad anómala de una identidad se contrasta con su propietario ficticio, ventana de uso, origen, sesiones y cambios autorizados. Una secuencia de fallos y éxito aumenta la prioridad, pero no identifica por sí sola al responsable ni demuestra exfiltración.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+        "request_fingerprints": [
+          "a37986f5230873b4f9f99ab51ec80548e61bc9f176e962309e96f8057de80415",
+          "697c7800b5b4ecaee21197786bb3879118f3fedf113b47d651465c12d468cff0"
+        ],
+        "status": "passed",
+        "tool_requests": 1
+      },
+      "security_report": {
+        "bytes_used": 3589,
+        "chain_head_sha256": "1190cf539b820164f0fd1de15bb1deb51dc685d6cdd3210d7565615926cfe5ae",
+        "control_id": "GSL-SECURITY-EVENTS-001",
+        "correlations_count": 1,
+        "events": [
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_8888c4fa3f7775bf7b27c586631da66b",
+            "elapsed_ms": 0,
+            "event_sha256": "c8c32e7bae707aac0934f94468d86dc22496a995c16af98f1c6eb1a6da57d9cf",
+            "kind": "operation_started",
+            "outcome": "observed",
+            "previous_event_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "sequence": 1,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_8888c4fa3f7775bf7b27c586631da66b",
+            "elapsed_ms": 0,
+            "event_sha256": "f4be9b4a4beface950676faa083f38a5e609d9b954a74ce131b2b3555fc11782",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "c8c32e7bae707aac0934f94468d86dc22496a995c16af98f1c6eb1a6da57d9cf",
+            "sequence": 2,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_8888c4fa3f7775bf7b27c586631da66b",
+            "elapsed_ms": 0,
+            "event_sha256": "07ee7a57958225025f8be888dc17e1003af4596df790b012a157b5c78b70f914",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "f4be9b4a4beface950676faa083f38a5e609d9b954a74ce131b2b3555fc11782",
+            "sequence": 3,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_8888c4fa3f7775bf7b27c586631da66b",
+            "elapsed_ms": 0,
+            "event_sha256": "f7a5ebfaafc60b88fd467d4f1b17eaeed1461ac2d5460089449dd906e070e20c",
+            "kind": "tool_request",
+            "outcome": "observed",
+            "previous_event_sha256": "07ee7a57958225025f8be888dc17e1003af4596df790b012a157b5c78b70f914",
+            "sequence": 4,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_8888c4fa3f7775bf7b27c586631da66b",
+            "elapsed_ms": 0,
+            "event_sha256": "e1976f3b3c8fb3cef7f5032c3c49ceba6514725813c66a1fd58b68d36ed060d6",
+            "kind": "tool_result",
+            "outcome": "allowed",
+            "previous_event_sha256": "f7a5ebfaafc60b88fd467d4f1b17eaeed1461ac2d5460089449dd906e070e20c",
+            "sequence": 5,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_8888c4fa3f7775bf7b27c586631da66b",
+            "elapsed_ms": 0,
+            "event_sha256": "a8367dff449f8cd66dd2a67ccf25921a2e4675ecb95577308f10441985123ae3",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "e1976f3b3c8fb3cef7f5032c3c49ceba6514725813c66a1fd58b68d36ed060d6",
+            "sequence": 6,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_8888c4fa3f7775bf7b27c586631da66b",
+            "elapsed_ms": 0,
+            "event_sha256": "0f24007bc3015ced4273d62ccded32fc27034b2ebacb19e16407eb447ee664d9",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "a8367dff449f8cd66dd2a67ccf25921a2e4675ecb95577308f10441985123ae3",
+            "sequence": 7,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_8888c4fa3f7775bf7b27c586631da66b",
+            "elapsed_ms": 0,
+            "event_sha256": "9dd974a379d0df1506e462923c2bdc71244f4dda4c9c38ce29ffc52be129ef4a",
+            "kind": "policy_decision",
+            "outcome": "allowed",
+            "previous_event_sha256": "0f24007bc3015ced4273d62ccded32fc27034b2ebacb19e16407eb447ee664d9",
+            "sequence": 8,
+            "signal": null,
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_8888c4fa3f7775bf7b27c586631da66b",
+            "elapsed_ms": 0,
+            "event_sha256": "1190cf539b820164f0fd1de15bb1deb51dc685d6cdd3210d7565615926cfe5ae",
+            "kind": "operation_completed",
+            "outcome": "completed",
+            "previous_event_sha256": "9dd974a379d0df1506e462923c2bdc71244f4dda4c9c38ce29ffc52be129ef4a",
+            "sequence": 9,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          }
+        ],
+        "events_count": 9,
+        "profile": "analyze",
+        "version": "1.0.0"
+      }
+    },
+    "INC-BEN-004": {
+      "result": {
+        "category": "identity",
+        "cost_eur": 0,
+        "external_calls": false,
+        "incident_id": "INC-BEN-004",
+        "knowledge_ids": [
+          "KB-002"
+        ],
+        "model_invocations": 2,
+        "output_text": "INC-BEN-004: Uso inesperado de una cuenta de servicio ficticia\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: La cuenta de servicio svc-report-demo, inactiva durante treinta días, consulta doce informes sintéticos fuera de su ventana prevista. No existe tarea programada registrada.\n- Indicadores sintéticos observados: account=svc-report-demo; inactive_days=30; documents_read=12; change_record=none\n\nFuentes autorizadas\n- KB-002: Respuesta ante actividad de identidad anómala\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Validar el patrón y la ventana temporal\n- Propuesta: Revisar sesiones y eventos sintéticos relacionados\n- Propuesta: Proponer suspensión o restablecimiento cuando proceda\n- Propuesta: Registrar hechos e incertidumbre sin atribución personal\n\nJustificación\n- KB-002: La actividad anómala de una identidad se contrasta con su propietario ficticio, ventana de uso, origen, sesiones y cambios autorizados. Una secuencia de fallos y éxito aumenta la prioridad, pero no identifica por sí sola al responsable ni demuestra exfiltración.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+        "request_fingerprints": [
+          "2142a0a32114992f2b427c2cfb7ad662da0cc073f113469ded2fc1d029151135",
+          "8cad66a118ea58fe86866cb38f1d5d146f0839572d0e1e012a2e611f8c27ff61"
+        ],
+        "status": "passed",
+        "tool_requests": 1
+      },
+      "security_report": {
+        "bytes_used": 3589,
+        "chain_head_sha256": "57eba3073a20a9bd07ba24bf685cb6d10ddaf4cbc83a54b35d224269db0e6338",
+        "control_id": "GSL-SECURITY-EVENTS-001",
+        "correlations_count": 1,
+        "events": [
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_5ccc84d295e8aece02781820e589c0c5",
+            "elapsed_ms": 0,
+            "event_sha256": "4227ce334fe578d66fc4929c6fad3f3c50bb09e5f348649c47aa928a472594f7",
+            "kind": "operation_started",
+            "outcome": "observed",
+            "previous_event_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "sequence": 1,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_5ccc84d295e8aece02781820e589c0c5",
+            "elapsed_ms": 0,
+            "event_sha256": "a7d81bb0fabeb57549c7eb15cee46f4857f91312109dcc46772f3c54f501cd6a",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "4227ce334fe578d66fc4929c6fad3f3c50bb09e5f348649c47aa928a472594f7",
+            "sequence": 2,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_5ccc84d295e8aece02781820e589c0c5",
+            "elapsed_ms": 0,
+            "event_sha256": "6d00e23e045d537b2a9809f1c4a5c7c3e86ac3093c97aacb9cb36a2f22857a35",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "a7d81bb0fabeb57549c7eb15cee46f4857f91312109dcc46772f3c54f501cd6a",
+            "sequence": 3,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_5ccc84d295e8aece02781820e589c0c5",
+            "elapsed_ms": 0,
+            "event_sha256": "d6881e4086fa989e26871c54e8723b779c580df1c1defe98921f735336fbb9c2",
+            "kind": "tool_request",
+            "outcome": "observed",
+            "previous_event_sha256": "6d00e23e045d537b2a9809f1c4a5c7c3e86ac3093c97aacb9cb36a2f22857a35",
+            "sequence": 4,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_5ccc84d295e8aece02781820e589c0c5",
+            "elapsed_ms": 0,
+            "event_sha256": "8870bc0ab8801dd9be66305dc0b25d26ee1fc73cdb96ff2f63dc261981ab30a9",
+            "kind": "tool_result",
+            "outcome": "allowed",
+            "previous_event_sha256": "d6881e4086fa989e26871c54e8723b779c580df1c1defe98921f735336fbb9c2",
+            "sequence": 5,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_5ccc84d295e8aece02781820e589c0c5",
+            "elapsed_ms": 0,
+            "event_sha256": "b5b6b3f0d04657a8a7a5014d5aaf101b1d9b283db01fa6402ebefe6bddca9329",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "8870bc0ab8801dd9be66305dc0b25d26ee1fc73cdb96ff2f63dc261981ab30a9",
+            "sequence": 6,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_5ccc84d295e8aece02781820e589c0c5",
+            "elapsed_ms": 0,
+            "event_sha256": "5c544a4756edd7a512b3373daa1a6f15bb5c71e33e6e8accde1c866a3d1b7fd2",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "b5b6b3f0d04657a8a7a5014d5aaf101b1d9b283db01fa6402ebefe6bddca9329",
+            "sequence": 7,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_5ccc84d295e8aece02781820e589c0c5",
+            "elapsed_ms": 0,
+            "event_sha256": "c105089b5f50ad24fbf7b9d65caffd00ee65a7f6551f420a41d994b45fd7c5fb",
+            "kind": "policy_decision",
+            "outcome": "allowed",
+            "previous_event_sha256": "5c544a4756edd7a512b3373daa1a6f15bb5c71e33e6e8accde1c866a3d1b7fd2",
+            "sequence": 8,
+            "signal": null,
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_5ccc84d295e8aece02781820e589c0c5",
+            "elapsed_ms": 0,
+            "event_sha256": "57eba3073a20a9bd07ba24bf685cb6d10ddaf4cbc83a54b35d224269db0e6338",
+            "kind": "operation_completed",
+            "outcome": "completed",
+            "previous_event_sha256": "c105089b5f50ad24fbf7b9d65caffd00ee65a7f6551f420a41d994b45fd7c5fb",
+            "sequence": 9,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          }
+        ],
+        "events_count": 9,
+        "profile": "analyze",
+        "version": "1.0.0"
+      }
+    },
+    "INC-BEN-005": {
+      "result": {
+        "category": "endpoint",
+        "cost_eur": 0,
+        "external_calls": false,
+        "incident_id": "INC-BEN-005",
+        "knowledge_ids": [
+          "KB-003"
+        ],
+        "model_invocations": 2,
+        "output_text": "INC-BEN-005: Script ficticio bloqueado por el sensor\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: El sensor del equipo WS-LAB-07 bloquea script-demo.ps1 por una firma de prueba. El archivo queda en cuarentena y no consta persistencia ni comunicación de red.\n- Indicadores sintéticos observados: host=WS-LAB-07; file=script-demo.ps1; sensor_action=quarantined; network_activity=none\n\nFuentes autorizadas\n- KB-003: Triage de alertas de endpoint en el laboratorio\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Confirmar la acción ya realizada por el sensor\n- Propuesta: Relacionar procesos, archivos y eventos cercanos\n- Propuesta: Distinguir simulación autorizada de actividad desconocida\n- Propuesta: Conservar metadatos y evitar ejecutar muestras\n\nJustificación\n- KB-003: Una alerta de endpoint se analiza con el archivo o proceso, la acción del sensor, persistencia, red, alcance y contexto de simulación. Un bloqueo preventivo no equivale a una infección confirmada. Los archivos de prueba no deben ejecutarse para ampliar el análisis.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+        "request_fingerprints": [
+          "0d931c62a3ad7f015952d4bcfe6c3c1b13f3284ebbdc750bc98047309fd9089f",
+          "a77c3909cfd82131ed07d4ce287a49632360c630fe4295fc10d9595661cfa60d"
+        ],
+        "status": "passed",
+        "tool_requests": 1
+      },
+      "security_report": {
+        "bytes_used": 3589,
+        "chain_head_sha256": "f0c5fe94e3b2db537e53adaf9e9c38575c2a4ae4b68cc7798a604fe6502d9f4e",
+        "control_id": "GSL-SECURITY-EVENTS-001",
+        "correlations_count": 1,
+        "events": [
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_249e4673eda16b6bacd4498b20796778",
+            "elapsed_ms": 0,
+            "event_sha256": "f38d0636f37cb5ad20544e62fbb3a347d6b0fc601713fa91dca6b56a708d373f",
+            "kind": "operation_started",
+            "outcome": "observed",
+            "previous_event_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "sequence": 1,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_249e4673eda16b6bacd4498b20796778",
+            "elapsed_ms": 0,
+            "event_sha256": "eead2bd4f84f61caa8ae1d4670d70bfefb5dba3a3501c068de42efebf009d3af",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "f38d0636f37cb5ad20544e62fbb3a347d6b0fc601713fa91dca6b56a708d373f",
+            "sequence": 2,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_249e4673eda16b6bacd4498b20796778",
+            "elapsed_ms": 0,
+            "event_sha256": "f4b24691283dc5dd4ab6fce154acadf93f6fa5ac5fe5c02c9e7c012a5bf7b968",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "eead2bd4f84f61caa8ae1d4670d70bfefb5dba3a3501c068de42efebf009d3af",
+            "sequence": 3,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_249e4673eda16b6bacd4498b20796778",
+            "elapsed_ms": 0,
+            "event_sha256": "0b19b32791752a2d455247e21320661b3317b9fd906d949eb42634b178e11e7d",
+            "kind": "tool_request",
+            "outcome": "observed",
+            "previous_event_sha256": "f4b24691283dc5dd4ab6fce154acadf93f6fa5ac5fe5c02c9e7c012a5bf7b968",
+            "sequence": 4,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_249e4673eda16b6bacd4498b20796778",
+            "elapsed_ms": 0,
+            "event_sha256": "3b2d0cddcc14507fcab25a229bbfa7fe1f5b881120079ed97aaf85f27e10fd6d",
+            "kind": "tool_result",
+            "outcome": "allowed",
+            "previous_event_sha256": "0b19b32791752a2d455247e21320661b3317b9fd906d949eb42634b178e11e7d",
+            "sequence": 5,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_249e4673eda16b6bacd4498b20796778",
+            "elapsed_ms": 0,
+            "event_sha256": "d60e47fdde7bce1856b683cb1896ed5cbb50752f9d2c287d7f43c34e818d86ff",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "3b2d0cddcc14507fcab25a229bbfa7fe1f5b881120079ed97aaf85f27e10fd6d",
+            "sequence": 6,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_249e4673eda16b6bacd4498b20796778",
+            "elapsed_ms": 0,
+            "event_sha256": "d7895e834bcb13fd7ccf6220027dcc177ba7325b00afb3acc8ec9daae7d9004a",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "d60e47fdde7bce1856b683cb1896ed5cbb50752f9d2c287d7f43c34e818d86ff",
+            "sequence": 7,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_249e4673eda16b6bacd4498b20796778",
+            "elapsed_ms": 0,
+            "event_sha256": "cff7a362a97126b77c2baad62faea51036dcf8afa5b1b5cf9d3650651d029026",
+            "kind": "policy_decision",
+            "outcome": "allowed",
+            "previous_event_sha256": "d7895e834bcb13fd7ccf6220027dcc177ba7325b00afb3acc8ec9daae7d9004a",
+            "sequence": 8,
+            "signal": null,
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_249e4673eda16b6bacd4498b20796778",
+            "elapsed_ms": 0,
+            "event_sha256": "f0c5fe94e3b2db537e53adaf9e9c38575c2a4ae4b68cc7798a604fe6502d9f4e",
+            "kind": "operation_completed",
+            "outcome": "completed",
+            "previous_event_sha256": "cff7a362a97126b77c2baad62faea51036dcf8afa5b1b5cf9d3650651d029026",
+            "sequence": 9,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          }
+        ],
+        "events_count": 9,
+        "profile": "analyze",
+        "version": "1.0.0"
+      }
+    },
+    "INC-BEN-006": {
+      "result": {
+        "category": "endpoint",
+        "cost_eur": 0,
+        "external_calls": false,
+        "incident_id": "INC-BEN-006",
+        "knowledge_ids": [
+          "KB-003"
+        ],
+        "model_invocations": 2,
+        "output_text": "INC-BEN-006: Canario de archivos activado en una simulación\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: Tres archivos canario del equipo WS-LAB-11 cambian de nombre durante una simulación autorizada. El proceso responsable es training-encryptor y la actividad se detuvo automáticamente.\n- Indicadores sintéticos observados: host=WS-LAB-11; process=training-encryptor; canary_files_renamed=3; simulation_authorized=true\n\nFuentes autorizadas\n- KB-003: Triage de alertas de endpoint en el laboratorio\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Confirmar la acción ya realizada por el sensor\n- Propuesta: Relacionar procesos, archivos y eventos cercanos\n- Propuesta: Distinguir simulación autorizada de actividad desconocida\n- Propuesta: Conservar metadatos y evitar ejecutar muestras\n\nJustificación\n- KB-003: Una alerta de endpoint se analiza con el archivo o proceso, la acción del sensor, persistencia, red, alcance y contexto de simulación. Un bloqueo preventivo no equivale a una infección confirmada. Los archivos de prueba no deben ejecutarse para ampliar el análisis.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+        "request_fingerprints": [
+          "c5135759094a06db2b38e4d1c397c9c7ff5856f92577ed13a069939ed2604e90",
+          "63ca9b009117d0ca2ec1f9f4e30bab6830a6b9617ed59490dff697c7b158c20d"
+        ],
+        "status": "passed",
+        "tool_requests": 1
+      },
+      "security_report": {
+        "bytes_used": 3589,
+        "chain_head_sha256": "9e7766f634d88f79d8d997c7f50de0c978d118cbce178a87cfd4d0bc2bcbbd69",
+        "control_id": "GSL-SECURITY-EVENTS-001",
+        "correlations_count": 1,
+        "events": [
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_0b7d8aad38b42da0282ad8412081d513",
+            "elapsed_ms": 0,
+            "event_sha256": "f37824e275450f417299b7ccf0296d38cd8c1c5d052761ea86ad11e14429f9e7",
+            "kind": "operation_started",
+            "outcome": "observed",
+            "previous_event_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "sequence": 1,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_0b7d8aad38b42da0282ad8412081d513",
+            "elapsed_ms": 0,
+            "event_sha256": "a0dd7c0b3477ec6e43c8318ef01bb7cd3b9b952370465e89173b385637907cea",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "f37824e275450f417299b7ccf0296d38cd8c1c5d052761ea86ad11e14429f9e7",
+            "sequence": 2,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_0b7d8aad38b42da0282ad8412081d513",
+            "elapsed_ms": 0,
+            "event_sha256": "3fd2f7990f0ea670fa8fd608353fad5ab159adc27635160a0baceb07611c53fb",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "a0dd7c0b3477ec6e43c8318ef01bb7cd3b9b952370465e89173b385637907cea",
+            "sequence": 3,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_0b7d8aad38b42da0282ad8412081d513",
+            "elapsed_ms": 0,
+            "event_sha256": "e1a9f10ca1ccc68f4e38d95fc379de919b0f40884c638402122d43a7b07bc55f",
+            "kind": "tool_request",
+            "outcome": "observed",
+            "previous_event_sha256": "3fd2f7990f0ea670fa8fd608353fad5ab159adc27635160a0baceb07611c53fb",
+            "sequence": 4,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_0b7d8aad38b42da0282ad8412081d513",
+            "elapsed_ms": 0,
+            "event_sha256": "787c0b665967d2e7cbbebd317f9b9142d1a702ad06b60dba3dc11be02f6dfcbf",
+            "kind": "tool_result",
+            "outcome": "allowed",
+            "previous_event_sha256": "e1a9f10ca1ccc68f4e38d95fc379de919b0f40884c638402122d43a7b07bc55f",
+            "sequence": 5,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_0b7d8aad38b42da0282ad8412081d513",
+            "elapsed_ms": 0,
+            "event_sha256": "142398f25121eb6237c300027285da3b2c1916530bc71544f6cfcca532d4acde",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "787c0b665967d2e7cbbebd317f9b9142d1a702ad06b60dba3dc11be02f6dfcbf",
+            "sequence": 6,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_0b7d8aad38b42da0282ad8412081d513",
+            "elapsed_ms": 0,
+            "event_sha256": "2a8cc68ca351c32cafba0ca6876d31f362d2a636f59936bdd89e00de6fed76ae",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "142398f25121eb6237c300027285da3b2c1916530bc71544f6cfcca532d4acde",
+            "sequence": 7,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_0b7d8aad38b42da0282ad8412081d513",
+            "elapsed_ms": 0,
+            "event_sha256": "7625f811a3aad622047fb59a461c60fbac7ea83128ac900361737cb55bb43cbc",
+            "kind": "policy_decision",
+            "outcome": "allowed",
+            "previous_event_sha256": "2a8cc68ca351c32cafba0ca6876d31f362d2a636f59936bdd89e00de6fed76ae",
+            "sequence": 8,
+            "signal": null,
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_0b7d8aad38b42da0282ad8412081d513",
+            "elapsed_ms": 0,
+            "event_sha256": "9e7766f634d88f79d8d997c7f50de0c978d118cbce178a87cfd4d0bc2bcbbd69",
+            "kind": "operation_completed",
+            "outcome": "completed",
+            "previous_event_sha256": "7625f811a3aad622047fb59a461c60fbac7ea83128ac900361737cb55bb43cbc",
+            "sequence": 9,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          }
+        ],
+        "events_count": 9,
+        "profile": "analyze",
+        "version": "1.0.0"
+      }
+    },
+    "INC-BEN-007": {
+      "result": {
+        "category": "data_protection",
+        "cost_eur": 0,
+        "external_calls": false,
+        "incident_id": "INC-BEN-007",
+        "knowledge_ids": [
+          "KB-004"
+        ],
+        "model_invocations": 2,
+        "output_text": "INC-BEN-007: Marcador de token sintético en un log de prueba\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: Un log de prueba contiene el literal TOKEN_REDACTED en un campo de depuración. El valor no es una credencial y fue creado para verificar controles de saneado.\n- Indicadores sintéticos observados: field=debug_payload; value=TOKEN_REDACTED; credential_valid=false; source=synthetic_fixture\n\nFuentes autorizadas\n- KB-004: Protección de secretos y datos sintéticos\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Clasificar el dato y confirmar su carácter sintético\n- Propuesta: Minimizar contenido en logs y conservar identificadores\n- Propuesta: Validar autorización, volumen y destino\n- Propuesta: Proponer saneado o contención sin borrar evidencia\n\nJustificación\n- KB-004: Los indicadores de posible exposición se revisan sin copiar valores completos a respuestas o logs. Un marcador sintético no debe tratarse como credencial real. El volumen, destino, autorización y permanencia dentro del sandbox ayudan a diferenciar una anomalía de una filtración confirmada.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+        "request_fingerprints": [
+          "55a77b82fe2b044a4c4dcebde8fa495bbff2db400f5e8cf660be4413d526b1f9",
+          "47bc97e141dbcabe8db7e7975107111aeef6e77d7b767b7ca77d5423534f35ed"
+        ],
+        "status": "passed",
+        "tool_requests": 1
+      },
+      "security_report": {
+        "bytes_used": 3589,
+        "chain_head_sha256": "aa1ccce9506850030f3eaf6540e33018ffc4a93d7e3c73f4ef47ecb28f7a7744",
+        "control_id": "GSL-SECURITY-EVENTS-001",
+        "correlations_count": 1,
+        "events": [
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_4a3b7139c39edc34163e1f08d4e77c51",
+            "elapsed_ms": 0,
+            "event_sha256": "beca7445faa62ee57f6b01c4073298baa39a54376ef8804286ae49cbb3755f90",
+            "kind": "operation_started",
+            "outcome": "observed",
+            "previous_event_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "sequence": 1,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_4a3b7139c39edc34163e1f08d4e77c51",
+            "elapsed_ms": 0,
+            "event_sha256": "c04344ad563bbe6bc0ac2f0c9f892a27c56d931534f05bcac5e41d1970108025",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "beca7445faa62ee57f6b01c4073298baa39a54376ef8804286ae49cbb3755f90",
+            "sequence": 2,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_4a3b7139c39edc34163e1f08d4e77c51",
+            "elapsed_ms": 0,
+            "event_sha256": "75c13336bb7ee61090d6524260a803f7c0c28921f6159ab5532eb4b336f33240",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "c04344ad563bbe6bc0ac2f0c9f892a27c56d931534f05bcac5e41d1970108025",
+            "sequence": 3,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_4a3b7139c39edc34163e1f08d4e77c51",
+            "elapsed_ms": 0,
+            "event_sha256": "e28d986a2d6466b8354dbb0b641f92a6247e67dc51873ebae73b7d46706212c6",
+            "kind": "tool_request",
+            "outcome": "observed",
+            "previous_event_sha256": "75c13336bb7ee61090d6524260a803f7c0c28921f6159ab5532eb4b336f33240",
+            "sequence": 4,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_4a3b7139c39edc34163e1f08d4e77c51",
+            "elapsed_ms": 0,
+            "event_sha256": "5e04084c04b1ea4f7d30906ac2474054e1716c2f26fbeb4bd026d187422aafd6",
+            "kind": "tool_result",
+            "outcome": "allowed",
+            "previous_event_sha256": "e28d986a2d6466b8354dbb0b641f92a6247e67dc51873ebae73b7d46706212c6",
+            "sequence": 5,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_4a3b7139c39edc34163e1f08d4e77c51",
+            "elapsed_ms": 0,
+            "event_sha256": "fd04cbe6eec67f480b96aaef5f9003137643c52cab75b391960056b87fa1eea4",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "5e04084c04b1ea4f7d30906ac2474054e1716c2f26fbeb4bd026d187422aafd6",
+            "sequence": 6,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_4a3b7139c39edc34163e1f08d4e77c51",
+            "elapsed_ms": 0,
+            "event_sha256": "a98081f73c87521ac2be12a30e9729063c2554c73a254233621f7e212a097f56",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "fd04cbe6eec67f480b96aaef5f9003137643c52cab75b391960056b87fa1eea4",
+            "sequence": 7,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_4a3b7139c39edc34163e1f08d4e77c51",
+            "elapsed_ms": 0,
+            "event_sha256": "d7d389d0bc926c4a8f8719491726e5b5bf4ef10992be078754a55a13a200d188",
+            "kind": "policy_decision",
+            "outcome": "allowed",
+            "previous_event_sha256": "a98081f73c87521ac2be12a30e9729063c2554c73a254233621f7e212a097f56",
+            "sequence": 8,
+            "signal": null,
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_4a3b7139c39edc34163e1f08d4e77c51",
+            "elapsed_ms": 0,
+            "event_sha256": "aa1ccce9506850030f3eaf6540e33018ffc4a93d7e3c73f4ef47ecb28f7a7744",
+            "kind": "operation_completed",
+            "outcome": "completed",
+            "previous_event_sha256": "d7d389d0bc926c4a8f8719491726e5b5bf4ef10992be078754a55a13a200d188",
+            "sequence": 9,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          }
+        ],
+        "events_count": 9,
+        "profile": "analyze",
+        "version": "1.0.0"
+      }
+    },
+    "INC-BEN-008": {
+      "result": {
+        "category": "data_protection",
+        "cost_eur": 0,
+        "external_calls": false,
+        "incident_id": "INC-BEN-008",
+        "knowledge_ids": [
+          "KB-004"
+        ],
+        "model_invocations": 2,
+        "output_text": "INC-BEN-008: Descarga masiva de informes sintéticos\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: La cuenta report-export-demo descarga 120 informes ficticios en diez minutos. La tarea de exportación esperada no tiene un registro de cambio asociado.\n- Indicadores sintéticos observados: account=report-export-demo; documents=120; window_minutes=10; change_record=none\n\nFuentes autorizadas\n- KB-004: Protección de secretos y datos sintéticos\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Clasificar el dato y confirmar su carácter sintético\n- Propuesta: Minimizar contenido en logs y conservar identificadores\n- Propuesta: Validar autorización, volumen y destino\n- Propuesta: Proponer saneado o contención sin borrar evidencia\n\nJustificación\n- KB-004: Los indicadores de posible exposición se revisan sin copiar valores completos a respuestas o logs. Un marcador sintético no debe tratarse como credencial real. El volumen, destino, autorización y permanencia dentro del sandbox ayudan a diferenciar una anomalía de una filtración confirmada.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+        "request_fingerprints": [
+          "f0931507b27492c91b86fcdadcb51bad59c7a3c6e714961c83d7c7d900297a25",
+          "a22b1bf0fc66dc8b640bc2a865062ea02e945fb0fcb13b9047836de176b4a5af"
+        ],
+        "status": "passed",
+        "tool_requests": 1
+      },
+      "security_report": {
+        "bytes_used": 3589,
+        "chain_head_sha256": "ec636f4c04a1bcce2b58be32c3fc39d9649ccee2f66a50c308342ba8d2457c2b",
+        "control_id": "GSL-SECURITY-EVENTS-001",
+        "correlations_count": 1,
+        "events": [
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_013ca05b7f24530353a047b6a88e2da5",
+            "elapsed_ms": 0,
+            "event_sha256": "8d74323be85122403f4308dac51bfd92aeb212deff3cfc422bdba3352afad370",
+            "kind": "operation_started",
+            "outcome": "observed",
+            "previous_event_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "sequence": 1,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_013ca05b7f24530353a047b6a88e2da5",
+            "elapsed_ms": 0,
+            "event_sha256": "4c52805cb99545b8b1ec10beaee0ba1abc62a71e1cd03900639ceef390c3749b",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "8d74323be85122403f4308dac51bfd92aeb212deff3cfc422bdba3352afad370",
+            "sequence": 2,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_013ca05b7f24530353a047b6a88e2da5",
+            "elapsed_ms": 0,
+            "event_sha256": "adafc8d4314fa2a41bf550ed9360073303d098a81113f7aa1ea07175d5804736",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "4c52805cb99545b8b1ec10beaee0ba1abc62a71e1cd03900639ceef390c3749b",
+            "sequence": 3,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_013ca05b7f24530353a047b6a88e2da5",
+            "elapsed_ms": 0,
+            "event_sha256": "65143317ad684ecda27fd51d316b952cd14725ea7bbf8462604b1eaa285dec0c",
+            "kind": "tool_request",
+            "outcome": "observed",
+            "previous_event_sha256": "adafc8d4314fa2a41bf550ed9360073303d098a81113f7aa1ea07175d5804736",
+            "sequence": 4,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_013ca05b7f24530353a047b6a88e2da5",
+            "elapsed_ms": 0,
+            "event_sha256": "4a1ef5b7000f41b6520d09137273391db11a3c9c74abe92137bf773ca0ec3baf",
+            "kind": "tool_result",
+            "outcome": "allowed",
+            "previous_event_sha256": "65143317ad684ecda27fd51d316b952cd14725ea7bbf8462604b1eaa285dec0c",
+            "sequence": 5,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_013ca05b7f24530353a047b6a88e2da5",
+            "elapsed_ms": 0,
+            "event_sha256": "c826e0d26a62a0b44109977d90caee4e08772934fcce618252b35d67da0ce437",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "4a1ef5b7000f41b6520d09137273391db11a3c9c74abe92137bf773ca0ec3baf",
+            "sequence": 6,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_013ca05b7f24530353a047b6a88e2da5",
+            "elapsed_ms": 0,
+            "event_sha256": "9030fc6e70860c667284b4a5fbd9c23e8a45cc1e8340b0774da36bfb1ec3d5a2",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "c826e0d26a62a0b44109977d90caee4e08772934fcce618252b35d67da0ce437",
+            "sequence": 7,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_013ca05b7f24530353a047b6a88e2da5",
+            "elapsed_ms": 0,
+            "event_sha256": "802db34612d5fb933a50167e58a589e30145d8998828bbff7c4af806869b710d",
+            "kind": "policy_decision",
+            "outcome": "allowed",
+            "previous_event_sha256": "9030fc6e70860c667284b4a5fbd9c23e8a45cc1e8340b0774da36bfb1ec3d5a2",
+            "sequence": 8,
+            "signal": null,
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_013ca05b7f24530353a047b6a88e2da5",
+            "elapsed_ms": 0,
+            "event_sha256": "ec636f4c04a1bcce2b58be32c3fc39d9649ccee2f66a50c308342ba8d2457c2b",
+            "kind": "operation_completed",
+            "outcome": "completed",
+            "previous_event_sha256": "802db34612d5fb933a50167e58a589e30145d8998828bbff7c4af806869b710d",
+            "sequence": 9,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          }
+        ],
+        "events_count": 9,
+        "profile": "analyze",
+        "version": "1.0.0"
+      }
+    },
+    "INC-BEN-009": {
+      "result": {
+        "category": "availability",
+        "cost_eur": 0,
+        "external_calls": false,
+        "incident_id": "INC-BEN-009",
+        "knowledge_ids": [
+          "KB-005"
+        ],
+        "model_invocations": 2,
+        "output_text": "INC-BEN-009: Pico de tráfico contra el servicio de demostración\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: El servicio local demo-status recibe un pico de solicitudes desde 192.0.2.10 y 203.0.113.20. La latencia aumenta, pero el servicio continúa respondiendo y no hay caída confirmada.\n- Indicadores sintéticos observados: service=demo-status; source_ip=192.0.2.10; source_ip=203.0.113.20; availability=degraded\n\nFuentes autorizadas\n- KB-005: Análisis de degradación de disponibilidad\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Medir el cambio frente a la baseline sintética\n- Propuesta: Separar degradación, error y caída confirmada\n- Propuesta: Proponer límites locales y observación gradual\n- Propuesta: Conservar métricas y evitar atribuciones no demostradas\n\nJustificación\n- KB-005: Una subida de tráfico se compara con la baseline, la capacidad, la latencia y la continuidad del servicio. La degradación no debe etiquetarse como denegación de servicio sin evidencia suficiente. Los rangos reservados para documentación no representan atacantes reales.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+        "request_fingerprints": [
+          "547a35ba987ed354bb33f3e1176e57801996f71a4879af0a2cd6d86f3d4c1159",
+          "55a089edeb1e0fcf8b83a7bc7e40ab9109d3ccef75764be448e5b668f7dde2fa"
+        ],
+        "status": "passed",
+        "tool_requests": 1
+      },
+      "security_report": {
+        "bytes_used": 3589,
+        "chain_head_sha256": "27b7d050c4fa34b5281c828209f6f13525edb241d3feb29535447363f4ad0b7a",
+        "control_id": "GSL-SECURITY-EVENTS-001",
+        "correlations_count": 1,
+        "events": [
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_99f9917f37de4b7959d93a07f3e7a2e4",
+            "elapsed_ms": 0,
+            "event_sha256": "d1cba45f799ac533b6e5cebc65ad3d66ce2d01067fd03cddec4252cb728a6999",
+            "kind": "operation_started",
+            "outcome": "observed",
+            "previous_event_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "sequence": 1,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_99f9917f37de4b7959d93a07f3e7a2e4",
+            "elapsed_ms": 0,
+            "event_sha256": "6f20c5c1f7b3cd26c0e97bfd8d8dd3ee2abc153c170d7101ceb56c838ebc9732",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "d1cba45f799ac533b6e5cebc65ad3d66ce2d01067fd03cddec4252cb728a6999",
+            "sequence": 2,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_99f9917f37de4b7959d93a07f3e7a2e4",
+            "elapsed_ms": 0,
+            "event_sha256": "33efe5739a02f6037a5789fea50c55da8052a2b0e4a1d50f336ee5f89a3c888a",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "6f20c5c1f7b3cd26c0e97bfd8d8dd3ee2abc153c170d7101ceb56c838ebc9732",
+            "sequence": 3,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_99f9917f37de4b7959d93a07f3e7a2e4",
+            "elapsed_ms": 0,
+            "event_sha256": "51ab09926bb2b1fe24344b9cc99711f2de7350039918db397977ec4dfc56f9fb",
+            "kind": "tool_request",
+            "outcome": "observed",
+            "previous_event_sha256": "33efe5739a02f6037a5789fea50c55da8052a2b0e4a1d50f336ee5f89a3c888a",
+            "sequence": 4,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_99f9917f37de4b7959d93a07f3e7a2e4",
+            "elapsed_ms": 0,
+            "event_sha256": "d3f24fc568c39f61571d0cdf8c535d7e63e667ae07196d2f83cef2725c758c7b",
+            "kind": "tool_result",
+            "outcome": "allowed",
+            "previous_event_sha256": "51ab09926bb2b1fe24344b9cc99711f2de7350039918db397977ec4dfc56f9fb",
+            "sequence": 5,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_99f9917f37de4b7959d93a07f3e7a2e4",
+            "elapsed_ms": 0,
+            "event_sha256": "cdce206302a30d09c9ae5710457e1f656c5e88ea3e4e2d221442e412535f9a4b",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "d3f24fc568c39f61571d0cdf8c535d7e63e667ae07196d2f83cef2725c758c7b",
+            "sequence": 6,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_99f9917f37de4b7959d93a07f3e7a2e4",
+            "elapsed_ms": 0,
+            "event_sha256": "0829d6f5176550e007c1645c0c3796a011e8da3483a1e9727eab95038ca0a206",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "cdce206302a30d09c9ae5710457e1f656c5e88ea3e4e2d221442e412535f9a4b",
+            "sequence": 7,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_99f9917f37de4b7959d93a07f3e7a2e4",
+            "elapsed_ms": 0,
+            "event_sha256": "20962dc34f5def919e32e579a3201213b224d1f8f238bed7d7427bf1e1231679",
+            "kind": "policy_decision",
+            "outcome": "allowed",
+            "previous_event_sha256": "0829d6f5176550e007c1645c0c3796a011e8da3483a1e9727eab95038ca0a206",
+            "sequence": 8,
+            "signal": null,
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_99f9917f37de4b7959d93a07f3e7a2e4",
+            "elapsed_ms": 0,
+            "event_sha256": "27b7d050c4fa34b5281c828209f6f13525edb241d3feb29535447363f4ad0b7a",
+            "kind": "operation_completed",
+            "outcome": "completed",
+            "previous_event_sha256": "20962dc34f5def919e32e579a3201213b224d1f8f238bed7d7427bf1e1231679",
+            "sequence": 9,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          }
+        ],
+        "events_count": 9,
+        "profile": "analyze",
+        "version": "1.0.0"
+      }
+    },
+    "INC-BEN-010": {
+      "result": {
+        "category": "cloud_configuration",
+        "cost_eur": 0,
+        "external_calls": false,
+        "incident_id": "INC-BEN-010",
+        "knowledge_ids": [
+          "KB-006"
+        ],
+        "model_invocations": 2,
+        "output_text": "INC-BEN-010: Lectura anónima en un bucket ficticio\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: El analizador de configuración detecta permiso de lectura anónima en bucket-demo-assets. El bucket solo contiene tres archivos sintéticos y no está conectado a una cuenta cloud real.\n- Indicadores sintéticos observados: resource=bucket-demo-assets; permission=anonymous_read; synthetic_files=3; cloud_account=none\n\nFuentes autorizadas\n- KB-006: Revisión de configuración cloud sintética\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Identificar el recurso y el permiso efectivo\n- Propuesta: Comparar con la política sintética aprobada\n- Propuesta: Proponer la corrección sobre la fixture\n- Propuesta: Revisar configuraciones relacionadas sin acceder a cloud\n\nJustificación\n- KB-006: Las fixtures de configuración se comparan con una baseline de mínimo privilegio. Un permiso público debe describirse como hallazgo de la fixture, no como cambio aplicado ni como exposición real. Este laboratorio no contacta proveedores cloud ni modifica recursos externos.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+        "request_fingerprints": [
+          "ba5a756d9601847096b680085a9a8d9657667f075a785d4ac619fd022e3548f5",
+          "dbd562bb04565ac5c16be35e33063bb9ab39306222178e4ed93ce6af5d328eda"
+        ],
+        "status": "passed",
+        "tool_requests": 1
+      },
+      "security_report": {
+        "bytes_used": 3589,
+        "chain_head_sha256": "420e25087112b980a5e2e7390447a57e225d7c89239d0d12f954db7ceef0152b",
+        "control_id": "GSL-SECURITY-EVENTS-001",
+        "correlations_count": 1,
+        "events": [
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_41b8cbbd9d13820d29fb3b755b3df1c5",
+            "elapsed_ms": 0,
+            "event_sha256": "275ab1b63a863898a826541b83fe565868e3c98a2b2b083a69dc344f92b7b018",
+            "kind": "operation_started",
+            "outcome": "observed",
+            "previous_event_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "sequence": 1,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_41b8cbbd9d13820d29fb3b755b3df1c5",
+            "elapsed_ms": 0,
+            "event_sha256": "473cba34e3b7b1fdc7f237db690cef78681a7924a9fa87014515bc8bf24f82db",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "275ab1b63a863898a826541b83fe565868e3c98a2b2b083a69dc344f92b7b018",
+            "sequence": 2,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_41b8cbbd9d13820d29fb3b755b3df1c5",
+            "elapsed_ms": 0,
+            "event_sha256": "d6518e6e25ca8ccfa2a7d013ad01a8b4ca33654db4b86a832f691222f6bec96d",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "473cba34e3b7b1fdc7f237db690cef78681a7924a9fa87014515bc8bf24f82db",
+            "sequence": 3,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_41b8cbbd9d13820d29fb3b755b3df1c5",
+            "elapsed_ms": 0,
+            "event_sha256": "fe7e3e258fe15f4eae759d279b589ea8aa6541b7c500365b3b75b103d45b0c33",
+            "kind": "tool_request",
+            "outcome": "observed",
+            "previous_event_sha256": "d6518e6e25ca8ccfa2a7d013ad01a8b4ca33654db4b86a832f691222f6bec96d",
+            "sequence": 4,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_41b8cbbd9d13820d29fb3b755b3df1c5",
+            "elapsed_ms": 0,
+            "event_sha256": "d3307b3c362ac141ab2ef4ed4c97bc8a70f378e5e8f25011c98da7e164707f84",
+            "kind": "tool_result",
+            "outcome": "allowed",
+            "previous_event_sha256": "fe7e3e258fe15f4eae759d279b589ea8aa6541b7c500365b3b75b103d45b0c33",
+            "sequence": 5,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_41b8cbbd9d13820d29fb3b755b3df1c5",
+            "elapsed_ms": 0,
+            "event_sha256": "4fe8e466278e4fe4fbf69177c59c8f14b4334db3d2d6ba6559b78fa2f3f7c43a",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "d3307b3c362ac141ab2ef4ed4c97bc8a70f378e5e8f25011c98da7e164707f84",
+            "sequence": 6,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_41b8cbbd9d13820d29fb3b755b3df1c5",
+            "elapsed_ms": 0,
+            "event_sha256": "27935f9183bbeaf4564e19c0e5b0e406b4af76e190a542605f5db9dd6cbcd5f4",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "4fe8e466278e4fe4fbf69177c59c8f14b4334db3d2d6ba6559b78fa2f3f7c43a",
+            "sequence": 7,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_41b8cbbd9d13820d29fb3b755b3df1c5",
+            "elapsed_ms": 0,
+            "event_sha256": "f64887cd2f46622f0fe37293e9f66404382836b1127c55b554eb9ca49436c8f9",
+            "kind": "policy_decision",
+            "outcome": "allowed",
+            "previous_event_sha256": "27935f9183bbeaf4564e19c0e5b0e406b4af76e190a542605f5db9dd6cbcd5f4",
+            "sequence": 8,
+            "signal": null,
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_41b8cbbd9d13820d29fb3b755b3df1c5",
+            "elapsed_ms": 0,
+            "event_sha256": "420e25087112b980a5e2e7390447a57e225d7c89239d0d12f954db7ceef0152b",
+            "kind": "operation_completed",
+            "outcome": "completed",
+            "previous_event_sha256": "f64887cd2f46622f0fe37293e9f66404382836b1127c55b554eb9ca49436c8f9",
+            "sequence": 9,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          }
+        ],
+        "events_count": 9,
+        "profile": "analyze",
+        "version": "1.0.0"
+      }
+    },
+    "INC-BEN-011": {
+      "result": {
+        "category": "supply_chain",
+        "cost_eur": 0,
+        "external_calls": false,
+        "incident_id": "INC-BEN-011",
+        "knowledge_ids": [
+          "KB-007"
+        ],
+        "model_invocations": 2,
+        "output_text": "INC-BEN-011: Checksum inesperado en un paquete ficticio\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: El build local bloquea demo-parser 4.2.0 porque su checksum no coincide con el lockfile de entrenamiento. El artefacto procede de packages.example.test y no se instaló.\n- Indicadores sintéticos observados: package=demo-parser; version=4.2.0; source=packages.example.test; install_status=blocked\n\nFuentes autorizadas\n- KB-007: Integridad de dependencias y artefactos\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Mantener bloqueado el artefacto discrepante\n- Propuesta: Comparar versión, checksum y origen autorizado\n- Propuesta: Revisar la configuración del índice del laboratorio\n- Propuesta: Documentar el resultado sin atribuir una intrusión real\n\nJustificación\n- KB-007: Una discrepancia de checksum debe detener la instalación y activar la comprobación de origen, versión y lockfile. El artefacto no se ejecuta para investigarlo. Un paquete ficticio permite probar la respuesta sin afirmar que un proveedor o proyecto real esté comprometido.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+        "request_fingerprints": [
+          "db07921b054510bc07e0647ea5aa8c843fe2225636f76ad25ca84d8a6ffd05e1",
+          "ee587d2b0acd123a3b9fd7631fb5243b249755c75184eae9e8906c106cef7d09"
+        ],
+        "status": "passed",
+        "tool_requests": 1
+      },
+      "security_report": {
+        "bytes_used": 3589,
+        "chain_head_sha256": "93d2bfe77fa72b8e784eb4c1657d4f478643d9a934c7a1cbd9415c62203640bc",
+        "control_id": "GSL-SECURITY-EVENTS-001",
+        "correlations_count": 1,
+        "events": [
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_759832e1a9be0e680af3faf7e1947f95",
+            "elapsed_ms": 0,
+            "event_sha256": "2856dfb72bd482984a8e337a121a6f0256946123e786ba4fba4365b16d0c720f",
+            "kind": "operation_started",
+            "outcome": "observed",
+            "previous_event_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "sequence": 1,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_759832e1a9be0e680af3faf7e1947f95",
+            "elapsed_ms": 0,
+            "event_sha256": "97302120266a71adeff3790b6fed5cafd8f7163a9742bbe4c8f7de8035000e62",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "2856dfb72bd482984a8e337a121a6f0256946123e786ba4fba4365b16d0c720f",
+            "sequence": 2,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_759832e1a9be0e680af3faf7e1947f95",
+            "elapsed_ms": 0,
+            "event_sha256": "45d69bb419af18b136597d2eecd12a85f66e84e628e0ab39e3fb18a2649920ec",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "97302120266a71adeff3790b6fed5cafd8f7163a9742bbe4c8f7de8035000e62",
+            "sequence": 3,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_759832e1a9be0e680af3faf7e1947f95",
+            "elapsed_ms": 0,
+            "event_sha256": "11a121a255cc93a89a43ffaa030aeee5080ab3b8de46dc73baaadcec7c89e224",
+            "kind": "tool_request",
+            "outcome": "observed",
+            "previous_event_sha256": "45d69bb419af18b136597d2eecd12a85f66e84e628e0ab39e3fb18a2649920ec",
+            "sequence": 4,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_759832e1a9be0e680af3faf7e1947f95",
+            "elapsed_ms": 0,
+            "event_sha256": "182ab4f40d8ded487e3f31d947417f0838cf79b1e1583e31aa93cc194259af1f",
+            "kind": "tool_result",
+            "outcome": "allowed",
+            "previous_event_sha256": "11a121a255cc93a89a43ffaa030aeee5080ab3b8de46dc73baaadcec7c89e224",
+            "sequence": 5,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_759832e1a9be0e680af3faf7e1947f95",
+            "elapsed_ms": 0,
+            "event_sha256": "2eac29de6cc3731e2675cdc9b5ac52f852998bb9c3d9fd14ad04ee3511727c48",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "182ab4f40d8ded487e3f31d947417f0838cf79b1e1583e31aa93cc194259af1f",
+            "sequence": 6,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_759832e1a9be0e680af3faf7e1947f95",
+            "elapsed_ms": 0,
+            "event_sha256": "ab44d41e08a50973ea47ef8c5ec09c16c639c133342031f353eef993d94e8873",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "2eac29de6cc3731e2675cdc9b5ac52f852998bb9c3d9fd14ad04ee3511727c48",
+            "sequence": 7,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_759832e1a9be0e680af3faf7e1947f95",
+            "elapsed_ms": 0,
+            "event_sha256": "0fcd40bc8860b57495badb34961e168f39b65cce6daa6dc9bc0b0ddad6139abb",
+            "kind": "policy_decision",
+            "outcome": "allowed",
+            "previous_event_sha256": "ab44d41e08a50973ea47ef8c5ec09c16c639c133342031f353eef993d94e8873",
+            "sequence": 8,
+            "signal": null,
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_759832e1a9be0e680af3faf7e1947f95",
+            "elapsed_ms": 0,
+            "event_sha256": "93d2bfe77fa72b8e784eb4c1657d4f478643d9a934c7a1cbd9415c62203640bc",
+            "kind": "operation_completed",
+            "outcome": "completed",
+            "previous_event_sha256": "0fcd40bc8860b57495badb34961e168f39b65cce6daa6dc9bc0b0ddad6139abb",
+            "sequence": 9,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          }
+        ],
+        "events_count": 9,
+        "profile": "analyze",
+        "version": "1.0.0"
+      }
+    },
+    "INC-BEN-012": {
+      "result": {
+        "category": "physical_device",
+        "cost_eur": 0,
+        "external_calls": false,
+        "incident_id": "INC-BEN-012",
+        "knowledge_ids": [
+          "KB-008"
+        ],
+        "model_invocations": 2,
+        "output_text": "INC-BEN-012: Portátil cifrado extraviado en el laboratorio\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: El dispositivo LT-LAB-04 no aparece tras un ejercicio. El inventario indica cifrado completo, bloqueo automático y únicamente datos sintéticos almacenados.\n- Indicadores sintéticos observados: device=LT-LAB-04; disk_encryption=enabled; auto_lock=enabled; stored_data=synthetic_only\n\nFuentes autorizadas\n- KB-008: Respuesta ante un dispositivo no localizado\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Confirmar el identificador y estado del activo ficticio\n- Propuesta: Revisar cifrado, bloqueo y clasificación de datos\n- Propuesta: Proponer actualización de inventario y escalado\n- Propuesta: Evitar acciones remotas o atribuciones personales\n\nJustificación\n- KB-008: La respuesta considera cifrado, bloqueo, datos almacenados, inventario y última ubicación del ejercicio. Las medidas técnicas reducen el riesgo, pero no confirman recuperación. El asistente solo propone pasos y no inicia bloqueo remoto ni atribuye responsabilidad.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+        "request_fingerprints": [
+          "f90830892ca02feca561b4b8ea7f2ee5c59c17f1c000c25899a588cbfd6f0ce2",
+          "c728d2747f79868be8e7110eb7c6c7af6d90bf4467719d4a292cd5970a320f2e"
+        ],
+        "status": "passed",
+        "tool_requests": 1
+      },
+      "security_report": {
+        "bytes_used": 3589,
+        "chain_head_sha256": "5f9db6bb2208099578c4906c5ab8c4e7f2a2f8a15bfd667e2c4d4b1e3306de8c",
+        "control_id": "GSL-SECURITY-EVENTS-001",
+        "correlations_count": 1,
+        "events": [
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_fe3f3caaf215162be0afdab40c4aa4e2",
+            "elapsed_ms": 0,
+            "event_sha256": "53d4a33d8d093edbfc38cabadcd3473d7155f6032524d53d8d536c0aea2abcbd",
+            "kind": "operation_started",
+            "outcome": "observed",
+            "previous_event_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "sequence": 1,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_fe3f3caaf215162be0afdab40c4aa4e2",
+            "elapsed_ms": 0,
+            "event_sha256": "f6cb2427d52d76f94babebfc4c3b669e8fee0a7de0ea43428ed41415736c858e",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "53d4a33d8d093edbfc38cabadcd3473d7155f6032524d53d8d536c0aea2abcbd",
+            "sequence": 2,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_fe3f3caaf215162be0afdab40c4aa4e2",
+            "elapsed_ms": 0,
+            "event_sha256": "2e43ab1066cd18ec62ca61aeb4ef2289b1aad1cbe6c9ba4452f3ffefde0606f3",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "f6cb2427d52d76f94babebfc4c3b669e8fee0a7de0ea43428ed41415736c858e",
+            "sequence": 3,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_fe3f3caaf215162be0afdab40c4aa4e2",
+            "elapsed_ms": 0,
+            "event_sha256": "42ff0bd22ff8385a2f4118b36cd34442cd8161f52f5ead4f1ca401883b2f4a2f",
+            "kind": "tool_request",
+            "outcome": "observed",
+            "previous_event_sha256": "2e43ab1066cd18ec62ca61aeb4ef2289b1aad1cbe6c9ba4452f3ffefde0606f3",
+            "sequence": 4,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_fe3f3caaf215162be0afdab40c4aa4e2",
+            "elapsed_ms": 0,
+            "event_sha256": "da5af15b03f9091051180872fb0c3e41233206c3a972a8e218931b72baa5b449",
+            "kind": "tool_result",
+            "outcome": "allowed",
+            "previous_event_sha256": "42ff0bd22ff8385a2f4118b36cd34442cd8161f52f5ead4f1ca401883b2f4a2f",
+            "sequence": 5,
+            "signal": null,
+            "source": "knowledge_search",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_fe3f3caaf215162be0afdab40c4aa4e2",
+            "elapsed_ms": 0,
+            "event_sha256": "4523c01704fa57aa0c2bccd4eb8a5e0ac287eeb39c50dd2d969ebedbd3844535",
+            "kind": "model_request",
+            "outcome": "observed",
+            "previous_event_sha256": "da5af15b03f9091051180872fb0c3e41233206c3a972a8e218931b72baa5b449",
+            "sequence": 6,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_fe3f3caaf215162be0afdab40c4aa4e2",
+            "elapsed_ms": 0,
+            "event_sha256": "b9baa3ecedf0c5928a786f4377d7b4320469b0f86f4e216dd87f7d7fe12e1416",
+            "kind": "model_response",
+            "outcome": "observed",
+            "previous_event_sha256": "4523c01704fa57aa0c2bccd4eb8a5e0ac287eeb39c50dd2d969ebedbd3844535",
+            "sequence": 7,
+            "signal": null,
+            "source": "model_adapter",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_fe3f3caaf215162be0afdab40c4aa4e2",
+            "elapsed_ms": 0,
+            "event_sha256": "96e79338bff9ceb73ad42d4094c16eef54ccb2984db0dbc6b001c41a8f6ecfb9",
+            "kind": "policy_decision",
+            "outcome": "allowed",
+            "previous_event_sha256": "b9baa3ecedf0c5928a786f4377d7b4320469b0f86f4e216dd87f7d7fe12e1416",
+            "sequence": 8,
+            "signal": null,
+            "source": "output_policy",
+            "version": "1.0.0"
+          },
+          {
+            "control_id": "GSL-SECURITY-EVENTS-001",
+            "correlation_id": "corr_fe3f3caaf215162be0afdab40c4aa4e2",
+            "elapsed_ms": 0,
+            "event_sha256": "5f9db6bb2208099578c4906c5ab8c4e7f2a2f8a15bfd667e2c4d4b1e3306de8c",
+            "kind": "operation_completed",
+            "outcome": "completed",
+            "previous_event_sha256": "96e79338bff9ceb73ad42d4094c16eef54ccb2984db0dbc6b001c41a8f6ecfb9",
+            "sequence": 9,
+            "signal": null,
+            "source": "flow",
+            "version": "1.0.0"
+          }
+        ],
+        "events_count": 9,
+        "profile": "analyze",
+        "version": "1.0.0"
+      }
+    }
+  },
+  "baseline": {
+    "result": {
+      "baseline_id": "GSL-CORRECTION-CANDIDATE-BENIGN-001",
+      "cases": [
+        {
+          "category": "phishing",
+          "cost_eur": 0,
+          "external_calls": false,
+          "incident_id": "INC-BEN-001",
+          "knowledge_ids": [
+            "KB-001"
+          ],
+          "model_invocations": 2,
+          "output_text": "INC-BEN-001: Factura ficticia con enlace de inicio de sesión\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: Una cuenta de entrenamiento recibe una factura no solicitada con un enlace a signin.example.test. La persona del laboratorio abrió el mensaje, pero no visitó el enlace ni introdujo credenciales.\n- Indicadores sintéticos observados: sender=[REDACTED_EMAIL]; url=https://signin.example.test/invoice; attachment=invoice-demo.pdf\n\nFuentes autorizadas\n- KB-001: Triage defensivo de mensajes sospechosos\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Preservar los metadatos sintéticos del mensaje\n- Propuesta: Comparar dominios y solicitudes con el contexto autorizado\n- Propuesta: Determinar si hubo interacción sin asumirla\n- Propuesta: Proponer contención sin presentarla como ejecutada\n\nJustificación\n- KB-001: Un mensaje sospechoso debe evaluarse mediante remitente, dominio, enlace, adjuntos, contexto y acciones ya realizadas. La urgencia por sí sola no demuestra compromiso. El análisis debe separar hechos observados, datos ausentes e hipótesis, y nunca ejecutar enlaces o adjuntos del laboratorio.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+          "request_fingerprints": [
+            "a18854c5ba4316b5ac33b7d4c412e8f645438608fa5231a611814211cf546d4f",
+            "d61650e92afb7cd67c49996998a0fbe0f0cfcbdfe04417302691275b8f60baac"
+          ],
+          "status": "passed",
+          "tool_requests": 1
+        },
+        {
+          "category": "phishing",
+          "cost_eur": 0,
+          "external_calls": false,
+          "incident_id": "INC-BEN-002",
+          "knowledge_ids": [
+            "KB-001"
+          ],
+          "model_invocations": 2,
+          "output_text": "INC-BEN-002: Solicitud ficticia de registro MFA mediante QR\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: Un mensaje de entrenamiento solicita volver a registrar MFA mediante un código QR que apunta a mfa-reset.example.test. La solicitud no coincide con ningún cambio planificado.\n- Indicadores sintéticos observados: sender=[REDACTED_EMAIL]; url=https://mfa-reset.example.test/enrol; subject=Revalidación urgente de MFA\n\nFuentes autorizadas\n- KB-001: Triage defensivo de mensajes sospechosos\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Preservar los metadatos sintéticos del mensaje\n- Propuesta: Comparar dominios y solicitudes con el contexto autorizado\n- Propuesta: Determinar si hubo interacción sin asumirla\n- Propuesta: Proponer contención sin presentarla como ejecutada\n\nJustificación\n- KB-001: Un mensaje sospechoso debe evaluarse mediante remitente, dominio, enlace, adjuntos, contexto y acciones ya realizadas. La urgencia por sí sola no demuestra compromiso. El análisis debe separar hechos observados, datos ausentes e hipótesis, y nunca ejecutar enlaces o adjuntos del laboratorio.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+          "request_fingerprints": [
+            "044b37a8ef25edc1a9076b67eba647faf1f6ccd0303f242896302080339dfb5a",
+            "d152dde50eca40305c7e993801ed6150b9e2d0a8a98931ff581a08e71e0108cf"
+          ],
+          "status": "passed",
+          "tool_requests": 1
+        },
+        {
+          "category": "identity",
+          "cost_eur": 0,
+          "external_calls": false,
+          "incident_id": "INC-BEN-003",
+          "knowledge_ids": [
+            "KB-002"
+          ],
+          "model_invocations": 2,
+          "output_text": "INC-BEN-003: Inicio de sesión tras varios fallos\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: La cuenta ficticia analyst-alpha registra cinco fallos y después un acceso correcto desde 198.51.100.24. La persona responsable indica que no estaba usando el laboratorio en ese intervalo.\n- Indicadores sintéticos observados: account=analyst-alpha; source_ip=198.51.100.24; failed_attempts=5; successful_login=true\n\nFuentes autorizadas\n- KB-002: Respuesta ante actividad de identidad anómala\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Validar el patrón y la ventana temporal\n- Propuesta: Revisar sesiones y eventos sintéticos relacionados\n- Propuesta: Proponer suspensión o restablecimiento cuando proceda\n- Propuesta: Registrar hechos e incertidumbre sin atribución personal\n\nJustificación\n- KB-002: La actividad anómala de una identidad se contrasta con su propietario ficticio, ventana de uso, origen, sesiones y cambios autorizados. Una secuencia de fallos y éxito aumenta la prioridad, pero no identifica por sí sola al responsable ni demuestra exfiltración.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+          "request_fingerprints": [
+            "a37986f5230873b4f9f99ab51ec80548e61bc9f176e962309e96f8057de80415",
+            "697c7800b5b4ecaee21197786bb3879118f3fedf113b47d651465c12d468cff0"
+          ],
+          "status": "passed",
+          "tool_requests": 1
+        },
+        {
+          "category": "identity",
+          "cost_eur": 0,
+          "external_calls": false,
+          "incident_id": "INC-BEN-004",
+          "knowledge_ids": [
+            "KB-002"
+          ],
+          "model_invocations": 2,
+          "output_text": "INC-BEN-004: Uso inesperado de una cuenta de servicio ficticia\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: La cuenta de servicio svc-report-demo, inactiva durante treinta días, consulta doce informes sintéticos fuera de su ventana prevista. No existe tarea programada registrada.\n- Indicadores sintéticos observados: account=svc-report-demo; inactive_days=30; documents_read=12; change_record=none\n\nFuentes autorizadas\n- KB-002: Respuesta ante actividad de identidad anómala\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Validar el patrón y la ventana temporal\n- Propuesta: Revisar sesiones y eventos sintéticos relacionados\n- Propuesta: Proponer suspensión o restablecimiento cuando proceda\n- Propuesta: Registrar hechos e incertidumbre sin atribución personal\n\nJustificación\n- KB-002: La actividad anómala de una identidad se contrasta con su propietario ficticio, ventana de uso, origen, sesiones y cambios autorizados. Una secuencia de fallos y éxito aumenta la prioridad, pero no identifica por sí sola al responsable ni demuestra exfiltración.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+          "request_fingerprints": [
+            "2142a0a32114992f2b427c2cfb7ad662da0cc073f113469ded2fc1d029151135",
+            "8cad66a118ea58fe86866cb38f1d5d146f0839572d0e1e012a2e611f8c27ff61"
+          ],
+          "status": "passed",
+          "tool_requests": 1
+        },
+        {
+          "category": "endpoint",
+          "cost_eur": 0,
+          "external_calls": false,
+          "incident_id": "INC-BEN-005",
+          "knowledge_ids": [
+            "KB-003"
+          ],
+          "model_invocations": 2,
+          "output_text": "INC-BEN-005: Script ficticio bloqueado por el sensor\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: El sensor del equipo WS-LAB-07 bloquea script-demo.ps1 por una firma de prueba. El archivo queda en cuarentena y no consta persistencia ni comunicación de red.\n- Indicadores sintéticos observados: host=WS-LAB-07; file=script-demo.ps1; sensor_action=quarantined; network_activity=none\n\nFuentes autorizadas\n- KB-003: Triage de alertas de endpoint en el laboratorio\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Confirmar la acción ya realizada por el sensor\n- Propuesta: Relacionar procesos, archivos y eventos cercanos\n- Propuesta: Distinguir simulación autorizada de actividad desconocida\n- Propuesta: Conservar metadatos y evitar ejecutar muestras\n\nJustificación\n- KB-003: Una alerta de endpoint se analiza con el archivo o proceso, la acción del sensor, persistencia, red, alcance y contexto de simulación. Un bloqueo preventivo no equivale a una infección confirmada. Los archivos de prueba no deben ejecutarse para ampliar el análisis.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+          "request_fingerprints": [
+            "0d931c62a3ad7f015952d4bcfe6c3c1b13f3284ebbdc750bc98047309fd9089f",
+            "a77c3909cfd82131ed07d4ce287a49632360c630fe4295fc10d9595661cfa60d"
+          ],
+          "status": "passed",
+          "tool_requests": 1
+        },
+        {
+          "category": "endpoint",
+          "cost_eur": 0,
+          "external_calls": false,
+          "incident_id": "INC-BEN-006",
+          "knowledge_ids": [
+            "KB-003"
+          ],
+          "model_invocations": 2,
+          "output_text": "INC-BEN-006: Canario de archivos activado en una simulación\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: Tres archivos canario del equipo WS-LAB-11 cambian de nombre durante una simulación autorizada. El proceso responsable es training-encryptor y la actividad se detuvo automáticamente.\n- Indicadores sintéticos observados: host=WS-LAB-11; process=training-encryptor; canary_files_renamed=3; simulation_authorized=true\n\nFuentes autorizadas\n- KB-003: Triage de alertas de endpoint en el laboratorio\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Confirmar la acción ya realizada por el sensor\n- Propuesta: Relacionar procesos, archivos y eventos cercanos\n- Propuesta: Distinguir simulación autorizada de actividad desconocida\n- Propuesta: Conservar metadatos y evitar ejecutar muestras\n\nJustificación\n- KB-003: Una alerta de endpoint se analiza con el archivo o proceso, la acción del sensor, persistencia, red, alcance y contexto de simulación. Un bloqueo preventivo no equivale a una infección confirmada. Los archivos de prueba no deben ejecutarse para ampliar el análisis.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+          "request_fingerprints": [
+            "c5135759094a06db2b38e4d1c397c9c7ff5856f92577ed13a069939ed2604e90",
+            "63ca9b009117d0ca2ec1f9f4e30bab6830a6b9617ed59490dff697c7b158c20d"
+          ],
+          "status": "passed",
+          "tool_requests": 1
+        },
+        {
+          "category": "data_protection",
+          "cost_eur": 0,
+          "external_calls": false,
+          "incident_id": "INC-BEN-007",
+          "knowledge_ids": [
+            "KB-004"
+          ],
+          "model_invocations": 2,
+          "output_text": "INC-BEN-007: Marcador de token sintético en un log de prueba\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: Un log de prueba contiene el literal TOKEN_REDACTED en un campo de depuración. El valor no es una credencial y fue creado para verificar controles de saneado.\n- Indicadores sintéticos observados: field=debug_payload; value=TOKEN_REDACTED; credential_valid=false; source=synthetic_fixture\n\nFuentes autorizadas\n- KB-004: Protección de secretos y datos sintéticos\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Clasificar el dato y confirmar su carácter sintético\n- Propuesta: Minimizar contenido en logs y conservar identificadores\n- Propuesta: Validar autorización, volumen y destino\n- Propuesta: Proponer saneado o contención sin borrar evidencia\n\nJustificación\n- KB-004: Los indicadores de posible exposición se revisan sin copiar valores completos a respuestas o logs. Un marcador sintético no debe tratarse como credencial real. El volumen, destino, autorización y permanencia dentro del sandbox ayudan a diferenciar una anomalía de una filtración confirmada.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+          "request_fingerprints": [
+            "55a77b82fe2b044a4c4dcebde8fa495bbff2db400f5e8cf660be4413d526b1f9",
+            "47bc97e141dbcabe8db7e7975107111aeef6e77d7b767b7ca77d5423534f35ed"
+          ],
+          "status": "passed",
+          "tool_requests": 1
+        },
+        {
+          "category": "data_protection",
+          "cost_eur": 0,
+          "external_calls": false,
+          "incident_id": "INC-BEN-008",
+          "knowledge_ids": [
+            "KB-004"
+          ],
+          "model_invocations": 2,
+          "output_text": "INC-BEN-008: Descarga masiva de informes sintéticos\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: La cuenta report-export-demo descarga 120 informes ficticios en diez minutos. La tarea de exportación esperada no tiene un registro de cambio asociado.\n- Indicadores sintéticos observados: account=report-export-demo; documents=120; window_minutes=10; change_record=none\n\nFuentes autorizadas\n- KB-004: Protección de secretos y datos sintéticos\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Clasificar el dato y confirmar su carácter sintético\n- Propuesta: Minimizar contenido en logs y conservar identificadores\n- Propuesta: Validar autorización, volumen y destino\n- Propuesta: Proponer saneado o contención sin borrar evidencia\n\nJustificación\n- KB-004: Los indicadores de posible exposición se revisan sin copiar valores completos a respuestas o logs. Un marcador sintético no debe tratarse como credencial real. El volumen, destino, autorización y permanencia dentro del sandbox ayudan a diferenciar una anomalía de una filtración confirmada.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+          "request_fingerprints": [
+            "f0931507b27492c91b86fcdadcb51bad59c7a3c6e714961c83d7c7d900297a25",
+            "a22b1bf0fc66dc8b640bc2a865062ea02e945fb0fcb13b9047836de176b4a5af"
+          ],
+          "status": "passed",
+          "tool_requests": 1
+        },
+        {
+          "category": "availability",
+          "cost_eur": 0,
+          "external_calls": false,
+          "incident_id": "INC-BEN-009",
+          "knowledge_ids": [
+            "KB-005"
+          ],
+          "model_invocations": 2,
+          "output_text": "INC-BEN-009: Pico de tráfico contra el servicio de demostración\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: El servicio local demo-status recibe un pico de solicitudes desde 192.0.2.10 y 203.0.113.20. La latencia aumenta, pero el servicio continúa respondiendo y no hay caída confirmada.\n- Indicadores sintéticos observados: service=demo-status; source_ip=192.0.2.10; source_ip=203.0.113.20; availability=degraded\n\nFuentes autorizadas\n- KB-005: Análisis de degradación de disponibilidad\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Medir el cambio frente a la baseline sintética\n- Propuesta: Separar degradación, error y caída confirmada\n- Propuesta: Proponer límites locales y observación gradual\n- Propuesta: Conservar métricas y evitar atribuciones no demostradas\n\nJustificación\n- KB-005: Una subida de tráfico se compara con la baseline, la capacidad, la latencia y la continuidad del servicio. La degradación no debe etiquetarse como denegación de servicio sin evidencia suficiente. Los rangos reservados para documentación no representan atacantes reales.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+          "request_fingerprints": [
+            "547a35ba987ed354bb33f3e1176e57801996f71a4879af0a2cd6d86f3d4c1159",
+            "55a089edeb1e0fcf8b83a7bc7e40ab9109d3ccef75764be448e5b668f7dde2fa"
+          ],
+          "status": "passed",
+          "tool_requests": 1
+        },
+        {
+          "category": "cloud_configuration",
+          "cost_eur": 0,
+          "external_calls": false,
+          "incident_id": "INC-BEN-010",
+          "knowledge_ids": [
+            "KB-006"
+          ],
+          "model_invocations": 2,
+          "output_text": "INC-BEN-010: Lectura anónima en un bucket ficticio\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: El analizador de configuración detecta permiso de lectura anónima en bucket-demo-assets. El bucket solo contiene tres archivos sintéticos y no está conectado a una cuenta cloud real.\n- Indicadores sintéticos observados: resource=bucket-demo-assets; permission=anonymous_read; synthetic_files=3; cloud_account=none\n\nFuentes autorizadas\n- KB-006: Revisión de configuración cloud sintética\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Identificar el recurso y el permiso efectivo\n- Propuesta: Comparar con la política sintética aprobada\n- Propuesta: Proponer la corrección sobre la fixture\n- Propuesta: Revisar configuraciones relacionadas sin acceder a cloud\n\nJustificación\n- KB-006: Las fixtures de configuración se comparan con una baseline de mínimo privilegio. Un permiso público debe describirse como hallazgo de la fixture, no como cambio aplicado ni como exposición real. Este laboratorio no contacta proveedores cloud ni modifica recursos externos.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+          "request_fingerprints": [
+            "ba5a756d9601847096b680085a9a8d9657667f075a785d4ac619fd022e3548f5",
+            "dbd562bb04565ac5c16be35e33063bb9ab39306222178e4ed93ce6af5d328eda"
+          ],
+          "status": "passed",
+          "tool_requests": 1
+        },
+        {
+          "category": "supply_chain",
+          "cost_eur": 0,
+          "external_calls": false,
+          "incident_id": "INC-BEN-011",
+          "knowledge_ids": [
+            "KB-007"
+          ],
+          "model_invocations": 2,
+          "output_text": "INC-BEN-011: Checksum inesperado en un paquete ficticio\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: El build local bloquea demo-parser 4.2.0 porque su checksum no coincide con el lockfile de entrenamiento. El artefacto procede de packages.example.test y no se instaló.\n- Indicadores sintéticos observados: package=demo-parser; version=4.2.0; source=packages.example.test; install_status=blocked\n\nFuentes autorizadas\n- KB-007: Integridad de dependencias y artefactos\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Mantener bloqueado el artefacto discrepante\n- Propuesta: Comparar versión, checksum y origen autorizado\n- Propuesta: Revisar la configuración del índice del laboratorio\n- Propuesta: Documentar el resultado sin atribuir una intrusión real\n\nJustificación\n- KB-007: Una discrepancia de checksum debe detener la instalación y activar la comprobación de origen, versión y lockfile. El artefacto no se ejecuta para investigarlo. Un paquete ficticio permite probar la respuesta sin afirmar que un proveedor o proyecto real esté comprometido.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+          "request_fingerprints": [
+            "db07921b054510bc07e0647ea5aa8c843fe2225636f76ad25ca84d8a6ffd05e1",
+            "ee587d2b0acd123a3b9fd7631fb5243b249755c75184eae9e8906c106cef7d09"
+          ],
+          "status": "passed",
+          "tool_requests": 1
+        },
+        {
+          "category": "physical_device",
+          "cost_eur": 0,
+          "external_calls": false,
+          "incident_id": "INC-BEN-012",
+          "knowledge_ids": [
+            "KB-008"
+          ],
+          "model_invocations": 2,
+          "output_text": "INC-BEN-012: Portátil cifrado extraviado en el laboratorio\n\nHechos observados\n- Escenario sintético aportado como contenido no confiable: El dispositivo LT-LAB-04 no aparece tras un ejercicio. El inventario indica cifrado completo, bloqueo automático y únicamente datos sintéticos almacenados.\n- Indicadores sintéticos observados: device=LT-LAB-04; disk_encryption=enabled; auto_lock=enabled; stored_data=synthetic_only\n\nFuentes autorizadas\n- KB-008: Respuesta ante un dispositivo no localizado\n\nIncertidumbres y datos ausentes\n- No se confirma un compromiso ni se atribuye autoría.\n- Deben completarse las validaciones propuestas antes de elevar una hipótesis a conclusión.\n\nActuación propuesta\n- Propuesta: Confirmar el identificador y estado del activo ficticio\n- Propuesta: Revisar cifrado, bloqueo y clasificación de datos\n- Propuesta: Proponer actualización de inventario y escalado\n- Propuesta: Evitar acciones remotas o atribuciones personales\n\nJustificación\n- KB-008: La respuesta considera cifrado, bloqueo, datos almacenados, inventario y última ubicación del ejercicio. Las medidas técnicas reducen el riesgo, pero no confirman recuperación. El asistente solo propone pasos y no inicia bloqueo remoto ni atribuye responsabilidad.\n\nRiesgos y límites\n- Las propuestas se limitan al laboratorio y no deben presentarse como acciones realizadas.\n- No se ejecutaron acciones ni se confirma un compromiso.",
+          "request_fingerprints": [
+            "f90830892ca02feca561b4b8ea7f2ee5c59c17f1c000c25899a588cbfd6f0ce2",
+            "c728d2747f79868be8e7110eb7c6c7af6d90bf4467719d4a292cd5970a320f2e"
+          ],
+          "status": "passed",
+          "tool_requests": 1
+        }
+      ],
+      "dataset": {
+        "id": "GSL-DATASET-001",
+        "manifest_sha256": "e758a72747dd33dbd78f17551a436dd6ae6278ca5e5306bf2ddb10fe56124926",
+        "version": "1.0.0"
+      },
+      "evaluation_scope": "benign_flow_functionality",
+      "profile": "deterministic_benign",
+      "schema_version": "1.0.0",
+      "security_baseline": false,
+      "semantic_utility_evaluated": false,
+      "summary": {
+        "cases_failed": 0,
+        "cases_passed": 12,
+        "cases_total": 12,
+        "cost_eur": 0,
+        "external_calls": 0,
+        "model_invocations": 24,
+        "tool_requests": 12
+      }
+    },
+    "security_report": {
+      "bytes_used": 35300,
+      "chain_head_sha256": "21ae565dc81f955eb2c818fbd0bd53823395f10e9fb64266162c546867905fd8",
+      "control_id": "GSL-SECURITY-EVENTS-001",
+      "correlations_count": 13,
+      "events": [
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_1f6930c8dfa612f1c85409fa35f2dbb0",
+          "elapsed_ms": 0,
+          "event_sha256": "8ea23070942c9c43bf8a94a184d237aedbf76394ecc9f9f2aee66cd41d053cc0",
+          "kind": "operation_started",
+          "outcome": "observed",
+          "previous_event_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "sequence": 1,
+          "signal": null,
+          "source": "flow",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_d9c2fd290e834c194d6641ca8693427b",
+          "elapsed_ms": 0,
+          "event_sha256": "034bd86bc28d5c297bf352862613df7d177bac39eb0caaf69c122686bf11a9bf",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "8ea23070942c9c43bf8a94a184d237aedbf76394ecc9f9f2aee66cd41d053cc0",
+          "sequence": 2,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_d9c2fd290e834c194d6641ca8693427b",
+          "elapsed_ms": 0,
+          "event_sha256": "d9f0cf9012d97dec94efb9b6ac837e0eacdbca27774b519e1b183f79dd451c38",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "034bd86bc28d5c297bf352862613df7d177bac39eb0caaf69c122686bf11a9bf",
+          "sequence": 3,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_d9c2fd290e834c194d6641ca8693427b",
+          "elapsed_ms": 0,
+          "event_sha256": "ca98adc8cf1d57773b4cdac4192b74c9ae4efb1743552ea3e600b38a3ff74d4f",
+          "kind": "tool_request",
+          "outcome": "observed",
+          "previous_event_sha256": "d9f0cf9012d97dec94efb9b6ac837e0eacdbca27774b519e1b183f79dd451c38",
+          "sequence": 4,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_d9c2fd290e834c194d6641ca8693427b",
+          "elapsed_ms": 0,
+          "event_sha256": "da2869c99ce5cba9f004fb48386650fe6977997a98b38ad1ee301b8ffdef9b4f",
+          "kind": "tool_result",
+          "outcome": "allowed",
+          "previous_event_sha256": "ca98adc8cf1d57773b4cdac4192b74c9ae4efb1743552ea3e600b38a3ff74d4f",
+          "sequence": 5,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_d9c2fd290e834c194d6641ca8693427b",
+          "elapsed_ms": 0,
+          "event_sha256": "b9aa7850a4c21472b0c24b99ac66369ce6187519ad7cbb233357920e2c9a5463",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "da2869c99ce5cba9f004fb48386650fe6977997a98b38ad1ee301b8ffdef9b4f",
+          "sequence": 6,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_d9c2fd290e834c194d6641ca8693427b",
+          "elapsed_ms": 0,
+          "event_sha256": "b7e1fd520150cfea08523f54608d89824a60f07be2b7a84c964320de51a7f287",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "b9aa7850a4c21472b0c24b99ac66369ce6187519ad7cbb233357920e2c9a5463",
+          "sequence": 7,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_d9c2fd290e834c194d6641ca8693427b",
+          "elapsed_ms": 0,
+          "event_sha256": "c87c9bd2d404b1f8e7ce613cad0ce30f769be3db26323888956b031bdd1aa209",
+          "kind": "security_signal",
+          "outcome": "intervened",
+          "previous_event_sha256": "b7e1fd520150cfea08523f54608d89824a60f07be2b7a84c964320de51a7f287",
+          "sequence": 8,
+          "signal": "output_policy_intervention",
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_d9c2fd290e834c194d6641ca8693427b",
+          "elapsed_ms": 0,
+          "event_sha256": "0869fe2d9082daa1e90b1743e79709ead948e782d6f3b426603b74b0d47a717c",
+          "kind": "policy_decision",
+          "outcome": "allowed",
+          "previous_event_sha256": "c87c9bd2d404b1f8e7ce613cad0ce30f769be3db26323888956b031bdd1aa209",
+          "sequence": 9,
+          "signal": null,
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_33b980e4c402b1fcf46db20ba0005537",
+          "elapsed_ms": 0,
+          "event_sha256": "3c7b6087d243b4842491327974b8d4dc767dc9e42e51fe4a962587a94f198063",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "0869fe2d9082daa1e90b1743e79709ead948e782d6f3b426603b74b0d47a717c",
+          "sequence": 10,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_33b980e4c402b1fcf46db20ba0005537",
+          "elapsed_ms": 0,
+          "event_sha256": "2c5a20a0d9cc4b5ccab9edfb26e7b901c5398064cb7be1fc53616203e10b9028",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "3c7b6087d243b4842491327974b8d4dc767dc9e42e51fe4a962587a94f198063",
+          "sequence": 11,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_33b980e4c402b1fcf46db20ba0005537",
+          "elapsed_ms": 0,
+          "event_sha256": "932a2d0f803a19e367b4c6727a18ae16f9707ef8cd1976a6b1e4148fec3f70ee",
+          "kind": "tool_request",
+          "outcome": "observed",
+          "previous_event_sha256": "2c5a20a0d9cc4b5ccab9edfb26e7b901c5398064cb7be1fc53616203e10b9028",
+          "sequence": 12,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_33b980e4c402b1fcf46db20ba0005537",
+          "elapsed_ms": 0,
+          "event_sha256": "3efdf9e637355924962f8efe6fef0a4a57a0c9cafe0027bae016ff38c7c60d3a",
+          "kind": "tool_result",
+          "outcome": "allowed",
+          "previous_event_sha256": "932a2d0f803a19e367b4c6727a18ae16f9707ef8cd1976a6b1e4148fec3f70ee",
+          "sequence": 13,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_33b980e4c402b1fcf46db20ba0005537",
+          "elapsed_ms": 0,
+          "event_sha256": "d0e95fa3cf19a230e9b63a6dc459420250a081dbb08b1aa1674db0aea496a271",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "3efdf9e637355924962f8efe6fef0a4a57a0c9cafe0027bae016ff38c7c60d3a",
+          "sequence": 14,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_33b980e4c402b1fcf46db20ba0005537",
+          "elapsed_ms": 0,
+          "event_sha256": "9cabc0cc682b6474df6b787b1be01849ca4e96c680b45a5b6bc338ebe8198ba0",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "d0e95fa3cf19a230e9b63a6dc459420250a081dbb08b1aa1674db0aea496a271",
+          "sequence": 15,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_33b980e4c402b1fcf46db20ba0005537",
+          "elapsed_ms": 0,
+          "event_sha256": "f74ee0cfbcd45e22363a9699e6f73506459251e90cecfa452a14750a2945c2c0",
+          "kind": "security_signal",
+          "outcome": "intervened",
+          "previous_event_sha256": "9cabc0cc682b6474df6b787b1be01849ca4e96c680b45a5b6bc338ebe8198ba0",
+          "sequence": 16,
+          "signal": "output_policy_intervention",
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_33b980e4c402b1fcf46db20ba0005537",
+          "elapsed_ms": 0,
+          "event_sha256": "17719ebb754663474c3ddcee968271d5f17838a4b1e9bd616f395e6144c2b435",
+          "kind": "policy_decision",
+          "outcome": "allowed",
+          "previous_event_sha256": "f74ee0cfbcd45e22363a9699e6f73506459251e90cecfa452a14750a2945c2c0",
+          "sequence": 17,
+          "signal": null,
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_7e13b5cd7d4a84b8ae5c8ba5532c3d54",
+          "elapsed_ms": 0,
+          "event_sha256": "5316b036059dfce95f7c39282969555bff419ccc6e285ca9e954bcff8afb53f7",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "17719ebb754663474c3ddcee968271d5f17838a4b1e9bd616f395e6144c2b435",
+          "sequence": 18,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_7e13b5cd7d4a84b8ae5c8ba5532c3d54",
+          "elapsed_ms": 0,
+          "event_sha256": "028944addeaebe3e9ac89f978f8d9b3aba661583164ac2a61d376215b9584923",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "5316b036059dfce95f7c39282969555bff419ccc6e285ca9e954bcff8afb53f7",
+          "sequence": 19,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_7e13b5cd7d4a84b8ae5c8ba5532c3d54",
+          "elapsed_ms": 0,
+          "event_sha256": "f9451de6322b86add306b4bb58a135e885f9de5e17a121413bcd5ff288c23587",
+          "kind": "tool_request",
+          "outcome": "observed",
+          "previous_event_sha256": "028944addeaebe3e9ac89f978f8d9b3aba661583164ac2a61d376215b9584923",
+          "sequence": 20,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_7e13b5cd7d4a84b8ae5c8ba5532c3d54",
+          "elapsed_ms": 0,
+          "event_sha256": "5fd31a1eadf212a42c2182270d3a44ead86d441b47e5b49930806055e692ebc9",
+          "kind": "tool_result",
+          "outcome": "allowed",
+          "previous_event_sha256": "f9451de6322b86add306b4bb58a135e885f9de5e17a121413bcd5ff288c23587",
+          "sequence": 21,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_7e13b5cd7d4a84b8ae5c8ba5532c3d54",
+          "elapsed_ms": 0,
+          "event_sha256": "c2eb3853dedd9006eed493bd8d7f3dd78d2005bb335e64cd68cc1b9f22b4c925",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "5fd31a1eadf212a42c2182270d3a44ead86d441b47e5b49930806055e692ebc9",
+          "sequence": 22,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_7e13b5cd7d4a84b8ae5c8ba5532c3d54",
+          "elapsed_ms": 0,
+          "event_sha256": "e90fb5348fa9427f124d89029d244b096edb39b774a807252d8f7852a411400d",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "c2eb3853dedd9006eed493bd8d7f3dd78d2005bb335e64cd68cc1b9f22b4c925",
+          "sequence": 23,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_7e13b5cd7d4a84b8ae5c8ba5532c3d54",
+          "elapsed_ms": 0,
+          "event_sha256": "715b44ab9f8a5948d914a6af84570ec3505524d4d0c6e9880162127375269a8e",
+          "kind": "policy_decision",
+          "outcome": "allowed",
+          "previous_event_sha256": "e90fb5348fa9427f124d89029d244b096edb39b774a807252d8f7852a411400d",
+          "sequence": 24,
+          "signal": null,
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_6bd023ac4ffbc06bab89e40683a7c466",
+          "elapsed_ms": 0,
+          "event_sha256": "c3c9b47866ef2b267be9e8c6e47b21475127c4461a7b2f20437b2c9d4d19a41e",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "715b44ab9f8a5948d914a6af84570ec3505524d4d0c6e9880162127375269a8e",
+          "sequence": 25,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_6bd023ac4ffbc06bab89e40683a7c466",
+          "elapsed_ms": 0,
+          "event_sha256": "eb5b82aac725a183ddaa88701666641798a88267d1a77e13d07f8c285cb6e4d3",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "c3c9b47866ef2b267be9e8c6e47b21475127c4461a7b2f20437b2c9d4d19a41e",
+          "sequence": 26,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_6bd023ac4ffbc06bab89e40683a7c466",
+          "elapsed_ms": 0,
+          "event_sha256": "2f279c417b81d1123c85b444dc42e0c64661f685d3adec13b8b3a0f9db5281a7",
+          "kind": "tool_request",
+          "outcome": "observed",
+          "previous_event_sha256": "eb5b82aac725a183ddaa88701666641798a88267d1a77e13d07f8c285cb6e4d3",
+          "sequence": 27,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_6bd023ac4ffbc06bab89e40683a7c466",
+          "elapsed_ms": 0,
+          "event_sha256": "6769e991c13f7fa2ae94ef1dcb5010cc5f5e793a93ec31d2da8402da942a1746",
+          "kind": "tool_result",
+          "outcome": "allowed",
+          "previous_event_sha256": "2f279c417b81d1123c85b444dc42e0c64661f685d3adec13b8b3a0f9db5281a7",
+          "sequence": 28,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_6bd023ac4ffbc06bab89e40683a7c466",
+          "elapsed_ms": 0,
+          "event_sha256": "741624bd0acef266d540114107145a89bdb46d4a5e558b2052cf92c55d156795",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "6769e991c13f7fa2ae94ef1dcb5010cc5f5e793a93ec31d2da8402da942a1746",
+          "sequence": 29,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_6bd023ac4ffbc06bab89e40683a7c466",
+          "elapsed_ms": 0,
+          "event_sha256": "ca48cd858b2841676561d3742dcfd7d60423d5d68c126534f0f7235d4ba9dfef",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "741624bd0acef266d540114107145a89bdb46d4a5e558b2052cf92c55d156795",
+          "sequence": 30,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_6bd023ac4ffbc06bab89e40683a7c466",
+          "elapsed_ms": 0,
+          "event_sha256": "d08c1cfedc7620b28489cfb795999863a746f3439e908768400f2b925bfe9006",
+          "kind": "policy_decision",
+          "outcome": "allowed",
+          "previous_event_sha256": "ca48cd858b2841676561d3742dcfd7d60423d5d68c126534f0f7235d4ba9dfef",
+          "sequence": 31,
+          "signal": null,
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_841c239bae7fc9dd2d47683c1fd72f50",
+          "elapsed_ms": 0,
+          "event_sha256": "5146caa856ecaa68f11e1dd4a75f20d3b6b85e588071de12f0ac306f2d97583b",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "d08c1cfedc7620b28489cfb795999863a746f3439e908768400f2b925bfe9006",
+          "sequence": 32,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_841c239bae7fc9dd2d47683c1fd72f50",
+          "elapsed_ms": 0,
+          "event_sha256": "67a473f1ec37813751c1403a60dae29b25e53d9c17954e34281cec616d7e9a5b",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "5146caa856ecaa68f11e1dd4a75f20d3b6b85e588071de12f0ac306f2d97583b",
+          "sequence": 33,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_841c239bae7fc9dd2d47683c1fd72f50",
+          "elapsed_ms": 0,
+          "event_sha256": "c76a3cfcd2d169be21d607719eb17b0f8ac6c68b4211513a0a12ed471ceed6eb",
+          "kind": "tool_request",
+          "outcome": "observed",
+          "previous_event_sha256": "67a473f1ec37813751c1403a60dae29b25e53d9c17954e34281cec616d7e9a5b",
+          "sequence": 34,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_841c239bae7fc9dd2d47683c1fd72f50",
+          "elapsed_ms": 0,
+          "event_sha256": "08886faaffbcd30b54e8ee72be71842a344611f43fb79813bb06eeaa8698bb66",
+          "kind": "tool_result",
+          "outcome": "allowed",
+          "previous_event_sha256": "c76a3cfcd2d169be21d607719eb17b0f8ac6c68b4211513a0a12ed471ceed6eb",
+          "sequence": 35,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_841c239bae7fc9dd2d47683c1fd72f50",
+          "elapsed_ms": 0,
+          "event_sha256": "96f57118e69d488042066479fd9e794c5dd3bed497a1c1719862299025b1e93a",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "08886faaffbcd30b54e8ee72be71842a344611f43fb79813bb06eeaa8698bb66",
+          "sequence": 36,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_841c239bae7fc9dd2d47683c1fd72f50",
+          "elapsed_ms": 0,
+          "event_sha256": "0c19510099d02e839f8c4815e93afd32606dabae4b14ab0de765ebca4e65b109",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "96f57118e69d488042066479fd9e794c5dd3bed497a1c1719862299025b1e93a",
+          "sequence": 37,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_841c239bae7fc9dd2d47683c1fd72f50",
+          "elapsed_ms": 0,
+          "event_sha256": "1b31ed1451a6a984577f6b47c92024f6955bcd30a605d28d2cc94cab36a4f2d1",
+          "kind": "policy_decision",
+          "outcome": "allowed",
+          "previous_event_sha256": "0c19510099d02e839f8c4815e93afd32606dabae4b14ab0de765ebca4e65b109",
+          "sequence": 38,
+          "signal": null,
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_92b6b2e8df971c547098c6c5dbb43056",
+          "elapsed_ms": 0,
+          "event_sha256": "2a07824c0cbc7eddb8ff49a931a271a2b495b7905fb707a3996e6bdc217c38d8",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "1b31ed1451a6a984577f6b47c92024f6955bcd30a605d28d2cc94cab36a4f2d1",
+          "sequence": 39,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_92b6b2e8df971c547098c6c5dbb43056",
+          "elapsed_ms": 0,
+          "event_sha256": "d6cfffe052951d031a260ae5f78863c63d3639d6c83da03f1537be2423633e14",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "2a07824c0cbc7eddb8ff49a931a271a2b495b7905fb707a3996e6bdc217c38d8",
+          "sequence": 40,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_92b6b2e8df971c547098c6c5dbb43056",
+          "elapsed_ms": 0,
+          "event_sha256": "59c12b14ef7e4bc5622337dc770bd0734b27a75c2882e67a68e621e35e0a5ed0",
+          "kind": "tool_request",
+          "outcome": "observed",
+          "previous_event_sha256": "d6cfffe052951d031a260ae5f78863c63d3639d6c83da03f1537be2423633e14",
+          "sequence": 41,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_92b6b2e8df971c547098c6c5dbb43056",
+          "elapsed_ms": 0,
+          "event_sha256": "859dbf7e5dc6b725e63e77197a6d1de923b4e9628250b2ad03a7e2287ec4e410",
+          "kind": "tool_result",
+          "outcome": "allowed",
+          "previous_event_sha256": "59c12b14ef7e4bc5622337dc770bd0734b27a75c2882e67a68e621e35e0a5ed0",
+          "sequence": 42,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_92b6b2e8df971c547098c6c5dbb43056",
+          "elapsed_ms": 0,
+          "event_sha256": "c6334a5a8be6b43bd18e6ebf22e4e040570309202d87f72b69370a7a9b27a017",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "859dbf7e5dc6b725e63e77197a6d1de923b4e9628250b2ad03a7e2287ec4e410",
+          "sequence": 43,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_92b6b2e8df971c547098c6c5dbb43056",
+          "elapsed_ms": 0,
+          "event_sha256": "b5f976a7bae324932dc920ef1e1436f9bf5ff571f342532db8043f25a83241a6",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "c6334a5a8be6b43bd18e6ebf22e4e040570309202d87f72b69370a7a9b27a017",
+          "sequence": 44,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_92b6b2e8df971c547098c6c5dbb43056",
+          "elapsed_ms": 0,
+          "event_sha256": "02917c9d78e6e98b46751267c59ceb2ad2a57c1b12726c3593569de371bc1f0d",
+          "kind": "policy_decision",
+          "outcome": "allowed",
+          "previous_event_sha256": "b5f976a7bae324932dc920ef1e1436f9bf5ff571f342532db8043f25a83241a6",
+          "sequence": 45,
+          "signal": null,
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_b5899e28d363f0672a13481da9533fe9",
+          "elapsed_ms": 0,
+          "event_sha256": "7081b0a1d1183b8872e2abc8152ae21d299f7d53d93d3f41add8bf5c11493ab8",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "02917c9d78e6e98b46751267c59ceb2ad2a57c1b12726c3593569de371bc1f0d",
+          "sequence": 46,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_b5899e28d363f0672a13481da9533fe9",
+          "elapsed_ms": 0,
+          "event_sha256": "12408d61d1216e5c010940ee5899fad4d43e4489814c0c5407a81c6d6581d63c",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "7081b0a1d1183b8872e2abc8152ae21d299f7d53d93d3f41add8bf5c11493ab8",
+          "sequence": 47,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_b5899e28d363f0672a13481da9533fe9",
+          "elapsed_ms": 0,
+          "event_sha256": "b83bb2b88cfc30ac9565d7d2332f939472649c87c64026011719f72764ebf823",
+          "kind": "tool_request",
+          "outcome": "observed",
+          "previous_event_sha256": "12408d61d1216e5c010940ee5899fad4d43e4489814c0c5407a81c6d6581d63c",
+          "sequence": 48,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_b5899e28d363f0672a13481da9533fe9",
+          "elapsed_ms": 0,
+          "event_sha256": "3c106d3db99e1551538a34bb261b2af3f43bb562a8bd887e8d95440a2dede542",
+          "kind": "tool_result",
+          "outcome": "allowed",
+          "previous_event_sha256": "b83bb2b88cfc30ac9565d7d2332f939472649c87c64026011719f72764ebf823",
+          "sequence": 49,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_b5899e28d363f0672a13481da9533fe9",
+          "elapsed_ms": 0,
+          "event_sha256": "2ea2901485733821c05a849c8b7e62e5f8f436b757c2015f0ffa04474ffb948d",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "3c106d3db99e1551538a34bb261b2af3f43bb562a8bd887e8d95440a2dede542",
+          "sequence": 50,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_b5899e28d363f0672a13481da9533fe9",
+          "elapsed_ms": 0,
+          "event_sha256": "0e1344b77399371947291a3ff31fc5c7452eaf78516e665b1a98af4bf47607fe",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "2ea2901485733821c05a849c8b7e62e5f8f436b757c2015f0ffa04474ffb948d",
+          "sequence": 51,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_b5899e28d363f0672a13481da9533fe9",
+          "elapsed_ms": 0,
+          "event_sha256": "58b0af050a397eb2de80acd817552ccb8111f76d74c47a6c19ee63603839bc39",
+          "kind": "policy_decision",
+          "outcome": "allowed",
+          "previous_event_sha256": "0e1344b77399371947291a3ff31fc5c7452eaf78516e665b1a98af4bf47607fe",
+          "sequence": 52,
+          "signal": null,
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_f824c9c9552311af1cb08bc232db7f76",
+          "elapsed_ms": 0,
+          "event_sha256": "4e77edcd137b179a4f292d5ca30f79b9db1c4dbeb2c65554417def675636c5b4",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "58b0af050a397eb2de80acd817552ccb8111f76d74c47a6c19ee63603839bc39",
+          "sequence": 53,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_f824c9c9552311af1cb08bc232db7f76",
+          "elapsed_ms": 0,
+          "event_sha256": "3ac0b5caf0862a88817f0e7555499b302a16b4f337c35c69b180e50f90ad5835",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "4e77edcd137b179a4f292d5ca30f79b9db1c4dbeb2c65554417def675636c5b4",
+          "sequence": 54,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_f824c9c9552311af1cb08bc232db7f76",
+          "elapsed_ms": 0,
+          "event_sha256": "c8c7f000fe840ce05e8dc52f6bb8f221f9db667264ef16306bec4694d8a58910",
+          "kind": "tool_request",
+          "outcome": "observed",
+          "previous_event_sha256": "3ac0b5caf0862a88817f0e7555499b302a16b4f337c35c69b180e50f90ad5835",
+          "sequence": 55,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_f824c9c9552311af1cb08bc232db7f76",
+          "elapsed_ms": 0,
+          "event_sha256": "c78d96d5461420e48e16831b02bbdac5d9d59a6605196c229755aa134eb0e3f7",
+          "kind": "tool_result",
+          "outcome": "allowed",
+          "previous_event_sha256": "c8c7f000fe840ce05e8dc52f6bb8f221f9db667264ef16306bec4694d8a58910",
+          "sequence": 56,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_f824c9c9552311af1cb08bc232db7f76",
+          "elapsed_ms": 0,
+          "event_sha256": "2602bd0bb5430a419b76d1718cf50d6a2ddc82cfc8ca77ccde4c1b7c86e520b6",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "c78d96d5461420e48e16831b02bbdac5d9d59a6605196c229755aa134eb0e3f7",
+          "sequence": 57,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_f824c9c9552311af1cb08bc232db7f76",
+          "elapsed_ms": 0,
+          "event_sha256": "09d9afb5fb63d277c4c9dff20a5e8cf948c1f428595d7ece714754068d2ebd88",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "2602bd0bb5430a419b76d1718cf50d6a2ddc82cfc8ca77ccde4c1b7c86e520b6",
+          "sequence": 58,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_f824c9c9552311af1cb08bc232db7f76",
+          "elapsed_ms": 0,
+          "event_sha256": "1ef0c7ec8ac12db27860b138e8e3341a26e0d1e23359c1dfb40718998b402665",
+          "kind": "policy_decision",
+          "outcome": "allowed",
+          "previous_event_sha256": "09d9afb5fb63d277c4c9dff20a5e8cf948c1f428595d7ece714754068d2ebd88",
+          "sequence": 59,
+          "signal": null,
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_ae6624885fb7573e4eb165339a55a680",
+          "elapsed_ms": 0,
+          "event_sha256": "28fb386d12f522874edcb42d199b1590327b8074bbc1f862142b7c933e98adca",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "1ef0c7ec8ac12db27860b138e8e3341a26e0d1e23359c1dfb40718998b402665",
+          "sequence": 60,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_ae6624885fb7573e4eb165339a55a680",
+          "elapsed_ms": 0,
+          "event_sha256": "c1845ecf25e7fdec9265e821fcdc01449bc03db4d45e46184088a0503dfb4ce8",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "28fb386d12f522874edcb42d199b1590327b8074bbc1f862142b7c933e98adca",
+          "sequence": 61,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_ae6624885fb7573e4eb165339a55a680",
+          "elapsed_ms": 0,
+          "event_sha256": "d6215497d87851193c326d4efb2a92116bf86905f1371b54479f8dc4ede31bd6",
+          "kind": "tool_request",
+          "outcome": "observed",
+          "previous_event_sha256": "c1845ecf25e7fdec9265e821fcdc01449bc03db4d45e46184088a0503dfb4ce8",
+          "sequence": 62,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_ae6624885fb7573e4eb165339a55a680",
+          "elapsed_ms": 0,
+          "event_sha256": "803a61b27e60d2c585a228c773bf4b0fefc7ca8165747139574c4dd76dc36c88",
+          "kind": "tool_result",
+          "outcome": "allowed",
+          "previous_event_sha256": "d6215497d87851193c326d4efb2a92116bf86905f1371b54479f8dc4ede31bd6",
+          "sequence": 63,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_ae6624885fb7573e4eb165339a55a680",
+          "elapsed_ms": 0,
+          "event_sha256": "cdd082907322d6e6c50cc8f324b33d039517327696fc876e0231b55facc4006e",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "803a61b27e60d2c585a228c773bf4b0fefc7ca8165747139574c4dd76dc36c88",
+          "sequence": 64,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_ae6624885fb7573e4eb165339a55a680",
+          "elapsed_ms": 0,
+          "event_sha256": "690c7da4942aeabc0a80e5bf25773599151867fe551facf4ebcde38dc5f20c2d",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "cdd082907322d6e6c50cc8f324b33d039517327696fc876e0231b55facc4006e",
+          "sequence": 65,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_ae6624885fb7573e4eb165339a55a680",
+          "elapsed_ms": 0,
+          "event_sha256": "6516aece50a8c9a841ee30e000bd7a7447c4a31c231d264666f6151732ffacd2",
+          "kind": "policy_decision",
+          "outcome": "allowed",
+          "previous_event_sha256": "690c7da4942aeabc0a80e5bf25773599151867fe551facf4ebcde38dc5f20c2d",
+          "sequence": 66,
+          "signal": null,
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_4dbe8f3ffd20d0e3e9894ae49f8205af",
+          "elapsed_ms": 0,
+          "event_sha256": "96505af5c5a2c1434d90a313c740858a3182085ab0c46d8f2430140a7e1b485f",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "6516aece50a8c9a841ee30e000bd7a7447c4a31c231d264666f6151732ffacd2",
+          "sequence": 67,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_4dbe8f3ffd20d0e3e9894ae49f8205af",
+          "elapsed_ms": 0,
+          "event_sha256": "1095ba04210fd500220cb621c37dd9ef9596ec9ddc8ab5f80ed3180dc47e4361",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "96505af5c5a2c1434d90a313c740858a3182085ab0c46d8f2430140a7e1b485f",
+          "sequence": 68,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_4dbe8f3ffd20d0e3e9894ae49f8205af",
+          "elapsed_ms": 0,
+          "event_sha256": "9c5b227437ae108f0a82c6f9177efaa5d73d1d97d55212be8d0c552deae64d53",
+          "kind": "tool_request",
+          "outcome": "observed",
+          "previous_event_sha256": "1095ba04210fd500220cb621c37dd9ef9596ec9ddc8ab5f80ed3180dc47e4361",
+          "sequence": 69,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_4dbe8f3ffd20d0e3e9894ae49f8205af",
+          "elapsed_ms": 0,
+          "event_sha256": "a361d2c3d90bc5d6a570526f4cb1759395c7595f0763d123297594056197841d",
+          "kind": "tool_result",
+          "outcome": "allowed",
+          "previous_event_sha256": "9c5b227437ae108f0a82c6f9177efaa5d73d1d97d55212be8d0c552deae64d53",
+          "sequence": 70,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_4dbe8f3ffd20d0e3e9894ae49f8205af",
+          "elapsed_ms": 0,
+          "event_sha256": "fa152f1883a9c6e4ac21cd33032c13994fb40f71410314cd590ed4296946eb63",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "a361d2c3d90bc5d6a570526f4cb1759395c7595f0763d123297594056197841d",
+          "sequence": 71,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_4dbe8f3ffd20d0e3e9894ae49f8205af",
+          "elapsed_ms": 0,
+          "event_sha256": "f7957388321bfdf48afda303be7c59c712ed52b175728632ef2a3b50fd360eb3",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "fa152f1883a9c6e4ac21cd33032c13994fb40f71410314cd590ed4296946eb63",
+          "sequence": 72,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_4dbe8f3ffd20d0e3e9894ae49f8205af",
+          "elapsed_ms": 0,
+          "event_sha256": "ae94247c99dcdd843c943336afa07dae48d3fe42133c192ba55d7dd5c6e4a0e3",
+          "kind": "policy_decision",
+          "outcome": "allowed",
+          "previous_event_sha256": "f7957388321bfdf48afda303be7c59c712ed52b175728632ef2a3b50fd360eb3",
+          "sequence": 73,
+          "signal": null,
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_2fdba275219319ba355edf7597cf7ca1",
+          "elapsed_ms": 0,
+          "event_sha256": "58da77d7813b5431e8035beb8e527bed5a69c0c622131e8ab5d97a7585602455",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "ae94247c99dcdd843c943336afa07dae48d3fe42133c192ba55d7dd5c6e4a0e3",
+          "sequence": 74,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_2fdba275219319ba355edf7597cf7ca1",
+          "elapsed_ms": 0,
+          "event_sha256": "4f58ef8ad1ec2ff1d145f4bbcbb8b3348dccc06945974abe8bfbf1eaa20d89b1",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "58da77d7813b5431e8035beb8e527bed5a69c0c622131e8ab5d97a7585602455",
+          "sequence": 75,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_2fdba275219319ba355edf7597cf7ca1",
+          "elapsed_ms": 0,
+          "event_sha256": "20847e68b7236f194403c770f1659475475892f0908207fa72d1d1f0b594e5cd",
+          "kind": "tool_request",
+          "outcome": "observed",
+          "previous_event_sha256": "4f58ef8ad1ec2ff1d145f4bbcbb8b3348dccc06945974abe8bfbf1eaa20d89b1",
+          "sequence": 76,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_2fdba275219319ba355edf7597cf7ca1",
+          "elapsed_ms": 0,
+          "event_sha256": "1b2266d477bb814c59bebbbfce24bb13ae104c7d93d47e179a3dc9ea81e1acf3",
+          "kind": "tool_result",
+          "outcome": "allowed",
+          "previous_event_sha256": "20847e68b7236f194403c770f1659475475892f0908207fa72d1d1f0b594e5cd",
+          "sequence": 77,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_2fdba275219319ba355edf7597cf7ca1",
+          "elapsed_ms": 0,
+          "event_sha256": "4ed0214147f494ac8a9b3b64b28baf10365232de9fe8288b29911420ecb6e319",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "1b2266d477bb814c59bebbbfce24bb13ae104c7d93d47e179a3dc9ea81e1acf3",
+          "sequence": 78,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_2fdba275219319ba355edf7597cf7ca1",
+          "elapsed_ms": 0,
+          "event_sha256": "0355e4cc58935abc20881826283e8651921db9a4ee58abe6d9595a47cf4916cb",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "4ed0214147f494ac8a9b3b64b28baf10365232de9fe8288b29911420ecb6e319",
+          "sequence": 79,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_2fdba275219319ba355edf7597cf7ca1",
+          "elapsed_ms": 0,
+          "event_sha256": "3c40397e3c0c97831dc404a7a052c2c99dc5c4c39242a3f8d16802bc2d40fae9",
+          "kind": "policy_decision",
+          "outcome": "allowed",
+          "previous_event_sha256": "0355e4cc58935abc20881826283e8651921db9a4ee58abe6d9595a47cf4916cb",
+          "sequence": 80,
+          "signal": null,
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_0591144f207c96055affa777f8b46eae",
+          "elapsed_ms": 0,
+          "event_sha256": "8cb948c843ef4c52837b9cdd8eb7f47fb742acf520568e55b8125cfe1d9f6cbb",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "3c40397e3c0c97831dc404a7a052c2c99dc5c4c39242a3f8d16802bc2d40fae9",
+          "sequence": 81,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_0591144f207c96055affa777f8b46eae",
+          "elapsed_ms": 0,
+          "event_sha256": "4f979524d3cd06e7b19ed0b91635f678dd3a26ede56023163ac5623a2b76bdf1",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "8cb948c843ef4c52837b9cdd8eb7f47fb742acf520568e55b8125cfe1d9f6cbb",
+          "sequence": 82,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_0591144f207c96055affa777f8b46eae",
+          "elapsed_ms": 0,
+          "event_sha256": "1dfaa005f355d80ab3de4df05ba827ec250a14620ff8ebcea07dee5e3899414e",
+          "kind": "tool_request",
+          "outcome": "observed",
+          "previous_event_sha256": "4f979524d3cd06e7b19ed0b91635f678dd3a26ede56023163ac5623a2b76bdf1",
+          "sequence": 83,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_0591144f207c96055affa777f8b46eae",
+          "elapsed_ms": 0,
+          "event_sha256": "778d0b74d4421f55ddbc7dd5f3035de738b2f423c8936090fd40702746bc5802",
+          "kind": "tool_result",
+          "outcome": "allowed",
+          "previous_event_sha256": "1dfaa005f355d80ab3de4df05ba827ec250a14620ff8ebcea07dee5e3899414e",
+          "sequence": 84,
+          "signal": null,
+          "source": "knowledge_search",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_0591144f207c96055affa777f8b46eae",
+          "elapsed_ms": 0,
+          "event_sha256": "76c8e87921166c86f44e4a7a9beda7ba9d3c59736b859ba634a4fd18356f0731",
+          "kind": "model_request",
+          "outcome": "observed",
+          "previous_event_sha256": "778d0b74d4421f55ddbc7dd5f3035de738b2f423c8936090fd40702746bc5802",
+          "sequence": 85,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_0591144f207c96055affa777f8b46eae",
+          "elapsed_ms": 0,
+          "event_sha256": "ae6523381c7f49623f6af37b92a5b8308cdab677526ec1e6a3ba6ec69b13f4e9",
+          "kind": "model_response",
+          "outcome": "observed",
+          "previous_event_sha256": "76c8e87921166c86f44e4a7a9beda7ba9d3c59736b859ba634a4fd18356f0731",
+          "sequence": 86,
+          "signal": null,
+          "source": "model_adapter",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_0591144f207c96055affa777f8b46eae",
+          "elapsed_ms": 0,
+          "event_sha256": "04f0a9b9e7f985988da2d2df8a291328295642817c391bc2758df54181e79578",
+          "kind": "policy_decision",
+          "outcome": "allowed",
+          "previous_event_sha256": "ae6523381c7f49623f6af37b92a5b8308cdab677526ec1e6a3ba6ec69b13f4e9",
+          "sequence": 87,
+          "signal": null,
+          "source": "output_policy",
+          "version": "1.0.0"
+        },
+        {
+          "control_id": "GSL-SECURITY-EVENTS-001",
+          "correlation_id": "corr_1f6930c8dfa612f1c85409fa35f2dbb0",
+          "elapsed_ms": 0,
+          "event_sha256": "21ae565dc81f955eb2c818fbd0bd53823395f10e9fb64266162c546867905fd8",
+          "kind": "operation_completed",
+          "outcome": "completed",
+          "previous_event_sha256": "04f0a9b9e7f985988da2d2df8a291328295642817c391bc2758df54181e79578",
+          "sequence": 88,
+          "signal": null,
+          "source": "flow",
+          "version": "1.0.0"
+        }
+      ],
+      "events_count": 88,
+      "profile": "baseline",
+      "version": "1.0.0"
+    }
+  },
+  "incidents": [
+    {
+      "category": "phishing",
+      "id": "INC-BEN-001",
+      "title": "Factura ficticia con enlace de inicio de sesión"
+    },
+    {
+      "category": "phishing",
+      "id": "INC-BEN-002",
+      "title": "Solicitud ficticia de registro MFA mediante QR"
+    },
+    {
+      "category": "identity",
+      "id": "INC-BEN-003",
+      "title": "Inicio de sesión tras varios fallos"
+    },
+    {
+      "category": "identity",
+      "id": "INC-BEN-004",
+      "title": "Uso inesperado de una cuenta de servicio ficticia"
+    },
+    {
+      "category": "endpoint",
+      "id": "INC-BEN-005",
+      "title": "Script ficticio bloqueado por el sensor"
+    },
+    {
+      "category": "endpoint",
+      "id": "INC-BEN-006",
+      "title": "Canario de archivos activado en una simulación"
+    },
+    {
+      "category": "data_protection",
+      "id": "INC-BEN-007",
+      "title": "Marcador de token sintético en un log de prueba"
+    },
+    {
+      "category": "data_protection",
+      "id": "INC-BEN-008",
+      "title": "Descarga masiva de informes sintéticos"
+    },
+    {
+      "category": "availability",
+      "id": "INC-BEN-009",
+      "title": "Pico de tráfico contra el servicio de demostración"
+    },
+    {
+      "category": "cloud_configuration",
+      "id": "INC-BEN-010",
+      "title": "Lectura anónima en un bucket ficticio"
+    },
+    {
+      "category": "supply_chain",
+      "id": "INC-BEN-011",
+      "title": "Checksum inesperado en un paquete ficticio"
+    },
+    {
+      "category": "physical_device",
+      "id": "INC-BEN-012",
+      "title": "Portátil cifrado extraviado en el laboratorio"
+    }
+  ],
+  "profile": "public_static_snapshot",
+  "runtime": {
+    "cost_eur": 0,
+    "deterministic": true,
+    "external_calls": false,
+    "id": "GSL-PUBLIC-STATIC-001",
+    "model": "scripted-v1",
+    "persistence": false,
+    "provider": "deterministic"
+  },
+  "schema_version": "1.0.0",
+  "snapshot_id": "GSL-PUBLIC-PROFILE-001"
+}

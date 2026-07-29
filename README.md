@@ -55,6 +55,17 @@ modelo de amenazas están en la
 [especificación web](./docs/web-interface-spec.md) y el
 [threat model del frontal](./docs/web-threat-model.md).
 
+## Demo pública estática
+
+El mismo frontal admite un perfil público de solo lectura basado en snapshots
+deterministas. No publica Python, Functions, API, POST, Ollama o secretos y
+etiqueta sus resultados como precomputados. El checkout contiene la
+configuración y el artefacto reproducible, pero no se declara aquí una URL o
+un despliegue verificado.
+
+Consulta la [especificación pública](./docs/public-static-profile-spec.md) y su
+[threat model](./docs/public-static-threat-model.md).
+
 ## Uso por CLI
 
 Analizar un incidente sintético:
@@ -168,6 +179,8 @@ final permanece inmutable y no se regenera durante una ejecución ordinaria.
 - [Rules of Engagement](./docs/rules-of-engagement.md)
 - [Decisión de arquitectura](./docs/architecture-decision-record.md)
 - [Backend experimental de Ollama Cloud](./docs/ollama-cloud-experimental.md)
+- [Perfil público estático](./docs/public-static-profile-spec.md)
+- [Threat model público](./docs/public-static-threat-model.md)
 
 ### Gobierno y operación
 

@@ -21,6 +21,10 @@ real.
 - [Threat model del frontal
   web](./web-threat-model.md): activos, flujo, doce amenazas, controles y
   cuatro riesgos residuales de `CMP-19` y `TB-07`.
+- [Perfil público estático](./public-static-profile-spec.md): UI compartida,
+  snapshot reproducible y configuración sin Functions, POST o secretos.
+- [Threat model público](./public-static-threat-model.md): interpretación,
+  integridad, cabeceras, supply chain y límites del hosting estático.
 - [Data card](./data-card.md): inventario de `DAT-01` a `DAT-25`, procedencia,
   sensibilidad, calidad, acceso, ciclo de vida y límites de los datos
   sintéticos y de la evidencia.

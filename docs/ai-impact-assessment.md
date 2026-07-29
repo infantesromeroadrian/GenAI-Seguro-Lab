@@ -5,8 +5,8 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-AIA-001` |
-| Versión | `1.2.0` |
-| Fecha | 2026-07-28 |
+| Versión | `1.3.0` |
+| Fecha | 2026-07-29 |
 | Estado de la evaluación | `COMPLETADA_ALCANCE_ACTUAL` |
 | Decisión que habilita | `CONTINUAR_SOLO_LABORATORIO_ACTUAL` |
 | Límite de autoridad | `NO_AUTORIZA_AMPLIACION` |
@@ -16,7 +16,7 @@
 | Evidencia final | `DAT-25`, SHA-256 `05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d` |
 
 Esta evaluación responde a `PGS-06-M02` y fue reevaluada para las extensiones
-`GSL-WEB-001` y `GSL-OLLAMA-001`. `MOD-01`
+`GSL-WEB-001`, `GSL-OLLAMA-001` y `GSL-PUBLIC-STATIC-001`. `MOD-01`
 forma parte de ese sistema, pero es un doble determinista:
 no es un modelo de machine learning ni un modelo GenAI real. El documento no
 es una evaluación jurídica, una DPIA, una clasificación bajo una regulación,
@@ -31,6 +31,8 @@ sintético, determinista y sin red externa. `GSL-OLLAMA-001` añade únicamente 
 `DAT-25` ni habilita datos reales, usuarios externos, prompt libre, una
 interfaz remota, nuevos efectos, evaluaciones cloud o un despliegue.
 En particular, la extensión no habilita datos reales.
+El perfil público estático solo distribuye proyecciones sintéticas
+precomputadas y no expone ese runtime.
 
 En caso de discrepancia, prevalecen las fuentes especializadas:
 
@@ -114,6 +116,20 @@ contractual, residencia, retención, coste o comportamiento general del
 proveedor. Cualquier nueva prueba real requiere autoridad raíz, revisión de
 egress/términos y evidencia separada.
 
+## Reevaluación de la extensión `GSL-PUBLIC-STATIC-001`
+
+El perfil materializa el trigger de interfaz pública, pero reduce la
+consecuencia al servir solo assets y resultados sintéticos precomputados:
+
+- no publica el listener, Python, Functions, API, POST, secretos u Ollama;
+- etiqueta la experiencia como demo y los botones como “precomputado”;
+- regenera el snapshot desde los 12 análisis y la baseline deterministas;
+- no reejecuta ni reinterpreta `DAT-25`.
+
+La configuración y el artefacto existen en el checkout. No se ha verificado
+una URL, respuesta desplegada, cuenta, dominio, logs o tratamiento operativo
+de Vercel; esas propiedades requieren evidencia y autoridad separadas.
+
 ## Partes interesadas y potencialmente afectadas
 
 | Parte | Interés o impacto actual | Límite |
@@ -122,7 +138,7 @@ egress/términos y evidencia separada.
 | `ACT-02` — mantenedor y tester | Controla código, corpus, dependencias, Git y ejecución bajo su cuenta | La concentración de autoridad no constituye una RACI formal |
 | `ACT-03` — principal sintético | Demuestra binding y consumo de una aprobación técnica interna | No acredita identidad, comprensión o presencia humana real |
 | Titulares de datos reales | Ninguno en el alcance actual | Deben identificarse antes de admitir cualquier dato real |
-| Terceros, organizaciones o público | Ninguno recibe decisiones o efectos actuales | Deben identificarse antes de una UI remota, API pública, integración o uso de alto impacto |
+| Visitantes del perfil público | Pueden leer una demo sintética precomputada, sin decisión o efecto | Pueden confundirla con ejecución real; la UI debe conservar etiquetas y límites |
 | Revisor independiente `REV-01` | Papel planificado, no ejercido | No se atribuye revisión independiente a esta evaluación |
 
 ## Beneficios previstos y daños plausibles

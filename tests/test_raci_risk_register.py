@@ -141,7 +141,7 @@ def test_formal_risk_register_preserves_scope_ownership_and_pending_decisions() 
     _, rows = _table(document, "formal-risk-register")
 
     assert "`GSL-RISK-REGISTER-001`" in document
-    assert "`1.0.0`" in document
+    assert "`1.1.0`" in document
     assert "`ABIERTO_ALCANCE_ACTUAL`" in document
     assert f"`{SOURCE_COMMIT}`" in document
     assert f"`{CANDIDATE_COMMIT}`" in document

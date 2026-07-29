@@ -5,8 +5,8 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-REGISTER-001` |
-| Versión | `1.0.0` |
-| Fecha | 2026-07-28 |
+| Versión | `1.1.0` |
+| Fecha | 2026-07-29 |
 | Estado | `ABIERTO_ALCANCE_ACTUAL` |
 | Corte de las fuentes | commit `648dd9afe9ef696388257ebf8dda4b59ece1aeb5` |
 | Candidato evaluado | commit `77edd64037bb0e41edffa58cae2682ba7d2694d2` |
@@ -63,6 +63,16 @@ prueba real requiere decisión y evidencia nuevas, nunca una reinterpretación
 de `DAT-25`.
 La [política de cambios de modelo](./model-change-reevaluation-policy.md)
 mantiene el paquete de reevaluación aplicable.
+
+### Extensión pública estática
+
+`GSL-PUBLIC-STATIC-001` materializa la distribución/supply chain de `RR-03` y
+el riesgo de representación de `RR-06`; no crea otro registro. La demo no
+ejecuta modelos o herramientas y se etiqueta como snapshot precomputado.
+Persisten la posible manipulación u obsolescencia del artefacto, su confusión
+con una ejecución y las incertidumbres del hosting real. La regeneración
+reproducible y las cabeceras no aceptan ni cierran esos riesgos y no
+reinterpretan `DAT-25`.
 
 ## Cola de decisiones humanas
 

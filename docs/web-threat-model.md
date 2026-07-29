@@ -9,7 +9,7 @@
 | Fecha | 2026-07-28 |
 | Superficie | `CMP-19` — navegador y gateway HTTP de loopback |
 | Fuente de requisitos | [`GSL-WEB-001`](./web-interface-spec.md) |
-| Rules of Engagement | [`GSL-ROE-001` 2.8.0](./rules-of-engagement.md) |
+| Rules of Engagement | [`GSL-ROE-001` 2.9.0](./rules-of-engagement.md) |
 
 ## Activos y límites
 

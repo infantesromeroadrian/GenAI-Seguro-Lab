@@ -63,7 +63,7 @@ def test_experimental_contract_is_linked_and_declares_honest_limits() -> None:
 def test_governance_surfaces_distinguish_extension_from_historical_evidence() -> None:
     expected_by_path = {
         ROOT / "docs" / "rules-of-engagement.md": (
-            "`2.8.0`",
+            "`2.9.0`",
             "`GSL-OLLAMA-001`",
             "baseline/evaluaciones",
         ),
