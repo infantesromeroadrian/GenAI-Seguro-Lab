@@ -8,6 +8,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
+from genai_seguro_lab.cli import build_parser
+
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = ROOT / "evaluations" / "benign-baseline-v1.json"
 ENTRYPOINT = ROOT / "main.py"
@@ -16,6 +20,7 @@ ENTRYPOINT = ROOT / "main.py"
 def _environment() -> dict[str, str]:
     environment = os.environ.copy()
     environment.pop("PYTHONPATH", None)
+    environment.pop("OLLAMA_API_KEY", None)
     environment["PYTHONDONTWRITEBYTECODE"] = "1"
     return environment
 
@@ -121,6 +126,44 @@ def test_unknown_incident_fails_without_traceback() -> None:
     assert completed.stdout == ""
     assert completed.stderr == "error: unknown benign incident identifier\n"
     assert "Traceback" not in completed.stderr
+
+
+def test_cloud_analyze_is_explicit_and_missing_key_fails_sanitized() -> None:
+    completed = _run_entrypoint(
+        "analyze",
+        "--incident",
+        "INC-BEN-001",
+        "--provider",
+        "ollama",
+    )
+
+    assert completed.returncode == 1
+    assert completed.stdout == ""
+    assert completed.stderr == (
+        "error: cloud analysis provider is unavailable\n"
+    )
+    assert "OLLAMA_API_KEY" not in completed.stderr
+    assert "Traceback" not in completed.stderr
+
+
+def test_provider_option_exists_only_for_analyze_and_web() -> None:
+    parser = build_parser()
+
+    assert parser.parse_args(
+        [
+            "analyze",
+            "--incident",
+            "INC-BEN-001",
+            "--provider",
+            "ollama",
+        ]
+    ).provider == "ollama"
+    assert parser.parse_args(
+        ["web", "--provider", "ollama"]
+    ).provider == "ollama"
+    with pytest.raises(SystemExit) as captured:
+        parser.parse_args(["baseline", "--provider", "ollama"])
+    assert captured.value.code == 2
 
 
 def test_smoke_commands_do_not_create_real_drafts() -> None:

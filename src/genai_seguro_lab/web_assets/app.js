@@ -18,6 +18,10 @@ const elements = {
   loadingState: document.querySelector("#loading-state"),
   outputSections: document.querySelector("#output-sections"),
   runState: document.querySelector("#run-state"),
+  runtimeExternalCalls: document.querySelector("#runtime-external-calls"),
+  runtimeMode: document.querySelector("#runtime-mode"),
+  runtimeModel: document.querySelector("#runtime-model"),
+  runtimeEffects: document.querySelector("#runtime-effects"),
   systemStatus: document.querySelector("#system-status"),
   timelineEmpty: document.querySelector("#timeline-empty"),
 };
@@ -25,6 +29,7 @@ const elements = {
 const state = {
   csrfToken: "",
   incidents: [],
+  analyzeAvailable: false,
   running: false,
 };
 
@@ -105,7 +110,8 @@ function hideError() {
 function setBusy(isBusy) {
   state.running = isBusy;
   elements.incidentSelect.disabled = isBusy || state.incidents.length === 0;
-  elements.analyzeButton.disabled = isBusy || state.incidents.length === 0;
+  elements.analyzeButton.disabled =
+    isBusy || state.incidents.length === 0 || !state.analyzeAvailable;
   elements.baselineButton.disabled = isBusy || state.incidents.length === 0;
   elements.loadingState.hidden = !isBusy;
   if (isBusy) {
@@ -216,7 +222,10 @@ function renderAnalysis(payload) {
     metricCard("Categoría", categoryLabel(result.category)),
     metricCard("Invocaciones", result.model_invocations),
     metricCard("Herramientas", result.tool_requests),
-    metricCard("Coste", `${result.cost_eur} €`),
+    metricCard(
+      "Coste",
+      result.cost_eur === null ? "Desconocido" : `${result.cost_eur} €`,
+    ),
   );
   renderOutputSections(parsed.sections);
   renderTimeline(payload.security_report);
@@ -281,6 +290,7 @@ async function initialize() {
     const payload = await requestJson("/api/status");
     state.csrfToken = payload.csrf_token;
     state.incidents = payload.incidents;
+    state.analyzeAvailable = payload.capabilities.analyze;
 
     clearElement(elements.incidentSelect);
     for (const incident of state.incidents) {
@@ -290,7 +300,23 @@ async function initialize() {
       elements.incidentSelect.append(option);
     }
 
-    elements.systemStatus.textContent = "Operativo";
+    const hosted = payload.app.provider === "ollama";
+    elements.runtimeMode.textContent = hosted
+      ? "Ollama Cloud · experimental"
+      : "Determinista";
+    elements.runtimeModel.textContent = payload.app.model;
+    elements.runtimeExternalCalls.textContent = hosted
+      ? "2 por análisis"
+      : "0";
+    elements.runtimeEffects.textContent = hosted
+      ? "Analyze realiza dos llamadas a Ollama Cloud; baseline permanece local y determinista. No se escriben ni persisten resultados."
+      : "Analyze y baseline son locales y deterministas. No se escriben archivos ni persisten resultados.";
+    elements.analyzeButton.querySelector("span").textContent = hosted
+      ? "Analizar con Ollama Cloud"
+      : "Analizar incidente";
+    elements.systemStatus.textContent = state.analyzeAvailable
+      ? "Operativo"
+      : "Solo baseline";
     updateIncidentPreview();
     setBusy(false);
   } catch (error) {

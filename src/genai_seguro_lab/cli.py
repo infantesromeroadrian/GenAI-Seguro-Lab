@@ -16,7 +16,13 @@ from .baseline import (
     run_functional_baseline,
     run_incident,
 )
+from .cloud_analysis import (
+    UnknownCloudIncidentError,
+    canonical_cloud_analysis_json,
+    run_cloud_incident,
+)
 from .data_contract import load_dataset
+from .ollama_cloud_adapter import OllamaCloudError
 from .resource_control import ResourceLimitError, exclusive_process_lock
 from .security_events import (
     SecurityEventError,
@@ -45,9 +51,7 @@ def _web_port(value: str) -> int:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="genai-seguro-lab",
-        description=(
-            "Ejecuta el flujo benigno determinista sobre el corpus sintético."
-        ),
+        description="Ejecuta el flujo benigno sobre el corpus sintético.",
         allow_abbrev=False,
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -61,6 +65,15 @@ def build_parser() -> argparse.ArgumentParser:
         "--incident",
         required=True,
         help="Identificador exacto con formato INC-BEN-NNN.",
+    )
+    analyze.add_argument(
+        "--provider",
+        choices=("deterministic", "ollama"),
+        default="deterministic",
+        help=(
+            "Backend de analyze; deterministic por defecto y ollama "
+            "solo mediante opt-in explícito."
+        ),
     )
     analyze.add_argument(
         "--security-report",
@@ -89,6 +102,15 @@ def build_parser() -> argparse.ArgumentParser:
         default=DEFAULT_PORT,
         type=_web_port,
         help=f"Puerto local entre 1024 y 65535 (por defecto: {DEFAULT_PORT}).",
+    )
+    web.add_argument(
+        "--provider",
+        choices=("deterministic", "ollama"),
+        default="deterministic",
+        help=(
+            "Backend fijado al iniciar el frontal; baseline permanece "
+            "determinista."
+        ),
     )
     return parser
 
@@ -123,12 +145,25 @@ def main(argv: Sequence[str] | None = None) -> int:
     data_dir = repository_data_dir()
     if arguments.command == "web":
         try:
-            return serve(data_dir, port=arguments.port)
+            return serve(
+                data_dir,
+                port=arguments.port,
+                provider=arguments.provider,
+            )
         except (OSError, ResourceLimitError, TypeError, ValueError):
             print("error: local web interface is unavailable", file=sys.stderr)
             return 1
 
-    profile = "analyze" if arguments.command == "analyze" else "baseline"
+    profile = (
+        "cloud_analyze"
+        if (
+            arguments.command == "analyze"
+            and arguments.provider == "ollama"
+        )
+        else "analyze"
+        if arguments.command == "analyze"
+        else "baseline"
+    )
     journal = SecurityEventJournal(profile)
 
     try:
@@ -153,21 +188,33 @@ def main(argv: Sequence[str] | None = None) -> int:
                         outcome="denied",
                     )
                     raise
-                result = run_incident(
-                    bundle,
-                    arguments.incident,
-                    security_journal=journal,
-                )
+                if arguments.provider == "ollama":
+                    result = run_cloud_incident(
+                        bundle,
+                        arguments.incident,
+                        security_journal=journal,
+                    )
+                else:
+                    result = run_incident(
+                        bundle,
+                        arguments.incident,
+                        security_journal=journal,
+                    )
             else:
                 result = run_functional_baseline(
                     data_dir,
                     security_journal=journal,
                 )
-    except UnknownIncidentError:
+    except (UnknownIncidentError, UnknownCloudIncidentError):
         if not journal.is_finished:
             journal.finish(succeeded=False)
         print("error: unknown benign incident identifier", file=sys.stderr)
         return 2
+    except OllamaCloudError:
+        if not journal.is_finished:
+            journal.finish(succeeded=False)
+        print("error: cloud analysis provider is unavailable", file=sys.stderr)
+        return 1
     except (
         LookupError,
         OSError,
@@ -188,5 +235,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             _canonical_security_envelope(result, journal.report())
         )
     else:
-        sys.stdout.write(canonical_json(result))
+        if arguments.command == "analyze" and arguments.provider == "ollama":
+            sys.stdout.write(canonical_cloud_analysis_json(result))
+        else:
+            sys.stdout.write(canonical_json(result))
     return 0

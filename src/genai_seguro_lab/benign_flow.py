@@ -16,11 +16,13 @@ from .data_contract import (
 from .local_tools import (
     KnowledgeCatalog,
     KnowledgeSearchResult,
+    ToolDeniedError,
 )
 from .model_adapter import (
     ModelAdapter,
-    ModelDescriptor,
+    ModelDescriptorType,
     ModelMessage,
+    ModelProviderError,
     ModelRequest,
     ModelResult,
     ModelToolRequest,
@@ -98,7 +100,7 @@ class BenignFinalOutput(FlowSchema):
 class SafeModelInvocation(FlowSchema):
     """Proyección sin la petición ni la respuesta bruta del modelo."""
 
-    descriptor: ModelDescriptor
+    descriptor: ModelDescriptorType
     request_id: Text
     request_fingerprint: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
     finish_reason: Literal["stop", "tool_request"]
@@ -304,7 +306,7 @@ class BenignAnalysisFlow:
             raise TypeError(
                 "resource_control must be a ProductResourceControl"
             )
-        if control.profile not in {"analyze", "baseline"}:
+        if control.profile not in {"analyze", "cloud_analyze", "baseline"}:
             raise ValueError("resource control profile cannot run analysis")
         journal = control.security_journal
 
@@ -329,6 +331,14 @@ class BenignAnalysisFlow:
                         "unknown_model_request",
                         source="model_adapter",
                         outcome="denied",
+                        correlation=security_correlation,
+                    )
+                    raise
+                except ModelProviderError:
+                    journal.signal(
+                        "provider_error",
+                        source="model_adapter",
+                        outcome="failed",
                         correlation=security_correlation,
                     )
                     raise
@@ -362,10 +372,13 @@ class BenignAnalysisFlow:
             tool_request = tool_requests[0]
             if tool_request.name != "knowledge_search":
                 journal.signal(
-                    "unknown_model_request",
-                    source="model_adapter",
+                    "tool_denied",
+                    source="flow",
                     outcome="denied",
                     correlation=security_correlation,
+                )
+                raise ToolDeniedError(
+                    "requested tool is not allowed in this flow"
                 )
             control.accept_tool_request(
                 tool_request.arguments_json,
@@ -440,6 +453,14 @@ class BenignAnalysisFlow:
                         correlation=security_correlation,
                     )
                     raise
+                except ModelProviderError:
+                    journal.signal(
+                        "provider_error",
+                        source="model_adapter",
+                        outcome="failed",
+                        correlation=security_correlation,
+                    )
+                    raise
             finally:
                 control.checkpoint(correlation=security_correlation)
             control.after_model_call(
@@ -472,7 +493,9 @@ class BenignAnalysisFlow:
                 output = BenignFinalOutput.model_validate_json(
                     second.response.output_text
                 )
-            except ValidationError as exc:
+            except ValidationError:
+                output = None
+            if output is None:
                 journal.signal(
                     "unexpected_flow_sequence",
                     source="flow",
@@ -481,7 +504,7 @@ class BenignAnalysisFlow:
                 )
                 raise BenignFlowError(
                     "the final model output failed schema validation"
-                ) from exc
+                )
             control.accept_final_summary(
                 output.summary,
                 correlation=security_correlation,

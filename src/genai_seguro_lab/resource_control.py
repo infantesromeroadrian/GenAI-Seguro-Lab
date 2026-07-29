@@ -35,7 +35,7 @@ MAX_DRAFT_MARKDOWN_BYTES = 16 * 1024
 _LIMIT_MESSAGE = "product resource limit exceeded"
 _LOCK_MESSAGE = "product resource is already in use"
 
-ResourceProfile = Literal["analyze", "baseline", "draft"]
+ResourceProfile = Literal["analyze", "cloud_analyze", "baseline", "draft"]
 
 
 class ResourceLimitError(RuntimeError):
@@ -81,6 +81,18 @@ _PROFILE_LIMITS: dict[ResourceProfile, ResourceLimits] = {
         tool_requests=1,
         tool_executions=1,
         elapsed_seconds=1.0,
+        draft_proposals=0,
+        draft_challenges=0,
+        authentication_attempts=0,
+        draft_grants=0,
+        draft_files=0,
+    ),
+    "cloud_analyze": ResourceLimits(
+        cases=1,
+        model_invocations=2,
+        tool_requests=1,
+        tool_executions=1,
+        elapsed_seconds=125.0,
         draft_proposals=0,
         draft_challenges=0,
         authentication_attempts=0,

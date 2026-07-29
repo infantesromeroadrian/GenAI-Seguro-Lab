@@ -29,9 +29,9 @@
         </a>
 
         <div class="environment-badges" aria-label="Entorno de ejecución">
-          <span class="badge"><i class="status-dot"></i> Local</span>
+          <span class="badge"><i class="status-dot"></i> Loopback</span>
           <span class="badge">Sintético</span>
-          <span class="badge">Determinista</span>
+          <span class="badge" id="runtime-mode">Cargando backend</span>
         </div>
       </header>
 
@@ -46,8 +46,8 @@
             </h1>
             <p class="hero-lead">
               Un laboratorio visual para recorrer un análisis defensivo,
-              entender cada control y comprobar los límites del sistema sin
-              salir de tu equipo.
+              entender cada control y comprobar los límites explícitos del
+              backend seleccionado.
             </p>
           </div>
 
@@ -59,11 +59,11 @@
             <dl>
               <div>
                 <dt>Modelo</dt>
-                <dd>scripted-v1</dd>
+                <dd id="runtime-model">Cargando</dd>
               </div>
               <div>
                 <dt>Llamadas externas</dt>
-                <dd>0</dd>
+                <dd id="runtime-external-calls">Cargando</dd>
               </div>
               <div>
                 <dt>Persistencia</dt>
@@ -111,7 +111,7 @@
                 <i aria-hidden="true">→</i>
               </button>
               <button class="secondary-action" id="baseline-button" disabled>
-                Ejecutar baseline de 12 casos
+                Ejecutar baseline determinista de 12 casos
               </button>
             </div>
 
@@ -225,7 +225,9 @@
           <article>
             <span>03</span>
             <h2>Sin efectos ocultos</h2>
-            <p>Este frontal no escribe archivos, no llama a red y no persiste.</p>
+            <p id="runtime-effects">
+              Este frontal no escribe archivos ni persiste resultados.
+            </p>
           </article>
         </section>
       </main>

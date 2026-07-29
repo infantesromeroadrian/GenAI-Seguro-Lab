@@ -19,7 +19,12 @@ SECURITY_EVENTS_VERSION = "1.0.0"
 MAX_SECURITY_EVENT_BYTES = 2 * 1024
 MAX_SECURITY_EVENT_ELAPSED_MS = 24 * 60 * 60 * 1000
 
-SecurityEventProfile = Literal["analyze", "baseline", "draft"]
+SecurityEventProfile = Literal[
+    "analyze",
+    "cloud_analyze",
+    "baseline",
+    "draft",
+]
 SecurityEventKind = Literal[
     "operation_started",
     "operation_completed",
@@ -67,6 +72,7 @@ SecuritySignal = Literal[
     "authorization_replay_or_context_mismatch",
     "sandbox_violation",
     "data_integrity_violation",
+    "provider_error",
 ]
 
 Sha256 = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
@@ -220,6 +226,7 @@ class _ProfileLimits(_SecuritySchema):
 
 _PROFILE_LIMITS: dict[SecurityEventProfile, _ProfileLimits] = {
     "analyze": _ProfileLimits(events=32, bytes=32 * 1024),
+    "cloud_analyze": _ProfileLimits(events=32, bytes=32 * 1024),
     "baseline": _ProfileLimits(events=256, bytes=256 * 1024),
     "draft": _ProfileLimits(events=32, bytes=32 * 1024),
 }

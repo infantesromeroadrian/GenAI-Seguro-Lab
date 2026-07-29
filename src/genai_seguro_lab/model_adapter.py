@@ -148,13 +148,26 @@ class ModelDescriptor(AdapterSchema):
     cost_eur: Literal[0] = 0
 
 
+class HostedModelDescriptor(AdapterSchema):
+    """Metadatos observables de un modelo alojado sin fingir coste."""
+
+    provider: Literal["ollama"] = "ollama"
+    model: Literal["gpt-oss:120b"] = "gpt-oss:120b"
+    deterministic: Literal[False] = False
+    external_calls: Literal[True] = True
+    cost_eur: None = None
+
+
+ModelDescriptorType = ModelDescriptor | HostedModelDescriptor
+
+
 class ScriptedExchange(AdapterSchema):
     request: ModelRequest
     response: ModelResponse
 
 
 class ModelResult(AdapterSchema):
-    descriptor: ModelDescriptor
+    descriptor: ModelDescriptorType
     request_id: RequestId
     request_fingerprint: Sha256
     response: ModelResponse
@@ -165,9 +178,13 @@ class ModelAdapter(Protocol):
     """Contrato mínimo que deberán respetar todos los adaptadores."""
 
     @property
-    def descriptor(self) -> ModelDescriptor: ...
+    def descriptor(self) -> ModelDescriptorType: ...
 
     def generate(self, request: ModelRequest) -> ModelResult: ...
+
+
+class ModelProviderError(RuntimeError):
+    """Fallo de proveedor saneado y sin contenido remoto."""
 
 
 class UnknownModelRequestError(LookupError):

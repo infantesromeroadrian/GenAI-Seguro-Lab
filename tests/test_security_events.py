@@ -230,6 +230,29 @@ def test_event_count_limit_accepts_exact_boundary_and_rejects_plus_one() -> None
     assert journal.report().events_count == 32
 
 
+def test_cloud_profile_records_sanitized_provider_error_with_local_limits() -> None:
+    journal = SecurityEventJournal(
+        "cloud_analyze",
+        clock=lambda: 0.0,
+        token_bytes=_constant_token(8),
+    )
+
+    assert journal.profile == "cloud_analyze"
+    assert journal.limits == (32, 32 * 1024)
+    journal.signal(
+        "provider_error",
+        source="model_adapter",
+        outcome="failed",
+    )
+    journal.finish(succeeded=False)
+
+    report = journal.report()
+    assert report.profile == "cloud_analyze"
+    assert _signals(report) == ["provider_error"]
+    serialized = canonical_security_report_json(report)
+    assert all(canary not in serialized for canary in CANARIES)
+
+
 def test_authentication_failures_are_correlated_and_signal_exactly_third() -> None:
     tokens = iter((bytes([4]) * 16, bytes([5]) * 16))
     journal = SecurityEventJournal(

@@ -392,6 +392,29 @@ def test_cooperative_deadline_is_checked_after_synchronous_adapter_call() -> Non
     assert control.usage.tool_executions == 0
 
 
+def test_cloud_analyze_profile_has_exact_hosted_operation_budget() -> None:
+    now = [0.0]
+    control = ProductResourceControl(
+        "cloud_analyze",
+        clock=lambda: now[0],
+    )
+
+    assert control.profile == "cloud_analyze"
+    assert control.limits.cases == 1
+    assert control.limits.model_invocations == 2
+    assert control.limits.tool_requests == 1
+    assert control.limits.tool_executions == 1
+    assert control.limits.elapsed_seconds == 125.0
+    assert control.limits.draft_proposals == 0
+    assert control.limits.draft_files == 0
+
+    now[0] = 125.0
+    control.checkpoint()
+    now[0] = 125.001
+    with pytest.raises(ResourceLimitError):
+        control.checkpoint()
+
+
 def test_product_operations_execute_the_real_search_exactly_once_per_case(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

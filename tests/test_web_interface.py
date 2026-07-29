@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import http.client
 import json
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from pathlib import Path
 from threading import Thread
@@ -15,15 +15,60 @@ from genai_seguro_lab.web import (
     MAX_REQUEST_BYTES,
     create_server,
 )
+from genai_seguro_lab.ollama_cloud_adapter import OllamaCloudAdapter
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
 DRAFTS_DIR = ROOT / "sandbox" / "drafts"
 
 
+class _CloudTransport:
+    def __init__(self, responses: tuple[bytes, ...]) -> None:
+        self._responses = list(responses)
+        self.calls = 0
+
+    def post(
+        self,
+        *,
+        url: str,
+        headers: Mapping[str, str],
+        body: bytes,
+        timeout_seconds: float,
+        max_response_bytes: int,
+    ) -> bytes:
+        self.calls += 1
+        if not self._responses:
+            raise AssertionError("unexpected provider call")
+        return self._responses.pop(0)
+
+
+def _cloud_adapter(
+    transport: _CloudTransport,
+    *,
+    configured: bool = True,
+) -> OllamaCloudAdapter:
+    return OllamaCloudAdapter(
+        transport=transport,
+        api_key_loader=(
+            (lambda: "test-only-placeholder")
+            if configured
+            else (lambda: "")
+        ),
+    )
+
+
 @contextmanager
-def _running_server() -> Iterator[tuple[str, int]]:
-    server = create_server(DATA_DIR, port=0)
+def _running_server(
+    *,
+    provider: str = "deterministic",
+    cloud_adapter: OllamaCloudAdapter | None = None,
+) -> Iterator[tuple[str, int]]:
+    server = create_server(
+        DATA_DIR,
+        port=0,
+        provider=provider,
+        cloud_adapter=cloud_adapter,
+    )
     thread = Thread(target=server.serve_forever, daemon=True)
     thread.start()
     try:
@@ -91,12 +136,18 @@ def test_server_binds_only_to_loopback_and_lists_closed_capabilities() -> None:
         payload = _status(server_address)
 
     assert payload["app"] == {
+        "analysis_calls_per_operation": 0,
+        "baseline_provider": "deterministic",
+        "configured": True,
+        "cost_eur": 0,
+        "deterministic": True,
         "external_calls": False,
         "id": "GSL-WEB-001",
         "mode": "local_synthetic_deterministic",
-        "model": "deterministic/scripted-v1",
+        "model": "scripted-v1",
         "persistence": False,
-        "version": "1.0.0",
+        "provider": "deterministic",
+        "version": "1.1.0",
     }
     assert payload["capabilities"] == {
         "analyze": True,
@@ -133,6 +184,8 @@ def test_frontend_assets_are_local_and_receive_security_headers() -> None:
     assert b"prefers-reduced-motion" in css
     assert b"textContent" in javascript
     assert b"innerHTML" not in javascript
+    assert b"runtime-mode" in html
+    assert b"payload.app.provider" in javascript
     for response_headers in (headers, css_headers, js_headers):
         assert response_headers["cache-control"] == "no-store"
         assert (
@@ -177,6 +230,127 @@ def test_analysis_reuses_safe_flow_and_emits_ephemeral_security_report() -> None
         "operation_completed"
     )
     assert tuple(sorted(path.name for path in DRAFTS_DIR.iterdir())) == before
+
+
+def test_cloud_backend_is_fixed_and_reported_honestly_without_cloud_baseline() -> None:
+    first = json.dumps(
+        {
+            "done": True,
+            "message": {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": "knowledge_search",
+                            "arguments": {
+                                "query": "phishing",
+                                "knowledge_ids": ["KB-001"],
+                                "limit": 1,
+                            },
+                        },
+                    }
+                ],
+            },
+        }
+    ).encode()
+    second = json.dumps(
+        {
+            "done": True,
+            "message": {
+                "role": "assistant",
+                "content": (
+                    '{"actions_executed":false,'
+                    '"compromise_confirmed":false,'
+                    '"incident_id":"INC-BEN-001",'
+                    '"knowledge_ids":["KB-001"],'
+                    '"summary":"No se confirma compromiso."}'
+                ),
+            },
+        }
+    ).encode()
+    transport = _CloudTransport((first, second))
+    adapter = _cloud_adapter(transport)
+
+    with _running_server(
+        provider="ollama",
+        cloud_adapter=adapter,
+    ) as server_address:
+        status_payload = _status(server_address)
+        token = status_payload["csrf_token"]
+        analyze_status, _, analyze_body = _request(
+            server_address,
+            "POST",
+            "/api/analyze",
+            body=b'{"incident_id":"INC-BEN-001"}',
+            headers=_post_headers(server_address, token),
+        )
+        baseline_status, _, baseline_body = _request(
+            server_address,
+            "POST",
+            "/api/baseline",
+            body=b"{}",
+            headers=_post_headers(server_address, token),
+        )
+
+    assert status_payload["app"] == {
+        "analysis_calls_per_operation": 2,
+        "baseline_provider": "deterministic",
+        "configured": True,
+        "cost_eur": None,
+        "deterministic": False,
+        "external_calls": True,
+        "id": "GSL-WEB-001",
+        "mode": "synthetic_cloud_analysis_experimental",
+        "model": "gpt-oss:120b",
+        "persistence": False,
+        "provider": "ollama",
+        "version": "1.1.0",
+    }
+    assert status_payload["capabilities"]["analyze"] is True
+    assert analyze_status == baseline_status == 200
+    analyze_payload = json.loads(analyze_body)
+    assert analyze_payload["result"]["provider"] == "ollama"
+    assert analyze_payload["result"]["external_calls"] is True
+    assert analyze_payload["result"]["deterministic"] is False
+    assert analyze_payload["result"]["cost_eur"] is None
+    assert analyze_payload["security_report"]["profile"] == "cloud_analyze"
+    baseline_payload = json.loads(baseline_body)
+    assert baseline_payload["result"]["summary"]["external_calls"] == 0
+    assert baseline_payload["security_report"]["profile"] == "baseline"
+    assert transport.calls == 2
+
+
+def test_unconfigured_cloud_status_and_error_are_sanitized() -> None:
+    transport = _CloudTransport(())
+    adapter = _cloud_adapter(transport, configured=False)
+
+    with _running_server(
+        provider="ollama",
+        cloud_adapter=adapter,
+    ) as server_address:
+        status_payload = _status(server_address)
+        token = status_payload["csrf_token"]
+        response_status, _, response_body = _request(
+            server_address,
+            "POST",
+            "/api/analyze",
+            body=b'{"incident_id":"INC-BEN-001"}',
+            headers=_post_headers(server_address, token),
+        )
+
+    assert status_payload["app"]["provider"] == "ollama"
+    assert status_payload["app"]["configured"] is False
+    assert status_payload["capabilities"]["analyze"] is False
+    assert response_status == 503
+    assert json.loads(response_body) == {
+        "error": {
+            "code": "provider_unavailable",
+            "message": "El proveedor de análisis no está disponible.",
+        }
+    }
+    assert transport.calls == 0
 
 
 def test_baseline_returns_all_cases_without_external_calls_or_writes() -> None:

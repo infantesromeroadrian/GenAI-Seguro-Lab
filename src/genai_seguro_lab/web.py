@@ -9,7 +9,7 @@ import sys
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Annotated, Any, Final, cast
+from typing import Annotated, Any, Final, Literal, cast
 from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
@@ -19,7 +19,15 @@ from .baseline import (
     run_functional_baseline,
     run_incident,
 )
+from .cloud_analysis import (
+    UnknownCloudIncidentError,
+    run_cloud_incident,
+)
 from .data_contract import load_dataset
+from .ollama_cloud_adapter import (
+    OllamaCloudAdapter,
+    OllamaCloudError,
+)
 from .resource_control import (
     ResourceLimitError,
     ResourceLockError,
@@ -32,6 +40,7 @@ REQUEST_TIMEOUT_SECONDS: Final = 5.0
 DEFAULT_PORT: Final = 8765
 LOOPBACK_HOST: Final = "127.0.0.1"
 WEB_ASSETS: Final = Path(__file__).with_name("web_assets")
+AnalysisProvider = Literal["deterministic", "ollama"]
 
 STATIC_ROUTES: Final = {
     "/": ("index.html", "text/html; charset=utf-8"),
@@ -73,16 +82,40 @@ class GenAISeguroHTTPServer(ThreadingHTTPServer):
     allow_reuse_address = True
     request_queue_size = 8
 
-    def __init__(self, data_dir: Path, port: int) -> None:
+    def __init__(
+        self,
+        data_dir: Path,
+        port: int,
+        *,
+        provider: AnalysisProvider = "deterministic",
+        cloud_adapter: OllamaCloudAdapter | None = None,
+    ) -> None:
         if not isinstance(data_dir, Path):
             raise TypeError("data_dir must be a Path")
         if isinstance(port, bool) or not isinstance(port, int):
             raise TypeError("port must be an integer")
         if port < 0 or port > 65535:
             raise ValueError("port must be between 0 and 65535")
+        if provider not in {"deterministic", "ollama"}:
+            raise ValueError("unknown analysis provider")
+        if provider == "deterministic" and cloud_adapter is not None:
+            raise ValueError(
+                "cloud adapter requires the ollama analysis provider"
+            )
+        if cloud_adapter is not None and not isinstance(
+            cloud_adapter,
+            OllamaCloudAdapter,
+        ):
+            raise TypeError("cloud_adapter must be an OllamaCloudAdapter")
 
         bundle = load_dataset(data_dir)
         self.data_dir = data_dir
+        self.provider = provider
+        self.cloud_adapter = (
+            cloud_adapter or OllamaCloudAdapter()
+            if provider == "ollama"
+            else None
+        )
         self.csrf_token = secrets.token_urlsafe(32)
         self.incidents = tuple(
             {
@@ -287,17 +320,50 @@ class GenAISeguroRequestHandler(BaseHTTPRequestHandler):
         return document
 
     def _status_document(self) -> dict[str, Any]:
+        if self.lab_server.provider == "ollama":
+            adapter = self.lab_server.cloud_adapter
+            if adapter is None:
+                raise RuntimeError("cloud adapter is unavailable")
+            descriptor = adapter.descriptor
+            configured = adapter.is_configured
+            mode = "synthetic_cloud_analysis_experimental"
+        else:
+            descriptor = None
+            configured = True
+            mode = "local_synthetic_deterministic"
         return {
             "app": {
-                "external_calls": False,
+                "analysis_calls_per_operation": (
+                    2 if self.lab_server.provider == "ollama" else 0
+                ),
+                "baseline_provider": "deterministic",
+                "configured": configured,
+                "cost_eur": (
+                    descriptor.cost_eur if descriptor is not None else 0
+                ),
+                "deterministic": (
+                    descriptor.deterministic
+                    if descriptor is not None
+                    else True
+                ),
+                "external_calls": (
+                    descriptor.external_calls
+                    if descriptor is not None
+                    else False
+                ),
                 "id": "GSL-WEB-001",
-                "mode": "local_synthetic_deterministic",
-                "model": "deterministic/scripted-v1",
+                "mode": mode,
+                "model": (
+                    descriptor.model
+                    if descriptor is not None
+                    else "scripted-v1"
+                ),
                 "persistence": False,
-                "version": "1.0.0",
+                "provider": self.lab_server.provider,
+                "version": "1.1.0",
             },
             "capabilities": {
-                "analyze": True,
+                "analyze": configured,
                 "baseline": True,
                 "free_prompt": False,
                 "uploads": False,
@@ -307,18 +373,36 @@ class GenAISeguroRequestHandler(BaseHTTPRequestHandler):
         }
 
     def _run_analysis(self, incident_id: str) -> dict[str, Any]:
-        journal = SecurityEventJournal("analyze")
+        profile = (
+            "cloud_analyze"
+            if self.lab_server.provider == "ollama"
+            else "analyze"
+        )
+        journal = SecurityEventJournal(profile)
         try:
             with exclusive_process_lock(
                 self.lab_server.data_dir / "manifest.json",
                 security_journal=journal,
             ):
                 bundle = load_dataset(self.lab_server.data_dir)
-                result = run_incident(
-                    bundle,
-                    incident_id,
-                    security_journal=journal,
-                )
+                if self.lab_server.provider == "ollama":
+                    adapter = self.lab_server.cloud_adapter
+                    if adapter is None:
+                        raise OllamaCloudError(
+                            "ollama cloud provider is unavailable"
+                        )
+                    result = run_cloud_incident(
+                        bundle,
+                        incident_id,
+                        adapter=adapter,
+                        security_journal=journal,
+                    )
+                else:
+                    result = run_incident(
+                        bundle,
+                        incident_id,
+                        security_journal=journal,
+                    )
         except Exception:
             if not journal.is_finished:
                 journal.finish(succeeded=False)
@@ -424,11 +508,18 @@ class GenAISeguroRequestHandler(BaseHTTPRequestHandler):
                 "Solicitud no válida.",
             )
             return
-        except UnknownIncidentError:
+        except (UnknownIncidentError, UnknownCloudIncidentError):
             self._send_error_json(
                 HTTPStatus.NOT_FOUND,
                 "unknown_incident",
                 "Incidente sintético no disponible.",
+            )
+            return
+        except OllamaCloudError:
+            self._send_error_json(
+                HTTPStatus.SERVICE_UNAVAILABLE,
+                "provider_unavailable",
+                "El proveedor de análisis no está disponible.",
             )
             return
         except ResourceLockError:
@@ -477,19 +568,32 @@ def create_server(
     data_dir: Path,
     *,
     port: int = DEFAULT_PORT,
+    provider: AnalysisProvider = "deterministic",
+    cloud_adapter: OllamaCloudAdapter | None = None,
 ) -> GenAISeguroHTTPServer:
     """Crea un listener fijo en loopback; ``port=0`` se reserva a tests."""
 
-    return GenAISeguroHTTPServer(data_dir, port)
+    return GenAISeguroHTTPServer(
+        data_dir,
+        port,
+        provider=provider,
+        cloud_adapter=cloud_adapter,
+    )
 
 
-def serve(data_dir: Path, *, port: int = DEFAULT_PORT) -> int:
+def serve(
+    data_dir: Path,
+    *,
+    port: int = DEFAULT_PORT,
+    provider: AnalysisProvider = "deterministic",
+) -> int:
     """Atiende la interfaz hasta recibir una interrupción del operador."""
 
-    server = create_server(data_dir, port=port)
+    server = create_server(data_dir, port=port, provider=provider)
     actual_port = server.server_address[1]
     sys.stderr.write(
-        f"GenAI Seguro Lab disponible en http://{LOOPBACK_HOST}:{actual_port}\n"
+        "GenAI Seguro Lab "
+        f"({provider}) disponible en http://{LOOPBACK_HOST}:{actual_port}\n"
     )
     try:
         server.serve_forever(poll_interval=0.25)
