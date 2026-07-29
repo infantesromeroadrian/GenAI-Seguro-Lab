@@ -5,14 +5,14 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-SYSTEM-CARD-001` |
-| Versión | `1.3.0` |
-| Fecha de corte | 2026-07-28 |
+| Versión | `1.4.0` |
+| Fecha de corte | 2026-07-29 |
 | Estado | `DESCRIPTIVA_ALCANCE_ACTUAL` |
 | Corte de las fuentes del repositorio | commit `648dd9afe9ef696388257ebf8dda4b59ece1aeb5` |
 | Candidato de producto evaluado | commit `77edd64037bb0e41edffa58cae2682ba7d2694d2`, árbol `bc09b78f7f3d85f94241f9955e79abb264bd89de` |
 | Evidencia final | `DAT-25`, SHA-256 `05d3e93eb8493f7c8501afbc2cb1c26307c37c3140c65f19d70173a5bbd9714d` |
-| Extensión actual | `GSL-WEB-001` y `GSL-OLLAMA-001`, posteriores a `DAT-25` |
-| Ámbito | Laboratorio con datos exclusivamente sintéticos; determinista por defecto y Ollama Cloud experimental solo por opt-in |
+| Extensión actual | `GSL-WEB-001`, `GSL-OLLAMA-001`, `GSL-PUBLIC-STATIC-001` y `GSL-PUBLIC-LLM-001`, posteriores a `DAT-25` |
+| Ámbito | Laboratorio con datos sintéticos; baseline determinista y análisis con LLM alojado para incidentes enumerados |
 
 Esta ficha resume el sistema observado. No sustituye el
 [inventario](./system-inventory.md), el
@@ -35,6 +35,7 @@ adversario sobre entradas enumeradas.
 | `ACT-01` | Operador local que usa `analyze`, `baseline` o el navegador de loopback y recibe una proyección saneada; la aplicación no ofrece login propio. |
 | `ACT-02` | Mantenedor y ejecutor de pruebas que modifica, valida y versiona el laboratorio mediante su autoridad de sistema operativo y GitHub. [`GSL-RACI-001`](./raci.md) formaliza la concentración actual de accountability. |
 | `ACT-03` | Llamador interno del flujo de borradores; usa una identidad sintética, no una presencia humana verificada. Este flujo no está expuesto por la CLI. |
+| `ACT-04` | Visitante anónimo de la demo; selecciona un incidente sintético para «Análisis con LLM» o consulta la baseline precomputada, sin prompt libre, identidad, herramienta o efecto. |
 
 ## Usos previstos y prohibidos
 
@@ -65,9 +66,11 @@ El runtime observado es un solo proceso Python local. `CMP-19` añade un
 listener HTTP fijo en `127.0.0.1` y una interfaz gráfica servida con assets
 propios. En el alcance evaluado de `DAT-25` no hay proveedor ni conexión
 externa. Posteriormente, `GSL-OLLAMA-001` permite dos llamadas a Ollama Cloud
-solo para un `analyze` explícito; no añade API pública, base de datos, vector
-store, Docker, cuenta de servicio ni telemetría externa. La cuenta macOS que
-inicia el proceso conserva la autoridad efectiva del host.
+solo para un `analyze` explícito. `GSL-PUBLIC-LLM-001` expone esa capacidad
+mediante dos rutas Vercel del mismo origen con entrada enumerada y secreto
+server-side; no añade base de datos, vector store, Docker, prompt libre,
+uploads, efectos ni telemetría de aplicación. La cuenta macOS conserva la
+autoridad del runtime local y Vercel constituye otra frontera para la demo.
 
 <!-- system-boundaries:start -->
 | Frontera | Función | Aislamiento observado |
@@ -79,6 +82,8 @@ inicia el proceso conserva la autoridad efectiva del host.
 | `TB-05` | Sandbox de borradores | Almacén local create-only con transacción y recuperación; no es aislamiento de sistema operativo. |
 | `TB-06` | Datos sintéticos versionados | Manifiestos, esquemas y hashes detectan deriva; la autoridad de mantenimiento aún puede cambiar el repositorio. |
 | `TB-07` | Navegador ↔ gateway HTTP | Loopback, Host/Origin/CSRF y cabeceras de navegador; separación lógica dentro del mismo host y usuario. |
+| `TB-08` | Runtime ↔ proveedor LLM alojado | Egress HTTPS fijo, secreto por entorno, dos llamadas y salida no confiable validada localmente. |
+| `TB-09` | Navegador público ↔ Vercel ↔ proveedor | Mismo origen, CSRF, Function efímera, entrada enumerada y proyección sin secreto, proveedor o modelo. |
 <!-- system-boundaries:end -->
 
 ## Componentes y superficies
@@ -87,6 +92,7 @@ inicia el proceso conserva la autoridad efectiva del host.
 |---|---|---|
 | Ruta de producto | `CMP-01`, `CMP-02`, `CMP-03`, `CMP-04`, `CMP-05`, `CMP-09`, `CMP-10`, `CMP-11`, `CMP-19`, `MOD-01`, `TOL-01` | CLI y frontal de loopback, carga validada, flujo benigno, baseline, políticas, eventos efímeros, doble determinista y consulta de conocimiento de solo lectura. |
 | Extensión alojada opt-in | `CMP-20`, `CMP-21`, `MOD-02`, `IDN-02` | Adaptador/runner Ollama para un incidente sintético, secreto por entorno, dos llamadas y coste desconocido; no alcanza baseline ni evaluaciones. |
+| Demo pública | `GSL-PUBLIC-STATIC-001`, `GSL-PUBLIC-LLM-001`, `ACT-04`, `TB-09` | Assets y baseline versionados más Function cerrada para análisis no determinista; la UI usa el nombre genérico «LLM». |
 | Efecto interno no expuesto | `TOL-02`, `CMP-12`, `IDN-03` | Propuesta, aprobación sintética y creación confinada de un borrador; no hay ruta desde `CMP-01`. |
 | Evaluación y soporte | `CMP-06`, `CMP-07`, `CMP-08`, `CMP-13`, `CMP-14`, `CMP-15`, `CMP-16`, `CMP-17`, `CMP-18` | Perfil vulnerable, harness y analizadores separados de la ruta de producto. |
 | Identidad efectiva | `IDN-01`, `IDN-04`, `IDN-05` | Cuenta local del proceso, ausencia de autoridad en el modelo y grants lógicos por operación. |
@@ -111,6 +117,10 @@ identidad sintética no demuestra presencia humana.
 El [threat model del frontal](./web-threat-model.md) documenta la nueva
 frontera, sus controles y cuatro riesgos residuales. `DAT-25` es anterior a
 esta extensión y no evalúa `CMP-19` o `TB-07`.
+
+El [threat model público](./public-static-threat-model.md) documenta `TB-09`,
+el secreto de runtime, el control de origen, la proyección y los riesgos de
+abuso y disponibilidad. `DAT-25` tampoco evalúa esta extensión.
 
 ## Datos, modelo y efectos
 

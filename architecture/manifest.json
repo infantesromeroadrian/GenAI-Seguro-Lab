@@ -1,6 +1,6 @@
 {
   "name": "GenAI Seguro Lab",
-  "description": "Laboratorio local para analizar y evaluar incidentes sintéticos mediante controles deterministas, con un backend Ollama Cloud experimental y opt-in que no participa en la baseline ni en la evidencia histórica. El mismo repositorio publica además una demo de portfolio independiente y de solo lectura: Vercel sirve assets y snapshots deterministas versionados sin API, funciones, secretos, egress o ejecución remota. La demo no sustituye el runtime local, DAT-25 ni una evaluación nueva.",
+  "description": "Laboratorio para analizar y evaluar incidentes sintéticos mediante controles deterministas y un backend LLM alojado. La implementación actual usa Ollama Cloud, pero la interfaz pública mantiene el proveedor desacoplado y lo presenta como «Análisis con LLM». Vercel sirve los assets y la baseline determinista y expone una Function cerrada para analizar únicamente incidentes enumerados; la credencial permanece en el runtime, no hay persistencia y la demo no sustituye DAT-25 ni constituye una evaluación nueva.",
   "source": "https://github.com/infantesromeroadrian/GenAI-Seguro-Lab",
   "sourceHost": "github",
   "topDiagram": "system-context",

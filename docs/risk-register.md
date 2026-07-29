@@ -64,17 +64,17 @@ de `DAT-25`.
 La [política de cambios de modelo](./model-change-reevaluation-policy.md)
 mantiene el paquete de reevaluación aplicable.
 
-### Extensión pública estática
+### Extensión pública alojada
 
-`GSL-PUBLIC-STATIC-001` materializa la distribución/supply chain de `RR-03` y
-el riesgo de representación de `RR-06`; no crea otro registro. La demo no
-ejecuta modelos o herramientas y se etiqueta como snapshot precomputado.
-Persisten la posible manipulación u obsolescencia del artefacto, su confusión
-con una ejecución y las incertidumbres operativas del proveedor. La URL,
-cabeceras y ausencia temprana de errores o `5xx` se verificaron, pero no
-demuestran disponibilidad futura, residencia, retención o controles internos.
-La regeneración reproducible y las cabeceras no aceptan ni cierran esos riesgos
-y no reinterpretan `DAT-25`.
+`GSL-PUBLIC-STATIC-001` y `GSL-PUBLIC-LLM-001` materializan la
+distribución/supply chain de `RR-03`, el agotamiento de `RR-01` y el riesgo de
+representación/generalización de `RR-06`; no crean otro registro. La baseline
+se etiqueta como precomputada y el análisis vivo como «Análisis con LLM».
+Persisten abuso distribuido sin cuota global verificada, coste desconocido,
+dependencia del proveedor, confusión entre modos y las incertidumbres de
+residencia, retención y telemetría de Vercel y del proveedor. El kill switch,
+la entrada enumerada, los timeouts y las cabeceras reducen exposición, pero no
+aceptan ni cierran esos riesgos y no reinterpretan `DAT-25`.
 
 ## Cola de decisiones humanas
 

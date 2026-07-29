@@ -66,7 +66,7 @@ def test_aia_pins_scope_sources_and_non_authorizing_outcome() -> None:
     document = _read(AIA)
     for expected in (
         "`GSL-AIA-001`",
-        "`1.3.0`",
+        "`1.4.0`",
         "2026-07-29",
         "`COMPLETADA_ALCANCE_ACTUAL`",
         "`CONTINUAR_SOLO_LABORATORIO_ACTUAL`",
@@ -97,6 +97,7 @@ def test_screening_matches_the_current_system_and_affected_parties() -> None:
         "`ACT-01`",
         "`ACT-02`",
         "`ACT-03`",
+        "`ACT-04`",
         "`DAT-01` a `DAT-25`",
         "No hay entrenamiento",
         "No",
@@ -107,6 +108,8 @@ def test_screening_matches_the_current_system_and_affected_parties() -> None:
         "no expone prompt libre",
         "cuenta macOS",
         "`PGS-06-M04`",
+        "`GSL-PUBLIC-LLM-001`",
+        "Análisis con LLM",
     ):
         assert fact in screening
 

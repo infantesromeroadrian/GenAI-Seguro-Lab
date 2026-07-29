@@ -49,7 +49,7 @@
         "inventoryIds": [
           "ACT-04"
         ],
-        "state": "public-read-only"
+        "state": "public-fixed-input"
       }
     },
     {
@@ -90,11 +90,13 @@
       "subDiagramId": "public-portfolio-deployment",
       "meta": {
         "type": "system",
-        "deployment": "vercel-static",
-        "state": "public-static-snapshot",
-        "runtimeApi": false,
-        "runtimeExternalIntegrations": 0,
-        "secrets": false
+        "deployment": "vercel-static-and-python-function",
+        "state": "public-live-llm-with-static-baseline",
+        "runtimeApi": true,
+        "runtimeExternalIntegrations": 1,
+        "secrets": true,
+        "persistence": false,
+        "publicProviderLabel": "LLM"
       }
     }
   ],
@@ -131,21 +133,22 @@
       "id": "context-visitor-uses-public-demo",
       "source": "portfolio-visitor",
       "target": "public-portfolio-demo",
-      "label": "GET HTTPS de UI y snapshots deterministas versionados",
+      "label": "GET de UI/baseline y POST de un incidente enumerado",
       "meta": {
         "type": "calls",
         "crossesBoundary": "TB-09",
-        "readOnly": true
+        "freePrompt": false,
+        "uploads": false
       }
     },
     {
       "id": "context-maintainer-publishes-public-demo",
       "source": "lab-maintainer",
       "target": "public-portfolio-demo",
-      "label": "Git + generación offline + despliegue estático Vercel",
+      "label": "Git + snapshot offline + despliegue Vercel",
       "meta": {
         "type": "publishes",
-        "runtimeDependency": false
+        "runtimeDependency": true
       }
     },
     {
@@ -168,6 +171,29 @@
       "meta": {
         "type": "data-flow",
         "crossesBoundary": "TB-08",
+        "rawContentPersisted": false
+      }
+    },
+    {
+      "id": "context-public-demo-calls-ollama-cloud",
+      "source": "public-portfolio-demo",
+      "target": "ollama-cloud-provider",
+      "label": "Implementación actual: 2 POST HTTPS por análisis con datos sintéticos",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-09",
+        "providerHiddenFromPublicProjection": true,
+        "retries": 0
+      }
+    },
+    {
+      "id": "context-ollama-returns-public-model-output",
+      "source": "ollama-cloud-provider",
+      "target": "public-portfolio-demo",
+      "label": "Salida no confiable → validación y proyección pública",
+      "meta": {
+        "type": "data-flow",
+        "crossesBoundary": "TB-09",
         "rawContentPersisted": false
       }
     }
