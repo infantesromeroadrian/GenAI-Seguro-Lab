@@ -6,7 +6,7 @@
     <meta name="color-scheme" content="dark">
     <meta
       name="description"
-      content="Banco de trabajo local para observar el flujo seguro de GenAI Seguro Lab."
+      content="Interfaz visual para observar el flujo seguro de GenAI Seguro Lab."
     >
     <title>GenAI Seguro Lab</title>
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -24,12 +24,15 @@
           </span>
           <span class="brand-copy">
             <strong>GenAI Seguro</strong>
-            <small>LAB / LOCAL WORKBENCH</small>
+            <small id="brand-context">LAB / CARGANDO PERFIL</small>
           </span>
         </a>
 
         <div class="environment-badges" aria-label="Entorno de ejecución">
-          <span class="badge"><i class="status-dot"></i> Loopback</span>
+          <span class="badge">
+            <i class="status-dot"></i>
+            <span id="runtime-location">Cargando entorno</span>
+          </span>
           <span class="badge">Sintético</span>
           <span class="badge" id="runtime-mode">Cargando backend</span>
         </div>
@@ -44,7 +47,7 @@
               <span>Observa.</span>
               Verifica.
             </h1>
-            <p class="hero-lead">
+            <p class="hero-lead" id="hero-lead">
               Un laboratorio visual para recorrer un análisis defensivo,
               entender cada control y comprobar los límites explícitos del
               backend seleccionado.
@@ -71,7 +74,7 @@
               </div>
               <div>
                 <dt>Superficie</dt>
-                <dd>Loopback</dd>
+                <dd id="runtime-surface">Cargando</dd>
               </div>
             </dl>
           </div>
@@ -154,7 +157,7 @@
                 <span class="empty-core">GSL</span>
               </div>
               <h3>El sistema está listo</h3>
-              <p>
+              <p id="empty-description">
                 Ejecuta un caso para ver el diagnóstico, las métricas y la
                 cadena de decisiones de seguridad.
               </p>
@@ -168,7 +171,9 @@
             <div class="analysis-view" id="analysis-view" hidden>
               <div class="result-summary">
                 <div>
-                  <span class="result-kicker">Análisis completado</span>
+                  <span class="result-kicker" id="analysis-kicker">
+                    Análisis completado
+                  </span>
                   <h3 id="analysis-title"></h3>
                 </div>
                 <span class="result-status">PASS</span>
@@ -181,7 +186,9 @@
             <div class="baseline-view" id="baseline-view" hidden>
               <div class="result-summary">
                 <div>
-                  <span class="result-kicker">Baseline funcional</span>
+                  <span class="result-kicker" id="baseline-kicker">
+                    Baseline funcional
+                  </span>
                   <h3>Los 12 escenarios del corpus</h3>
                 </div>
                 <span class="result-status">PASS</span>
@@ -196,10 +203,12 @@
         <section class="security-panel" aria-labelledby="security-title">
           <div class="section-heading">
             <div>
-              <p class="panel-index">03 / TELEMETRÍA EFÍMERA</p>
+              <p class="panel-index" id="security-index">
+                03 / TELEMETRÍA EFÍMERA
+              </p>
               <h2 id="security-title">Cadena de seguridad</h2>
             </div>
-            <p>
+            <p id="security-description">
               Eventos saneados, encadenados y mantenidos únicamente durante
               esta operación.
             </p>
@@ -233,8 +242,8 @@
       </main>
 
       <footer>
-        <span>GENAI SEGURO LAB · GSL-WEB-001</span>
-        <span>Local · educativo · no productivo</span>
+        <span id="profile-identifier">GENAI SEGURO LAB · GSL-WEB-001</span>
+        <span id="runtime-profile">Cargando perfil</span>
       </footer>
     </div>
   </body>

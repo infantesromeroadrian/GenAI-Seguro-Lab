@@ -5,8 +5,8 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-WEB-001` |
-| Versión | `1.1.0` |
-| Fecha | 2026-07-28 |
+| Versión | `1.2.0` |
+| Fecha | 2026-07-29 |
 | Estado | Implementado como extensión posterior al roadmap interno 66/66 |
 | Usuario | `ACT-01` — operador local |
 | Datos | Los 12 incidentes benignos y sintéticos de `DAT-01` |
@@ -26,6 +26,10 @@ El resultado esperado es una interfaz local desde la que `ACT-01` puede:
 3. ejecutar su análisis o la baseline benigna completa;
 4. leer únicamente la proyección ya saneada;
 5. recorrer los eventos efímeros de la operación.
+
+La UI también se reutiliza en `GSL-PUBLIC-STATIC-001`, un perfil separado que
+solo muestra snapshots precomputados. Ese perfil no expone este listener ni
+convierte sus GET estáticos en operaciones del runtime local.
 
 ## Alcance
 
@@ -49,7 +53,8 @@ El resultado esperado es una interfaz local desde la que `ACT-01` puede:
 - Otro proveedor/modelo, endpoint configurable, credenciales en UI o cloud
   para baseline/evaluaciones. Ollama se limita al contrato experimental.
 - Borradores, escritura, acciones de contención o nuevas herramientas.
-- Autenticación, acceso multiusuario, TLS, proxy, túnel o despliegue público.
+- Autenticación, acceso multiusuario, proxy, túnel o publicación del listener.
+  El perfil público estático se rige por su especificación propia.
 - Persistencia, telemetría, analytics, service worker o recursos de terceros.
 - Presentar la UI como evidencia de robustez adversaria o cierre de `SEC-1`.
 

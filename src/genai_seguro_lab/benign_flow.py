@@ -15,7 +15,9 @@ from .data_contract import (
 )
 from .local_tools import (
     KnowledgeCatalog,
+    KnowledgeSearchArguments,
     KnowledgeSearchResult,
+    ToolArgumentsError,
     ToolDeniedError,
 )
 from .model_adapter import (
@@ -379,6 +381,30 @@ class BenignAnalysisFlow:
                 )
                 raise ToolDeniedError(
                     "requested tool is not allowed in this flow"
+                )
+            try:
+                tool_arguments = (
+                    KnowledgeSearchArguments.model_validate_json(
+                        tool_request.arguments_json
+                    )
+                )
+            except ValidationError:
+                raise ToolArgumentsError(
+                    "knowledge_search arguments were rejected"
+                ) from None
+            if (
+                tool_arguments.query != incident.category
+                or tool_arguments.knowledge_ids != incident.knowledge_refs
+                or tool_arguments.limit != 1
+            ):
+                journal.signal(
+                    "tool_denied",
+                    source="flow",
+                    outcome="denied",
+                    correlation=security_correlation,
+                )
+                raise ToolDeniedError(
+                    "knowledge request does not match the validated incident"
                 )
             control.accept_tool_request(
                 tool_request.arguments_json,

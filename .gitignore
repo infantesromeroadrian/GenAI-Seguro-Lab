@@ -30,3 +30,6 @@ secrets*.json
 # Salidas generadas por el laboratorio
 sandbox/drafts/*
 !sandbox/drafts/README.md
+
+# Estado local de despliegue
+.vercel/

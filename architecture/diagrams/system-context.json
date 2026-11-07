@@ -42,6 +42,17 @@
       }
     },
     {
+      "id": "portfolio-visitor",
+      "label": "ACT-04 · Visitante del portfolio",
+      "meta": {
+        "type": "person",
+        "inventoryIds": [
+          "ACT-04"
+        ],
+        "state": "public-fixed-input"
+      }
+    },
+    {
       "id": "genai-seguro-lab",
       "label": "GenAI Seguro Lab",
       "subDiagramId": "local-containers",
@@ -71,6 +82,21 @@
           "2026-07-29-sanitized-stage-unobserved",
           "2026-07-29-instrumented-end-to-end-passed"
         ]
+      }
+    },
+    {
+      "id": "public-portfolio-demo",
+      "label": "GenAI Seguro Lab · Demo pública",
+      "subDiagramId": "public-portfolio-deployment",
+      "meta": {
+        "type": "system",
+        "deployment": "vercel-static-and-python-function",
+        "state": "public-live-llm-with-static-baseline",
+        "runtimeApi": true,
+        "runtimeExternalIntegrations": 1,
+        "secrets": true,
+        "persistence": false,
+        "publicProviderLabel": "LLM"
       }
     }
   ],
@@ -104,6 +130,28 @@
       }
     },
     {
+      "id": "context-visitor-uses-public-demo",
+      "source": "portfolio-visitor",
+      "target": "public-portfolio-demo",
+      "label": "GET de UI/baseline y POST de un incidente enumerado",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-09",
+        "freePrompt": false,
+        "uploads": false
+      }
+    },
+    {
+      "id": "context-maintainer-publishes-public-demo",
+      "source": "lab-maintainer",
+      "target": "public-portfolio-demo",
+      "label": "Git + snapshot offline + despliegue Vercel",
+      "meta": {
+        "type": "publishes",
+        "runtimeDependency": true
+      }
+    },
+    {
       "id": "context-lab-calls-ollama-cloud",
       "source": "genai-seguro-lab",
       "target": "ollama-cloud-provider",
@@ -123,6 +171,29 @@
       "meta": {
         "type": "data-flow",
         "crossesBoundary": "TB-08",
+        "rawContentPersisted": false
+      }
+    },
+    {
+      "id": "context-public-demo-calls-ollama-cloud",
+      "source": "public-portfolio-demo",
+      "target": "ollama-cloud-provider",
+      "label": "Implementación actual: 2 POST HTTPS por análisis con datos sintéticos",
+      "meta": {
+        "type": "calls",
+        "crossesBoundary": "TB-09",
+        "providerHiddenFromPublicProjection": true,
+        "retries": 0
+      }
+    },
+    {
+      "id": "context-ollama-returns-public-model-output",
+      "source": "ollama-cloud-provider",
+      "target": "public-portfolio-demo",
+      "label": "Salida no confiable → validación y proyección pública",
+      "meta": {
+        "type": "data-flow",
+        "crossesBoundary": "TB-09",
         "rawContentPersisted": false
       }
     }

@@ -28,21 +28,24 @@ CARD_STATUS = "DESCRIPTIVA_ALCANCE_ACTUAL"
 EXPECTED_CARD_METADATA = {
     SYSTEM_CARD: (
         "GSL-SYSTEM-CARD-001",
-        "1.3.0",
+        "1.4.0",
+        "2026-07-29",
         "648dd9afe9ef696388257ebf8dda4b59ece1aeb5",
     ),
     DATA_CARD: (
         "GSL-DATA-CARD-001",
         "1.0.0",
+        "2026-07-28",
         "52e039f0c72f96671170e977a761691aa81c525e",
     ),
     MODEL_CARD: (
         "GSL-MODEL-CARD-001",
         "1.0.0",
+        "2026-07-28",
         "52e039f0c72f96671170e977a761691aa81c525e",
     ),
 }
-EXPECTED_BOUNDARIES = {f"TB-{index:02d}" for index in range(1, 8)}
+EXPECTED_BOUNDARIES = {f"TB-{index:02d}" for index in range(1, 10)}
 EXPECTED_DATA_ASSETS = {f"DAT-{index:02d}" for index in range(1, 26)}
 
 
@@ -69,12 +72,17 @@ def _compact(document: str) -> str:
 
 
 def test_cards_pin_identity_scope_and_evidence_without_approval_claims() -> None:
-    for path, (identifier, version, source_commit) in EXPECTED_CARD_METADATA.items():
+    for path, (
+        identifier,
+        version,
+        cut_date,
+        source_commit,
+    ) in EXPECTED_CARD_METADATA.items():
         document = _read(path)
         for expected in (
             f"`{identifier}`",
             f"`{version}`",
-            "2026-07-28",
+            cut_date,
             f"`{CARD_STATUS}`",
             f"`{source_commit}`",
             f"`{CANDIDATE_COMMIT}`",
@@ -92,9 +100,9 @@ def test_system_card_covers_boundaries_actors_components_and_pending_risks() -> 
     boundaries = set(re.findall(r"`(TB-\d{2})`", _marked(document, "system-boundaries")))
     assert boundaries == EXPECTED_BOUNDARIES
 
-    for actor in ("ACT-01", "ACT-02", "ACT-03"):
+    for actor in ("ACT-01", "ACT-02", "ACT-03", "ACT-04"):
         assert f"`{actor}`" in document
-    for component_index in range(1, 20):
+    for component_index in range(1, 22):
         assert f"`CMP-{component_index:02d}`" in document
     for element in ("MOD-01", "TOL-01", "TOL-02", "IDN-01", "IDN-03", "IDN-04", "IDN-05"):
         assert f"`{element}`" in document

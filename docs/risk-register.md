@@ -5,8 +5,8 @@
 | Campo | Valor |
 |---|---|
 | Identificador | `GSL-RISK-REGISTER-001` |
-| Versión | `1.0.0` |
-| Fecha | 2026-07-28 |
+| Versión | `1.1.0` |
+| Fecha | 2026-07-29 |
 | Estado | `ABIERTO_ALCANCE_ACTUAL` |
 | Corte de las fuentes | commit `648dd9afe9ef696388257ebf8dda4b59ece1aeb5` |
 | Candidato evaluado | commit `77edd64037bb0e41edffa58cae2682ba7d2694d2` |
@@ -63,6 +63,18 @@ prueba real requiere decisión y evidencia nuevas, nunca una reinterpretación
 de `DAT-25`.
 La [política de cambios de modelo](./model-change-reevaluation-policy.md)
 mantiene el paquete de reevaluación aplicable.
+
+### Extensión pública alojada
+
+`GSL-PUBLIC-STATIC-001` y `GSL-PUBLIC-LLM-001` materializan la
+distribución/supply chain de `RR-03`, el agotamiento de `RR-01` y el riesgo de
+representación/generalización de `RR-06`; no crean otro registro. La baseline
+se etiqueta como precomputada y el análisis vivo como «Análisis con LLM».
+Persisten abuso distribuido sin cuota global verificada, coste desconocido,
+dependencia del proveedor, confusión entre modos y las incertidumbres de
+residencia, retención y telemetría de Vercel y del proveedor. El kill switch,
+la entrada enumerada, los timeouts y las cabeceras reducen exposición, pero no
+aceptan ni cierran esos riesgos y no reinterpretan `DAT-25`.
 
 ## Cola de decisiones humanas
 

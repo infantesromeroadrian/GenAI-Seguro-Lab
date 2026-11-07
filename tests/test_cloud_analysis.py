@@ -53,7 +53,13 @@ def _tool_response(
     name: str = "knowledge_search",
     *,
     query: str = "phishing",
+    arguments: dict[str, object] | None = None,
 ) -> bytes:
+    selected_arguments = arguments or {
+        "knowledge_ids": ["KB-001"],
+        "limit": 1,
+        "query": query,
+    }
     return json.dumps(
         {
             "done": True,
@@ -67,11 +73,7 @@ def _tool_response(
                         "function": {
                             "index": 0,
                             "name": name,
-                            "arguments": {
-                                "knowledge_ids": ["KB-001"],
-                                "limit": 1,
-                                "query": query,
-                            },
+                            "arguments": selected_arguments,
                         },
                     }
                 ],
@@ -172,6 +174,46 @@ def test_empty_remote_query_is_rejected_before_search_or_second_call() -> None:
     assert all(
         event.kind != "tool_result" for event in journal.report().events
     )
+
+
+@pytest.mark.parametrize(
+    "arguments",
+    (
+        {
+            "knowledge_ids": ["KB-001"],
+            "limit": 1,
+            "query": "identity",
+        },
+        {
+            "knowledge_ids": ["KB-002"],
+            "limit": 1,
+            "query": "phishing",
+        },
+        {
+            "knowledge_ids": ["KB-001"],
+            "limit": 2,
+            "query": "phishing",
+        },
+    ),
+)
+def test_remote_tool_arguments_must_exactly_match_the_incident(
+    arguments: dict[str, object],
+) -> None:
+    transport = SequenceTransport(
+        (_tool_response(arguments=arguments),)
+    )
+
+    with pytest.raises(
+        ToolDeniedError,
+        match="does not match the validated incident",
+    ):
+        run_cloud_incident(
+            load_dataset(DATA_DIR),
+            "INC-BEN-001",
+            adapter=_adapter(transport),
+        )
+
+    assert len(transport.documents) == 1
 
 
 @pytest.mark.parametrize(
