@@ -161,7 +161,7 @@ cuenta, dependencia o error de mantenimiento con el mismo nivel de permisos.
 
 | ID | Escenario y objetivo adversario | Precondición y camino | Activos y límites | Resultado esperado en el estado actual | Evidencia pendiente |
 |---|---|---|---|---|---|
-| `AC-SC-01` | Alterar código, allowlists, `uv.lock`, corpus o snapshot para debilitar controles o presentar una baseline falsa | `MANTENIMIENTO`: comprometer o usar indebidamente la autoridad de `ACT-02`; cadenas `AUTH-08/09` | `TB-01`, `TB-06`, código, dependencias, `DAT-01` a `DAT-04`; techo `C3` | Git, el remoto público y el lock permiten detectar diferencias y reproducir resolución, pero no hay firma, CI o revisión independiente que impidan por sí solos una mutación autorizada o comprometida | Escenarios separados de cambio de código, lock y evidencia; definir oráculo de integridad antes de ejecutarlos |
+| `AC-SC-01` | Alterar código, allowlists, `uv.lock`, corpus o snapshot para debilitar controles o presentar una baseline falsa | `MANTENIMIENTO`: comprometer o usar indebidamente la autoridad de `ACT-02`; cadenas `AUTH-08/09` | `TB-01`, `TB-06`, código, dependencias, `DAT-01` a `DAT-04`; techo `C3` | Git, el remoto público y el lock permiten detectar diferencias y reproducir resolución, pero no hay firma ni revisión independiente (la CI mínima solo ejecuta `pytest`) que impidan por sí solos una mutación autorizada o comprometida | Escenarios separados de cambio de código, lock y evidencia; definir oráculo de integridad antes de ejecutarlos |
 
 ## Backlog de observables para el harness
 

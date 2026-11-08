@@ -99,7 +99,7 @@ severidad.
 | Orden | Caso | `I` | `L` | `K` | `S` | Prioridad | Fundamento actual |
 |---:|---|---:|---:|---:|---:|---|---|
 | 1 | `AC-DOS-01` | 1 | 3 | 3 | 18 | `PR-1` | `CMP-10` rechaza concurrencia entre procesos que cooperan mediante la CLI, pero una llamada Python puede omitir el lock y no existe cuota persistente o rate limit entre ejecuciones |
-| 2 | `AC-SC-01` | 3 | 2 | 1 | 8 | `PR-2` | Posee el mayor impacto, aunque exige autoridad de mantenimiento; no hay firma, CI ni revisión independiente |
+| 2 | `AC-SC-01` | 3 | 2 | 1 | 8 | `PR-2` | Posee el mayor impacto, aunque exige autoridad de mantenimiento; no hay firma ni revisión independiente ejercida (CI mínima desde 2026-11-07, sin efecto sobre la autoridad de mantenimiento) |
 | 3 | `AC-TOL-03` | 2 | 1 | 2 | 6 | `PR-3` | Huella, campos extra, binding y replay tienen cobertura; el efecto potencial queda confinado a un borrador |
 | 4 | `AC-TOL-04` | 2 | 1 | 2 | 6 | `PR-3` | Traversal, symlinks y overwrite se rechazan mediante validación de ruta y creación exclusiva |
 | 5 | `AC-TOL-05` | 2 | 1 | 2 | 6 | `PR-3` | La confirmación literal histórica se rechaza; una aprobación exige identidad sintética, credencial, contexto exacto, TTL y consumo único |

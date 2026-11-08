@@ -333,8 +333,10 @@ desde la CLI ordinaria.
 | `GAP-08` | Sistema multiagente, autonomía abierta y ejecución de shell | No forman parte del diseño aprobado |
 
 `GAP-09` queda retirado desde PGS-07-M08: el remoto Git y la publicación
-pública del código ya existen. La ausencia de CI/CD o GitHub Actions no se
-reclasifica aquí como un requisito pendiente.
+pública del código ya existen. La CI mínima de GitHub Actions
+(`.github/workflows/ci.yml`, PR #2, 2026-11-07) tampoco se
+reclasifica aquí como un requisito; la ausencia de CD, firma, SBOM y release
+sigue registrada en `GSL-SUPPLY-CHAIN-001`.
 
 ## Límites relevantes para el threat model
 

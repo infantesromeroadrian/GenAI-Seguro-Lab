@@ -40,7 +40,7 @@ Esto no es una aprobación, exención ni aceptación de riesgo.
 
 - agotamiento y límites no probados mediante cargas DOS;
 - integridad de corpus futuros y supply chain;
-- ausencia de firma, CI y revisión independiente ejercida;
+- ausencia de firma, SBOM, release y revisión independiente ejercida (la CI mínima existe desde 2026-11-07 y las licencias de dependencias siguen sin evaluar);
 - aprobación sintética sin demostrar presencia humana real;
 - confinamiento lógico sin aislamiento del sistema operativo;
 - generalización no demostrada a prompts libres, idiomas, ataques desconocidos
