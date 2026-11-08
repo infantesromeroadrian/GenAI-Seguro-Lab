@@ -58,9 +58,9 @@ resumen y la política de salida.
 
 `thinking`, prompts, cuerpos remotos, respuestas crudas y el secreto no se
 registran ni forman parte del resultado, journal o error. `OLLAMA_API_KEY`
-debe proporcionarse en el entorno del proceso; `.env.example` solo documenta
-el nombre con valor vacío. El proyecto no carga automáticamente archivos
-`.env`.
+debe proporcionarse únicamente en el entorno del proceso. `.env.example`
+permanece vacío a propósito y no documenta ningún valor. El proyecto no carga
+automáticamente archivos `.env`.
 
 ## Uso
 

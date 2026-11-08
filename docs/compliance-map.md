@@ -73,7 +73,7 @@ obligación atribuida al proyecto.
 | Desarrollo seguro | `GSL-NIST-CONTROLS-001`, políticas `GSL-*`, suite de pruebas | La validación documental no demuestra conformidad ni resistencia universal. |
 | Threat model | `GSL-ABUSE-CASES-001`, priorización y `GSL-THREAT-CROSSWALK-001` | Cuatro fixtures DOS/SC permanecen inertes y no existe modelo real. |
 | Privacidad | datos sintéticos, redacción y ausencia de red | No se ha evaluado un tratamiento real ni una base jurídica. |
-| Trazabilidad y cambio | Git, hashes, ADR, fichas y triggers | No hay firma, SBOM, CI, release ni revisión independiente ejercida. |
+| Trazabilidad y cambio | Git, hashes, ADR, fichas y triggers | No hay firma, SBOM, release ni revisión independiente ejercida. Actualizado 2026-11-09: existe CI mínima (`.github/workflows/ci.yml`, PR #2) que ejecuta `pytest`; no sustituye a la revisión independiente. |
 
 ## Regla de mantenimiento
 

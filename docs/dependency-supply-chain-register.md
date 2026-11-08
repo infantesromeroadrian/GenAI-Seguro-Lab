@@ -63,7 +63,7 @@ datos, vector store, telemetría, Docker o dependencia de modelo real.
 | `SC-TOOL-02` | `uv` | CLI local `0.6.10` | No está fijado por versión o hash dentro del repositorio; distintas versiones pueden resolver o instalar de forma diferente |
 | `SC-TOOL-03` | Git | `2.50.1` observado | No está fijado; los commits e hashes aportan integridad, no firma o identidad fuerte |
 | `SC-TOOL-04` | PyPI / pythonhosted | Índice y almacenamiento externos usados por el lock | Disponibilidad, cuenta del publicador, compromiso de índice y revocación quedan fuera del control local |
-| `SC-TOOL-05` | GitHub | Remoto público y publicación manual de `main` | No hay workflow versionado, firma de commit, release o revisión independiente ejercida |
+| `SC-TOOL-05` | GitHub | Remoto público y publicación manual de `main` | No hay firma de commit, release o revisión independiente ejercida. Actualizado 2026-11-09: existe workflow versionado (`.github/workflows/ci.yml`, PR #2, acciones fijadas por SHA, `permissions: contents: read`) |
 <!-- toolchain-register:end -->
 
 Las versiones de `uv` y Git son observaciones del host, no requisitos
@@ -77,10 +77,10 @@ reconstrucción en lugar de asumir que coincide.
 |---|---|---|---|
 | `SCG-01` | No existe SBOM CycloneDX/SPDX versionada | `ABIERTO` | Este registro es inventario humano, no SBOM estándar; decidir formato antes de distribuir artefactos |
 | `SCG-02` | No hay firma de commits, tags, paquetes, lock o evidencia | `ABIERTO` | Los hashes detectan drift cubierto, no autenticidad; revisar antes de release o colaboración |
-| `SCG-03` | No existe CI/CD o workflow de GitHub versionado | `ABIERTO` | Reconstrucción y pruebas son manuales; reevaluar al añadir automatización |
+| `SCG-03` | CI/CD parcial: existe CI mínima de GitHub versionada (`.github/workflows/ci.yml`, PR #2, 2026-11-07); no hay CD ni escaneo de seguridad, SBOM o firma en el pipeline | `ABIERTO` | Actualizado 2026-11-09: CI ejecuta `uv sync --locked` y `pytest` en push a `main`, pull request y `workflow_dispatch`; no hay despliegue automatizado (CD) y la reconstrucción desde limpio sigue siendo manual |
 | `SCG-04` | No hay política de release, tag o rollback externo | `ABIERTO` | Releases siguen fuera de la autorización actual |
 | `SCG-05` | No hay `SECURITY.md`, `CODEOWNERS` ni separación de funciones | `ABIERTO` | `ACT-02` concentra mantenimiento; `REV-01` sigue sin asignar |
-| `SCG-06` | Licencias de dependencias y del repositorio no se han evaluado ni documentado | `NO_EVALUADO` | Revisar antes de redistribuir, empaquetar o aceptar contribuciones |
+| `SCG-06` | Licencias de dependencias no se han evaluado ni documentado; la licencia del repositorio es MIT (`LICENSE`) | `NO_EVALUADO` | Actualizado 2026-11-09: la licencia del repositorio está declarada; revisar las licencias de dependencias antes de redistribuir, empaquetar o aceptar contribuciones |
 | `SCG-07` | Vulnerabilidades y advisories no se han escaneado en este corte | `NO_EVALUADO` | No equivale a “sin vulnerabilidades”; consultar fuentes y registrar fecha antes de release o ante alerta |
 | `SCG-08` | Build no hermética y herramientas de host no fijadas por artefacto | `ABIERTO` | PGS-07-M01 reconstruirá desde limpio y registrará versiones, red usada y límites |
 <!-- supply-chain-gaps:end -->
